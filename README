@@ -39,10 +39,20 @@ Input Filters:
   
   *Highlighting: highlights keywords and nicknames and 
     handles highlighting tabs as well
+
+  *KeepAlive: sends a ping to the server every three minutes
+    on every connection to keep you connected
   
   MessageInTab: opens a new tab when someone private
     messages you
 	
+Output Filters:
+
+  *Colorizer: Lets you use %B for bold, %U for underline,
+  %O for clear all attributes, and %C##,## (first number
+  is the foreground color, second number is the background color)
+  for colors.
+
 * == Used by default
 
 ===============================================================================
@@ -145,6 +155,10 @@ Commands specific to the GNUstep output plugin (GNUstepOutput)
 
 /clear
   Clears the text in the current tab.
+
+/scrollback <characters>
+  This sets how many characters your scroll-back buffer holds.
+  This change will automatically be saved to the defaults.
   
 ===============================================================================
 Notes about GNUstepOutput (default):
