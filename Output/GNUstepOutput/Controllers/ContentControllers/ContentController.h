@@ -67,7 +67,7 @@ extern NSString *ContentConsoleName;
 - (void)moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
 
 - (int)indexForView: (id <ContentControllerQueryView>)aView;
-- (int)count;
+- (unsigned)count;
 	 
 - (NSArray *)containedContentControllers;
 - (NSArray *)viewListForContentController: 

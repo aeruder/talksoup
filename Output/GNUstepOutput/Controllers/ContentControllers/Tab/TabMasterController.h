@@ -50,7 +50,7 @@
 - (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController;
 
-- (void)selectView: (id <ContentControllerQueryView)aView;
+- (void)selectView: (id <ContentControllerQueryView>)aView;
 - (void)selectViewAtIndex: (int)aIndex;
 
 - (void)removeView: (id <ContentControllerQueryView>)aView;

@@ -100,7 +100,6 @@
 	  aContentController, @"Content",
 	  nil]];
 }
-- (void)
 - (void)removeView: (id <ContentControllerQueryView>)aView
 {
 	id tab;

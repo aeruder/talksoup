@@ -29,6 +29,7 @@
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSFont.h>
 #import <AppKit/NSAttributedString.h>
+#import <AppKit/NSWindow.h>
 #import <Foundation/NSMapTable.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSArray.h>
@@ -740,8 +741,8 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	id <MasterController> master;
 	id <ContentControllerQueryView> view;
 
-	master = [nameToMaster objectForKey: lowercase(aName)];
-	view = [nameToController objectForKey: lowercase(aName)];
+	master = [nameToMasterController objectForKey: lowercase(aName)];
+	view = [nameToBoth objectForKey: lowercase(aName)];
 	
 	if (master) {
 		[[master window] makeKeyAndOrderFront: nil];
