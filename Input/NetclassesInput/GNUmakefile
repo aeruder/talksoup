@@ -6,7 +6,7 @@ BUNDLE_EXTENSION =
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/Input
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-NetclassesInput_BUNDLE_LIBS = -framework netclasses -framework TalkSoupBundles
+NetclassesInput_BUNDLE_LIBS = -framework netclasses -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
 else
 NetclassesInput_BUNDLE_LIBS = -lnetclasses -lTalkSoupBundles
 endif
