@@ -348,6 +348,13 @@ static void send_message(id command, id name, id connection)
 	[_TS_ setTopicForChannel: S2AS(name) to: topic
 	  onConnection: connection 
 	  withNickname: S2AS([connection nick]) sender: _GS_];
+
+	if (topic)
+	{
+		[_TS_ setTopicForChannel: S2AS(name) to: nil
+		  onConnection: connection withNickname: S2AS([connection nick])
+		  sender: _GS_];
+	}
 	return self;
 }
 - commandJoin: (NSString *)aString
