@@ -21,20 +21,21 @@ Copyright (C) 2003 Andy Ruder
 Comments are welcome.
 
 ===============================================================================
+* netclasses MUST be installed before installation *
+
 Installation Instructions:
 
-1. make
-	Compiles TalkSoup
+1. First you must install TalkSoupBundles
+ andy ~/TalkSoup $ cd TalkSoupBundles
+ andy ~/TalkSoup/TalkSoupBundles $ make
+ andy ~/TalkSoup/TalkSoupBundles $ su -c 'make install'
+
+2. Now you must install TalkSoup, go back to the head source directory.
+ andy ~/TalkSoup $ make
+ andy ~/TalkSoup/TalkSoupBundles $ su -c 'make install'
 	
-2. make install
-	Installs TalkSoup *must be done as root*
-	
-	You can also install TalkSoup as a regular user by doing a 
-	GNUSTEP_INSTALLATION_DIR="$GNUSTEP_USER_ROOT" make install
-	which will install it into $HOME/GNUstep
-	
-3. gopen TalkSoup.app
-	Run TalkSoup
+3. Run TalkSoup
+ andy ~ $ gopen TalkSoup.app
 
 Enjoy!
 

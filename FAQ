@@ -168,6 +168,10 @@ Questions covered in this FAQ:
 
 3.3 How do I load and unload bundles while TalkSoup is running?
 
+	If you are using the GNUstepOutput bundle, you can very simply 
+	run the Bundle Setup from the Info menu.  The following procedure
+	will work on any output bundle:
+
     To see what bundles you currently have loaded, type /loaded.  If you
     want to load another input or output filter, you can use the /load
     command.  To load a input filter, type /load in <filtername> and to
