@@ -29,16 +29,17 @@ extern NSString *GNUstepOutputScrollBack;
 
 #import <Foundation/NSObject.h>
 
-@class NSView, NSString, NSImage;
+@class NSView, NSString, NSImage, NSBox;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
 @class NSDictionary, NSMutableDictionary;
 
-/* object: the bundle object 
+/* object: the preference string 
  *
  * dictionary:
- *   @"Preference" the preference string
+ *   @"Bundle" the bundle object 
  *   @"Old" the old value
  *   @"New" the new value
+ *   @"Owner" the owner of the preference change
  */
 extern NSString *PreferencesChangedNotification;
 
@@ -65,6 +66,7 @@ extern NSString *PreferencesModuleRemovalNotification;
 		NSMutableArray *prefsModules;
 		id currentPrefs;
 		NSMutableDictionary *defaultPreferences;
+		NSBox *labelBox;
 	}
 
 - (id)preferenceForKey: (NSString *)aKey;

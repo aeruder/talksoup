@@ -1,5 +1,5 @@
 /***************************************************************************
-                     ColorPreferencesController.h
+                        GeneralPreferencesController.h
                           -------------------
     begin                : Sat Aug 14 19:19:30 CDT 2004
     copyright            : (C) 2004 by Andrew Ruder
@@ -15,32 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-@class ColorPreferencesController, NSString;
+@class GeneralPreferencesController;
 
-extern NSString *GNUstepOutputPersonalBracketColor;
-extern NSString *GNUstepOutputOtherBracketColor;
-extern NSString *GNUstepOutputTextColor;
-extern NSString *GNUstepOutputBackgroundColor;
-
-#ifndef COLOR_PREFERENCES_CONTROLLER_H
-#define COLOR_PREFERENCES_CONTROLLER_H
+#ifndef GENERAL_PREFERENCES_CONTROLLER_H
+#define GENERAL_PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 
 @class NSString, NSImage;
-@class NSColorWell, NSView, NSImage;
+@class NSView, NSImage;
 
-@interface ColorPreferencesController : NSObject 
+@interface GeneralPreferencesController : NSObject 
 	{
-		NSColorWell *otherColorWell;
-		NSColorWell *personalColorWell;
-		NSColorWell *backgroundColorWell;
-		NSColorWell *textColorWell;
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
-		BOOL activated;
 	}
-- (void)setColorPreference: (NSColorWell *)aWell;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;

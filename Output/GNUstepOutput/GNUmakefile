@@ -3,11 +3,12 @@ include $(GNUSTEP_MAKEFILES)/common.make
 APP_NAME = GNUstepOutput
 
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = ColorPreferences.gorm Preferences.gorm GNUstepOutput.gorm \
- FontPreferences.gorm BundlePreferences.gorm
+ FontPreferences.gorm BundlePreferences.gorm GeneralPreferences.gorm
 
 GNUstepOutput_RESOURCE_FILES = Images/color_prefs.tiff Images/font_prefs.tiff \
  Images/bundle_prefs.tiff Images/common_ret.tiff\
- Images/common_retH.tiff AllLanguages/Defaults.plist
+ Images/common_retH.tiff AllLanguages/Defaults.plist \
+ Images/general_prefs.tiff
 
 GNUstepOutput_LANGUAGES = English
 
@@ -22,7 +23,8 @@ endif
 Controllers = Controllers/Preferences/PreferencesController.m \
   Controllers/Preferences/ColorPreferencesController.m \
   Controllers/Preferences/FontPreferencesController.m \
-  Controllers/Preferences/BundlePreferencesController.m
+  Controllers/Preferences/BundlePreferencesController.m \
+  Controllers/Preferences/GeneralPreferencesController.m
   
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) Misc/NSColorAdditions.m

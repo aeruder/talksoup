@@ -25,6 +25,7 @@
 #import <AppKit/NSColorWell.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
+#import <AppKit/NSButton.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
 
@@ -32,6 +33,12 @@ NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColo
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
+
+@interface ColorPreferencesController (PrivateMethods)
+- (void)setDefaultColors: (NSButton *)aButton;
+- (void)refreshFromPreferences;
+- (void)preferenceChanged: (NSNotification *)aNotification;
+@end
 
 @implementation ColorPreferencesController
 - init
@@ -63,6 +70,26 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 		return nil;
 	}
 
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: PreferencesChangedNotification 
+	  object: GNUstepOutputPersonalBracketColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: PreferencesChangedNotification 
+	  object: GNUstepOutputTextColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: PreferencesChangedNotification 
+	  object: GNUstepOutputBackgroundColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: PreferencesChangedNotification 
+	  object: GNUstepOutputOtherBracketColor];
+
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: PreferencesModuleAdditionNotification 
 	 object: self];
@@ -79,6 +106,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(preferencesView);
 	RELEASE(preferencesIcon);
 	[super dealloc];
@@ -115,16 +143,17 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: PreferencesChangedNotification
-	 object: _GS_
+	 object: preference 
 	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
-	  preference, @"Preference",
+	  _GS_, @"Bundle",
 	  newValue, @"New",
+	  self, @"Owner",
 	  oldValue, @"Old",
 	  nil]];
 }
 - (NSString *)preferencesName
 {
-	return @"Color";
+	return @"Colors";
 }
 - (NSImage *)preferencesIcon
 {
@@ -132,14 +161,47 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 }
 - (NSView *)preferencesView
 {
-	NSLog(@"preferencesView: %@", preferencesView);
 	return preferencesView;
 }
 - (void)activate
 {
+	activated = YES;
+	[self refreshFromPreferences];
+}
+- (void)deactivate
+{
+	activated = NO;
+}
+@end
+
+@implementation ColorPreferencesController (PrivateMethods)
+- (void)setDefaultColors: (NSButton *)aButton
+{
 	id txColor, otherColor, persColor, bgColor;
 
-	NSLog(@"Colors Activated");
+	txColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputTextColor];
+	otherColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputOtherBracketColor];
+	persColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputPersonalBracketColor];
+	bgColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputBackgroundColor];
+
+	[_PREFS_ setPreference: txColor forKey:
+	  GNUstepOutputTextColor];
+	[_PREFS_ setPreference: otherColor forKey:
+	  GNUstepOutputOtherBracketColor];
+	[_PREFS_ setPreference: persColor forKey:
+	  GNUstepOutputPersonalBracketColor];
+	[_PREFS_ setPreference: bgColor forKey:
+	  GNUstepOutputBackgroundColor];
+
+	[self refreshFromPreferences];
+}
+- (void)refreshFromPreferences
+{
+	id txColor, otherColor, persColor, bgColor;
 
 	txColor = [_PREFS_ preferenceForKey:
 	  GNUstepOutputTextColor];
@@ -160,8 +222,15 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	[personalColorWell setColor: persColor];
 	[backgroundColorWell setColor: bgColor];
 }
-- (void)deactivate
+- (void)preferenceChanged: (NSNotification *)aNotification
 {
-	NSLog(@"Colors Deactivated!");
+	id userInfo;
+	if (!activated) return;
+
+	userInfo = [aNotification userInfo];
+
+	if ([userInfo objectForKey: @"Owner"] == self) return;
+	
+	[self refreshFromPreferences];
 }
 @end

@@ -44,6 +44,7 @@
 #import <AppKit/NSFont.h>
 #import <AppKit/NSMatrix.h>
 #import <AppKit/NSNibLoading.h>
+#import <AppKit/NSBox.h>
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 
@@ -125,6 +126,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(window);
 	DESTROY(prefsModules);
 
@@ -613,6 +615,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[view setFrameOrigin: NSMakePoint(0,0)];
 	[preferencesView addSubview: view];
 	currentPrefs = module;
+	[labelBox setTitle: [module preferencesName]];
 	[module activate];
 }
 - (void)registerPreferencesModule: aPreferencesModule

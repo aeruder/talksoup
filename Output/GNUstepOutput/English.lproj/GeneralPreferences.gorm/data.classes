@@ -140,14 +140,15 @@
 	);
 	Super = NSObject;
     };
-    PreferencesController = {
+    GeneralPreferencesController = {
 	Actions = (
 	);
 	Outlets = (
-	    scrollView,
-	    window,
 	    preferencesView,
-	    labelBox
+	    userView,
+	    nameView,
+	    passwordView,
+	    nickView
 	);
 	Super = NSObject;
     };

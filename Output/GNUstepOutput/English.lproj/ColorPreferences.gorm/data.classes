@@ -1,7 +1,8 @@
 {
     ColorPreferencesController = {
 	Actions = (
-	    "setColorPreference:"
+	    "setColorPreference:",
+	    "setDefaultColors:"
 	);
 	Outlets = (
 	    otherColorWell,
@@ -150,7 +151,8 @@
 	    "useStandardLigatures:",
 	    "yank:",
 	    "zoom:",
-	    "setColorPreference:"
+	    "setColorPreference:",
+	    "setDefaultColors:"
 	);
 	Super = NSObject;
     };

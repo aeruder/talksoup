@@ -22,6 +22,7 @@
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/BundlePreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
@@ -461,6 +462,7 @@ PreferencesController *_PREFS_ = nil;
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 		_PREFS_ = [PreferencesController new];
+		AUTORELEASE([GeneralPreferencesController new]);
 		AUTORELEASE([ColorPreferencesController new]);
 		AUTORELEASE([FontPreferencesController new]);
 		AUTORELEASE([BundlePreferencesController new]);
