@@ -51,7 +51,6 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	int beginning;
 	NSRange aRange;
 	
-	NSLog(@"max: %d", max);
 	if ((beginning = max - length) < 0) return;
 	
 	aRange = [[back string] rangeOfString: @"\n" options: 0 range: 

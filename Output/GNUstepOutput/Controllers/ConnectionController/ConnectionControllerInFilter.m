@@ -155,16 +155,18 @@
 {
 	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
 	   @"CTCPRequest%@:from:", [[aCTCP string] uppercaseString]]);
-	BOOL show = YES;
 	id str;
+	id where;
+	
+	where = ContentConsoleName;
 	
 	if (sid && [self respondsToSelector: sid])
 	{
-		show = ([self performSelector: sid withObject: argument
-		 withObject: aPerson] == nil);
+		where = [self performSelector: sid withObject: argument
+		 withObject: aPerson];
 	}
 	
-	if (!show) return self;
+	if ([where isKindOf: [NSNull class]]) return self;
 	
 	if ([argument length])
 	{
@@ -177,7 +179,7 @@
 		  aCTCP, [IRCUserComponents(aPerson) objectAtIndex: 0]);
 	}
 	
-	[content putMessage: str in: ContentConsoleName];
+	[content putMessage: str in: where];
 	
 	return self;
 }
@@ -190,16 +192,16 @@
 {
 	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
 	   @"CTCPReply%@:from:", [[aCTCP string] uppercaseString]]);
-	BOOL show = YES;
 	id str;
+	id where = nil;
 	
 	if (sid && [self respondsToSelector: sid])
 	{
-		show = ([self performSelector: sid withObject: argument
-		 withObject: aPerson] == nil);
+		where = [self performSelector: sid withObject: argument
+		 withObject: aPerson];
 	}
 
-	if (!show) return self;
+	if ([where isKindOf: [NSNull class]]) return self;
 	
 	if ([argument length])
 	{
@@ -218,7 +220,7 @@
 		  @" ", aCTCP, nil);
 	}
 
-	[content putMessage: str in: nil];
+	[content putMessage: str in: where];
 
 	return self;
 }
@@ -377,6 +379,7 @@
 	  AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
 	NSEnumerator *iter;
 	id object;
+	id where;
 	
 	if ([connection connected] && !registered)
 	{
@@ -393,16 +396,16 @@
 		[a appendAttributedString: S2AS(@" ")];
 	}
 	
+	where = ContentConsoleName;
+	
 	if ([self respondsToSelector: sel])
 	{
-		if (![self performSelector: sel withObject: paramList])
-		{
-			[content putMessage: a in: ContentConsoleName];
-		}
+		where = [self performSelector: sel withObject: paramList];
 	}
-	else
+
+	if (![where isKindOf: [NSNull class]])
 	{
-		[content putMessage: a in: ContentConsoleName];
+		[content putMessage: a in: where];
 	}
 	
 	return self;

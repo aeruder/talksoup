@@ -21,6 +21,7 @@
 #include "GNUstepOutput.h"
 
 #include <Foundation/NSAttributedString.h>
+#include <Foundation/NSNull.h>
 
 @implementation ConnectionController (CTCP)
 - CTCPRequestPING: (NSAttributedString *)argument from: (NSAttributedString *)aPerson
@@ -34,7 +35,7 @@
 	  BuildAttributedFormat(@"Received a CTCP PING from %@", 
 	  [IRCUserComponents(aPerson) objectAtIndex: 0]) in: ContentConsoleName];
 	
-	return self;
+	return [NSNull null];
 }
 - CTCPRequestVERSION: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {
@@ -60,7 +61,7 @@
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
 
-	return nil;
+	return ContentConsoleName;
 }
 - CTCPRequestXYZZY: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {
@@ -71,7 +72,7 @@
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
 	
-	return nil;
+	return ContentConsoleName;
 }
 - CTCPRequestRFM: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {
@@ -81,6 +82,6 @@
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
 	
-	return nil;
+	return ContentConsoleName;
 }
 @end

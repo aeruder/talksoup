@@ -26,6 +26,7 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSAttributedString.h>
+#include <Foundation/NSNull.h>
 #include <AppKit/NSTableView.h>
 
 @implementation ConnectionController (NumericCommands)
@@ -47,7 +48,7 @@
 	
 	[self updateTopicInspector];
 	
-	return self;
+	return [NSNull null];
 }
 // RPL_TOPIC (extension???)
 - numericHandler333: (NSArray *)arguments
@@ -75,7 +76,7 @@
 	
 	[self updateTopicInspector];
 	
-	return self;
+	return [NSNull null];
 }
 // RPL_NAMREPLY
 - numericHandler353: (NSArray *)arguments
@@ -85,13 +86,13 @@
 	  
 	if (!channel)
 	{
-		return nil;
+		return ContentConsoleName;
 	}
 
 	[channel addServerUserList: [[arguments objectAtIndex: 2]
 	 string]];
 
-	return self;
+	return [NSNull null];
 }
 // RPL_ENDOFNAMES
 - numericHandler366: (NSArray *)arguments
@@ -102,14 +103,42 @@
 
 	if (!channel)
 	{
-		return nil;
+		return ContentConsoleName;
 	}
 
 	[channel endServerUserList];
 
 	[[cont tableView] reloadData]; 
 
-	return self;
+	return [NSNull null];
+}
+- numericHandler301: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler305: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler306: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler401: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler403: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler404: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler442: (NSArray *)argments
+{
+	return nil;
 }
 @end
 
