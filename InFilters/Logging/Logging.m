@@ -431,7 +431,7 @@ static NSInvocation *invoc = nil;
 	while (object)
 	{
 		[str appendString: [object string]];
-		if ((object = [object nextObject]))
+		if ((object = [iter nextObject]))
 		{
 			[str appendString: @" "];
 		}
@@ -471,14 +471,14 @@ static NSInvocation *invoc = nil;
 	while (object)
 	{
 		[str appendString: [object string]];
-		if ((object = [object nextObject]))
+		if ((object = [iter nextObject]))
 		{
 			[str appendString: @" "];
 		}
 	}
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@\n", 
-	  [NSDate date], str] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] (%@) %@\n", 
+	  [NSDate date], [command string], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
