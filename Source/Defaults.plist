@@ -1,9 +1,258 @@
 {
-	Nick = ("TalkSoup");
-	Plugins = {
-		Input = "NetclassesInput.bundle";
-		OutFilters = ();
-		InFilters = ("Highlighting.bundle");
-		Output = "GNUstepOutput.bundle";
+	GNUstepOutput = {
+	    BackgroundColor = "IRCColorCustom 1.000000 0.972500 0.862700";
+	    OtherBracketColor = "IRCColorCustom 0.000000 0.000000 1.000000";
+	    PersonalBracketColor = "IRCColorCustom 1.000000 0.000000 0.000000";
+	    ServerList = (
+		{
+		    Entries = (
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.dal.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.dal.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.eu.dal.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.eu.dal.net;
+			    UserName = "";
+			}
+		    );
+		    Name = DALnet;
+		},
+		{
+		    Entries = (
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.Prison.NET;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.Prison.NET;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.Qeast.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.Qeast.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.efnet.pl;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.efnet.pl;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.flamed.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.flamed.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = efnet.demon.co.uk;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = efnet.demon.co.uk;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.lagged.org;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.lagged.org;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.lightning.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.lightning.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.mindspring.com;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.mindspring.com;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.rt.ru;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.rt.ru;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.easynews.com;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.easynews.com;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.servercentral.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.servercentral.net;
+			    UserName = "";
+			}
+		    );
+		    Name = EFnet;
+		},
+		{
+		    Entries = (
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.freenode.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.freenode.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.eu.freenode.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.eu.freenode.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.au.freenode.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.au.freenode.net;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = irc.us.freenode.net;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = irc.us.freenode.net;
+			    UserName = "";
+			}
+		    );
+		    Name = FreeNode;
+		},
+		{
+		    Entries = (
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = us.undernet.org;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = us.undernet.org;
+			    UserName = "";
+			},
+			{
+			    AutoConnect = NO;
+			    Commands = "";
+			    Name = eu.undernet.org;
+			    Nick = "";
+			    Password = "";
+			    Port = 6667;
+			    RealName = "";
+			    Server = eu.undernet.org;
+			    UserName = "";
+			}
+		    );
+		    Name = UnderNet;
+		}
+	    );
+	    TextColor = "IRCColorCustom 0.000000 0.000000 0.000000";
 	};
+	Highlighting = {
+	    ExtraWords = ();
+	    TabAnythingColor = "IRCColorCustom 0.41 0.13 0.14";
+	    TabReferenceColor = "IRCColorCustom 0.13 0.14 0.41";
+	    UserColor = IRCColorBlue;
+	};
+	Nick = TalkSoup;
+	Password = "";
+	Plugins = {
+	    InFilters = (
+		Highlighting.bundle
+	    );
+	    Input = NetclassesInput.bundle;
+	    OutFilters = (
+	    );
+	    Output = GNUstepOutput.bundle;
+	};
+	RealName = "";
+	UserName = "";
 }
