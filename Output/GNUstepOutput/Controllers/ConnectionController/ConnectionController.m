@@ -31,6 +31,7 @@
 #import <TalkSoupBundles/TalkSoup.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSHost.h>
+#import <Foundation/NSNotification.h>
 #import <AppKit/NSColor.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTableView.h>
@@ -109,6 +110,12 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	[self setLowercasingFunction: IRCLowercase];
 
 	[_GS_ addConnectionController: self];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(windowWillClose:)
+	  name: NSWindowWillCloseNotification 
+	  object: nil];
+
 
 	[content bringNameToFront: ContentConsoleName];
 	

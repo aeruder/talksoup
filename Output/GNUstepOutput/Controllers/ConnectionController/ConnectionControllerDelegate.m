@@ -61,6 +61,9 @@
 //{
 //	[inputController lineTyped: @"/close"];
 //}
+- (void)windowWillClose: (NSNotification *)aNotification
+{
+}
 @end
 
 

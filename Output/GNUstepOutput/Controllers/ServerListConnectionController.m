@@ -113,11 +113,6 @@
 		[invoc setArgument: &tmp atIndex: 3];
 	}		
 	
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(windowWillClose:)
-	  name: NSWindowWillCloseNotification 
-	  object: nil];
-
 	[super newConnection: aConnection withNickname: aNick sender: aPlugin];
 	
 	return self;

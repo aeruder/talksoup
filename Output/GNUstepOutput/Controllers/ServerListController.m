@@ -117,7 +117,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 
 	iter = [x objectEnumerator];
 
-	subdir = APP_SUPPORT @"TalkSoup/GNUstepOutput";
+	subdir = APP_SUPPORT @"TalkSoup";
 
 	while ((object = [iter nextObject]))
 	{
@@ -183,7 +183,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	iter = [x objectEnumerator];
 
 	subdirs = [NSArray arrayWithObjects:
-	  APP_SUPPORT @"TalkSoup/GNUstepOutput",
+	  APP_SUPPORT @"TalkSoup",
 	  APP_SUPPORT @"TalkSoup/Output/GNUstepOutput/Resources",
 	  nil];
 
