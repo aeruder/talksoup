@@ -140,6 +140,14 @@
 {
 	return nil;
 }
+- numericHandler432: (NSArray *)arguments
+{
+	return nil;
+}
+- numericHandler433: (NSArray *)arguments
+{
+	return nil;
+}
 @end
 
 
