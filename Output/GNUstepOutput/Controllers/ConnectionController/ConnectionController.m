@@ -234,6 +234,10 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 {
 	return password;
 }
+- (NSString *)serverString
+{
+	return server;
+}
 - (NSString * (*)(NSString *))lowercasingFunction
 {
 	return lowercase;

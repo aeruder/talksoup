@@ -399,11 +399,11 @@
 	
 	if ([connection connected] && !registered)
 	{
-		object = [IRCUserComponents(sender) objectAtIndex: 0];
-		[content setLabel: object
+		ASSIGN(server, [[IRCUserComponents(sender) objectAtIndex: 0] string]);
+		[content setLabel: S2AS(server) 
 		 forName: ContentConsoleName];
-		[content setTitle: [object string]
-		  forViewController: [content viewControllerForName: [object string]]];
+		[content setTitle: server 
+		  forViewController: [content viewControllerForName: ContentConsoleName]];
 		registered = YES;
 	}
 	

@@ -22,6 +22,7 @@
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/ConnectionController.h"
 #import "GNUstepOutput.h"
 #import "Misc/NSAttributedStringAdditions.h"
 #import "Misc/NSColorAdditions.h"
@@ -67,6 +68,7 @@
 	nameToLabel = [NSMutableDictionary new];
 	nameToMasterController = [NSMutableDictionary new];
 	nameToTyping = [NSMutableDictionary new];
+	nameToTitle = [NSMutableDictionary new];
 	bothToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	  
@@ -629,6 +631,7 @@
 {
 	id name;
 	id title;
+	id server;
 
 	name = NSMapGet(bothToName, aController);
 	if (name && (title = [nameToTitle objectForKey: name]))
@@ -640,7 +643,13 @@
 		return nil;
 	}
 
-	return [nameToPresentation objectForKey: name];
+	server = [connectionController serverString];
+	title = [nameToPresentation objectForKey: name];
+	if (!server || ![server length])
+	{
+		return title;
+	}
+	return [NSString stringWithFormat: _l(@"%@ / %@"), title, server];
 }
 - (void)setTitle: (NSString *)aTitle
     forViewController: (id <ContentControllerQueryController>)aController

@@ -37,6 +37,7 @@
 		NSString *userName;
 		NSString *password;
 		NSString *realName;
+		NSString *server;
 		
 		NSString * (*lowercase)(NSString *);
 		id connection;
@@ -70,6 +71,8 @@
 
 - setPassword: (NSString *)aString;
 - (NSString *)password;
+
+- (NSString *)serverString;
 
 - (NSString * (*)(NSString *))lowercasingFunction;
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
