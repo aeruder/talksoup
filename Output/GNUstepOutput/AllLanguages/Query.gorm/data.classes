@@ -146,8 +146,8 @@
 	Actions = (
 	);
 	Outlets = (
-	    window,
-	    chatView
+	    chatView,
+	    window
 	);
 	Super = NSObject;
     };

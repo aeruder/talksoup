@@ -3,9 +3,9 @@
 	Actions = (
 	);
 	Outlets = (
-	    splitView,
-	    chatView,
 	    tableView,
+	    chatView,
+	    splitView,
 	    window
 	);
 	Super = NSObject;
