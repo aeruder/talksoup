@@ -45,13 +45,19 @@ Input Filters:
   
   MessageInTab: opens a new tab when someone private
     messages you
-	
+
+  Decolorizer: removes colors from incoming messages.
+
+  Debold: removes bold from incoming messages
+
+  Deunderline: removes underlining from incoming messages
+  
 Output Filters:
 
   *Colorizer: Lets you use %B for bold, %U for underline,
-  %O for clear all attributes, and %C##,## (first number
-  is the foreground color, second number is the background color)
-  for colors.
+  %O for clear all attributes, and %C(0-15),(0-15) to set
+  colors. (First number is the foreground color, second number 
+  is the background color).
 
 * == Used by default
 
@@ -129,6 +135,20 @@ Commands:
   This is a shortcut for /ctcp <nick> USERINFO.  On some
   IRC clients this will respond with information about the
   user named <nick>.
+
+/topic <channel> [topic]
+  This will set <channel>'s topic to [topic].  If [topic] is
+  not specified, it will refresh the channel's topic.
+
+/kick <channel> <user> [comment]
+  This will kick the specified <user> out of a <channel>.  If
+  [comment] is specified, it will be displayed to the user
+  instead of the default message.
+
+/raw <message>
+  This command will send <message> to the server as it is, 
+  no formatting or command substitution will take place on
+  the string.
 
 ===============================================================================
 Commands specific to the GNUstep output plugin (GNUstepOutput)
