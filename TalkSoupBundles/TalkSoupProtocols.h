@@ -265,7 +265,9 @@
 
 - (int)port;
 
-- (NSHost *)host;
+- (NSHost *)remoteHost;
+
+- (NSHost *)localHost;
 
 - setEncoding: (NSStringEncoding)encoding;
 

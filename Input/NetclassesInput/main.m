@@ -141,9 +141,14 @@
 {
 	return port;
 }
-- (NSHost *)host
+- (NSHost *)remoteHost
 {
 	return [transport address];
+}
+- (NSHost *)localHost
+{
+	return [[TCPSystem sharedInstance]
+	  hostForTransport: transport];
 }
 - (void)connectionLost
 {
