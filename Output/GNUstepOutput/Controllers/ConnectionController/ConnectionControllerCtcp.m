@@ -35,7 +35,7 @@
 	struct timeval tv = {0, 0};
 	int sec;
 	int microsec;
-
+	NSLog(@"Tessssting");
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		[content putMessage: S2AS(_l(@"gettimeofday() failed"))
@@ -47,9 +47,7 @@
 	  (unsigned)tv.tv_sec, (unsigned)(tv.tv_usec / 1000)];
 	then = [argument string];
 
-	results = [now commonPrefixWithString: then options: 0];
-
-	if ([results length] == [now length])
+	if ([then isEqualToString: now])
 	{
 		sec = 0;
 		microsec = 0;
@@ -57,15 +55,44 @@
 	else
 	{
 		id a1, a2;
-		now = [now substringFromIndex: [results length]];
 		a1 = [now componentsSeparatedByString: @"."];
-		then = [then substringFromIndex: [results length]];
 		a2 = [then componentsSeparatedByString: @"."];
 
-		if ([a1 count] != 2 || [a2 count] != 2) return nil;
+		if ([a1 count] < 2 || [a2 count] < 2) return nil;
 
-		sec = [[a1 objectAtIndex: 0] intValue] - 
-		  [[a2 objectAtIndex: 0] intValue];
+		now = [a1 objectAtIndex: 0];
+		then = [a2 objectAtIndex: 0];
+	
+		results = [now commonPrefixWithString: then options: 0];
+		
+		if ([results length] == [now length] && 
+		  [results length] == [then length])
+		{
+			sec = 0;
+		}
+		else
+		{
+			if ([now length] == [results length])
+			{
+				now = @"";
+			}
+			else
+			{
+				now = [now substringFromIndex: [results length]];
+			}
+
+			if ([then length] == [results length])
+			{
+				then = @"";
+			}
+			else
+			{
+				then = [then substringFromIndex: [results length]];
+			}
+			
+			sec = [now intValue] - [then intValue];
+		}
+		
 		microsec = [[a1 objectAtIndex: 1] intValue] - 
 		  [[a2 objectAtIndex: 1] intValue];
 
@@ -76,8 +103,9 @@
 		}
 	}
 
-	[content putMessage: BuildAttributedFormat(_l(@"CTCP PING reply from %@: %@"),
-	  aPerson, [NSString stringWithFormat: @"%u.%03u", sec, microsec])
+	[content putMessage: BuildAttributedFormat(_l(@"CTCP PING reply from %@: %@ seconds"),
+	  [IRCUserComponents(aPerson) objectAtIndex: 0], 
+	  [NSString stringWithFormat: @"%u.%03u", sec, microsec])
 	  in: nil];
 
 	return self;
