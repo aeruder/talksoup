@@ -32,6 +32,9 @@
 #include <Foundation/NSException.h>
 #include <Foundation/NSHost.h>
 
+NSString *NetclassesErrorTimeout = @"Connection timed out";
+NSString *NetclassesErrorBadAddress = @"Bad address";
+
 static TCPSystem *default_system = nil;
 
 @interface TCPSystem (InternalTCPSystem)
@@ -226,7 +229,7 @@ static TCPSystem *default_system = nil;
 	{
 		[aTimer invalidate];
 	}
-	[self connectingFailed: @"Timeout reached"];
+	[self connectingFailed: NetclassesErrorTimeout];
 	
 	return self;
 }
@@ -293,7 +296,7 @@ static TCPSystem *default_system = nil;
 	{
 		if (inet_aton([[aHost address] cString], &(sin.sin_addr)) == 0)
 		{
-			[self setErrorString: @"Invalid address" withErrno: 0];
+			[self setErrorString: NetclassesErrorBadAddress withErrno: 0];
 			return -1;
 		}	      
 	}
@@ -350,7 +353,7 @@ static TCPSystem *default_system = nil;
 
 	if (!host)
 	{
-		[self setErrorString: @"Host cannot be nil" withErrno: 0];
+		[self setErrorString: NetclassesErrorBadAddress withErrno: 0];
 		return -1;
 	}
 	
@@ -426,7 +429,7 @@ static TCPSystem *default_system = nil;
 			}
 			else
 			{
-				[self setErrorString: @"Connection timed out"
+				[self setErrorString: NetclassesErrorTimeout
 				  withErrno: 0];
 				close(myDesc);
 				return -1;

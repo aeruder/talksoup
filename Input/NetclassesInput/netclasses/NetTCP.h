@@ -29,6 +29,9 @@
 @class NSString, NSNumber, NSString, NSData, NSMutableData, TCPConnecting;
 @class TCPTransport, TCPSystem, NSHost;
 
+extern NSString *NetclassesErrorTimeout;
+extern NSString *NetclassesErrorBadAddress;
+ 
 @interface TCPSystem : NSObject
 	{
 		NSString *errorString;

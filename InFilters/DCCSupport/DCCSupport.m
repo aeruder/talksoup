@@ -629,7 +629,6 @@ static NSInvocation *invoc = nil;
 		id port;
 		id address;
 		
-		NSLog(@"%@", list);
 		if ([list count] >= 5)
 		{
 			fileSize = [NSNumber numberWithUnsignedLong: 
