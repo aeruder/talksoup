@@ -119,6 +119,7 @@
 }
 - connectionEstablished: (id)aTransport
 {
+	NSLog(@"%@", self);
 	id x = [super connectionEstablished: aTransport];
 	[_TS_ newConnection: self sender: control];
 	return x;
@@ -304,7 +305,7 @@
 }
 - (BOOL)respondsToSelector: (SEL)aSel
 {
-	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: aSel])
+	if ([_TSDummy_ respondsToSelector: aSel])
 	{
 		return YES;
 	}
@@ -312,7 +313,7 @@
 }
 - methodSignatureForSelector: (SEL)aSel
 {
-	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: aSel])
+	if ([_TSDummy_ respondsToSelector: aSel])
 	{
 		return [_TSDummy_ methodSignatureForSelector: aSel];
 	}
@@ -331,7 +332,9 @@
 	sel = [invocation selector];
 	selS = NSStringFromSelector(sel);
 	
-	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: sel]
+	NSLog(@"%@", selS);
+	
+	if ([_TSDummy_ respondsTo: sel]
 	    && [selS hasSuffix: @"nConnection:sender:"])
 	{
 		selS = [selS substringToIndex: [selS length] - 

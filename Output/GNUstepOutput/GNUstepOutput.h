@@ -19,6 +19,13 @@
 
 NSString *GNUstepOutputLowercase(NSString *aString);
 
+#ifdef S2AS
+	#undef S2AS
+#endif
+
+#define S2AS(_x) AUTORELEASE([[NSAttributedString alloc] initWithString: \
+                   (_x)])
+						 
 #ifdef _l
 	#undef _l
 #endif
@@ -42,6 +49,10 @@ NSString *GNUstepOutputLowercase(NSString *aString);
 		NSMapTable *connectionToContent;
 		NSMapTable *connectionToInformation;
 	}
+- (id)connectionToContent: (id)aObject;
+
+- (id)connectionToInformation: (id)aObject;
+	
 - newConnection: (id)connection sender: aPlugin;
 
 - registeredWithServerOnConnection: (id)connection sender: aPlugin;

@@ -12,7 +12,7 @@ GNUstepOutput_LANGUAGES = English
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-                  Controllers/ContentController.m
+              Controllers/ContentController.m Controllers/InputController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m
 

@@ -25,6 +25,7 @@
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
+#include <Foundation/NSHost.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString)
 {
@@ -52,6 +53,14 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	pendingIdentToContent = [NSMutableDictionary new];
 	
 	return self;
+}
+- (id)connectionToContent: (id)aObject
+{
+	return NSMapGet(connectionToContent, aObject);
+}
+- (id)connectionToInformation: (id)aObject
+{
+	return NSMapGet(connectionToInformation, aObject);
 }
 - (id)openNewContentWindow
 {
@@ -83,11 +92,10 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 }
 - newConnection: (id)connection sender: aPlugin
 {
-	NSLog(@"It worked?");
 	id ident = [connection identification];
 	id content;
 	
-	content = [pendingIdentToContent objectForKey: ident];
+	content = AUTORELEASE(RETAIN([pendingIdentToContent objectForKey: ident]));
 
 	if (!(content))
 	{
@@ -97,8 +105,14 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	}
 	
 	[pendingIdentToContent removeObjectForKey: ident];
+	
+	NSLog(@"%@ %@", content, connection);
+	
 	NSMapInsert(connectionToContent, connection, content);
 	NSMapInsert(connectionToContent, content, connection);
+	
+	NSLog(@"%@ %@", NSMapGet(connectionToContent, connection), NSMapGet(connectionToContent, content));
+	
 	
 	[content putMessage: @"Connecting..." in: ContentConsoleName];
 	[content setLabel: AUTORELEASE([[NSAttributedString alloc] initWithString:
