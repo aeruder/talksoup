@@ -207,6 +207,22 @@
 {
 	return identifier;
 }
+- sortUserList
+{
+	NSEnumerator *iter;
+	id object;
+	
+	[userList sortUsingSelector: @selector(sortByName:)];
+	[lowercaseList removeAllObjects];
+	
+	iter = [userList objectEnumerator];
+	while ((object = [iter nextObject]))
+	{
+		[lowercaseList addObject: GNUstepOutputLowercase([object userName])];
+	}
+	
+	return self;
+}
 - addUser: (NSString *)aString
 {
 	id user;
@@ -214,10 +230,8 @@
 	user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: aString]);
 	
 	[userList addObject: user];
-	[lowercaseList insertObject: GNUstepOutputLowercase([user userName])
-	           atIndex: 0];
 	
-	[userList sortUsingSelector: @selector(sortByName:)];
+	[self sortUserList];
 	
 	return self;
 }
@@ -287,20 +301,10 @@
 }
 - endServerUserList
 {
-	NSEnumerator *iter;
-	id object;
-	
 	[userList setArray: tempList];
-	[userList sortUsingSelector: @selector(sortByName:)];
-	
 	[tempList removeAllObjects];
-	[lowercaseList removeAllObjects];
 	
-	iter = [userList objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		[lowercaseList addObject: GNUstepOutputLowercase([object userName])];
-	}
+	[self sortUserList];
 	
 	return self;
 }

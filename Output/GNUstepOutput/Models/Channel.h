@@ -78,6 +78,8 @@ extern const int ChannelUserVoice;
 - setIdentifier: (NSString *)aName;
 - (NSString *)identifier;
 
+- sortUserList;
+
 - addUser: (NSString *)aString;
 - (BOOL)containsUser: aString;
 - removeUser: (NSString *)aString;
