@@ -23,6 +23,7 @@
 #import <AppKit/NSButton.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTextField.h>
+#import <AppKit/NSOpenPanel.h>
 #endif
 
 #import <Foundation/NSDictionary.h>
@@ -102,9 +103,51 @@
 }
 - (void)changeCompletedHit: (NSButton *)sender
 {
+	id openPanel;
+	int result;
+	
+	openPanel = [NSOpenPanel openPanel];
+	[openPanel setCanChooseFiles: NO];
+	[openPanel setCanChooseDirectories: YES];
+	[openPanel setAllowsMultipleSelection: NO];
+	
+	result = [openPanel runModalForDirectory: nil file: nil types: nil];
+	if (result == NSOkButton)
+	{
+		id tmp;
+	
+		tmp = [openPanel fileNames];
+		if ([tmp count] == 0) return;
+
+		tmp = [tmp objectAtIndex: 0];
+		
+		set_default(DCCCompletedDirectory, tmp);
+		[self reloadData];
+	}
 }
 - (void)changeDownloadHit: (NSButton *)sender
 {
+	id openPanel;
+	int result;
+	
+	openPanel = [NSOpenPanel openPanel];
+	[openPanel setCanChooseFiles: NO];
+	[openPanel setCanChooseDirectories: YES];
+	[openPanel setAllowsMultipleSelection: NO];
+	
+	result = [openPanel runModalForDirectory: nil file: nil types: nil];
+	if (result == NSOkButton)
+	{
+		id tmp;
+	
+		tmp = [openPanel fileNames];
+		if ([tmp count] == 0) return;
+
+		tmp = [tmp objectAtIndex: 0];
+		
+		set_default(DCCDownloadDirectory, tmp);
+		[self reloadData];
+	}
 }
 - (void)blockSizeHit: (NSTextField *)sender
 {
