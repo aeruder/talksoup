@@ -75,7 +75,7 @@
 	  forContentController: aContentController];
 }
 - (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
-   atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController
+   atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController
 {
 	AttributedTabViewItem *tabItem;
 	
@@ -99,6 +99,26 @@
 	  aView, @"View",
 	  aContentController, @"Content",
 	  nil]];
+}
+- (void)selectView: (id <ContentControllerQueryView>)aView
+{
+	id tab;
+
+	tab = NSMapGet(viewToTab, aView);
+
+	if (!tab) return;
+
+	[tabView selectTabViewItem: tab];
+}
+- (void)selectViewAtIndex: (unsigned)aIndex
+{
+	id view;
+
+	if (aIndex >= [indexToView count]) return;
+
+	view = [indexToView objectAtIndex: aIndex];
+
+	[self selectView: view];
 }
 - (void)removeView: (id <ContentControllerQueryView>)aView
 {
@@ -135,7 +155,7 @@
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
 	 object: content userInfo: userInfo];
 }
-- (void)removeViewAtIndex: (int)aIndex
+- (void)removeViewAtIndex: (unsigned)aIndex
 {
 	id aView;
 	id tab;
@@ -150,11 +170,11 @@
 
 	[self removeView: aView];
 }
-- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
+- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (unsigned)aIndex;
 {
-	int index;
+	unsigned index;
 	id tab;
-	int origIndex;
+	unsigned origIndex;
 	id content;
 	
 	if (!(NSMapMember(viewToTab, aView, 0, 0)))
@@ -196,7 +216,7 @@
 	  content, @"Content",
 	  nil]];
 }
-- (void)moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex
+- (void)moveViewAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex
 {
 	id tab;
 	id aView;
@@ -212,6 +232,22 @@
 	
 	[self moveView: aView toIndex: aNewIndex];
 }	 
+- (unsigned)indexForView: (id <ContentControllerQueryView>)aView
+{
+	NSTabViewItem *tab;
+	unsigned index;
+
+	tab = NSMapGet(viewToTab, aView);
+	if (!tab) return NSNotFound;
+
+	index = [tabView indexOfTabViewItem: tab];
+
+	return index;
+}
+- (unsigned)count
+{
+	return [indexToView count];
+}
 - (NSArray *)containedContentControllers
 {
 	return [NSArray arrayWithArray: contentControllers];

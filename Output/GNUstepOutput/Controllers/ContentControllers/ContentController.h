@@ -55,18 +55,18 @@ extern NSString *ContentConsoleName;
 - (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController;
 - (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
-   atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController;
+   atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController;
 
 - (void)selectView: (id <ContentControllerQueryView>)aView;
-- (void)selectViewAtIndex: (int)aIndex;
+- (void)selectViewAtIndex: (unsigned)aIndex;
 
 - (void)removeView: (id <ContentControllerQueryView>)aView;
-- (void)removeViewAtIndex: (int)aIndex;
+- (void)removeViewAtIndex: (unsigned)aIndex;
 
-- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
-- (void)moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
+- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (unsigned)aIndex;
+- (void)moveViewAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex;
 
-- (int)indexForView: (id <ContentControllerQueryView>)aView;
+- (unsigned)indexForView: (id <ContentControllerQueryView>)aView;
 - (unsigned)count;
 	 
 - (NSArray *)containedContentControllers;
