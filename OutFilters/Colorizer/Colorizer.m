@@ -24,6 +24,8 @@
 #import <Foundation/NSScanner.h>
 #import <Foundation/NSAutoreleasePool.h>
 
+#include <ctype.h>
+
 static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 {
 	int y;
@@ -159,7 +161,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 			NSRange aRange;
 			aRange = NSMakeRange(location, [aString length]);
 			
-			aString = [astr attributedSubstringWithRange: aRange];
+			aString = [astr attributedSubstringFromRange: aRange];
 			
 			aRange.location = [string length];
 			[string appendAttributedString: aString];

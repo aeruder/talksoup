@@ -27,6 +27,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 NSString *DCCStatusTransferring = @"DCCStatusTransferring";
 NSString *DCCStatusError = @"DCCStatusError";
@@ -192,7 +193,7 @@ NSString *BuildDCCSendRequest(NSDictionary *info)
 {
 	if ([status isEqualToString: DCCStatusTransferring])
 	{
-		if (transferredBytes < [[info objectForKey: DCCInfoFileSize] intValue])
+		if ((int)transferredBytes < [[info objectForKey: DCCInfoFileSize] intValue])
 		{
 			RELEASE(status);
 			status = RETAIN(DCCStatusError);
@@ -319,7 +320,7 @@ static id connection_holder = nil;
 		return self;
 	}
 
-	if (length > blockSize)
+	if (length > (int)blockSize)
 	{
 		char *buffer = [dataToWrite mutableBytes];
 
@@ -328,7 +329,7 @@ static id connection_holder = nil;
 		memmove(buffer, buffer + blockSize, length - blockSize);
 		[dataToWrite setLength: length - blockSize];
 	}
-	else if (length == blockSize)
+	else if (length == (int)blockSize)
 	{
 		[transport writeData: dataToWrite];
 		[dataToWrite setLength: 0];
@@ -512,7 +513,7 @@ static id connection_holder = nil;
 {
 	if ([status isEqualToString: DCCStatusTransferring])
 	{
-		if (confirmedBytes != [[info objectForKey: DCCInfoFileSize] intValue])
+		if ((int)confirmedBytes != [[info objectForKey: DCCInfoFileSize] intValue])
 		{
 			RELEASE(status);
 			status = RETAIN(DCCStatusError);

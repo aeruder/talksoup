@@ -29,6 +29,12 @@
 #import <Foundation/NSFileHandle.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSHost.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSData.h>
+#import <Foundation/NSPathUtilities.h>
+
+#include <string.h>
+#include <stdlib.h>
 
 static NSString *dcc_default = @"DCCSupport";
 static NSString *dcc_dir = @"DCCSupportDirectory";
@@ -59,7 +65,7 @@ static void set_default(NSString *key, id value)
 		key = [key substringFromIndex: [dcc_default length]];
 		
 		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
-		if (dict && [dict isKindOf: [NSDictionary class]])
+		if (dict && [dict isKindOfClass: [NSDictionary class]])
 		{
 			dict = [NSMutableDictionary dictionaryWithDictionary: dict];
 		}
@@ -100,7 +106,7 @@ static id get_default(NSString *key)
 		sub = [key substringFromIndex: [dcc_default length]];
 		
 		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
-		if (!dict || ![dict isKindOf: [NSDictionary class]])
+		if (!dict || ![dict isKindOfClass: [NSDictionary class]])
 		{
 			[[NSUserDefaults standardUserDefaults] setObject: 
 			  dict = AUTORELEASE([NSDictionary new]) forKey: dcc_default];
@@ -677,7 +683,7 @@ static NSInvocation *invoc = nil;
 	
 	val--;
 	
-	if (val < 0 || val >= [connections count])
+	if (val < 0 || val >= (int)[connections count])
 	{
 		return BuildAttributedString(@"Usage: /dcc abort <#>", @"\n",
 		  @"Aborts the connection in slot <#>.  See /dcc list.", nil);
@@ -685,11 +691,11 @@ static NSInvocation *invoc = nil;
 	
 	x = [connections objectAtIndex: val];
 	
-	if ([x isKindOf: [DCCSender class]] || [x isKindOf: [DCCGetter class]])
+	if ([x isKindOfClass: [DCCSender class]] || [x isKindOfClass: [DCCGetter class]])
 	{
 		[x abortConnection];
 	}
-	else if ([x isKindOf: [NSDictionary class]])
+	else if ([x isKindOfClass: [NSDictionary class]])
 	{
 		x = [NSDictionary dictionaryWithDictionary: x];
 		[connections removeObjectAtIndex: val];
@@ -800,7 +806,7 @@ static NSInvocation *invoc = nil;
 	for (index = 0; index < max; index++)
 	{
 		object = [connections objectAtIndex: index];
-		if ([object isKindOf: [NSDictionary class]])
+		if ([object isKindOfClass: [NSDictionary class]])
 		{
 			[attr appendAttributedString: 
 			  BuildAttributedFormat(@"%@. %@ %@ has requested to send %@ (%@ bytes)",
@@ -810,7 +816,7 @@ static NSInvocation *invoc = nil;
 			  [object objectForKey: DCCInfoFileName],  
 			  [NSString stringWithFormat: @"%d", [[object objectForKey: DCCInfoFileSize] intValue]])];
 		}
-		if ([object isKindOf: [DCCGetter class]])
+		if ([object isKindOfClass: [DCCGetter class]])
 		{
 			[attr appendAttributedString: 
 			  BuildAttributedFormat(@"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)",
@@ -823,7 +829,7 @@ static NSInvocation *invoc = nil;
 			    [[[object info] objectForKey: DCCInfoFileSize] intValue]],
 			  [NSString stringWithFormat: @"%d", [object cps]])];
 		}
-		if ([object isKindOf: [DCCSender class]])
+		if ([object isKindOfClass: [DCCSender class]])
 		{
 			if ([[object status] isEqualToString: DCCStatusConnecting])
 			{
@@ -882,8 +888,8 @@ static NSInvocation *invoc = nil;
 
 	number = [[x objectAtIndex: 0] intValue] - 1;
 	
-	if (number >= [connections count] || 
-	    !([(dict = [connections objectAtIndex: number]) isKindOf: [NSDictionary class]]))
+	if (number >= (int)[connections count] || 
+	    !([(dict = [connections objectAtIndex: number]) isKindOfClass: [NSDictionary class]]))
 	{
 		return BuildAttributedString(@"The specified index is invalid. Please see /dcc list.", nil);
 	}

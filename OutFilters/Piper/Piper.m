@@ -28,6 +28,7 @@
 #import <Foundation/NSTask.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
+#import <Foundation/NSEnumerator.h>
 
 static NSAttributedString *pipeit(NSAttributedString *a)
 {
@@ -42,7 +43,7 @@ static NSAttributedString *pipeit(NSAttributedString *a)
 	id newData;
 	id str;
 	
-	if (!piper || ![piper isKindOf: [NSArray class]]) return a;
+	if (!piper || ![piper isKindOfClass: [NSArray class]]) return a;
 	
 	str = [a string];
 	iter = [piper objectEnumerator];

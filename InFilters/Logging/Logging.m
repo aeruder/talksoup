@@ -26,6 +26,10 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSFileManager.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSDate.h>
+#import <Foundation/NSCalendarDate.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSPathUtilities.h>
 
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;

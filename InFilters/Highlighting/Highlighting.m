@@ -24,6 +24,7 @@
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSInvocation.h>
+#import <Foundation/NSEnumerator.h>
 
 static id get_pref(NSString *x)
 {
@@ -95,7 +96,7 @@ static BOOL has_name(NSString *str, NSString *name)
 	str = [str lowercaseString];
 	name = [name lowercaseString];
 	
-	while (a.location < len)
+	while ((int)a.location < len)
 	{
 		cur = [str rangeOfString: name options: 0 range: a];
 		
@@ -108,7 +109,7 @@ static BOOL has_name(NSString *str, NSString *name)
 			x = [str characterAtIndex: cur.location - 1];
 			is = [set characterIsMember: x];
 		}
-		if (cur.location + cur.length < len)
+		if ((int)cur.location + (int)cur.length < len)
 		{
 			x = [str characterAtIndex: cur.location + cur.length];
 			is &= [set characterIsMember: x];
@@ -359,7 +360,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if ([words isKindOf: [NSArray class]])
+	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];
 	}
@@ -381,7 +382,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if ([words isKindOf: [NSArray class]])
+	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];
 	}
@@ -402,7 +403,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if ([words isKindOf: [NSArray class]])
+	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];
 	}
