@@ -475,8 +475,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 }
 - activateInFilter: (NSString *)aFilt
 {
-	if (!aFilt) return self;
 	id obj;
+	if (!aFilt) return self;
 	
 	if ((obj = [inObjects objectForKey: aFilt]))
 	{
@@ -513,8 +513,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 }
 - activateOutFilter: (NSString *)aFilt
 {
-	if (!aFilt) return self;
 	id obj;
+	if (!aFilt) return self;
 	
 	if ((obj = [outObjects objectForKey: aFilt]))
 	{
