@@ -24,6 +24,7 @@
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSTextView.h>
+#include <AppKit/NSTextContainer.h>
 #include <Foundation/NSString.h>
 
 @implementation TopicInspectorController
@@ -34,9 +35,16 @@
 	RELEASE(temp);
 	contentView = RETAIN([window contentView]);
 
-	NSLog(@"Nib loded..");
-	
 	[window setContentView: nothingView];
+	
+	[topicText setHorizontallyResizable: NO];
+	[topicText setVerticallyResizable: YES];
+	[topicText setMinSize: NSMakeSize(0, 0)];
+	[topicText setMaxSize: NSMakeSize(1e7, 1e7)];
+	[[topicText textContainer] setContainerSize:
+	  NSMakeSize([topicText frame].size.width, 1e7)];
+	[[topicText textContainer] setWidthTracksTextView: YES];
+	[topicText setTextContainerInset: NSMakeSize(2, 0)];
 }
 - setTopic: (NSString *)aTopic inChannel: (NSString *)aChannel
    setBy: (NSString *)author onDate: (NSString *)date

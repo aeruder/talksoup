@@ -26,7 +26,6 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSScanner.h>
 
-
 @implementation NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedString
 {

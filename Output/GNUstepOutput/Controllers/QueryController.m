@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "Controllers/QueryController.h"
+#include "Views/ScrollingTextView.h"
 #include "Misc/NSColorAdditions.h"
 #include "GNUstepOutput.h"
 #include "TalkSoupBundles/TalkSoup.h"
@@ -56,7 +57,7 @@
 	DESTROY(window);
 	[super dealloc];
 }
-- (NSTextView *)chatView
+- (ScrollingTextView *)chatView
 {
 	return chatView;
 }

@@ -43,6 +43,7 @@
 	[commandsText setMaxSize: NSMakeSize(1e7, 1e7)];
 	[[commandsText textContainer] setContainerSize:
 	  NSMakeSize([commandsText frame].size.width, 1e7)];
+	[[commandsText textContainer] setWidthTracksTextView: YES];
 	[commandsText setTextContainerInset: NSMakeSize(2, 0)];
 }
 - (void)dealloc

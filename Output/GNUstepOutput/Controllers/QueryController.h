@@ -22,7 +22,7 @@
 
 #include <Foundation/NSObject.h>
 
-@class NSView, NSTextView;
+@class NSView, ScrollingTextView;
  
 @interface QueryController : NSObject
 	{
@@ -32,7 +32,7 @@
 
 - (NSView *)contentView;
 
-- (NSTextView *)chatView;
+- (ScrollingTextView *)chatView;
 
 @end
 

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "Controllers/ChannelController.h"
+#include "Views/ScrollingTextView.h"
 #include "Misc/NSColorAdditions.h"
 #include "Models/Channel.h"
 #include "GNUstepOutput.h"
@@ -106,7 +107,7 @@
 	RELEASE(tableView);
 	[super dealloc];
 }
-- (NSTextView *)chatView
+- (ScrollingTextView *)chatView
 {
 	return chatView;
 }

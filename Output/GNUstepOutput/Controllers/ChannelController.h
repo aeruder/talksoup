@@ -20,19 +20,19 @@
 #ifndef CHANNEL_CONTROLLER_H
 #define CHANNEL_CONTROLLER_H
 
-@class NSTableView, NSTextView, NSSplitView, NSView;
+@class NSTableView, ScrollingTextView, NSSplitView, NSView;
 
 #include <Foundation/NSObject.h>
 
 @interface ChannelController : NSObject
 	{
 		NSTableView *tableView;
-		NSTextView *chatView;
+		ScrollingTextView *chatView;
 		NSSplitView *splitView;
 		id window;
 	}
 
-- (NSTextView *)chatView; 
+- (ScrollingTextView *)chatView; 
 
 - (NSView *)contentView;
 

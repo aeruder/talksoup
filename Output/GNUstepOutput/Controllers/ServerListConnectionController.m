@@ -76,8 +76,7 @@
 	{
 		NSRect a = NSRectFromString(tmp);
 		
-		[[[self contentController] window] setFrameOrigin: a.origin];
-		[[[self contentController] window] setContentSize: a.size];
+		[[[self contentController] window] setFrame: a display: YES];
 	}
 	
 	if ((tmp = [aInfo objectForKey: ServerListInfoServer]))
@@ -116,12 +115,9 @@
 	if ([[ServerListController serverInGroup: serverGroup row: serverRow]
 	  isEqual: serverInfo])
 	{	
-		NSRect size;
 		tmp = [NSMutableDictionary dictionaryWithDictionary: serverInfo];
 	
-		size = [window frame];
-		size.size = [[window contentView] frame].size;
-		[tmp setObject: NSStringFromRect(size) 
+		[tmp setObject: NSStringFromRect([window frame]) 
 		  forKey: ServerListInfoWindowFrame];
 	
 		[ServerListController setServer: tmp inGroup: serverGroup

@@ -23,6 +23,7 @@
 #include "Misc/NSColorAdditions.h"
 #include "GNUstepOutput.h"
 #include "TalkSoupBundles/TalkSoup.h"
+#include "Views/ScrollingTextView.h"
 
 #include <Foundation/NSNotification.h>
 #include <Foundation/NSString.h>

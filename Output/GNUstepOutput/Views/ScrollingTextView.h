@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <AppKit/NSTextView.h>
+#include "Views/KeyTextView.h"
 
-@interface ScrollingTextView : NSTextView
+@interface ScrollingTextView : KeyTextView
 @end

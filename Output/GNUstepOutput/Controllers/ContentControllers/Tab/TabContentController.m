@@ -22,6 +22,7 @@
 #include "Controllers/InputController.h"
 #include "Controllers/ConnectionController.h"
 #include "Views/AttributedTabViewItem.h"
+#include "Views/ScrollingTextView.h"
 #include "Misc/NSColorAdditions.h"
 #include "Misc/NSAttributedStringAdditions.h"
 #include <AppKit/NSColor.h>
@@ -41,6 +42,10 @@
 #include "GNUstepOutput.h"
 
 NSString *ContentConsoleName = @"Content Console Name";
+
+@interface ContentController (TextViewDelegate)
+- (BOOL)tabsTextViewPressedKey: (NSEvent *)aEvent sender: textView;
+@end
 
 @interface ContentController (WindowTabViewDelegate)
 - (void)tabView: (NSTabView *)aTabView
@@ -269,6 +274,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 {
 	id controller = nil;
 	
+	if (!aString) return self;
+	
 	if ([aChannel isKindOf: [ChannelController class]]
 	    || [aChannel isKindOf: [QueryController class]])
 	{
@@ -387,6 +394,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabView setNeedsDisplay: YES];
 
+	[[query chatView] setKeyAction: @selector(tabsTextViewPressedKey:sender:)];
+	[[query chatView] setKeyTarget: self];
+
 	return self;
 }
 - addChannelWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
@@ -438,6 +448,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	[tabView selectTabViewItem: name];
 	
 	[tabView setNeedsDisplay: YES];
+	
+	[[chan chatView] setKeyAction: @selector(tabsTextViewPressedKey:sender:)];
+	[[chan chatView] setKeyTarget: self];
 	
 	return self;
 }
@@ -621,5 +634,19 @@ NSString *ContentConsoleName = @"Content Console Name";
 		[connection performSelector: _cmd withObject: aTabView
 		  withObject: tabViewItem];
 	}	
+}
+@end
+
+@implementation ContentController (TextViewDelegate)
+- (BOOL)tabsTextViewPressedKey: (NSEvent *)aEvent sender: textView
+{
+	id fe;
+	[window makeFirstResponder: typeView];
+	
+	fe = [window fieldEditor: NO forObject: typeView];
+	[fe setSelectedRange: NSMakeRange([[fe textStorage] length], 0)]; 
+	[fe keyDown: aEvent];
+	
+	return NO;
 }
 @end
