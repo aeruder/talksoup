@@ -723,7 +723,7 @@ static const char *my_hstrerror(int aError)
 	
 	if (inet_aton([ip cString], &address))
 	{
-		host = gethostbyaddr(&address, sizeof(address), AF_INET);
+		host = gethostbyaddr((const char *)&address, sizeof(address), AF_INET);
 		if (!host)
 		{
 			[self setErrorString: [NSString stringWithFormat:

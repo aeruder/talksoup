@@ -1,8 +1,8 @@
 {
     ApplicationDescription = "An IRC Client for GNUstep";
     ApplicationIcon = irc;
-    ApplicationName = Charla;
-    ApplicationRelease = "0.01";
+    ApplicationName = TalkSoup;
+    ApplicationRelease = "0.02";
     ApplicationURL = "http://beregorn.homelinux.com/";
     Authors = ("Luis García Alanís <luis.garcia@mac.com>", "Andrew Ruder <aeruder@yahoo.com>");
     Copyright = "Copyright \u00a9 2002 Andrew Ruder <aeruder@yahoo.com>";

@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-PACKAGE_NAME=Charla
-VERSION=0.01
+PACKAGE_NAME=TalkSoup
+VERSION=0.02
 
 SUBPROJECTS = Source
 

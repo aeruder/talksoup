@@ -53,15 +53,6 @@ static NSFont *standard_font = nil;
 /* Setup TypeView */
 	typeView = [[NSTextField alloc] init];
 	
-/*	[typeView setBackgroundColor: [NSColor blackColor]];
-	[typeView setTextColor: [NSColor whiteColor]];
-	[typeView setInsertionPointColor: [NSColor whiteColor]];
-	[typeView setSelectedTextAttributes: 
-	 [NSDictionary dictionaryWithObjectsAndKeys:
-	  [NSColor whiteColor], NSForegroundColorAttributeName,
-	  [NSColor blueColor], NSBackgroundColorAttributeName,
-	  nil]];*/
-
 	[typeView setEditable: YES];
 	[typeView setDrawsBackground: YES];
 	[typeView setBordered: NO];

@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ChannelView.h
+                        ChannelViewController.h
                           -------------------
-    begin                : Sun Oct  6 01:33:50 CDT 2002
+    begin                : Thu Oct 24 12:50:49 CDT 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,23 +15,43 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <AppKit/NSView.h>
+#import <Foundation/NSObject.h>
 
-@class ConsoleView, NSSplitView, NSTableView, NSTableColumn, NSScrollView;
+@class NSString, NSTabViewItem, NSTextView, NSTableView;
+@class NSTableColumn, ConsoleView, Channel;
 
-@interface ChannelView : NSView
+@interface ChannelViewController : NSObject
 	{
-		NSSplitView *splitView;
+		id view;
+		NSTabViewItem *tab;
+		NSString *name;
+		Channel *channelModel;
+		
+		ConsoleView *consoleView;
 		NSTableView *userTable;
 		NSTableColumn *userColumn;
-		NSScrollView *userScroll;
-		ConsoleView *consoleView;
 	}
++ (ChannelViewController *)lookupByTab: (NSTabViewItem *)aTab;
+
 - init;
 
-- (ConsoleView *)consoleView;
-- (NSScrollView *)userScroll;
-- (NSSplitView *)splitView;
-- (NSTableColumn *)userColumn;
-- (NSTableView *)userTable;
+- (NSTabViewItem *)tabItem;
+- setTabItem: (NSTabViewItem *)aTab;
+- setTabLabel: (NSString *)aName;
+
+- view;
+- setView: aView;
+
+- (NSString *)name;
+- setName: (NSString *)aName;
+
+- setChannelModel: (Channel *)aObject;
+- (Channel *)channelModel;
+- reloadUserList;
+
+- putMessage: aMessage;
+
+- (BOOL)hasUserList;
 @end
+
+	

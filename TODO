@@ -1,0 +1,5 @@
+- Detachable tabs perhaps?
+- Work on making managers for the different views
+  instead of putting all the code in the views
+  directly(MVC style)
+- Fix focusing problems

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                Charla.m
+                               TalkSoup.m
                           -------------------
     begin                : Sat Oct  5 02:22:30 CDT 2002
     copyright            : (C) 2002 by Andy Ruder
@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#import "Charla.h"
+#import "TalkSoup.h"
 #import "Controllers/ConnectionController.h"
 
 #import <Foundation/NSAutoreleasePool.h>
@@ -30,7 +30,7 @@ int main(void)
 	
 	[NSApplication sharedApplication];
 	
-	[NSApp setDelegate: AUTORELEASE([[Charla alloc] init])];
+	[NSApp setDelegate: AUTORELEASE([[TalkSoup alloc] init])];
 	[NSApp run];
 
 	DESTROY(arp);
@@ -47,19 +47,19 @@ int main(void)
 @end
 */
 
-static Charla *charla_instance = nil;
+static TalkSoup *talksoup_instance = nil;
 
-@implementation Charla
+@implementation TalkSoup
 + sharedInstance
 {
-	charla_instance = (!charla_instance) ? [[Charla alloc] init] 
-	  : charla_instance;
+	talksoup_instance = (!talksoup_instance) ? [[TalkSoup alloc] init] 
+	  : talksoup_instance;
 
-	return charla_instance;
+	return talksoup_instance;
 }
 - init
 {
-	if (charla_instance)
+	if (talksoup_instance)
 	{
 		return nil;
 	}
@@ -105,8 +105,8 @@ static Charla *charla_instance = nil;
 	[menu addItemWithTitle: @"Quit" action: @selector(terminate:)
 	  keyEquivalent: @"q"];
 	
-	[menu addItemWithTitle: @"Test" action: @selector(connectToServer:)
-	  keyEquivalent: @"c"];
+	[menu addItemWithTitle: @"New Window" action: @selector(connectToServer:)
+	  keyEquivalent: @"n"];
 	
 	[NSApp setMainMenu: menu];
 }

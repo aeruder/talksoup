@@ -15,12 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
+#import "Controllers/ChannelViewController.h"
 #import "Controllers/ConnectionController.h"
 #import "Windows/ChannelWindow.h"
 #import "Views/ChannelView.h"
+#import "Views/ConsoleView.h"
 #import "Misc/Functions.h"
-#import "Charla.h"
+#import "Models/Channel.h"
+#import "TalkSoup.h"
 
+#import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSCharacterSet.h>
 #import <Foundation/NSDictionary.h>
@@ -34,7 +38,40 @@
 static NSMapTable *command_to_selector = 0;
 static NSString *version_number = nil;
 
+NSArray *SeparateOutFirstWord(NSString *argument)
+{
+	NSRange aRange;
+	NSString *first;
+	NSString *rest;
+
+	argument = [argument stringByTrimmingCharactersInSet:
+	  [NSCharacterSet whitespaceCharacterSet]];
+	  
+	if ([argument length] == 0)
+	{
+		return nil;
+	}
+
+	aRange = [argument rangeOfString: @" "];
+
+	if (aRange.location == NSNotFound && aRange.length == 0)
+	{
+		return [NSArray arrayWithObjects: argument, nil];
+	}
+	
+	rest = [[argument substringFromIndex: aRange.location]
+	  stringByTrimmingCharactersInSet:
+	    [NSCharacterSet whitespaceCharacterSet]];
+	
+	first = [argument substringToIndex: aRange.location];
+
+	return [NSArray arrayWithObjects: first, rest, nil];
+}
+
 @interface ConnectionController (IRCHandler)
+@end
+
+@interface ConnectionController (CTCPHandler)
 @end
 
 @interface ConnectionController (WindowDelegate)
@@ -43,21 +80,31 @@ static NSString *version_number = nil;
 @interface ConnectionController (TabViewItemDelegate)
 @end
 
+@interface ConnectionController (NumberCommandHandler)
+@end
+
 @interface ConnectionController (CommandHandler)
 - (void)commandReceived: (NSString *)command;
 - (void)commandPart: (NSString *)command;
 - (void)commandQuit: (NSString *)command;
+- (void)commandMsg: (NSString *)command;
+- (void)commandClose: (NSString *)command;
+- (void)commandQuery: (NSString *)command;
 @end
 
 @implementation ConnectionController
 + (void)initialize
 {
 	command_to_selector = NSCreateMapTable(NSObjectMapKeyCallBacks,
-	  NSIntMapValueCallBacks, 3);
+	  NSIntMapValueCallBacks, 7);
 	
 	NSMapInsert(command_to_selector, @"quit", @selector(commandQuit:));
 	NSMapInsert(command_to_selector, @"part", @selector(commandPart:));
 	NSMapInsert(command_to_selector, @"me", @selector(commandMe:));
+	NSMapInsert(command_to_selector, @"msg", @selector(commandMsg:));
+	NSMapInsert(command_to_selector, @"close", @selector(commandClose:));
+	NSMapInsert(command_to_selector, @"query", @selector(commandQuery:));
+	//NSMapInsert(command_to_selector, @"server", @selector(commandServer:));
 	
 	version_number =  RETAIN([[[NSBundle mainBundle] infoDictionary] 
 	  objectForKey: @"ApplicationRelease"]);
@@ -66,8 +113,10 @@ static NSString *version_number = nil;
 {
 	id temp;
 	
-	if (!(self = [super initWithNickname: @"Charla"
+	if (!(self = [super initWithNickname: @"TalkSoup"
 	  withUserName: nil withRealName: nil withPassword: nil])) return nil;
+	
+	[[TalkSoup sharedInstance] addConnection: self];
 	
 	window = [ChannelWindow new];
 	[window setDelegate: self];
@@ -78,67 +127,42 @@ static NSString *version_number = nil;
 	[temp setAction: @selector(commandReceived:)];
 	[temp setTarget: self];
 
-	nameToTab = [NSMutableDictionary new];
 	nameToChannel = [NSMutableDictionary new];
+	nameToDeadChannel = [NSMutableDictionary new];
 	
-	[self addTabWithName: @"console tab" withLabel: @"Unconnected"];
-	
-	consoleTab = RETAIN([nameToTab objectForKey: @"console tab"]);
-	consoleView = RETAIN([consoleTab view]);
+	console = RETAIN([self addTabWithName: nil withLabel: @"Unconnected"
+	  withUserList: NO]);
 	
 	[window makeKeyAndOrderFront: nil];
+	
 	return self;
 }
 - (void)dealloc
 {
-	DESTROY(consoleTab);
-	DESTROY(consoleView);
-	DESTROY(currentTab);
-	DESTROY(currentView);
+	DESTROY(console);
+	DESTROY(current);
 	
 	[window setDelegate: nil];
 	[[window tabView] setDelegate: nil];
 	
 	DESTROY(window);
 	DESTROY(connecting);
-	DESTROY(nameToTab);
 	DESTROY(nameToChannel);
 
 	[super dealloc];
 }
-- addTabWithName: (NSString *)aName withLabel: (NSString *)aLabel
-{
-	id tab = AUTORELEASE([NSTabViewItem new]);
-	id view = AUTORELEASE([ChannelView new]);
-	id tabView;
-
-	aName = [aName lowercaseString];
-
-	[view setName: aName];
-
-	[tab setLabel: aLabel];
-	[tab setView: view];
-
-	tabView = [window tabView];
-	[tabView addTabViewItem: tab];
-	[tabView setNeedsDisplay: YES];
-
-	[nameToTab setObject: tab forKey: aName];
-	[nameToChannel setObject: view forKey: aName];
-
-	return self;
-}
 - connectionEstablished: aTransport
 {
 	id object = [aTransport address];
-	[consoleTab setLabel: object];
-	[[window tabView] setNeedsDisplay: YES];
+	[console setTabLabel: object];
 	[window setTitle: object];
+	DESTROY(connecting);
 
 	return [super connectionEstablished: aTransport];
 }	
 - connectingStarted: (TCPConnecting *)aConnection
 {
+	[window setTitle: @"Connecting..."];
 	connecting = RETAIN(aConnection);
 	
 	return self;
@@ -149,53 +173,175 @@ static NSString *version_number = nil;
 
 	return self;
 }
+/*
+- (void)connectionLost
+{
+	NSEnumerator *iter;
+	id object;
+	
+	NSLog(@"Blah");
+	[self putMessage: @"Disconnected..." inChannel: console];
+	[self putMessage: @"Disconnected..." inChannel: [nameToChannel allValues]];
+	[self putMessage: @"Disconnected..." inChannel: 
+	   [nameToDeadChannel allValues]];
+	[window setTitle: @"Unconnected"];
+	NSLog(@"Blah 2");
+	
+	[super connectionLost];
+	
+	NSLog(@"Blah 3");
+	if (nextServer)
+	{
+		iter = [[nameToChannel allValues] objectEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[object setTabItem: nil];
+		}
+
+		iter = [[nameToDeadChannel allValues] objectEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[object setTabItem: nil];
+		}
+
+		[nameToChannel removeAllObjects];
+		[nameToDeadChannel removeAllObjects];
+		
+		[[TCPSystem sharedInstance] connectNetObjectInBackground: self
+		  toHost: nextServer onPort: 6667 withTimeout: 30];
+
+		DESTROY(nextServer);
+	}
+	NSLog(@"Blah 4");
+}
+*/
 - putMessage: (NSString *)message inChannel: channel
 {
-	id view;
-	id chat;
+	id view = nil;
 	
 	if (![message hasSuffix: @"\n"])
 	{
 		message = [message stringByAppendingString: @"\n"];
 	}
 	
-	if ([channel isKindOf: [ChannelView class]])
+	if ([channel isKindOf: [ChannelViewController class]])
 	{
 		view = channel;
 	}
 	else if ([channel isKindOf: [NSString class]])
 	{
-		view = [nameToChannel objectForKey: [channel lowercaseString]];
+		view = [nameToChannel objectForKey: [channel lowercaseIRCString]];
+	}
+	else if ([channel isKindOf: [NSArray class]])
+	{
+		id object;
+		NSEnumerator *iter;
+
+		iter = [channel objectEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[self putMessage: message inChannel: object];
+		}
+	}
+	else if ([channel isKindOf: [Channel class]])
+	{
+		view = [nameToChannel objectForKey: [[(Channel *)channel name] 
+		   lowercaseIRCString]];
 	}
 	else if (channel == nil)
 	{
-		view = currentView;
+		view = current;
 	}
 	else
 	{
 		return self;
 	}
 
-	chat = [view chatView];
-	[chat appendText: message];
-	[chat scrollPoint: NSMakePoint(0, NSMaxY([chat frame]))];	
+	[view putMessage: message];
 	
 	return self;
+}
+- (ChannelViewController *)addTabWithName: (NSString *)aName 
+    withLabel: (NSString *)aLabel withUserList: (BOOL)flag
+{
+	id tab = AUTORELEASE([NSTabViewItem new]);
+	id view = AUTORELEASE(((flag) ? [ChannelView new] : [ConsoleView new]));
+	ChannelViewController *cont = AUTORELEASE([ChannelViewController new]);
+
+	if (aName)
+	{
+		[nameToChannel setObject: cont forKey: aName];
+	}
+
+	[cont setName: aName];
+	
+	[[window tabView] addTabViewItem: tab];
+	[cont setTabItem: tab];
+	[cont setTabLabel: aLabel];
+	[cont setView: view];
+	
+	return cont;
+}
+- (void)removeTabWithName: (NSString *)aName
+{
+	id cont = [nameToChannel objectForKey: aName];
+	id tab = [cont tabItem];
+	id tabView = [window tabView];
+	
+	if (current == cont)
+	{
+		[tabView selectPreviousTabViewItem: self];
+	}
+
+	[tabView removeTabViewItem: tab];
+	[tabView setNeedsDisplay: YES];
+
+	[cont setTabItem: nil];
+
+	[cont setChannelModel: nil];
+	[cont reloadUserList];
+
+	[nameToChannel removeObjectForKey: aName];
+	[nameToDeadChannel removeObjectForKey: aName];
 }
 - (ChannelWindow *)window
 {
 	return window;
+}
+- (NSArray *)channelsWithUser: (NSString *)aUser
+{
+	id object;
+	NSEnumerator *iter;
+	NSMutableArray *list = AUTORELEASE([NSMutableArray new]);
+
+	iter = [[nameToChannel allValues] objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		if ([[object channelModel] containsUser: aUser])
+		{
+			[list addObject: object];
+		}
+	}
+
+	return [NSArray arrayWithArray: list];
 }
 @end
 
 @implementation ConnectionController (WindowDelegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {
+	if (window != [aNotification object]) return;
 	[window setDelegate: nil];
 	[[window tabView] setDelegate: nil];
 
 	[[NetApplication sharedInstance] disconnectObject: self];
-	[[Charla sharedInstance] removeConnection: self];
+	[[TalkSoup sharedInstance] removeConnection: self];
+}
+- (void)windowDidBecomeKey: (NSNotification *)aNotification
+{
+	if (window != [aNotification object]) return;
+	[window makeFirstResponder: [window typeView]];
 }
 @end
 
@@ -203,10 +349,48 @@ static NSString *version_number = nil;
 - (void)tabView:(NSTabView *)tabView 
      didSelectTabViewItem:(NSTabViewItem *)tabViewItem
 {
-	RELEASE(currentTab);
-	RELEASE(currentView);
-	currentTab = RETAIN(tabViewItem);
-	currentView = RETAIN([tabViewItem view]);
+	RELEASE(current);
+	current = RETAIN([ChannelViewController lookupByTab: tabViewItem]);
+}
+@end
+
+// These can return anything, but if they return nil, the 
+// command will also be printed to the console
+@implementation ConnectionController (NumberCommandHandler)
+// RPL_NAMREPLY
+- numericHandler353: (NSArray *)arguments
+{
+	NSLog(@"353: %@", arguments);
+	id channel = [[nameToChannel objectForKey: [[arguments objectAtIndex: 1]
+	  lowercaseIRCString]] channelModel];
+
+	if (!channel)
+	{
+		return nil;
+	}
+
+	[channel addServerUserList: [arguments objectAtIndex: 2]];
+
+	return self;
+}
+// RPL_ENDOFNAMES
+- numericHandler366: (NSArray *)arguments
+{
+	NSLog(@"366: %@", arguments);
+	id name = [[arguments objectAtIndex: 0] lowercaseIRCString];
+	id cont = [nameToChannel objectForKey: name];
+	id channel = [cont channelModel];
+
+	if (!channel)
+	{
+		return nil;
+	}
+
+	[channel endServerUserList];
+
+	[cont reloadUserList];
+
+	return self;
 }
 @end
 
@@ -224,33 +408,26 @@ static NSString *version_number = nil;
 	if ([command hasPrefix: @"/"])
 	{
 		id substring;
-		NSRange range;
 		id arguments;
 		SEL commandSelector;
+		id array;
 
-		range = [command rangeOfString: @" "];
-		if (range.location == NSNotFound && range.length == 0)
+		command = [command substringFromIndex: 1];
+		
+		array = SeparateOutFirstWord(command);
+
+		if ([array count] == 1)
 		{
-			substring = command;
 			arguments = nil;
+			substring = [array objectAtIndex: 0];
 		}
 		else
 		{
-			range.length = range.location - 1;
-			range.location = 1;
-
-			substring = [command substringWithRange: range];
-			arguments = [[command substringFromIndex: range.length + 1] 
-			  stringByTrimmingCharactersInSet: 
-			    [NSCharacterSet whitespaceCharacterSet]];
-
-			if ([arguments length] == 0)
-			{
-				arguments = nil;
-			}
+			arguments = [array objectAtIndex: 1];
+			substring = [array objectAtIndex: 0];
 		}
-
-		substring = [substring lowercaseString];
+		
+		substring = [substring lowercaseIRCString];
 		commandSelector = NSMapGet(command_to_selector, substring);
 
 		if (commandSelector != 0)
@@ -259,53 +436,99 @@ static NSString *version_number = nil;
 		}
 		else
 		{
-			NSLog(@"%@ %@");
 			[self writeString: @"%@ %@", substring, arguments]; 
 		}
 		return;
 	}
 
-	if (currentView == consoleView)
+	if (current == console)
 	{
-		[self putMessage: @"Join a channel first.\n" inChannel: consoleView];
+		[self putMessage: @"Join a channel first.\n" inChannel: console];
 		return;
 	}
 
-	[self putMessage: [NSString stringWithFormat: @"%@> %@\n", nick, command]
+	[self putMessage: [NSString stringWithFormat: @"<%@> %@\n", nick, command]
 	  inChannel: nil];
 	
-	[self sendMessage: command to: [currentView name]];
+	
+	[self sendMessage: command to: [current name]];
+}
+- (void)commandServer: (NSString *)command
+{
+	id array;
+
+	array = SeparateOutFirstWord(command);
+
+	if ([array count] == 0)
+	{
+		[self putMessage: @"Usage: /server <server>"
+		  inChannel: nil];
+	}
+	else
+	{
+		if (connected)
+		{
+			[self quitWithMessage: nil];
+			nextServer = [[NSString alloc] 
+			  initWithString: [array objectAtIndex: 0]];
+		}
+	}
 }
 - (void)commandPart: (NSString *)argument
 {
-	NSRange aRange;
-	NSString *channel;
-	NSString *message;
+	id array;
+	int x;
 
-	argument = [argument stringByTrimmingCharactersInSet:
-	  [NSCharacterSet whitespaceCharacterSet]];
-	  
-	if ([argument length] == 0)
+	array = SeparateOutFirstWord(argument);
+
+	x = [array count];
+	if (x == 0)
 	{
-		[self putMessage: @"Usage: /part <channel> <message>" inChannel: nil];
-		return;
+		[self putMessage: @"Usage: /part <channel> |<message>|" 
+		  inChannel: nil];
 	}
-	
-	aRange = [argument rangeOfString: @" "];
-
-	if (aRange.location == NSNotFound && aRange.length == 0)
+	else if (x == 1)
 	{
-		[self partChannel: argument withMessage: nil];
-		return;
+		[self partChannel: [array objectAtIndex: 0] withMessage: nil];
 	}
+	else
+	{
+		[self partChannel: [array objectAtIndex: 0] withMessage:
+		  [array objectAtIndex: 1]];
+	}
+}
+- (void)commandMsg: (NSString *)argument
+{
+	id array;
 
-	message = [[argument substringFromIndex: aRange.location] 
-	  stringByTrimmingCharactersInSet: 
-	   [NSCharacterSet whitespaceCharacterSet]];
-	
-	channel = [argument substringToIndex: aRange.location];
+	array = SeparateOutFirstWord(argument);
 
-	[self partChannel: channel withMessage: message];
+	if ([array count] < 2)
+	{
+		[self putMessage: @"Usage: /msg <destination> <message>" 
+		  inChannel: nil];
+	}
+	else
+	{
+		id object;
+		id message = [array objectAtIndex: 1];
+		id to = [array objectAtIndex: 0];
+		
+		if ((object = [nameToChannel objectForKey: to]))
+		{
+			[self putMessage: [NSString stringWithFormat: @"<%@> %@",
+			    nick, message]
+			  inChannel: object];
+		}
+		else
+		{
+			[self putMessage: [NSString stringWithFormat: @">%@< %@", 
+			    to, message]
+			  inChannel: nil];
+		}
+		
+		[self sendMessage: message to: to];
+	}
 }
 - (void)commandQuit: (NSString *)arguments
 {
@@ -313,16 +536,31 @@ static NSString *version_number = nil;
 }
 - (void)commandMe: (NSString *)argument
 {
-	if (currentView == consoleView)
+	if (current == console)
 	{
-		[self putMessage: @"Join a channel first.\n" inChannel: consoleView];
+		[self putMessage: @"Join a channel first.\n" inChannel: console];
 		return;
 	}
 
 	[self putMessage: [NSString stringWithFormat: @"* %@ %@\n", nick, argument]
 	  inChannel: nil];
 	
-	[self sendAction: argument to: [currentView name]];
+	[self sendAction: argument to: [current name]];
+}
+- (void)commandClose: (NSString *)command
+{
+	if ([current hasUserList])
+	{
+		[self partChannel: [current name] withMessage: nil];
+	}
+	[self removeTabWithName: [current name]];
+}
+- (void)commandQuery: (NSString *)command
+{
+	id name = [command lowercaseIRCString];
+	id cont = [self addTabWithName: name withLabel: command
+	  withUserList: NO];
+	[[window tabView] selectTabViewItem: [cont tabItem]];
 }
 @end
 
@@ -336,26 +574,44 @@ static NSString *version_number = nil;
           from: (NSString *)sender
 {
 	id view;
+	id senderNick = ExtractIRCNick(sender);
+	BOOL toMe = [to caseInsensitiveIRCCompare: nick] == NSOrderedSame;
 	
-	if ((view = [nameToChannel objectForKey: [to lowercaseString]]))
+	view = [nameToChannel objectForKey: [to lowercaseIRCString]];
+	view = (view == nil && toMe) ? [nameToChannel objectForKey: 
+	  [senderNick lowercaseIRCString]] : view;
+
+	if ((view))
 	{
+	
 		[self putMessage: 
-		  [NSString stringWithFormat: @"%@> %@\n", ExtractIRCNick(sender),
+		  [NSString stringWithFormat: @"<%@> %@\n", senderNick,
 		   aMessage] inChannel: view];
 		return self;
 	}
 	
 	if (ExtractIRCHost(sender))
 	{	
-		[self putMessage:
-		  [NSString stringWithFormat: @"*** %@> %@\n", ExtractIRCNick(sender),
-		   aMessage] inChannel: currentView];
+		if (toMe)
+		{
+			[self putMessage:
+			  [NSString stringWithFormat: @"*** <%@> %@\n", 
+			     ExtractIRCNick(sender), aMessage] 
+			   inChannel: current];
+		}
+		else
+		{
+			[self putMessage:
+			  [NSString stringWithFormat: @"*** <%@:%@> %@\n",
+			    ExtractIRCNick(sender), to, aMessage]
+			  inChannel: current];
+		}
 	}
 	else
 	{
 		[self putMessage:
 		  [NSString stringWithFormat: @"%@\n", aMessage] inChannel: 
-		    consoleView];
+		    console];
 	}
 
 	return self;
@@ -364,37 +620,51 @@ static NSString *version_number = nil;
     from: (NSString *)sender
 {
 	id view;
-	BOOL toMe;
+	BOOL toMe = [to caseInsensitiveIRCCompare: nick] == NSOrderedSame;
+	NSString *senderNick = ExtractIRCNick(sender);
 	
-	if ((view = [nameToChannel objectForKey: [to lowercaseString]]))
+	view = [nameToChannel objectForKey: [to lowercaseIRCString]];
+	view = (view == nil && toMe) ? [nameToChannel objectForKey:
+	  [senderNick lowercaseIRCString]] : view;
+	
+	if ((view))
 	{
 		[self putMessage:
-		  [NSString stringWithFormat: @"%@> %@\n", ExtractIRCNick(sender),
-		   aMessage] inChannel: view];
+		  [NSString stringWithFormat: @"<%@> %@\n", senderNick,
+		    aMessage] inChannel: view];
 		return self;
 	}
-
-	toMe = [to caseInsensitiveCompare: nick] == NSOrderedSame;
 	
-	if (ExtractIRCHost(sender) && toMe)
-	{
-		[self putMessage:
-		  [NSString stringWithFormat: @"*** %@> %@\n", ExtractIRCNick(sender),
-		   aMessage] inChannel: currentView];
+	if (ExtractIRCHost(sender))
+	{	
+		if (toMe)
+		{
+			[self putMessage:
+			  [NSString stringWithFormat: @"*** <%@> %@\n", 
+			     ExtractIRCNick(sender), aMessage] 
+			   inChannel: current];
+		}
+		else
+		{
+			[self putMessage:
+			  [NSString stringWithFormat: @"*** <%@:%@> %@\n",
+			    ExtractIRCNick(sender), to, aMessage]
+			  inChannel: current];
+		}
 	}
 	else
 	{
 		if (toMe)
 		{
 			[self putMessage:
-			  [NSString stringWithFormat: @"%@\n", aMessage] inChannel:
-			    consoleView];
+			  [NSString stringWithFormat: @"%@\n", aMessage] inChannel: 
+			    console];
 		}
 		else
 		{
 			[self putMessage:
-			  [NSString stringWithFormat: @"%@ :%@\n", to, aMessage] inChannel:
-			    consoleView];
+			  [NSString stringWithFormat: @"%@ :%@\n", to, aMessage]
+			   inChannel: console];
 		}
 	}
 
@@ -405,7 +675,7 @@ static NSString *version_number = nil;
 {
 	id view;
 
-	if ((view = [nameToChannel objectForKey: [to lowercaseString]]))
+	if ((view = [nameToChannel objectForKey: [to lowercaseIRCString]]))
 	{
 		[self putMessage:
 		  [NSString stringWithFormat: @"* %@ %@\n", ExtractIRCNick(sender),
@@ -417,7 +687,7 @@ static NSString *version_number = nil;
 	{
 		[self putMessage:
 		 [NSString stringWithFormat: @"*** * %@ %@\n", ExtractIRCNick(sender),
-		  anAction] inChannel: currentView];
+		  anAction] inChannel: current];
 	}
 
 	return self;
@@ -425,44 +695,154 @@ static NSString *version_number = nil;
 - channelParted: (NSString *)channel withMessage: (NSString *)aMessage
    from: (NSString *)parter
 {
+	id channelName = [channel lowercaseIRCString];
+	id channelCont = [nameToChannel objectForKey: channelName];
+	id parterNick = ExtractIRCNick(parter);
+	
+	if ([parterNick caseInsensitiveIRCCompare: nick] 
+	     == NSOrderedSame)
+	{
+		[channelCont setTabLabel: 
+		   [NSString stringWithFormat: @"(%@)", channel]];
+		
+		RETAIN(channelCont);
+		[nameToChannel removeObjectForKey: channelName];
+		[nameToDeadChannel setObject: channelCont forKey: channelName];
+		RELEASE(channelCont);
+		
+		[channelCont setChannelModel: nil];
+		[channelCont reloadUserList];
+	}
+	else
+	{
+		[[channelCont channelModel] removeUser: parterNick];
+		[channelCont reloadUserList];
+	}
+	
 	[self putMessage:
 	  [NSString stringWithFormat: @"%@ (%@) has left %@ (%@)\n", 
-	   ExtractIRCNick(parter), ExtractIRCHost(parter), channel, aMessage]
-	  inChannel: channel];
+	   parterNick, ExtractIRCHost(parter), channel, aMessage]
+	  inChannel: channelCont];
 	
 	return self;
 }
 - channelJoined: (NSString *)channel from: (NSString *)joiner
 {
-	if ([ExtractIRCNick(joiner) caseInsensitiveCompare: nick] == NSOrderedSame)
-	{
-		[self addTabWithName: channel withLabel: channel];
-		[[window tabView] selectTabViewItem: [nameToTab objectForKey: 
-		  [channel lowercaseString]]];
-	}
+	id newNick = ExtractIRCNick(joiner);
 	
+	if ([newNick caseInsensitiveIRCCompare: nick] == NSOrderedSame)
+	{
+		id channelModel = AUTORELEASE([Channel new]);
+		id channelName = [channel lowercaseIRCString];
+		id cont;
+		if ((cont = [nameToDeadChannel objectForKey: channelName]))
+		{
+			[cont setTabLabel: channel];
+			RETAIN(cont);
+			[nameToDeadChannel removeObjectForKey: channelName];
+			[nameToChannel setObject: cont forKey: channelName];
+			RELEASE(cont);
+		}
+		else
+		{
+			cont = [self addTabWithName: channelName
+		   withLabel: channel withUserList: YES];
+		}
+		   
+		[[window tabView] selectTabViewItem: [cont tabItem]];
+		
+		[channelModel setName: channel];
+		[cont setChannelModel: channelModel];
+	}
+	else
+	{
+		id cont = [nameToChannel objectForKey: [channel lowercaseIRCString]];
+		id model = [cont channelModel];
+		[model addUser: newNick];
+		
+		[cont reloadUserList];
+	}
+
 	[self putMessage:
 	  [NSString stringWithFormat: @"%@ (%@) has joined %@\n",
-	   ExtractIRCNick(joiner), ExtractIRCHost(joiner), channel]
+	   newNick, ExtractIRCHost(joiner), channel]
 	  inChannel: channel];
 	
 	return self;
 }
 - nickChangedTo: (NSString *)newName from: (NSString *)aPerson
 {
+	NSEnumerator *iter;
+	id object;
+	id model;
+		
 	aPerson = ExtractIRCNick(aPerson);
 	
-	if ([newName caseInsensitiveCompare: nick] == NSOrderedSame)
+	if ([newName caseInsensitiveIRCCompare: nick] == NSOrderedSame)
 	{
 		[window updateNick: newName];
 	}
 
-	[self putMessage: [NSString stringWithFormat: @"%@ is now known as %@", 
-	   aPerson, newName]
-	  inChannel: consoleView];
+	iter = [[self channelsWithUser: aPerson] objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		model = [object channelModel];
+		[model removeUser: aPerson];
+		[model addUser: newName];
+		[object reloadUserList];
+		[self putMessage: [NSString stringWithFormat: @"%@ is now known as %@", 
+		   aPerson, newName]
+		  inChannel: object];
+	}
 	
 	return self;
 } 
+- numericCommandReceived: (NSString *)command withParams: (NSArray *)paramList
+     from: (NSString *)sender
+{
+	SEL sel = NSSelectorFromString([NSString stringWithFormat: 
+	  @"numericHandler%@:", command]);
+	
+	if (sel == 0) 
+	{
+		[self putMessage: [paramList componentsJoinedByString: @" "] 
+		  inChannel: console];
+	}
+	else if ([self respondsToSelector: sel])
+	{
+		if (![self performSelector: sel withObject: paramList])
+		{
+			[self putMessage: [paramList componentsJoinedByString: @" "]
+			  inChannel: console];
+		}
+	}
+	
+	return self;
+}
+- quitIRCWithMessage: (NSString *)aMessage from: (NSString *)quitter
+{
+	id object;
+	NSEnumerator *iter;
+	id quitNick = ExtractIRCNick(quitter);
+
+	iter = [[self channelsWithUser: quitNick] objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		[[object channelModel] removeUser: quitNick];
+		[object reloadUserList];
+	
+		[self putMessage:
+		  [NSString stringWithFormat: @"%@ (%@) has quit (%@)\n", 
+		   ExtractIRCNick(quitter), ExtractIRCHost(quitter), aMessage]
+		  inChannel: object];
+	}
+	return self;
+}
+@end
+
+@implementation ConnectionController (CTCPHandler)
 - pingRequestReceived: (NSString *)argument from: (NSString *)aPerson
 {
 	[self sendPingReplyTo: ExtractIRCNick(aPerson) withArgument: argument];
@@ -470,14 +850,23 @@ static NSString *version_number = nil;
 }
 - versionRequestReceived: (NSString *)query from: (NSString *)aPerson
 {
-	[self sendVersionReplyTo: ExtractIRCNick(aPerson) name: @"Charla.app"
+	[self sendVersionReplyTo: ExtractIRCNick(aPerson) name: @"TalkSoup.app"
 	  version: version_number environment: @"GNUstep CVS"];
 	return self;
 }
-- numericCommandReceived: (NSString *)command withParams: (NSArray *)paramList
-     from: (NSString *)sender
+- customCTCPRequestReceived: (NSString *)aCTCP
+   withArgument: (NSString *)argument from: (NSString *)aPerson
 {
-	[self putMessage: [paramList componentsJoinedByString: @" "] inChannel: consoleView];
+	if ([aCTCP caseInsensitiveIRCCompare: @"XYZZY"] == NSOrderedSame)
+	{
+		[self sendCustomCTCP: @"XYZZY" withArgument: @"Nothing Happens."
+		  to: ExtractIRCNick(aPerson)];
+	}
+	if ([aCTCP caseInsensitiveIRCCompare: @"RFM"] == NSOrderedSame)
+	{
+		[self sendCustomCTCP: @"RFM" withArgument: @"Problems?  Blame RFM."
+		  to: ExtractIRCNick(aPerson)];
+	}
 	return self;
 }
 @end

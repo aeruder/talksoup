@@ -16,113 +16,127 @@
  ***************************************************************************/
 
 #import <Foundation/NSGeometry.h>
-
 #import <AppKit/AppKit.h>
 
 #import "Views/ChannelView.h"
+#import "Views/ConsoleView.h"
 
-static NSFont *standard_font = nil;
-
-@implementation NSTextView (appendText)
-- appendText: aText
-{
-	if ([aText isKindOf: [NSString class]])
-	{
-		[[self textStorage] appendAttributedString: 
-		  AUTORELEASE([[NSAttributedString alloc] initWithString: aText
-		     attributes: [self typingAttributes]])];
-	}
-	else if ([aText isKindOf: [NSAttributedString class]])
-	{
-		[[self textStorage] appendAttributedString: aText];
-	}
-	return self;
-}
+@interface ChannelView (NSSplitViewDelegate)
 @end
 
 @implementation ChannelView
-+ (void)initialize
-{
-	standard_font = [NSFont userFontOfSize: 12.0];
-}
 - init
 {
-	
 	if (!(self = [super initWithFrame: 
-	  NSMakeRect(0,0,108,108)])) return nil;
+	  NSMakeRect(0,0,208,208)])) return nil;
 	
-	scrollView = [[NSScrollView alloc] initWithFrame: 
-	  NSMakeRect(4, 4, 100, 100)];
+	splitView = [[NSSplitView alloc] initWithFrame:
+	  NSMakeRect(4, 4, 200, 200)];
 	
-	chatView = [[NSTextView alloc] initWithFrame: NSMakeRect(0, 0, 100, 100)];
+	[splitView setVertical: YES];
+	[splitView setAutoresizesSubviews: YES];
+	[splitView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[splitView setDelegate: self];
 	
-/*	[chatView setBackgroundColor: [NSColor blackColor]];
-	[chatView setTextColor: [NSColor whiteColor]];
-	[chatView setInsertionPointColor: [NSColor whiteColor]];
-	[chatView setSelectedTextAttributes:
-	 [NSDictionary dictionaryWithObjectsAndKeys:
-	  [NSColor whiteColor], NSForegroundColorAttributeName,
-	  [NSColor blueColor], NSBackgroundColorAttributeName,
-	  nil]];*/
+	consoleView = [[ConsoleView alloc] initWithBorder: NO];
+	[consoleView setFrame: NSMakeRect(0, 0, 100, 200)]; 
 	
-	[chatView setRichText: YES];
-	[chatView setUsesFontPanel: NO];
-	[chatView setHorizontallyResizable: NO];
-	[chatView setVerticallyResizable: YES];
-	[chatView setMinSize: NSMakeSize (0, 0)];
-	[chatView setMaxSize: NSMakeSize (1E7, 1E7)];
-	[chatView setEditable: NO];
-	[chatView setFont: [NSFont userFontOfSize: 12.0]];
-	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[[chatView textContainer] setContainerSize: 
-	  NSMakeSize([scrollView frame].size.width, 1E7)];
-	[[chatView textContainer] setWidthTracksTextView: YES];
+	userTable = [[NSTableView alloc] initWithFrame: 
+	  NSMakeRect(104, 0, 96, 200)];
+	[userTable setCornerView: nil];
+	[userTable setHeaderView: nil];
 	
-	[scrollView setDocumentView: chatView];
-	[scrollView setHasHorizontalScroller: NO];
-	[scrollView setHasVerticalScroller: YES];
-	[scrollView setBorderType: NSNoBorder];
-	[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	[scrollView setAutoresizesSubviews: YES];
+	userColumn = [[NSTableColumn alloc] initWithIdentifier: @"User List"];
+	[userColumn setEditable: NO];
+	[userColumn setMinWidth: 96];
+	
+	[userTable addTableColumn: userColumn];
+	
+	userScroll = [[NSScrollView alloc]
+	  initWithFrame: NSMakeRect(104, 0, 96, 200)];
+	[userScroll setDocumentView: userTable];
+	[userScroll setHasHorizontalScroller: NO];
+	[userScroll setHasVerticalScroller: YES];
+	[userScroll setBorderType: NSBezelBorder];
+	[userScroll setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	
+	[splitView addSubview: consoleView];
+	[splitView addSubview: userScroll];
 
-	[self addSubview: scrollView];
+	[self addSubview: splitView];
 	[self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[self setAutoresizesSubviews: YES];
 
 	return self;
 }
-- (NSString *)name
+- (void)dealloc
 {
-	return name;
+	[splitView setDelegate: nil];
+	DESTROY(userTable);
+	DESTROY(userColumn);
+	DESTROY(splitView);
+	DESTROY(userScroll);
+	DESTROY(consoleView);
+	[super dealloc];
+}	
+- (ConsoleView *)consoleView
+{
+	return consoleView;
 }
-- setName: (NSString *)newName
+- (NSScrollView *)userScroll
 {
-	if (newName == name) return self;
+	return userScroll;
+}
+- (NSSplitView *)splitView
+{
+	return splitView;
+}
+- (NSTableColumn *)userColumn
+{
+	return userColumn;
+}
+- (NSTableView *)userTable
+{
+	return userTable;
+}
+@end
 
-	RELEASE(name);
-	name = RETAIN(newName);
+@implementation ChannelView (NSSplitViewDelegate)
+- (void)splitView: (NSSplitView *)sender 
+    resizeSubviewsWithOldSize: (NSSize)oldSize
+{
+	NSRect frame1; // console view
+	NSRect frame2 = [userScroll frame]; // user table
+	NSRect frame3 = [splitView frame];
+	//id chatView = [consoleView chatView];
+	
+	if (frame3.size.width > frame2.size.width)
+	{
+		// Width of this view is constant(assuming it fits)
+		frame2.origin.x = frame3.size.width - frame2.size.width;
+		frame2.origin.y = 0;
+		frame2.size.height = frame3.size.height;
 
-	return self;
-}
-- putMessage: message
-{
-	[chatView appendText: message];
-	return self;
-}
-- (NSTextField *)nickView
-{
-	return nickView;
-}
-- (NSTextField *)typeView;
-{
-	return typeView;
-}
-- (NSTextView *)chatView
-{
-	return chatView;
-}
-- (NSScrollView *)scrollView
-{
-	return scrollView;
+		frame1.origin.x = 0;
+		frame1.origin.y = 0;
+		frame1.size.width = frame2.origin.x - [sender dividerThickness];
+		frame1.size.height = frame3.size.height;
+	}
+	else
+	{	
+		frame1.origin.x = 0;
+		frame1.origin.y = 0;
+		frame1.size.width = 0;
+		frame1.size.height = frame3.size.height;
+
+		frame2.origin.x = 0;
+		frame2.origin.y = 0;
+		frame2.size.width = frame3.size.width;
+		frame2.size.height = frame3.size.height;
+	}
+	[userScroll setFrame: frame2];
+	[userColumn setMinWidth: frame2.size.width];
+	
+	[consoleView setFrame: frame1];
 }
 @end

@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ChannelView.h
-                          -------------------
-    begin                : Sun Oct  6 01:33:50 CDT 2002
+                               TalkSoup.h
+						  -------------------
+    begin                : Sat Oct  5 02:22:30 CDT 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,23 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <AppKit/NSView.h>
+#import <Foundation/NSObject.h>
 
-@class ConsoleView, NSSplitView, NSTableView, NSTableColumn, NSScrollView;
+@class ConnectionController, NSNotification, NSMutableArray;
 
-@interface ChannelView : NSView
+@interface TalkSoup : NSObject
 	{
-		NSSplitView *splitView;
-		NSTableView *userTable;
-		NSTableColumn *userColumn;
-		NSScrollView *userScroll;
-		ConsoleView *consoleView;
+		NSMutableArray *connectionList;
 	}
-- init;
++ (id)sharedInstance;
 
-- (ConsoleView *)consoleView;
-- (NSScrollView *)userScroll;
-- (NSSplitView *)splitView;
-- (NSTableColumn *)userColumn;
-- (NSTableView *)userTable;
+- addConnection: (ConnectionController *)aConnection;
+- removeConnection: (ConnectionController *)aConnection;
+
+- (void)applicationWillFinishLaunching: (NSNotification *)aNotification;
+- (void)applicationDidFinishLaunching: (NSNotification *)aNotification;
 @end
+

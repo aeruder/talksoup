@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ChannelView.h
+                                ScrollingTextView.h
                           -------------------
-    begin                : Sun Oct  6 01:33:50 CDT 2002
+    begin                : Tue Nov  5 22:24:03 CST 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,23 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <AppKit/NSView.h>
+#import <AppKit/NSTextView.h>
 
-@class ConsoleView, NSSplitView, NSTableView, NSTableColumn, NSScrollView;
-
-@interface ChannelView : NSView
-	{
-		NSSplitView *splitView;
-		NSTableView *userTable;
-		NSTableColumn *userColumn;
-		NSScrollView *userScroll;
-		ConsoleView *consoleView;
-	}
-- init;
-
-- (ConsoleView *)consoleView;
-- (NSScrollView *)userScroll;
-- (NSSplitView *)splitView;
-- (NSTableColumn *)userColumn;
-- (NSTableView *)userTable;
+@interface ScrollingTextView : NSTextView
 @end
+

@@ -37,6 +37,14 @@ extern NSString *IRCException;
  * it, odds are you may want to look into using these functions.
  */
 
+
+@interface NSString (IRCAddition)
+// Because in IRC {}|^ are lowercase of []\~
+- (NSString *)uppercaseIRCString;
+- (NSString *)lowercaseIRCString;
+- (NSComparisonResult)caseInsensitiveIRCCompare: (NSString *)aString;
+@end
+
 NSString *ExtractIRCNick(NSString *prefix);
 NSString *ExtractIRCHost(NSString *prefix);
 
@@ -84,6 +92,9 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 
 - joinChannel: (NSString *)channel withPassword: (NSString *)aPassword;
 
+- sendCustomCTCP: (NSString *)aCTCP withArgument: (NSString *)anArgument
+    to: (NSString *)aPerson;
+	
 - sendVersionReplyTo: (NSString *)aPerson name:(NSString *)clientName
       version: (NSString *)clientVersion environment: (NSString *)clientEnv;
 
@@ -183,6 +194,12 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 - userInfoReplyReceived: (NSString *)userInfo from: (NSString *)aPerson;
 
 - userInfoRequestReceived: (NSString *)query from: (NSString *)aPerson;
+
+- customCTCPRequestReceived: (NSString *)aCTCP 
+   withArgument: (NSString *)argument from: (NSString *)aPerson;
+
+- customCTCPReplyReceived: (NSString *)aCTCP
+   withArgument: (NSString *)argument from: (NSString *)aPerson;
 
 - errorReceived: (NSString *)anError;
 

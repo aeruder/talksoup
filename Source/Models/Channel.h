@@ -17,8 +17,34 @@
 
 #import <Foundation/NSObject.h>
 
+@class NSString, NSMutableArray;
+
+@interface ChannelUser : NSObject
+	{
+		NSString *name;
+		int mode;
+	}
+@end
+
 @interface Channel : NSObject
 	{
-		NSArray *userList;
+		NSString *name;
+		NSMutableArray *userList;
+		NSMutableArray *lowercaseList;
+		NSMutableArray *tempList;
+		NSMutableArray *tempLowercaseList;
+		BOOL resetFlag;
 	}
+- init;
+
+- setName: (NSString *)aName; // Should be the same as the corresponding
+                              // ChannelViewController
+- (NSString *)name;
+
+- addUser: (NSString *)aString;
+- (BOOL)containsUser: aString;
+- removeUser: (NSString *)aString;
+
+- addServerUserList: (NSString *)aString;
+- endServerUserList;
 @end

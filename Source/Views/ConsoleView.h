@@ -1,7 +1,7 @@
 /***************************************************************************
-                                Charla.h
+                                ConsoleView.h
                           -------------------
-    begin                : Sat Oct  5 02:22:30 CDT 2002
+    begin                : Thu Oct 24 13:05:09 CDT 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,20 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <Foundation/NSObject.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSTextView.h>
 
-@class ConnectionController, NSNotification, NSMutableArray;
+@class NSScrollView, NSTextView, NSBox;
 
-@interface Charla : NSObject
-	{
-		NSMutableArray *connectionList;
-	}
-+ (id)sharedInstance;
-
-- addConnection: (ConnectionController *)aConnection;
-- removeConnection: (ConnectionController *)aConnection;
-
-- (void)applicationWillFinishLaunching: (NSNotification *)aNotification;
-- (void)applicationDidFinishLaunching: (NSNotification *)aNotification;
+@interface NSTextView (appendText)
+- appendText: aText;
 @end
+	
+@interface ConsoleView : NSView
+	{
+		NSScrollView *chatScroll;
+		NSTextView *chatView;
+	}
+- initWithBorder: (BOOL)border;
 
+- putMessage: message;
+
+- (NSScrollView *)chatScroll;
+- (NSTextView *)chatView;
+@end

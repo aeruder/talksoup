@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ChannelView.h
+                                ScrollingTextView.m
                           -------------------
-    begin                : Sun Oct  6 01:33:50 CDT 2002
+    begin                : Tue Nov  5 22:24:03 CST 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,23 +15,47 @@
  *                                                                         *
  ***************************************************************************/
 
+#import "Views/ScrollingTextView.h"
+
+#import <AppKit/NSClipView.h>
+#import <AppKit/NSScrollView.h>
 #import <AppKit/NSView.h>
+#import <Foundation/NSGeometry.h>
 
-@class ConsoleView, NSSplitView, NSTableView, NSTableColumn, NSScrollView;
+#include <math.h>
 
-@interface ChannelView : NSView
+@implementation ScrollingTextView
+- (void)setFrame: (NSRect)frameRect
+{
+	BOOL scroll = NO;
+
+	if (fabs(NSMaxY([[[self enclosingScrollView] contentView] 
+	                   documentVisibleRect]) - NSMaxY([self frame])) < 5)
 	{
-		NSSplitView *splitView;
-		NSTableView *userTable;
-		NSTableColumn *userColumn;
-		NSScrollView *userScroll;
-		ConsoleView *consoleView;
+		scroll = YES;
 	}
-- init;
+	[super setFrame: frameRect];
 
-- (ConsoleView *)consoleView;
-- (NSScrollView *)userScroll;
-- (NSSplitView *)splitView;
-- (NSTableColumn *)userColumn;
-- (NSTableView *)userTable;
+	if (scroll)
+	{
+		[self scrollPoint: NSMakePoint(0, NSMaxY([self frame]))];
+	}
+}
+- (void)setFrameSize: (NSSize)frameSize
+{
+	BOOL scroll = NO;
+
+	if (fabs(NSMaxY([[[self enclosingScrollView] contentView] 
+	                   documentVisibleRect]) - NSMaxY([self frame])) < 5)
+	{
+		scroll = YES;
+	}
+	[super setFrameSize: frameSize];
+
+	if (scroll)
+	{
+		[self scrollPoint: NSMakePoint(0, NSMaxY([self frame]))];
+	}
+}
 @end
+
