@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <Foundation/NSScanner.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSScanner.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSAutoreleasePool.h>
 #include "TalkSoupBundles/TalkSoup.h"
 
 static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)

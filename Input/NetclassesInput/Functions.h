@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString, NSString;
 

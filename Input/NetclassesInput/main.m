@@ -17,10 +17,10 @@
 
 #include "main.h"
 
-#include <Foundation/NSInvocation.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSString.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSString.h>
 #include "Functions.h"
 
 #ifdef S2AS

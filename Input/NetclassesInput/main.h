@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 #include "IRCObject.h"
 #include "TalkSoupBundles/TalkSoup.h"
