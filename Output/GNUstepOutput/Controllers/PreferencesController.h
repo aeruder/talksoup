@@ -26,6 +26,8 @@
 
 @interface PreferencesController : NSObject
 	{
+		NSTextField *fontField;
+		NSButton *setFontButton;
 		NSColorWell *personalBracketColor;
 		NSColorWell *backgroundColor;
 		NSColorWell *otherBracketColor;
@@ -56,6 +58,8 @@
 - textColorSet: (NSColorWell *)sender;
 
 - resetColors: (NSButton *)sender;
+
+- fontSet: (NSButton *)sender;
 
 - (NSWindow *)window;
 @end

@@ -19,9 +19,12 @@
 #define OUTPUT_NS_ATTRIBUTED_STRING_ADDITIONS_H
 
 #include <Foundation/NSAttributedString.h>
+
+@class NSFont;
  
 @interface NSAttributedString (OutputAdditions)	  
-- (NSMutableAttributedString *)substituteColorCodesIntoAttributedString;
+- (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont:
+  (NSFont *)aFont;
 @end
 
 #endif

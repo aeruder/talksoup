@@ -35,6 +35,9 @@
 #include <AppKit/NSTextView.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSView.h>
+#include <AppKit/NSFontPanel.h>
+#include <AppKit/NSFontManager.h>
+#include <AppKit/NSFont.h>
 
 @implementation PreferencesController
 - (void)awakeFromNib
@@ -70,48 +73,52 @@
 }
 - (void)loadCurrentDefaults
 {	
-	id output = [_TS_ pluginForOutput];
 	id y;
 	
 	y = [NSColor colorFromEncodedData: 
-	  [output defaultsObjectForKey: GNUstepOutputPersonalBracketColor]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputPersonalBracketColor]];
 	[personalBracketColor setColor: y];
 	[self personalBracketColorSet: personalBracketColor];
 	 
 	y = [NSColor colorFromEncodedData: 
-	  [output defaultsObjectForKey: GNUstepOutputOtherBracketColor]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputOtherBracketColor]];
 	[otherBracketColor setColor: y];
 	[self otherBracketColorSet: otherBracketColor];
 
 	y = [NSColor colorFromEncodedData: 
-	  [output defaultsObjectForKey: GNUstepOutputBackgroundColor]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]];
 	[backgroundColor setColor: y];
 	[self backgroundColorSet: backgroundColor];
 	 
 	y = [NSColor colorFromEncodedData: 
-	  [output defaultsObjectForKey: GNUstepOutputTextColor]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputTextColor]];
 	[textColor setColor: y];
 	[self textColorSet: textColor];
 	 
-	y = [output defaultsObjectForKey: IRCDefaultsNick];
+	y = [_GS_ defaultsObjectForKey: IRCDefaultsNick];
 	[nick setStringValue: y];
 	[self nickSet: nick];
 	[nick setDelegate: self];
 	
-	y = [output defaultsObjectForKey: IRCDefaultsRealName];
+	y = [_GS_ defaultsObjectForKey: IRCDefaultsRealName];
 	[realName setStringValue: y];
 	[self realNameSet: realName];
 	[realName setDelegate: self];
 	
-	y = [output defaultsObjectForKey: IRCDefaultsUserName];
+	y = [_GS_ defaultsObjectForKey: IRCDefaultsUserName];
 	[userName setStringValue: y];
 	[self userNameSet: userName];
 	[userName setDelegate: self];
 	
-	y = [output defaultsObjectForKey: IRCDefaultsPassword];
+	y = [_GS_ defaultsObjectForKey: IRCDefaultsPassword];
 	[password setStringValue: y];
 	[self passwordSet: password];
 	[password setDelegate: self];
+	
+	[fontField setStringValue: [NSString stringWithFormat: @"%@ %@",
+	  [_GS_ defaultsObjectForKey: GNUstepOutputFontName],
+	  [_GS_ defaultsObjectForKey: GNUstepOutputFontSize],
+	  nil]];
 }
 - nickSet: (NSTextField *)sender
 {
@@ -299,6 +306,18 @@
 
 	return self;
 }
+- fontSet: (NSButton *)aButton
+{
+	id font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	
+	[[NSFontManager sharedFontManager] setSelectedFont: font
+	  isMultiple: NO];
+	  
+	[[NSFontPanel sharedFontPanel] orderFront: self];
+	
+	return self;
+}
 - (NSWindow *)window
 {
 	return window;
@@ -326,7 +345,25 @@
 		[self nickSet: nick];
 	}
 }
+- (void)changeFont: (id)sender
+{
+	NSEnumerator *iter;
+	id object;
+	NSFont *font;
 
+	font = [sender convertFont: [sender selectedFont]];
+	
+	[_GS_ setDefaultsObject: [font fontName] forKey: GNUstepOutputFontName];
+	[_GS_ setDefaultsObject: [NSString stringWithFormat: @"%d", (int)[font pointSize]]
+	  forKey: GNUstepOutputFontSize];
+	  
+	iter = [[_GS_ connectionControllers] objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[[object contentController] setChatFont: font];
+	}
+}
 @end
 
 

@@ -74,6 +74,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	textColor = RETAIN([NSColor colorFromEncodedData: 
 	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
 	
+	chatFont = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	 
 	connection = aConnection;
 	
 	return self;
@@ -316,11 +319,12 @@ NSString *ContentConsoleName = @"Content Console Name";
 		 AUTORELEASE(([[NSAttributedString alloc] initWithString: aString
 		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
 		    textColor, NSForegroundColorAttributeName,
+			 chatFont, NSFontAttributeName,
 		     nil]]))];
 	}
 	else if ([aString isKindOf: [NSAttributedString class]])
 	{
-		aString = [aString substituteColorCodesIntoAttributedString];
+		aString = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
 	   
 		[aString addAttributeIfNotPresent: NSForegroundColorAttributeName value: textColor
 		  withRange: NSMakeRange(0, [aString length])];
@@ -605,6 +609,29 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	return self;
 }
+- setChatFont: (NSFont *)aFont
+{	
+	NSEnumerator *iter;
+	id object;
+	
+	if (!aFont) return self;
+	if ([aFont isEqual: chatFont]) return self;
+	
+	iter = [[nameToBoth allValues] objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		object = [[object chatView] textStorage];
+		[object replaceAttribute: NSFontAttributeName 
+		  withExactValue: chatFont withValue: aFont withRange:
+		  NSMakeRange(0, [object length])];
+	}
+
+	RELEASE(chatFont);
+	chatFont = RETAIN(aFont);	
+	
+	return self;
+}	
 @end
 
 @implementation ContentController (WindowTabViewDelegate)

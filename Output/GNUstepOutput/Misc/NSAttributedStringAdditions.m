@@ -27,7 +27,8 @@
 #include <Foundation/NSScanner.h>
 
 @implementation NSAttributedString (OutputAdditions)	  
-- (NSMutableAttributedString *)substituteColorCodesIntoAttributedString
+- (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont: 
+  (NSFont *)chatFont
 {
 	NSMutableAttributedString *a = AUTORELEASE([NSMutableAttributedString new]);
 	NSRange all =  { 0 };
@@ -74,12 +75,12 @@
 		}
 		if ([dict objectForKey: IRCBold])
 		{
-			[dict setObject: [NSFont boldSystemFontOfSize: 0.0]
+			[dict setObject: [NSFont boldSystemFontOfSize: [chatFont pointSize]]
 			  forKey: NSFontAttributeName];
 		}
 		else
 		{
-			[dict setObject: [NSFont userFontOfSize: 0.0]
+			[dict setObject: chatFont
 			  forKey: NSFontAttributeName];
 		}
 	

@@ -29,7 +29,7 @@ extern NSString *ContentConsoleName;
 @class NSMutableDictionary, NSString, NSAttributedString;
 @class NSTabViewItem, NSArray;
 @class NSColor;
-@class ConnectionController;
+@class ConnectionController, NSFont;
 
 NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString *str);
 
@@ -51,6 +51,7 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 	NSString *current;
 	NSColor *textColor;
 	ConnectionController *connection;
+	NSFont *chatFont;
 }
 - initWithConnectionController: (ConnectionController *)connect;
 
@@ -109,6 +110,8 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 - (NSString *)currentViewName;
 
 - setNickViewString: (NSString *)aNick;
+
+- setChatFont: (NSFont *)aFont;
 @end
 
 #endif

@@ -72,6 +72,8 @@ NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
+NSString *GNUstepOutputFontSize = @"GNUstepOutputFontSize";
+NSString *GNUstepOutputFontName = @"GNUstepOutputFontName";
 
 GNUstepOutput *_GS_ = nil;
 
@@ -102,6 +104,8 @@ GNUstepOutput *_GS_ = nil;
 	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
 	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
+	  @"Helvetica", GNUstepOutputFontName,
+	  @"12", GNUstepOutputFontSize,
 	  nil];
 	
 	RELEASE(_GS_);

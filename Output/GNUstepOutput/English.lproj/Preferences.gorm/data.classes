@@ -152,7 +152,8 @@
 	    "backgroundColorSet:",
 	    "otherBracketColorSet:",
 	    "textColorSet:",
-	    "resetColors:"
+	    "resetColors:",
+	    "fontSet:"
 	);
 	Outlets = (
 	    personalBracketColor,
@@ -164,7 +165,9 @@
 	    userName,
 	    password,
 	    resetButton,
-	    window
+	    window,
+	    fontField,
+	    setFontButton
 	);
 	Super = NSObject;
     };
