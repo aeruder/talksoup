@@ -56,8 +56,7 @@
 }
 - (void)setStringValue: (NSString *)aValue
 {
-	[[self textStorage] setAttributedString: 
-	  AUTORELEASE([[NSAttributedString alloc] initWithString: aValue])];
+	[self setString: aValue]; 
 	[self setSelectedRange: NSMakeRange([aValue length], 0)];
 }
 @end

@@ -382,11 +382,11 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	NSMapInsert(tabItemToName, tabItem, name);
 
-	[tabItem setAttributedLabel: aLabel];
-
 	[tabItem setView: [query contentView]];
 
 	[tabView addTabViewItem: tabItem];
+
+	[tabItem setAttributedLabel: aLabel];
 	
 	name = [tabView selectedTabViewItem];
 	
@@ -434,14 +434,14 @@ NSString *ContentConsoleName = @"Content Console Name";
 	[nameToTabItem setObject: tabItem forKey: name];
 
 	NSMapInsert(tabItemToName, tabItem, name);
-
-	[tabItem setAttributedLabel: aLabel];
 	
 	[tabItem setView: [chan contentView]];
 	
 	name = [tabView selectedTabViewItem];
 	
 	[tabView addTabViewItem: tabItem];
+
+	[tabItem setAttributedLabel: aLabel];
 	
 	name = [tabView selectedTabViewItem];
 	

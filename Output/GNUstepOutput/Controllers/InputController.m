@@ -425,8 +425,7 @@
 {
 	id x = [[controller contentController] controllerForViewWithName: 
 	  [[controller contentController] currentViewName]];
-	[[[x chatView] textStorage] setAttributedString: 
-	  AUTORELEASE([[NSAttributedString alloc] initWithString: @""])];
+	[[x chatView] setString: @""]; 
 	
 	return self;
 }	  
