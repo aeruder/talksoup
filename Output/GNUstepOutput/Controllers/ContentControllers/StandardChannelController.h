@@ -1,5 +1,5 @@
 /***************************************************************************
-                                QueryController.h
+                       StandardChannelController.h
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,25 +15,33 @@
  *                                                                         *
  ***************************************************************************/
 
-@class QueryController;
+@class StandardChannelController;
 
-#ifndef QUERY_CONTROLLER_H
-#define QUERY_CONTROLLER_H
+#ifndef CHANNEL_CONTROLLER_H
+#define CHANNEL_CONTROLLER_H
+
+@class NSTableView, ScrollingTextView, NSSplitView, NSView;
+@class Channel;
 
 #import <Foundation/NSObject.h>
+#import "Controllers/ContentControllers/ContentController.h"
 
-@class NSView, ScrollingTextView;
- 
-@interface QueryController : NSObject
+@interface StandardChannelController : NSObject < ContentControllerChannelView >
 	{
+		NSTableView *tableView;
+		ScrollingTextView *chatView;
+		NSSplitView *splitView;
 		id window;
-		id chatView;
+		Channel *channelSource;
 	}
 
+- (Channel *)channelSource;
+- (void)attachChannelSource: (Channel *)aChannel;
+- (void)detachChannelSource;
+
+- (NSTextView *)chatView; 
+
 - (NSView *)contentView;
-
-- (ScrollingTextView *)chatView;
-
 @end
 
 #endif

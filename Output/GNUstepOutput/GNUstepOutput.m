@@ -27,6 +27,8 @@
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/Tab/TabContentController.h"
+#import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Misc/NSColorAdditions.h"
 #import "Views/KeyTextView.h"
@@ -88,6 +90,7 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 }
 
 GNUstepOutput *_GS_ = nil;
+PreferencesController *_PREFS_ = nil;
 
 @implementation GNUstepOutput
 - init
@@ -324,9 +327,6 @@ GNUstepOutput *_GS_ = nil;
 		}
 	}
 		
-	if ([selS hasSuffix: @"nConnection:withNickname:sender:"] && 
-	    [ConnectionController instancesRespondToSelector: aSel]) return YES;
-	
 	return [super respondsToSelector: aSel];
 }
 - (NSMethodSignature *)methodSignatureForSelector: (SEL)aSel
@@ -351,11 +351,6 @@ GNUstepOutput *_GS_ = nil;
 		}
 	}
 
-	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
-	{
-		return x;
-	}
-	
 	return [super methodSignatureForSelector: aSel];
 }
 - (void)forwardInvocation: (NSInvocation *)aInvoc
@@ -418,16 +413,6 @@ GNUstepOutput *_GS_ = nil;
 @implementation GNUstepOutput (NSApplicationDelegate)
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
-	topic = [TopicInspectorController new];
-	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
-	[[topic topicText] setKeyTarget: self];
-	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)];
-
-	if (![ServerListController startAutoconnectServers])
-	{
-		AUTORELEASE([ConnectionController new]);
-	}
-
 	_PREFS_ = [PreferencesController new];
 	AUTORELEASE([GeneralPreferencesController new]);
 	AUTORELEASE([ColorPreferencesController new]);
@@ -465,21 +450,20 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {
-	AUTORELEASE([ConnectionController new]);
 }
 - (void)openServerList: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: _l(@"ServerList") owner: 
-	  AUTORELEASE([ServerListController new])];
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: _l(@"NamePrompt") owner:
-	  AUTORELEASE([NamePromptController new])];
+	id blah = [TabContentController new];
+	[[[blah primaryMasterController] window] makeKeyAndOrderFront: nil];
 }
 - (void)openTopicInspector: (NSNotification *)aNotification
 {
-		[[topic window] makeKeyAndOrderFront: nil];
+	id blah = [TabMasterController new];
+	NSLog(@"%@", [blah window]);
+	[[blah window] makeKeyAndOrderFront: nil];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {
@@ -535,3 +519,10 @@ GNUstepOutput *_GS_ = nil;
 	return NO;
 }
 @end
+
+int main(void)
+{
+	[NSAutoreleasePool new];
+	[[GNUstepOutput new] run];
+	return 0;
+}

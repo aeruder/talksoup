@@ -23,6 +23,10 @@ NSString *ContentControllerQueryType = @"ContentControllerQueryType";
 
 NSString *ContentConsoleName = @"ContentConsoleName";
 
-NSString *ContentControllerChangedTopicNotification = @"ContentControllerChangedTopicNotification";
+NSString *ContentControllerMovedInMasterControllerNotification = @"ContentControllerMovedInMasterControllerNotification";
+NSString *ContentControllerAddedToMasterControllerNotification = @"ContentControllerAddedToMasterControllerNotification";
+NSString *ContentControllerRemovedFromMasterControllerNotification = @"ContentControllerRemovedFromMasterControllerNotification";
+NSString *ContentControllerChangedNicknameNotification = @"ContentControllerChangedNicknameNotification";
 NSString *ContentControllerSelectedNameNotification = @"ContentControllerSelectedNameNotification";
 NSString *ContentControllerChangedLabelNotification = @"ContentControllerChangedLabelNotification";
+

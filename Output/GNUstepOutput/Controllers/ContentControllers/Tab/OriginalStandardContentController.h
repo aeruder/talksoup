@@ -1,5 +1,5 @@
 /***************************************************************************
-                         StandardContentController.h
+                                TabContentController.h
                           -------------------
     begin                : Tue Jan 20 22:08:40 CST 2004
     copyright            : (C) 2003 by Andy Ruder
@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-@class StandardContentController;
+@class TabContentController;
 
-#ifndef STANDARD_CONTENT_CONTROLLER_H
-#define STANDARD_CONTENT_CONTROLLER_H
+#ifndef TAB_CONTENT_CONTROLLER_H
+#define TAB_CONTENT_CONTROLLER_H
 
 #import "Controllers/ContentControllers/ContentController.h"
 
@@ -26,7 +26,6 @@
 #import <Foundation/NSMapTable.h>
 
 @class NSMutableArray, NSMutableDictionary, NSArray, NSString, NSAttributedString;
-@class NSFont;
 
 @interface StandardContentController : NSObject < ContentController >
 	{
@@ -40,26 +39,15 @@
 		NSMapTable *bothToName;
 		NSString *nickname;
 		NSString * (*lowercase)(NSString *);
-		Class channelClass;
-		Class queryClass;
-		NSFont *chatFont;
 	}
-+ (Class)masterClass;
-+ (Class)queryClass;
-+ (Class)channelClass;
-
-- initWithMasterController: (id <MasterController>) aMaster;
-
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
-- (void)setPrimaryMasterController: (id <MasterController>)aController;
+- setPrimaryMasterController: (id <MasterController>)aController;
 
-- (id <MasterController>)masterControllerForName: (NSString *)aName;
 - (NSView *)viewForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;
 - (id)controllerForName: (NSString *)aName;
 - (NSString *)typeForName: (NSString *)aName;
-
 - (NSArray *)allChatViews;
 - (NSArray *)allControllers;
 - (NSArray *)allViews;
@@ -81,21 +69,13 @@
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
-- addControllerOfType: (NSString *)aType withName: (NSString *)aName 
-   withLabel: (NSAttributedString *)aLabel 
-   inMasterController: (id <MasterController>)aMaster;
-- removeControllerWithName: (NSString *)aName;
-- renameControllerWithName: (NSString *)aName to: (NSString *)newName;
-
-- (NSAttributedString *)labelForName: (NSString *)aName;
-- setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName;
-
 - (NSString *)presentationalNameForName: (NSString *)aName;
+- (NSAttributedString *)labelForName: (NSString *)aName;
 
 - (NSString *)nickname;
 - setNickname: (NSString *)aNickname;
 
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
+- setLowercasingFunction: (NSString * (*aFunction)(NSString *));
 @end
 
 #endif

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ChannelController.m
+                      StandardChannelController.m
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -17,13 +17,14 @@
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
 #import "Models/Channel.h"
 #import "GNUstepOutput.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
+#import <AppKit/NSNibLoading.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSSplitView.h>
 #import <AppKit/NSTextView.h>
@@ -35,7 +36,24 @@
 #import <AppKit/NSFont.h>
 #import <AppKit/NSView.h>
 
-@implementation ChannelController
+@implementation StandardChannelController
++ (NSString *)standardNib
+{
+	return @"StandardChannel";
+}
+- init
+{
+	if (!(self = [super init])) return self;
+
+	if (!([NSBundle loadNibNamed: [StandardChannelController standardNib] owner: self]))
+	{
+		NSLog(@"Failed to load StandardChannelController UI");
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
+}
 - (void)awakeFromNib
 {
 	id x;
@@ -115,10 +133,23 @@
 }
 - (void)dealloc
 {
+	DESTROY(channelSource);
 	RELEASE(window);
 	[super dealloc];
 }
-- (ScrollingTextView *)chatView
+- (Channel *)channelSource
+{
+	return channelSource;
+}
+- (void)attachChannelSource: (Channel *)aChannel
+{
+	ASSIGN(channelSource, aChannel);
+}
+- (void)detachChannelSource
+{
+	DESTROY(channelSource);
+}
+- (NSTextView *)chatView
 {
 	return chatView;
 }
@@ -126,22 +157,14 @@
 {
 	return window;
 }
-- (NSSplitView *)splitView
-{
-	return splitView;
-}
-- (NSTableView *)tableView
-{
-	return tableView;
-}
 @end
 
-@interface ChannelController (NSSplitViewDelegate)
+@interface StandardChannelController (NSSplitViewDelegate)
 - (void)splitView: (NSSplitView *)sender
     resizeSubviewsWithOldSize: (NSSize)oldSize;
 @end
 
-@implementation ChannelController (NSSplitViewDelegate)
+@implementation StandardChannelController (NSSplitViewDelegate)
 - (void)splitView: (NSSplitView *)sender
     resizeSubviewsWithOldSize: (NSSize)oldSize
 {

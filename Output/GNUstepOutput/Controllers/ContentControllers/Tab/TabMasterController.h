@@ -20,10 +20,13 @@
 #ifndef TAB_MASTER_CONTROLLER_H
 #define TAB_MASTER_CONTROLLER_H
  
+#import "Controllers/ContentControllers/ContentController.h"
+
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>
  
 @class NSTextField, NSTabView, NSWindow, InputController, NSMutableArray;
+@class NSAttributedString;
 
 @interface TabMasterController : NSObject < MasterController >
 	{
