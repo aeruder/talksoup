@@ -1,5 +1,5 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-SUBPROJECTS = Highlighting
+SUBPROJECTS = Highlighting MessageInTab
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
