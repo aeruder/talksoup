@@ -145,6 +145,32 @@
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
    sender: aPlugin
 {
+	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
+	   @"CTCPRequest%@:from:", [[aCTCP string] uppercaseString]]);
+	BOOL show = YES;
+	id str;
+	
+	if (sid && [self respondsToSelector: sid])
+	{
+		show = ([self performSelector: sid withObject: argument
+		 withObject: aPerson] == nil);
+	}
+	
+	if (!show) return self;
+	
+	if ([argument length])
+	{
+		str = BuildAttributedFormat(_l(@"Received a CTCP '%@ %@' from %@"), 
+		  aCTCP, argument, [IRCUserComponents(aPerson) objectAtIndex: 0]);
+	}
+	else
+	{
+		str = BuildAttributedFormat(_l(@"Received a CTCP %@ from %@"),
+		  aCTCP, [IRCUserComponents(aPerson) objectAtIndex: 0]);
+	}
+	
+	[content putMessage: str in: ContentConsoleName];
+	
 	return self;
 }
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
@@ -152,12 +178,42 @@
    from: (NSAttributedString *)aPerson 
    onConnection: (id)aConnection sender: aPlugin
 {
+	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
+	   @"CTCPReply%@:from:", [[aCTCP string] uppercaseString]]);
+	BOOL show = YES;
+	id str;
+	
+	if (sid && [self respondsToSelector: sid])
+	{
+		show = ([self performSelector: sid withObject: argument
+		 withObject: aPerson] == nil);
+	}
+
+	if (!show) return self;
+	
+	if ([argument length])
+	{
+		str = BuildAttributedString(MARK, FCAN, otherColor, @"-",
+		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
+		  MARK, FCAN, otherColor, @"-",
+		  @" ", aCTCP, @" ", argument, nil);
+	}
+	else
+	{
+		str = BuildAttributedString(MARK, FCAN, otherColor, @"-",
+		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
+		  MARK, FCAN, otherColor, @"-",
+		  @" ", aCTCP, nil);
+	}
+
+	[content putMessage: str in: nil];
+
 	return self;
 }
 - errorReceived: (NSAttributedString *)anError onConnection: (id)aConnection 
    sender: aPlugin
 {
-	[self systemMessage: BuildAttributedString(@"Error: ", anError, nil)
+	[self systemMessage: BuildAttributedFormat(_l(@"Error: %@"), anError)
 	  onConnection: nil];
 	return self;
 }
@@ -173,8 +229,9 @@
    onConnection: (id)aConnection sender: aPlugin
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
-	[content putMessage: BuildAttributedString(aPerson, @" was kicked from ",
-	  aChannel, @" by ", name, @" (", reason, @")", nil) 
+	[content putMessage: 
+	  BuildAttributedFormat(_l(@"%@ was kicked from %@ by %@ (%@)"), aPerson,
+	  aChannel, name, reason) 
 	  in: [aChannel string]];
 	return self;
 }
@@ -183,8 +240,9 @@
 {
 	id name = [IRCUserComponents(inviter) objectAtIndex: 0];
 	
-	[content putMessage: BuildAttributedString(@"You have been invited to ", 
-	  aChannel, @" by ", name, nil)
+	[content putMessage: 
+	  BuildAttributedFormat(_l(@"You have been invited to %@ by %@"), 
+	  aChannel, name)
 	  in: nil];
 	return self;
 }
@@ -277,8 +335,8 @@
 	}
 	
 	[content putMessage: 
-	  BuildAttributedString(who, _l(@" sets mode "), anObject, @" ", aMode, @" ",
-	    params, nil) in: [anObject string]];
+	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@ %@"), who, anObject,
+	  params) in: [anObject string]];
 	
 	return self;
 }
@@ -348,8 +406,8 @@
 		  reloadData];
 	}
 	
-	[content putMessage: BuildAttributedString(
-	  oldName, @" is now known as ", newName, nil)
+	[content putMessage: BuildAttributedFormat(
+	  _l(@"%@ is now known as %@"), oldName, newName)
 	  in: array];
 	  
 	if ([content controllerForViewWithName: [oldName string]])
@@ -392,8 +450,8 @@
 		  reloadData];
 	}
 	
-	[content putMessage: BuildAttributedString([array objectAtIndex: 0], @" (", 
-	  [array objectAtIndex: 1], @") has joined ", channel, nil) in: name];
+	[content putMessage: BuildAttributedFormat(_l(@"%@ (%@) has joined %@"),
+	  [array objectAtIndex: 0], [array objectAtIndex: 1], channel) in: name];
 	
 	[self updateTopicInspector];
 	
@@ -428,8 +486,8 @@
 	
 	if (!isMe || view)
 	{
-		[content putMessage: BuildAttributedString(name, @" has left ", channel,
-		  @" (", aMessage, @")", nil) in: lowChan];
+		[content putMessage: BuildAttributedFormat(_l(@"%@ has left %@ (%@)"), 
+		  name, channel, aMessage) in: lowChan];
 	}
 	
 	return self;
@@ -454,8 +512,8 @@
 	}
 	
 	[content putMessage:
-	  BuildAttributedString(name,
-	   @" has quit IRC (", aMessage, @")", nil) in: array];
+	  BuildAttributedFormat(_l(@"%@ has quit IRC (%@)"), name, aMessage)
+	  in: array];
 		
 	return self;
 }

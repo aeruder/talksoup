@@ -18,6 +18,7 @@
 @class GNUstepOutput, NSString, NSColor;
 
 #include <Foundation/NSObject.h>
+#include <Foundation/NSBundle.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString);
 NSString *GNUstepOutputIdentificationForController(id controller);

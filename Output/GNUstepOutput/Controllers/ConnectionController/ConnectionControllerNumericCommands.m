@@ -37,8 +37,9 @@
 	id data = [nameToChannelData objectForKey: 
 	  GNUstepOutputLowercase([channel string])];
 	
-	[content putMessage: BuildAttributedString(@"Topic for ", 
-	  channel, @" is \"", topic, @"\"", nil) in: channel];
+	[content putMessage: 
+	  BuildAttributedFormat(_l(@"Topic for %@ is \"%@\""), channel, topic) 
+	  in: channel];
 	
 	[data setTopic: [topic string]];
 	[data setTopicAuthor: @""];
@@ -65,8 +66,9 @@
 	date = AUTORELEASE([[NSAttributedString alloc] initWithString: date
 	  attributes: attrib]);
 	
-	[content putMessage: BuildAttributedString(@"Topic for ",
-	  channel, @" set by ", who, @" at ", date, nil) in: channel];
+	[content putMessage: 
+	  BuildAttributedString(_l(@"Topic for %@ set by %@ at %@"),
+	  channel, who, date) in: channel];
 		
 	[data setTopicAuthor: [who string]];
 	[data setTopicDate: [date string]];
