@@ -29,11 +29,14 @@ This distribution comes with:
 
 Input Plugins:
 
-  NetclassesInput: an input plugin based on netclasses
+  *NetclassesInput: an input plugin based on netclasses
 
 Output Plugins:
 
-  GNUstepOutput: an output plugin based on gnustep-gui
+  *GNUstepOutput: an output plugin based on gnustep-gui
+
+
+* == Used by default
 
 Special Thanks To:
   
