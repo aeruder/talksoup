@@ -130,6 +130,36 @@ NSString *ContentConsoleName = @"Content Console Name";
 {
 	return [nameToBoth allValues];
 }
+- (NSArray *)allChannelNames
+{
+	NSMutableArray *x = AUTORELEASE([NSMutableArray new]);
+	NSEnumerator *iter;
+	id object;
+	
+	iter = [nameToChannel keyEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[x addObject: [nameToPresentation objectForKey: object]];
+	}
+	
+	return x;
+}
+- (NSArray *)allQueryNames;
+{
+	NSMutableArray *x = AUTORELEASE([NSMutableArray new]);
+	NSEnumerator *iter;
+	id object;
+	
+	iter = [nameToQuery keyEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[x addObject: [nameToPresentation objectForKey: object]];
+	}
+	
+	return x;
+}
 - (NSTextField *)typeView
 {
 	return typeView;

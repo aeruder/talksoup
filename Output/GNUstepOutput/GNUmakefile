@@ -16,9 +16,10 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 	      Controllers/ConnectionController.m \
 	      Controllers/PreferencesController.m
 
-Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m
+Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
+        Views/TabTextView.m
 
-Misc = Misc/NSColorAdditions.m
+Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m
 
 Models = Models/Channel.m
 

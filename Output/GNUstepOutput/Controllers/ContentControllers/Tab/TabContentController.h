@@ -50,6 +50,8 @@ extern NSString *ContentConsoleName;
 - setTextColor: (NSColor *)aColor;
 
 - (NSArray *)allViews;
+- (NSArray *)allChannelNames;
+- (NSArray *)allQueryNames;
 
 - (NSTextField *)typeView;
 

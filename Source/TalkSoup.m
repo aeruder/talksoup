@@ -85,6 +85,10 @@ id _TSDummy_;
 	[commandList removeObjectForKey: [aCommand uppercaseString]];
 	return self;
 }
+- (NSArray *)allCommands
+{
+	return [commandList allKeys];
+}
 - (BOOL)respondsToSelector: (SEL)aSel
 {
 	if ([_TSDummy_ respondsToSelector: aSel]) return YES;

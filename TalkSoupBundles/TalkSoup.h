@@ -84,6 +84,7 @@ extern id _TSDummy_;
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand;
 - addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc;
 - removeCommand: (NSString *)aCommand;
+- (NSArray *)allCommands;
 
 - (id)input;
 - (NSMutableArray *)inFilters;
