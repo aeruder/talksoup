@@ -44,6 +44,12 @@
 		Class queryClass;
 		NSFont *chatFont;
 	}
++ (Class)masterClass;
++ (Class)queryClass;
++ (Class)channelClass;
+
+- initWithMasterController: (id <MasterController>) aMaster;
+
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;

@@ -42,10 +42,19 @@ static NSString *TypeOfColor = @"TypeOfColor";
 @end
 
 @implementation StandardContentController
-/* Initializes the content controller with the console channel in a new master
- * controller 
- */
-- init
++ (Class)masterClass
+{
+	return Nil;
+}
++ (Class)queryClass
+{
+	return [StandardQueryController class];
+}
++ (Class)channelClass
+{
+	return [StandardChannelController class];
+}
+- initWithMasterController: (id <MasterController>) aMaster
 {
 	if (!(self = [super init])) return nil;
 	
@@ -59,17 +68,31 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	bothToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	  
-	// FIXME: this should create a console view and a new master controller,
-	// should also be configurable to create within another master controller
+	if (!aMaster) aMaster = [[[self class] masterClass] new]; 
+	if (!aMaster)
+	{
+		[self dealloc];
+		return nil;
+	}
+	
+	[masterControllers addObject: aMaster];
+
 	lowercase = IRCLowercase;
 
 	chatFont = RETAIN([FontPreferencesController
 	  getFontFromPreferences: GNUstepOutputChatFont]);
 	
-	channelClass = [StandardChannelController class];
-	queryClass = [StandardQueryController class];
+	channelClass = [[self class] channelClass];
+	queryClass = [[self class] queryClass];
 	
 	return self;
+}
+/* Initializes the content controller in a new master
+ * controller 
+ */
+- init
+{
+	return [self initWithMasterController: nil];
 }
 // FIXME a dealloc needs to be written
 /* Returns an array of all master controllers that are used by any of the channels or 

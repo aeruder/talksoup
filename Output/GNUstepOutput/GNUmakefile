@@ -77,6 +77,7 @@ Controllers/ConnectionController/ConnectionControllerTabCompletion.m
 ContentController = Controllers/ContentControllers/StandardContentController.m \
 Controllers/ContentControllers/ContentController.m \
 Controllers/ContentControllers/Tab/TabMasterController.m \
+Controllers/ContentControllers/Tab/TabContentController.m \
 Controllers/ContentControllers/StandardChannelController.m \
 Controllers/ContentControllers/StandardQueryController.m
 
