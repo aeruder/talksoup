@@ -23,6 +23,7 @@
 #include <Foundation/NSString.h>
 #include <Foundation/NSUserDefaults.h>
 #include <Foundation/NSNull.h>
+#include <Foundation/NSInvocation.h>
 
 static id get_pref(NSString *x)
 {
@@ -46,6 +47,40 @@ static id get_pref(NSString *x)
 	return [object objectForKey: x];
 }
 		
+static void set_pref(NSString *x, id val)
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([x hasPrefix: @"Highlighting"] && ![x isEqualToString: @"Highlighting"])
+	{
+		NSMutableDictionary *y;
+		id tmp;
+		
+		x = [x substringFromIndex: 12];
+		tmp = [object objectForKey: @"Highlighting"];
+		
+		if (!tmp)
+		{
+			y = AUTORELEASE([NSMutableDictionary new]);
+		}
+		else
+		{
+			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
+		}
+		
+		if (val)
+		{
+			[y setObject: val forKey: x];
+		}
+		else
+		{
+			[y removeObjectForKey: x];
+		}
+		
+		[object setObject: y forKey: @"Highlighting"];
+	}
+}
+
 static BOOL has_name(NSString *str, NSString *name)
 {
 	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
@@ -158,7 +193,145 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 	return from;
 }
 
+static NSInvocation *invoc = nil;
+
+#define COLOR_MSG S2AS(@"Colors are any color string listed by /colors")
+							  
 @implementation Highlighting
++ (void)initialize
+{
+	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
+	  [self methodSignatureForSelector: @selector(commandHighlighting:connection:)]]);
+	[invoc retainArguments];
+	[invoc setTarget: self];
+	[invoc setSelector: @selector(commandHighlighting:connection:)];
+}	
++ (NSAttributedString *)commandHighlighting: (NSString *)args 
+   connection: connection
+{
+	id x = [args separateIntoNumberOfArguments: 2];
+	id key, val;
+	int cnt = [x count];
+	
+	if (cnt == 0)
+	{
+		return BuildAttributedString([NSNull null], IRCBold, [NSNull null], 
+		  @"Highlighting.bundle Configurator:", @"\n",
+		  @"Usage: /highlighting <key> <value>", @"\n",
+		  @"Possible keys: usercolor, tabreferencecolor, tabanythingcolor, extrawords", 
+		  @"\n",
+		  @"Not specifying a value will bring up help for that particular key",
+		  nil);
+	}
+	
+	key = [x objectAtIndex: 0];
+	
+	if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
+	{
+		if (cnt == 1)
+		{
+			return BuildAttributedString(
+			  @"Sets the color of the person who says either your nickname "
+			  @"or a word specified in your extra words field.", @"\n",
+			  COLOR_MSG, nil);
+		}
+		
+		val = IRCColorFromUserColor([x objectAtIndex: 1]);
+		
+		if (!val)
+		{
+			return COLOR_MSG;
+		}
+		
+		set_pref(@"HighlightingUserColor", val);
+	}
+	else if ([key caseInsensitiveCompare: @"tabreferencecolor"] == NSOrderedSame)
+	{
+		if (cnt == 1)
+		{
+			return BuildAttributedString(
+			  @"Sets the color that the tab will change when a person says either "
+			  @"your nickname or a word specified in your extra words field.", @"\n",
+			  COLOR_MSG, nil);
+		}
+		
+		val = IRCColorFromUserColor([x objectAtIndex: 1]);
+		
+		if (!val)
+		{
+			return COLOR_MSG;
+		}
+		
+		set_pref(@"HighlightingTabReferenceColor", val);
+	}
+	else if ([key caseInsensitiveCompare: @"tabanythingcolor"] == NSOrderedSame)
+	{
+		if (cnt == 1)
+		{
+			return BuildAttributedString(
+			  @"Sets the color that the tab will change when a person says something",
+			  @"\n",
+			  COLOR_MSG, nil);
+		}
+		
+		val = IRCColorFromUserColor([x objectAtIndex: 1]);
+		
+		if (!val)
+		{
+			return COLOR_MSG;
+		}
+		
+		set_pref(@"HighlightingTabAnythingColor", val);
+	}
+	else if ([key caseInsensitiveCompare: @"extrawords"] == NSOrderedSame)
+	{
+		val = [get_pref(@"HighlightingExtraWords") componentsJoinedByString: 
+		  @"^"];
+		if (!val) val = @"";
+		
+		if (cnt == 1)
+		{
+			return BuildAttributedString(
+			  @"Sets the other words that a sender could say and result "
+			  @"in being highlighted", @"\n",
+			  @"The value should be a list of words separated by '^' or "
+			  @"nil to clear the list", @"\n", 
+			  @"The list is currently: ", val, 
+			  nil);
+		}
+		
+		val = [[x objectAtIndex: 1] componentsSeparatedByString: @"^"];
+		
+		if ([[x objectAtIndex: 1] caseInsensitiveCompare: @"nil"] == NSOrderedSame)
+		{
+			val = nil;
+		}
+		
+		set_pref(@"HighlightingExtraWords", val);
+	}
+	else
+	{
+		return BuildAttributedString([NSNull null], IRCBold, [NSNull null], 
+		  @"Highlighting.bundle Configurator:", @"\n",
+		  @"Usage: /highlighting <key> <value>", @"\n",
+		  @"Possible keys: usercolor, tabreferencecolor, tabanythingcolor, extrawords", 
+		  @"\n",
+		  @"Not specifying a value will bring up help for that particular key",
+		  nil);
+	}
+
+	return nil;
+}
+- pluginActivated
+{
+	[_TS_ addCommand: @"highlighting" withInvocation: invoc];
+	return self;
+}
+- pluginDeactivated
+{
+	[_TS_ removeCommand: @"highlighting"];
+	return self;
+}
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
    sender: aPlugin
