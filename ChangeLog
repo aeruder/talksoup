@@ -1,3 +1,14 @@
+2003-12-21 Andy Ruder <aeruder at ksu dot edu>
+ * OFTC made it into the server list
+ * made a change to the topic inspector that will hopefully make it
+   look good on OSX
+
+2003-12-19 Andy Ruder <aeruder at ksu dot edu>
+ * Made /dcc a little more sane on the syntax.
+ * Fixed some early deallocation bugs in delegate messages
+ * fixed user list weirdness
+ * fixed a server list bug when editing two different things
+
 2003-12-17 Andy Ruder <aeruder at ksu dot edu>
  * Finished all .nibs, got Server list working as well as all the other
    things working on the OSX port.
