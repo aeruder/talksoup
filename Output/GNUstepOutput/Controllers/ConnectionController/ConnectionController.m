@@ -79,12 +79,14 @@
 	[fieldEditor setFieldEditor: YES];
 	[fieldEditor setKeyTarget: self];
 	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
+	[fieldEditor setFont: [NSFont userFontOfSize: 12.0]];
 	
 	inputController = [[InputController alloc] initWithConnectionController: self];
 	
 	[typeView setTarget: inputController];
 	[typeView setAction: @selector(enterPressed:)];
 	[typeView abortEditing];
+	[typeView setFont: [NSFont userFontOfSize: 12.0]];
 	
 	[[content window] makeFirstResponder: typeView];
 	
