@@ -61,9 +61,9 @@ GNUstepOutput_LANGUAGES = English
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-GNUstepOutput_GUI_LIBS = -framework TalkSoupGUIs $(ADDITIONAL_FRAMEWORK_DIRS)
+GNUstepOutput_GUI_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
 else
-GNUstepOutput_GUI_LIBS = -lTalkSoupGUIs $(GUI_LIBS)
+GNUstepOutput_GUI_LIBS = -lTalkSoupBundles $(GUI_LIBS)
 endif
 
 ConnectionController = Controllers/ConnectionController/ConnectionController.m \
@@ -98,7 +98,7 @@ Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m\
 Models = Models/Channel.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
-                           $(Models)
+                           $(Models) $(Preferences)
 						   
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/application.make

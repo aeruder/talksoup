@@ -17,7 +17,7 @@
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
 #import "Models/Channel.h"
@@ -35,7 +35,11 @@
 #import <AppKit/NSFont.h>
 #import <AppKit/NSView.h>
 
-@implementation ChannelController
+@implementation StandardChannelController
++ (NSString *)standardNib
+{
+	return @"StandardChannel";
+}
 - (void)awakeFromNib
 {
 	id x;
@@ -141,12 +145,12 @@
 }
 @end
 
-@interface ChannelController (NSSplitViewDelegate)
+@interface StandardChannelController (NSSplitViewDelegate)
 - (void)splitView: (NSSplitView *)sender
     resizeSubviewsWithOldSize: (NSSize)oldSize;
 @end
 
-@implementation ChannelController (NSSplitViewDelegate)
+@implementation StandardChannelController (NSSplitViewDelegate)
 - (void)splitView: (NSSplitView *)sender
     resizeSubviewsWithOldSize: (NSSize)oldSize
 {

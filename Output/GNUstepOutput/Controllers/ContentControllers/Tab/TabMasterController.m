@@ -15,14 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#import "Controllers/TabMasterController.h"
-#import "Controllers/InputController.h"
+#import "Controllers/ContentControllers/Tab/TabMasterController.h"
+#import "Views/AttributedTabViewItem.h"
 
-#import <Foundation/NSTextField.h>
-#import <Foundation/NSTabView.h>
-#import <Foundation/NSTabItem.h>
-#import <Foundation/NSWindow.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSTabView.h>
+#import <AppKit/NSTabViewItem.h>
+#import <AppKit/NSWindow.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSValue.h>
 
 @implementation TabMasterController
 - init
@@ -47,7 +49,6 @@
 	[nickView setTarget: nil];
 	[nickView setDelegate: nil];
 	
-	[tabView setTarget: nil];
 	[tabView setDelegate: nil];
 	
 	[window setDelegate: nil];
@@ -65,9 +66,9 @@
 - addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController
 {
-	NSTabItem *tabItem;
+	AttributedTabViewItem *tabItem;
 	
-	tabItem = AUTORELEAE([AttributedTabItem new]);
+	tabItem = AUTORELEASE([AttributedTabViewItem new]);
 	
 	NSMapInsert(viewToTab, aView, tabItem);
 	NSMapInsert(viewToContent, aView, aContentController);
@@ -109,20 +110,22 @@
 	
 	[tabView setNeedsDisplay: YES];
 	
-	content = AUTORELEASE(RETAIN(NSMapGet(viewToContent, aView)));
+	content = NSMapGet(viewToContent, aView);
+	AUTORELEASE(RETAIN(content));
+
 	userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 	  self, @"Master",
 	  aView, @"View",
-	  NSMapGet(viewToContent, aView), @"Content",
+	  content, @"Content",
 	  nil];
 
 	NSMapRemove(viewToTab, aView);
 	NSMapRemove(viewToContent, aView);
 	NSMapRemove(tabToView, tab);
 	
-	[NSNotificationCenter 
+	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
-	 object:  userInfo: userInfo];
+	 object: content userInfo: userInfo];
 
 	return self;
 }
