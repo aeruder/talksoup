@@ -127,6 +127,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 		if (refColor)
 		{
 			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+			  @"HighlightTab", @"Process",
 			  refColor, @"TabColor",
 			  where, @"TabName",
 			  [NSNull null], @"TabPriority",
@@ -147,6 +148,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 		if (anyColor)
 		{
 			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+			  @"HighlightTab", @"Process",
 			  anyColor, @"TabColor",
 			  where, @"TabName",
 			  nil] onConnection: connection sender: cont];
