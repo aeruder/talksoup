@@ -1,17 +1,4 @@
 {
-    ColorPreferencesController = {
-	Actions = (
-	    "setColorPreference:"
-	);
-	Outlets = (
-	    otherColorWell,
-	    personalColorWell,
-	    textColorWell,
-	    backgroundColorWell,
-	    preferencesView
-	);
-	Super = NSObject;
-    };
     FirstResponder = {
 	Actions = (
 	    "activateContextHelpMode:",
@@ -149,8 +136,15 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:",
-	    "setColorPreference:"
+	    "zoom:"
+	);
+	Super = NSObject;
+    };
+    FontPreferencesController = {
+	Actions = (
+	);
+	Outlets = (
+	    preferencesView
 	);
 	Super = NSObject;
     };

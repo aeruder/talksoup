@@ -1,13 +1,8 @@
 {
-    ColorPreferencesController = {
+    BundlePreferencesController = {
 	Actions = (
-	    "setColorPreference:"
 	);
 	Outlets = (
-	    otherColorWell,
-	    personalColorWell,
-	    textColorWell,
-	    backgroundColorWell,
 	    preferencesView
 	);
 	Super = NSObject;
@@ -149,8 +144,7 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:",
-	    "setColorPreference:"
+	    "zoom:"
 	);
 	Super = NSObject;
     };

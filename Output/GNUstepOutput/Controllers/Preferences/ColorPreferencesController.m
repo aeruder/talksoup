@@ -17,6 +17,7 @@
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
 
 #import <AppKit/NSImage.h>
@@ -26,6 +27,11 @@
 #import <AppKit/NSWindow.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+
+NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
+NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
+NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
+NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 @implementation ColorPreferencesController
 - init
@@ -77,6 +83,45 @@
 	RELEASE(preferencesIcon);
 	[super dealloc];
 }
+- (void)setColorPreference: (NSColorWell *)aWell
+{
+	NSString *preference, *newValue, *oldValue;
+	
+	if (aWell == otherColorWell)
+	{
+		preference = GNUstepOutputOtherBracketColor;
+	} 
+	else if (aWell == personalColorWell) 
+	{
+		preference = GNUstepOutputPersonalBracketColor;
+	}
+	else if (aWell == backgroundColorWell)
+	{
+		preference = GNUstepOutputBackgroundColor;
+	}
+	else if (aWell == textColorWell)
+	{
+		preference = GNUstepOutputTextColor;
+	}
+	else
+	{
+		return;
+	}
+
+	oldValue = [_PREFS_ preferenceForKey: preference];
+	newValue = [[aWell color] encodeToData];
+	
+	[_PREFS_ setPreference: newValue forKey: preference];
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: PreferencesChangedNotification
+	 object: _GS_
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  preference, @"Preference",
+	  newValue, @"New",
+	  oldValue, @"Old",
+	  nil]];
+}
 - (NSString *)preferencesName
 {
 	return @"Color";
@@ -92,12 +137,31 @@
 }
 - (void)activate
 {
-	NSLog(@"Activated!");
-	// FIXME
+	id txColor, otherColor, persColor, bgColor;
+
+	NSLog(@"Colors Activated");
+
+	txColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputTextColor];
+	otherColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputOtherBracketColor];
+	persColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputPersonalBracketColor];
+	bgColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputBackgroundColor];
+
+	txColor = [NSColor colorFromEncodedData: txColor];
+	otherColor = [NSColor colorFromEncodedData: otherColor];
+	persColor = [NSColor colorFromEncodedData: persColor];
+	bgColor = [NSColor colorFromEncodedData: bgColor];
+
+	[textColorWell setColor: txColor];
+	[otherColorWell setColor: otherColor];
+	[personalColorWell setColor: persColor];
+	[backgroundColorWell setColor: bgColor];
 }
 - (void)deactivate
 {
-	NSLog(@"Deactivated!");
-	// FIXME
+	NSLog(@"Colors Deactivated!");
 }
 @end

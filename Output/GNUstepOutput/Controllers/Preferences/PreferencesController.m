@@ -27,6 +27,7 @@
 
 #import <TalkSoupBundles/TalkSoup.h>
 
+#import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
@@ -46,16 +47,10 @@
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 
-/* object: the preferences module */
+NSString *PreferencesChangedNotification = @"PreferencesChangedNotification";
 NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNotification";
-
-/* object: the preferences module */
 NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
 
-NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
-NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
-NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
-NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
 NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
@@ -89,6 +84,11 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 		[self dealloc];
 		return nil;
 	}
+
+	defaultPreferences = [[NSMutableDictionary alloc] initWithContentsOfFile: 
+	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
+	  pathForResource: @"Defaults"
+	  ofType: @"plist"]];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferencesModuleAdded:)
@@ -130,6 +130,92 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 	[super dealloc];
 }
+- setPreference: (id)aPreference forKey: (NSString *)aKey
+{
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
+		id newKey = [aKey substringFromIndex: 13];
+		id y;
+		
+		if ((y = [[NSUserDefaults standardUserDefaults] 
+			  objectForKey: @"GNUstepOutput"]))
+		{
+			[aDict addEntriesFromDictionary: y];
+		}
+		
+		if (aPreference)
+		{
+			[aDict setObject: aPreference forKey: newKey];
+		}
+		else
+		{
+			[aDict removeObjectForKey: newKey];
+		}
+		
+		[[NSUserDefaults standardUserDefaults]
+		   setObject: aDict forKey: @"GNUstepOutput"];
+	}
+	else
+	{
+		if (aPreference)
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  setObject: aPreference forKey: aKey];
+		}
+		else
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  removeObjectForKey: aKey];
+		}
+	}
+	
+	return self;
+}		
+- (id)preferenceForKey: (NSString *)aKey
+{
+	id z;
+	
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		id y;
+		id newKey = [aKey substringFromIndex: 13];
+		
+		y = [[NSUserDefaults standardUserDefaults] 
+		   objectForKey: @"GNUstepOutput"];
+		
+		if ((z = [y objectForKey: newKey]))
+		{
+			return z;
+		}
+		
+		z = [defaultPreferences objectForKey: newKey];
+		
+		[self setPreference: z forKey: aKey];
+		
+		return z;
+	}
+	
+	if ((z = [[NSUserDefaults standardUserDefaults]
+	     objectForKey: aKey]))
+	{
+		return z;
+	}
+	
+	z = [defaultPreferences objectForKey: aKey];
+	
+	[self setPreference: z forKey: aKey];
+	
+	return z;
+}
+- (id)defaultPreferenceForKey: (NSString *)aKey
+{
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		aKey = [aKey substringFromIndex: 13];
+	}
+	return [defaultPreferences objectForKey: aKey];
+}	  
 - (NSWindow *)window 
 {
 	return window;
@@ -554,7 +640,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[bCell setImagePosition: NSImageOnly];
 	[bCell setShowsStateBy: NSPushInCellMask];
 	[bCell setBordered: YES];
-	[bCell setBezelStyle: NSThickerSquareBezelStyle];
+	[bCell setBezelStyle: NSRegularSquareBezelStyle];
 
 	NSLog(@"button cell created: %@", bCell);
 
@@ -568,6 +654,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	{
 		[prefsList selectCellAtRow: 0 column: 0];
 		[self buttonClicked: prefsList];
+		[window makeFirstResponder: prefsList];
 	}
 }
 - (void)unregisterPreferencesModule: aPreferencesModule

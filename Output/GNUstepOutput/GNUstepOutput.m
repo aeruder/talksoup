@@ -20,6 +20,8 @@
 #import "Controllers/ConnectionController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
+#import "Controllers/Preferences/BundlePreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
@@ -85,6 +87,7 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 }
 
 GNUstepOutput *_GS_ = nil;
+PreferencesController *_PREFS_ = nil;
 
 @implementation GNUstepOutput
 - init
@@ -126,10 +129,6 @@ GNUstepOutput *_GS_ = nil;
 	if (!fontName) fontName = @"Helvetica";
 	if ([fontSize intValue] < 0 || !fontSize) fontSize = @"12";	
 	
-	defaultPreferences = [[NSMutableDictionary alloc] initWithContentsOfFile: 
-	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
-	  pathForResource: @"Defaults"
-	  ofType: @"plist"]];
 
 	/*
 	[defaultPreferences setObject: fontName
@@ -147,99 +146,12 @@ GNUstepOutput *_GS_ = nil;
 {
 	[[topic topicText] setKeyTarget: nil];
 	RELEASE(topic);
-	RELEASE(defaultPreferences);
 	RELEASE(connectionControllers);
 	RELEASE(pendingIdentToConnectionController);
 	NSFreeMapTable(connectionToConnectionController);
 	
 	[super dealloc];
 }
-- setPreference: (id)aPreference forKey: (NSString *)aKey
-{
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
-		id newKey = [aKey substringFromIndex: 13];
-		id y;
-		
-		if ((y = [[NSUserDefaults standardUserDefaults] 
-			  objectForKey: @"GNUstepOutput"]))
-		{
-			[aDict addEntriesFromDictionary: y];
-		}
-		
-		if (aPreference)
-		{
-			[aDict setObject: aPreference forKey: newKey];
-		}
-		else
-		{
-			[aDict removeObjectForKey: newKey];
-		}
-		
-		[[NSUserDefaults standardUserDefaults]
-		   setObject: aDict forKey: @"GNUstepOutput"];
-	}
-	else
-	{
-		if (aPreference)
-		{
-			[[NSUserDefaults standardUserDefaults]
-			  setObject: aPreference forKey: aKey];
-		}
-		else
-		{
-			[[NSUserDefaults standardUserDefaults]
-			  removeObjectForKey: aKey];
-		}
-	}
-	
-	return self;
-}		
-- (id)preferenceForKey: (NSString *)aKey
-{
-	id z;
-	
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		id y;
-		id newKey = [aKey substringFromIndex: 13];
-		
-		y = [[NSUserDefaults standardUserDefaults] 
-		   objectForKey: @"GNUstepOutput"];
-		
-		if ((z = [y objectForKey: newKey]))
-		{
-			return z;
-		}
-		
-		z = [defaultPreferences objectForKey: newKey];
-		
-		[self setPreference: z forKey: aKey];
-		
-		return z;
-	}
-	
-	if ((z = [[NSUserDefaults standardUserDefaults]
-	     objectForKey: aKey]))
-	{
-		return z;
-	}
-	
-	z = [defaultPreferences objectForKey: aKey];
-	
-	[self setPreference: z forKey: aKey];
-	
-	return z;
-}
-- (id)defaultPreferenceForKey: (NSString *)aKey
-{
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		aKey = [aKey substringFromIndex: 13];
-	}
-	return [defaultPreferences objectForKey: aKey];
-}	  
 - (id)connectionToConnectionController: (id)aObject
 {
 	return NSMapGet(connectionToConnectionController, aObject);
@@ -548,8 +460,10 @@ GNUstepOutput *_GS_ = nil;
 @implementation GNUstepOutput (NSApplicationDelegate)
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
-		prefs = [PreferencesController new];
+		_PREFS_ = [PreferencesController new];
 		AUTORELEASE([ColorPreferencesController new]);
+		AUTORELEASE([FontPreferencesController new]);
+		AUTORELEASE([BundlePreferencesController new]);
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {
@@ -579,13 +493,13 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {
-	if (!prefs)
+	if (!_PREFS_)
 	{
 	}
 	else
 	{
 		NSLog(@"It works!\n");
-		[[prefs window] makeKeyAndOrderFront: nil];
+		[[_PREFS_ window] makeKeyAndOrderFront: nil];
 	}
 }
 @end

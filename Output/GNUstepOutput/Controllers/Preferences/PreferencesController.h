@@ -19,10 +19,6 @@
 
 @class PreferencesController, NSString;
 
-extern NSString *GNUstepOutputPersonalBracketColor;
-extern NSString *GNUstepOutputOtherBracketColor;
-extern NSString *GNUstepOutputTextColor;
-extern NSString *GNUstepOutputBackgroundColor;
 extern NSString *GNUstepOutputServerList;
 extern NSString *GNUstepOutputFontName;
 extern NSString *GNUstepOutputFontSize;
@@ -35,6 +31,16 @@ extern NSString *GNUstepOutputScrollBack;
 
 @class NSView, NSString, NSImage;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
+@class NSDictionary, NSMutableDictionary;
+
+/* object: the bundle object 
+ *
+ * dictionary:
+ *   @"Preference" the preference string
+ *   @"Old" the old value
+ *   @"New" the new value
+ */
+extern NSString *PreferencesChangedNotification;
 
 /* object: the preferences module */
 extern NSString *PreferencesModuleAdditionNotification;
@@ -58,7 +64,13 @@ extern NSString *PreferencesModuleRemovalNotification;
 		NSView *preferencesView;
 		NSMutableArray *prefsModules;
 		id currentPrefs;
+		NSMutableDictionary *defaultPreferences;
 	}
+
+- (id)preferenceForKey: (NSString *)aKey;
+- setPreference: (id)aPreference forKey: (NSString *)aKey;
+- (id)defaultPreferenceForKey: (NSString *)aKey;
+
 - (NSWindow *)window;
 
 - (BOOL)setCurrentModule: aPrefsModule;

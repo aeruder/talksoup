@@ -15,7 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-@class ColorPreferencesController;
+@class ColorPreferencesController, NSString;
+
+extern NSString *GNUstepOutputPersonalBracketColor;
+extern NSString *GNUstepOutputOtherBracketColor;
+extern NSString *GNUstepOutputTextColor;
+extern NSString *GNUstepOutputBackgroundColor;
 
 #ifndef COLOR_PREFERENCES_CONTROLLER_H
 #define COLOR_PREFERENCES_CONTROLLER_H
@@ -27,13 +32,14 @@
 
 @interface ColorPreferencesController : NSObject 
 	{
-		NSColorWell *otherColor;
-		NSColorWell *personalColor;
-		NSColorWell *backgroundColor;
-		NSColorWell *textColor;
+		NSColorWell *otherColorWell;
+		NSColorWell *personalColorWell;
+		NSColorWell *backgroundColorWell;
+		NSColorWell *textColorWell;
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
 	}
+- (void)setColorPreference: (NSColorWell *)aWell;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
