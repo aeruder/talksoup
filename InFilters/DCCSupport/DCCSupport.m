@@ -32,6 +32,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSData.h>
 #import <Foundation/NSPathUtilities.h>
+#import <Foundation/NSBundle.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -558,7 +559,7 @@ static NSInvocation *invoc = nil;
 	id nick = [dcc receiver];
 	
 	[[_TS_ pluginForOutput] showMessage:
-	  BuildAttributedFormat(@"Transfer of %@ to %@ initiated.", path, nick)
+	  BuildAttributedFormat(_l(@"Transfer of %@ to %@ initiated."), path, nick)
 	  onConnection: aConnection];
 }	
 - (void)finishedSend: (id)dcc onConnection: aConnection
@@ -572,25 +573,25 @@ static NSInvocation *invoc = nil;
 	if ([status isEqualToString: DCCStatusDone])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ to %@ completed successfully! (%@ cps)",
+		  BuildAttributedFormat(_l(@"Transfer of %@ to %@ completed successfully! (%@ cps)"),
 		  path, nick, cps) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusTimeout])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ to %@ timed out.",
+		  BuildAttributedFormat(_l(@"Transfer of %@ to %@ timed out."),
 		  path, nick) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusAborted])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ to %@ aborted.",
+		  BuildAttributedFormat(_l(@"Transfer of %@ to %@ aborted."),
 		  path, nick) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusError])
 	{
 		[[_TS_ pluginForOutput] showMessage: 
-		  BuildAttributedFormat(@"There was an error sending %@ to %@.", 
+		  BuildAttributedFormat(_l(@"There was an error sending %@ to %@."), 
 		  path, nick) onConnection: aConnection];
 	}
 
@@ -603,7 +604,7 @@ static NSInvocation *invoc = nil;
 	id filename = [info objectForKey: DCCInfoFileName];
 	
 	[[_TS_ pluginForOutput] showMessage: 
-	  BuildAttributedFormat(@"Transfer of %@ from %@ initiated.",
+	  BuildAttributedFormat(_l(@"Transfer of %@ from %@ initiated."),
 	  filename, nick) onConnection: aConnection];
 }
 - (void)finishedReceive: (id)dcc onConnection: aConnection
@@ -619,25 +620,25 @@ static NSInvocation *invoc = nil;
 	if ([status isEqualToString: DCCStatusDone])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)",
+		  BuildAttributedFormat(_l(@"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)"),
 		  filename, path, nick, cps) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusTimeout])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ from %@ timed out.",
+		  BuildAttributedFormat(_l(@"Transfer of %@ from %@ timed out."),
 		  filename, nick) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusAborted])
 	{
 		[[_TS_ pluginForOutput] showMessage:
-		  BuildAttributedFormat(@"Transfer of %@ from %@ aborted.",
+		  BuildAttributedFormat(_l(@"Transfer of %@ from %@ aborted."),
 		  filename, nick) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusError])
 	{
 		[[_TS_ pluginForOutput] showMessage: 
-		  BuildAttributedFormat(@"There was an error receiving %@ from %@.", 
+		  BuildAttributedFormat(_l(@"There was an error receiving %@ from %@."), 
 		  filename, nick) onConnection: aConnection];
 	}
 
@@ -685,8 +686,8 @@ static NSInvocation *invoc = nil;
 	
 	if (val < 0 || val >= (int)[connections count])
 	{
-		return BuildAttributedString(@"Usage: /dcc abort <#>", @"\n",
-		  @"Aborts the connection in slot <#>.  See /dcc list.", nil);
+		return S2AS(_l(@"Usage: /dcc abort <#>" @"\n"
+		  @"Aborts the connection in slot <#>.  See /dcc list."));
 	}
 	
 	x = [connections objectAtIndex: val];
@@ -699,7 +700,7 @@ static NSInvocation *invoc = nil;
 	{
 		x = [NSDictionary dictionaryWithDictionary: x];
 		[connections removeObjectAtIndex: val];
-		return BuildAttributedFormat(@"Offer of the file %@ from %@ removed.",
+		return BuildAttributedFormat(_l(@"Offer of the file %@ from %@ removed."),
 		  [x objectForKey: DCCInfoFileName], [x objectForKey: DCCInfoNick]);
 	}
 	
@@ -714,9 +715,9 @@ static NSInvocation *invoc = nil;
 	
 	if ([x count] == 0)
 	{
-		return BuildAttributedString(@"Usage: /dcc gettimeout <seconds>", @"\n",
-		  @"Sets the timeout in seconds on receiving files.", @"\n",
-		  @"Current timeout: ", get_default(dcc_gettimeout), nil);
+		return BuildAttributedString(_l(@"Usage: /dcc gettimeout <seconds>" @"\n"
+		  @"Sets the timeout in seconds on receiving files." @"\n"
+		  @"Current timeout: "), get_default(dcc_gettimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
@@ -725,7 +726,7 @@ static NSInvocation *invoc = nil;
 	
 	SET_DEFAULT_INT(dcc_gettimeout, val);
 	
-	return S2AS(@"Ok.");
+	return S2AS(_l(@"Ok."));
 }
 - (NSAttributedString *)commandDCCSENDTIMEOUT: (NSString *)command connection: (id)connection
 {
@@ -736,9 +737,9 @@ static NSInvocation *invoc = nil;
 	
 	if ([x count] == 0)
 	{
-		return BuildAttributedString(@"Usage: /dcc sendtimeout <seconds>", @"\n",
-		  @"Sets the timeout in seconds on sending files.", @"\n",
-		  @"Current timeout: ", get_default(dcc_sendtimeout), nil);
+		return BuildAttributedString(_l(@"Usage: /dcc sendtimeout <seconds>" @"\n"
+		  @"Sets the timeout in seconds on sending files." @"\n"
+		  @"Current timeout: "), get_default(dcc_sendtimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
@@ -747,7 +748,7 @@ static NSInvocation *invoc = nil;
 	
 	SET_DEFAULT_INT(dcc_sendtimeout, val);
 	
-	return S2AS(@"Ok.");
+	return S2AS(_l(@"Ok."));
 }
 - (NSAttributedString *)commandDCCSEND: (NSString *)command connection: (id)connection
 {
@@ -764,9 +765,9 @@ static NSInvocation *invoc = nil;
 	
 	if ([x count] < 2)
 	{
-		return BuildAttributedString(
-		 @"Usage: /dcc send <user> <file>", @"\n",
-		 @"Requests <user> to receive file named <file>", nil);
+		return S2AS(
+		 _l(@"Usage: /dcc send <user> <file>" @"\n"
+		 @"Requests <user> to receive file named <file>"));
 	}
 	
 	user = [x objectAtIndex: 0];
@@ -776,7 +777,7 @@ static NSInvocation *invoc = nil;
 	
 	if (![dfm fileExistsAtPath: path isDirectory: &isDir] || isDir)
 	{
-		return S2AS(@"That file does not exist.");
+		return S2AS(_l(@"That file does not exist."));
 	}
 	
 	connections = [self getConnectionTable: connection];
@@ -789,7 +790,7 @@ static NSInvocation *invoc = nil;
 		[connections addObject: sender];
 	}
 
-	return BuildAttributedFormat(@"Offering %@ to %@.", path, user);
+	return BuildAttributedFormat(_l(@"Offering %@ to %@."), path, user);
 }
 - (NSAttributedString *)commandDCCLIST: (NSString *)command connection: (id)connection
 {
@@ -809,9 +810,9 @@ static NSInvocation *invoc = nil;
 		if ([object isKindOfClass: [NSDictionary class]])
 		{
 			[attr appendAttributedString: 
-			  BuildAttributedFormat(@"%@. %@ %@ has requested to send %@ (%@ bytes)",
+			  BuildAttributedFormat(_l(@"%@. %@ %@ has requested to send %@ (%@ bytes)"),
 			  [NSString stringWithFormat: @"%d", index + 1],
-			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"REQUEST", nil), 
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, _l(@"REQUEST"), nil), 
 			  [object objectForKey: DCCInfoNick],
 			  [object objectForKey: DCCInfoFileName],  
 			  [NSString stringWithFormat: @"%d", [[object objectForKey: DCCInfoFileSize] intValue]])];
@@ -819,9 +820,9 @@ static NSInvocation *invoc = nil;
 		if ([object isKindOfClass: [DCCGetter class]])
 		{
 			[attr appendAttributedString: 
-			  BuildAttributedFormat(@"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)",
+			  BuildAttributedFormat(_l(@"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)"),
 			  [NSString stringWithFormat: @"%d", index + 1],
-			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"RECEIVING", nil),
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, _l(@"RECEIVING"), nil),
 			  [[object info] objectForKey: DCCInfoNick],  
 			  [[object info] objectForKey: DCCInfoFileName], 
 			  [object percentDone],
@@ -834,18 +835,18 @@ static NSInvocation *invoc = nil;
 			if ([[object status] isEqualToString: DCCStatusConnecting])
 			{
 			[attr appendAttributedString: 
-			  BuildAttributedFormat(@"%@. %@ You have offered to send %@ to %@",
+			  BuildAttributedFormat(_l(@"%@. %@ You have offered to send %@ to %@"),
 			  [NSString stringWithFormat: @"%d", index + 1],
-			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"OFFERED", nil),
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, _l(@"OFFERED"), nil),
 			  [object path],  
 			  [object receiver])];
 			}
 			else
 			{
 			[attr appendAttributedString: 
-			  BuildAttributedFormat(@"%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)",
+			  BuildAttributedFormat(_l(@"%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)"),
 			  [NSString stringWithFormat: @"%d", index + 1],
-			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"SENDING", nil),
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, _l(@"SENDING"), nil),
 			  [object path],  
 			  [object receiver], 
 			  [object percentDone],
@@ -858,7 +859,7 @@ static NSInvocation *invoc = nil;
 	}
 	
 	[attr appendAttributedString: 
-	  S2AS(@"End of list.")];
+	  S2AS(_l(@"End of list."))];
 
 	return attr;
 }
@@ -879,11 +880,10 @@ static NSInvocation *invoc = nil;
 	
 	if ([x count] == 0)
 	{
-		return BuildAttributedString(@"Usage: /dcc get <#> [-c] [filename]", @"\n",
+		return S2AS(_l(@"Usage: /dcc get <#> [-c] [filename]" @"\n"
 		  @"Receives the file at <#> position (see /dcc list)."
-		  @"If [filename] isn't specified, it will be put into the default",
-		  @" directory (see /dcc setdir) with the filename specified by the sender.",
-		  nil);
+		  @"If [filename] isn't specified, it will be put into the default"
+		  @" directory (see /dcc setdir) with the filename specified by the sender."));
 	}
 
 	number = [[x objectAtIndex: 0] intValue] - 1;
@@ -891,7 +891,7 @@ static NSInvocation *invoc = nil;
 	if (number >= (int)[connections count] || 
 	    !([(dict = [connections objectAtIndex: number]) isKindOfClass: [NSDictionary class]]))
 	{
-		return BuildAttributedString(@"The specified index is invalid. Please see /dcc list.", nil);
+		return S2AS(_l(@"The specified index is invalid. Please see /dcc list."));
 	}
 	
 	path = @"";
@@ -932,7 +932,7 @@ static NSInvocation *invoc = nil;
 		{
 			if ((path = unique_path(path)) == nil)
 			{
-				return S2AS(@"Could not find a unique file name.");
+				return S2AS(_l(@"Could not find a unique file name."));
 			}
 		}
 	}
@@ -976,10 +976,10 @@ static NSInvocation *invoc = nil;
 	
 	if ([dir length] == 0)
 	{
-		return BuildAttributedString(@"Usage: /dcc setdir [-f] <directory>", @"\n",
-		  @"Sets the default download directory to <directory>, if -f is specified ",
-		  @"the directory will be created if it doesn't already exist.", @"\n",
-		  @"Currently: ", [get_default(dcc_dir) stringByExpandingTildeInPath], nil);
+		return BuildAttributedString(_l(@"Usage: /dcc setdir [-f] <directory>" @"\n"
+		  @"Sets the default download directory to <directory>, if -f is specified "
+		  @"the directory will be created if it doesn't already exist." @"\n"
+		  @"Currently: "), [get_default(dcc_dir) stringByExpandingTildeInPath], nil);
 	}
 	
 	dfm = [NSFileManager defaultManager];	
@@ -995,7 +995,7 @@ static NSInvocation *invoc = nil;
 	{
 		if (!isDir)
 		{
-			return S2AS(@"File exists at path.");
+			return S2AS(_l(@"File exists at path."));
 		}
 	}
 	else if (force)
@@ -1026,7 +1026,7 @@ static NSInvocation *invoc = nil;
 		
 		if (object)
 		{
-			return S2AS(@"Could not create directory.");
+			return S2AS(_l(@"Could not create directory."));
 		}
 	}
 	else
@@ -1037,10 +1037,10 @@ static NSInvocation *invoc = nil;
 	if (couldCreate)
 	{
 		set_default(dcc_dir, dir);
-		return S2AS(@"Ok.");
+		return S2AS(_l(@"Ok."));
 	}
 
-	return S2AS(@"Directory does not exist. Try the -f flag.");
+	return S2AS(_l(@"Directory does not exist. Try the -f flag."));
 }
 - (NSAttributedString *)commandDCC: (NSString *)command connection: (id)connection
 {
@@ -1061,15 +1061,14 @@ static NSInvocation *invoc = nil;
 		}
 	}
 	
-	return BuildAttributedString(@"Usage:", @"\n", 
-	  @"/dcc list (lists current connections and requests)", @"\n",
-	  @"/dcc get (receives a file)", @"\n",
-	  @"/dcc setdir (sets default download directory)", @"\n",
-	  @"/dcc send (sends a file)", @"\n",
-	  @"/dcc gettimeout (sets timeout on receiving files)", @"\n",
-	  @"/dcc sendtimeout (sets timeout on sending files)", @"\n",
-	  @"/dcc abort (aborts a connection)",
-	  nil);
+	return S2AS(_l(@"Usage:" @"\n" 
+	  @"/dcc list (lists current connections and requests)" @"\n"
+	  @"/dcc get (receives a file)" @"\n"
+	  @"/dcc setdir (sets default download directory)" @"\n"
+	  @"/dcc send (sends a file)" @"\n"
+	  @"/dcc gettimeout (sets timeout on receiving files)" @"\n"
+	  @"/dcc sendtimeout (sets timeout on sending files)" @"\n"
+	  @"/dcc abort (aborts a connection)"));
 }	
 - init
 {
@@ -1099,12 +1098,12 @@ static NSInvocation *invoc = nil;
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"Provides a interface to DCC file transfer "
+	 _l(@"Description: " @"Provides a interface to DCC file transfer "
 	 @"through the /dcc command.  Type /dcc when this bundle is loaded "
 	 @"for more information.\n\n"
-	 @"Copyright (C) 2003 by Andrew Ruder", nil);
+	 @"Copyright (C) 2003 by Andrew Ruder"), nil);
 }
 - DCCSendRequestReceived: (NSDictionary *)aInfo onConnection: aConnection
 {
@@ -1115,7 +1114,7 @@ static NSInvocation *invoc = nil;
 	[connections addObject: aInfo];
 	
 	[[_TS_ pluginForOutput] showMessage: BuildAttributedFormat(
-	  @"%@ (%@:%@) has requested to send %@ (%@ bytes)",
+	  _l(@"%@ (%@:%@) has requested to send %@ (%@ bytes)"),
 	  [aInfo objectForKey: DCCInfoNick],
 	  [[aInfo objectForKey: DCCInfoHost] address],
 	  [NSString stringWithFormat: @"%hu", 

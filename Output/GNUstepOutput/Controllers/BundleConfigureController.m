@@ -152,7 +152,7 @@ static NSString *big_description = nil;
 + (void)initialize
 {
 	 big_description = 
-	 @"Welcome to the TalkSoup Bundle Configuration Interface.\n\n"
+	 _l((@"Welcome to the TalkSoup Bundle Configuration Interface.\n\n"
 	 @"TalkSoup is a highly-modular IRC client, and parts of it "
 	 @"can be loaded and unloaded while it is running.  These "
 	 @"optional parts are called bundles.  There are two sets "
@@ -171,7 +171,7 @@ static NSString *big_description = nil;
 	 @"the two tables.\n\n"
 
 	 @"Clicking on any bundle will show information about "
-	 @"that bundle in this text area.";
+	 @"that bundle in this text area."));
 }
 - (void)awakeFromNib
 {

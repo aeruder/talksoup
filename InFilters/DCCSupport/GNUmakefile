@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+DCCSupport_LANGUAGES = English
+DCCSupport_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 DCCSupport_PRINCIPAL_CLASS = DCCSupport
 
 DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m

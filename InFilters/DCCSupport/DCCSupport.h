@@ -17,6 +17,16 @@
 
 @class DCCSupport;
 
+@class NSBundle;
+
+#ifdef _l
+	#undef _l
+#endif
+
+#define _l(X) [[NSBundle bundleForClass: [DCCSupport class]] \
+               localizedStringForKey: (X) value: nil \
+               table: @"Localizable"]
+
 #ifndef DCCSUPPORT_H
 #define DCCSUPPORT_H
 

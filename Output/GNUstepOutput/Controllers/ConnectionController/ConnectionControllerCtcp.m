@@ -52,10 +52,8 @@
 - CTCPRequestCLIENTINFO: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {
 	[_TS_ sendCTCPReply: S2AS(@"CLIENTINFO") withArgument:
-	  BuildAttributedString(@"TalkSoup can be obtained from: "
-	    @"http://linuks.mine.nu/andy/ "
-		 @"http://www.freshmeat.net/talksoup/ or "
-		 @"http://andyruder.tripod.com", nil)
+	  BuildAttributedString(_l(@"TalkSoup can be obtained from: ")
+	    @"http://aeruder.gnustep.us ", nil)
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
 	  onConnection: connection 
 	  withNickname: S2AS([connection nick])
