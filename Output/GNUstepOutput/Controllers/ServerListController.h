@@ -34,7 +34,7 @@ extern NSString *ServerListInfoAutoConnect;
 #import <Foundation/NSObject.h>
 
 @class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView, NSArray;
-@class NSDictionary;
+@class NSDictionary, NSMutableArray;
 
 @interface ServerListController : NSObject
 	{
@@ -51,6 +51,8 @@ extern NSString *ServerListInfoAutoConnect;
 		id editor;
 		int wasEditing;
 	}
++ (BOOL)saveServerListPreferences: (NSArray *)aPrefs;
++ (NSMutableArray *)serverListPreferences;
 
 + (BOOL)startAutoconnectServers;
 + (NSDictionary *)serverInGroup: (int)group row: (int)row;

@@ -24,6 +24,8 @@
 
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSFileManager.h>
+#import <Foundation/NSPathUtilities.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTableColumn.h>
@@ -44,46 +46,46 @@ NSString *ServerListInfoName = @"Name";
 NSString *ServerListInfoEntries = @"Entries";
 NSString *ServerListInfoAutoConnect = @"AutoConnect";
 
-static inline NSMutableArray *mutablized_prefs()
+static id mutable_object(id object)
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-		  GNUstepOutputServerList];
-	NSEnumerator *iter, *iter2;
-	id o1, o2;
-	id t1, t2;
-	id work = AUTORELEASE([NSMutableArray new]);
-	
-	if (!tmp) return work;
-	
-	iter = [tmp objectEnumerator];
-	
-	while ((o1 = [iter nextObject]))
+	if ( [object isKindOfClass: [NSString class]] && 
+	    ![object isKindOfClass: [NSMutableString class]])
 	{
-		o1 = [NSMutableDictionary dictionaryWithDictionary: o1];
-		
-		t1 = [o1 objectForKey: ServerListInfoEntries];
-		if (!t1)
+		return [NSMutableString stringWithString: object];
+	} 
+	else if ( [object isKindOfClass: [NSDictionary class]] )
+	{
+		id dict = [NSMutableDictionary dictionaryWithCapacity: [object count]];
+		id iter;
+		id iterobj;
+
+		iter = [object keyEnumerator];
+		while ((iterobj = [iter nextObject]))
 		{
-			t2 = AUTORELEASE([NSMutableArray new]);
+			[dict setObject: mutable_object([object objectForKey: iterobj])
+			  forKey: iterobj];
 		}
-		else
+
+		return dict;
+	}
+	else if ( [ object isKindOfClass: [NSArray class]] )
+	{
+		id arr = [NSMutableArray arrayWithCapacity: [object count]];
+		id iter;
+		id iterobj;
+
+		iter = [object objectEnumerator];
+		while ((iterobj = [iter nextObject]))
 		{
-			t2 = AUTORELEASE([NSMutableArray new]);
-			iter2 = [t1 objectEnumerator];
-			while ((o2 = [iter2 nextObject]))
-			{
-				o2 = [NSMutableDictionary dictionaryWithDictionary: o2];
-				[t2 addObject: o2];
-			}
+			[arr addObject: mutable_object(iterobj)];
 		}
-		
-		[o1 setObject: t2 forKey: ServerListInfoEntries];
-		
-		[work addObject: o1];
+
+		return arr;
 	}
 	
-	return work;
+	return object;
 }
+
 static int sort_server_dictionary(id first, id second, void *x)
 {
 	return [[first objectForKey: ServerListInfoName] caseInsensitiveCompare:
@@ -91,10 +93,94 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 
 @implementation ServerListController
++ (BOOL)saveServerListPreferences: (NSArray *)aPrefs
+{
+	NSArray *x;
+	NSFileManager *fm;
+	NSEnumerator *iter;
+	id object;
+	BOOL isDir;
+
+	if (!aPrefs) return NO;
+
+	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,
+	  NSUserDomainMask, YES);
+
+	fm = [NSFileManager defaultManager];
+
+	iter = [x objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		object = [object stringByAppendingString:
+#ifdef GNUSTEP
+		  @"/ApplicationSupport/"
+#else
+		  @"/Application Support/"
+#endif
+		  @"TalkSoup/Output/GNUstepOutput/Resources"
+		];
+
+		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
+		{
+			id dict = AUTORELEASE([NSMutableDictionary new]);
+			object = [object stringByAppendingString: @"ServerList.plist"];
+
+			[dict setObject: aPrefs forKey: @"Servers"];
+			
+			if ([dict writeToFile: object atomically: YES])
+			{
+				return YES;
+			}
+		}
+	}
+
+	return NO;
+}
++ (NSMutableArray *)serverListPreferences
+{
+	NSArray *x;
+	NSFileManager *fm;
+	NSEnumerator *iter;
+	id object;
+	BOOL isDir;
+
+	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,
+	  NSAllDomainsMask, YES);
+
+	fm = [NSFileManager defaultManager];
+
+	iter = [x objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		object = [object stringByAppendingString:
+#ifdef GNUSTEP
+		  @"/ApplicationSupport/"
+#else
+		  @"/Application Support/"
+#endif
+		  @"TalkSoup/Output/GNUstepOutput/Resources/ServerList.plist"
+		];
+
+		if ([fm fileExistsAtPath: object isDirectory: &isDir] && !isDir)
+		{
+			id dict = [NSDictionary dictionaryWithContentsOfFile: object];
+			id obj;
+			
+			if (dict && (obj = [dict objectForKey: @"Servers"])
+			 && [obj isKindOfClass: [NSArray class]])
+			{
+				return mutable_object(obj);
+			}
+		}
+	}
+
+	return AUTORELEASE([NSMutableArray new]);
+}
 + (BOOL)startAutoconnectServers
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-		  GNUstepOutputServerList];
+	id tmp = [ServerListController serverListPreferences];
 	NSEnumerator *iter;
 	NSEnumerator *iter2;
 	BOOL hadOne = NO;
@@ -125,8 +211,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 + (NSDictionary *)serverInGroup: (int)group row: (int)row
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-		  GNUstepOutputServerList];
+	id tmp = [ServerListController serverListPreferences];
 	
 	if (group >= (int)[tmp count] || group < 0) return nil;
 	
@@ -139,7 +224,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 + (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row
 {
-	id tmp = mutablized_prefs();
+	id tmp = [ServerListController serverListPreferences]; 
 	id array;
 	
 	if (group >= (int)[tmp count] || group < 0) return;
@@ -151,13 +236,11 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	[array replaceObjectAtIndex: row withObject: x];
 
-	[_GS_ setDefaultsObject: tmp forKey: 
-	  GNUstepOutputServerList];
+	[ServerListController saveServerListPreferences: tmp];
 }
 + (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-		  GNUstepOutputServerList];
+	id tmp = [ServerListController serverListPreferences];
 	NSEnumerator *iter;
 	NSEnumerator *iter2;
 	id o1, o2;
@@ -199,10 +282,9 @@ static int sort_server_dictionary(id first, id second, void *x)
 	[window setDelegate: self];
 	[window makeKeyAndOrderFront: nil];
 	
-	tmp = mutablized_prefs();
+	tmp = [ServerListController serverListPreferences];
 	[tmp sortUsingFunction: sort_server_dictionary context: 0]; 
-	[_GS_ setDefaultsObject: tmp
-	  forKey: GNUstepOutputServerList];
+	[ServerListController saveServerListPreferences: tmp];
 	[browser reloadColumn: 0];
 	
 	[_GS_ addServerList: self];
@@ -236,7 +318,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	{
 		NSMutableArray *x;
 		id newOne;
-		x = mutablized_prefs();
+		x = [ServerListController serverListPreferences];
 		
 		if (wasEditing != -1 && wasEditing < (int)[x count])
 		{
@@ -256,8 +338,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		}
 	
 		[x sortUsingFunction: sort_server_dictionary context: 0]; 
-		[_GS_ setDefaultsObject: x
-		 forKey: GNUstepOutputServerList];
+		[ServerListController saveServerListPreferences: x];
 	
 		[browser reloadColumn: 0]; 
 		
@@ -278,7 +359,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		id array;
 		id newOne;
-		id prefs = mutablized_prefs();
+		id prefs = [ServerListController serverListPreferences];
 		
 		if ([server length] == 0)
 		{
@@ -340,8 +421,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		}
 	
 		[array sortUsingFunction: sort_server_dictionary context: 0];
-		[_GS_ setDefaultsObject: prefs
-		 forKey: GNUstepOutputServerList];
+		[ServerListController saveServerListPreferences: prefs];
 	
 		[browser reloadColumn: 1]; 
 		
@@ -405,8 +485,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)editHit: (NSButton *)sender
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-	  GNUstepOutputServerList];
+	id tmp = [ServerListController serverListPreferences]; 
 	int row;
 	id o;
 
@@ -460,7 +539,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)removeHit: (NSButton *)sender
 {
-	id prefs = mutablized_prefs();
+	id prefs = [ServerListController serverListPreferences];
 	int row;
 	
 	if ([browser selectedColumn] == 0)
@@ -471,8 +550,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[prefs removeObjectAtIndex: row];
 		
-		[_GS_ setDefaultsObject: prefs
-		 forKey: GNUstepOutputServerList];
+		[ServerListController saveServerListPreferences: prefs];
 	
 		[browser reloadColumn: 0];
 	}
@@ -490,16 +568,14 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[x removeObjectAtIndex: row];
 		
-		[_GS_ setDefaultsObject: prefs
-		 forKey: GNUstepOutputServerList];
+		[ServerListController saveServerListPreferences: prefs];
 	
 		[browser reloadColumn: 1];
 	}		
 }
 - (void)connectHit: (NSButton *)sender
 {
-	id tmp = [_GS_ defaultsObjectForKey:
-	  GNUstepOutputServerList];
+	id tmp = [ServerListController serverListPreferences];
 	id win;
 	id aContent = nil;
 	
@@ -583,8 +659,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 @implementation ServerListController (BrowserDelegate)
 - (int)browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
-	id serverList = [_GS_ defaultsObjectForKey:
-	  GNUstepOutputServerList];
+	id serverList = [ServerListController serverListPreferences]; 
 	
 	if (!serverList)
 	{
@@ -630,8 +705,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 - (void)browser: (NSBrowser *)sender willDisplayCell: (id)cell
   atRow: (int)row column: (int)column
 {
-	id serverList = [_GS_ defaultsObjectForKey:
-	  GNUstepOutputServerList];
+	id serverList = [ServerListController serverListPreferences]; 
 
 	if (!serverList) return;
 	

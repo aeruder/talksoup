@@ -128,10 +128,10 @@ static inline NSArray *get_directories_with_talksoup()
 	while ((object = [iter nextObject]))
 	{
 		object = [object stringByAppendingString: 
-#ifdef __APPLE__
-		  @"/Application Support/TalkSoup"
-#else
+#ifdef GNUSTEP 
 		  @"/ApplicationSupport/TalkSoup"
+#else
+		  @"/Application Support/TalkSoup"
 #endif
 		  ];
 		
