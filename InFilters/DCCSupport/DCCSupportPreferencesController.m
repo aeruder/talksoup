@@ -53,6 +53,15 @@
 }
 - (void)reloadData
 {
+	id path1 = get_default(DCCCompletedDirectory);
+	id path2 = get_default(DCCDownloadDirectory);
+	
+	path1 = [path1 stringByStandardizingPath];
+	path2 = [path2 stringByStandardizingPath];
+	
+	set_default(DCCCompletedDirectory, path1);
+	set_default(DCCDownloadDirectory, path2);
+	
 	[changeCompletedField setStringValue: 
 	  get_default(DCCCompletedDirectory)];
 	[changeDownloadField setStringValue:

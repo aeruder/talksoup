@@ -83,6 +83,8 @@ static NSString *unique_path(NSString *path)
 	
 	dfm = [NSFileManager defaultManager];
 	
+	if (![dfm fileExistsAtPath: path]) return path;
+
 	for (x = 0; x < 10000000; x++)
 	{
 		temp = 
@@ -223,9 +225,38 @@ static NSString *unique_path(NSString *path)
 	
 	if ([status isEqualToString: DCCStatusDone])
 	{
+		id completed = get_default(DCCCompletedDirectory);
+		id filename = [path lastPathComponent];
+		id fm, newpath;
+		
+		completed = [completed stringByStandardizingPath];
+		
 		[[_TS_ pluginForOutput] showMessage:
 		  BuildAttributedFormat(_l(@"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)"),
 		  filename, path, nick, cps) onConnection: aConnection];
+		fm = [NSFileManager defaultManager];
+		
+		newpath = [NSString stringWithFormat: @"%@/%@", completed, filename];
+		newpath = unique_path(newpath);
+		if (!newpath)
+		{
+			[[_TS_ pluginForOutput] showMessage:
+			  BuildAttributedFormat(_l(@"Could not move %@ into %@"),
+			  filename, completed) onConnection: aConnection];
+			return;
+		}
+		
+		if (![fm movePath: path toPath: newpath handler: nil])
+		{
+			[[_TS_ pluginForOutput] showMessage:
+			  BuildAttributedFormat(_l(@"Could not move %@ to %@"),
+			  filename, newpath) onConnection: aConnection];
+			return;
+		}
+		
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(_l(@"%@ moved to %@"), 
+		  filename, newpath) onConnection: aConnection];
 	}
 	else if ([status isEqualToString: DCCStatusTimeout])
 	{
@@ -475,7 +506,7 @@ static NSString *unique_path(NSString *path)
 	id path;
 	id dict;
 	int number;
-	BOOL tryContinue = NO, isDir;
+	BOOL isDir;
 	id dfm;
 	id getter;
 	NSMutableArray *connections;
@@ -486,7 +517,7 @@ static NSString *unique_path(NSString *path)
 	
 	if ([x count] == 0)
 	{
-		return S2AS(_l(@"Usage: /dcc get <#> [-c] [filename]" @"\n"
+		return S2AS(_l(@"Usage: /dcc get <#> [filename]" @"\n"
 		  @"Receives the file at <#> position (see /dcc list)."
 		  @"If [filename] isn't specified, it will be put into the default"
 		  @" directory (see /dcc setdir) with the filename specified by the sender."));
@@ -505,20 +536,6 @@ static NSString *unique_path(NSString *path)
 	if ([x count] == 2)
 	{
 		path = [x objectAtIndex: 1];
-		if ([path hasPrefix: @"-c"])
-		{
-			x = [path separateIntoNumberOfArguments: 2];
-			tryContinue = YES;
-			
-			if ([x count] <= 1)
-			{
-				path = @"";
-			}
-			else
-			{
-				path = [x objectAtIndex: 1];
-			}
-		}
 	}
 	
 	dfm = [NSFileManager defaultManager];
@@ -533,18 +550,12 @@ static NSString *unique_path(NSString *path)
 		path = [NSString stringWithFormat: @"%@/%@", x, fix_file_name(path)];
 	}
 	
-	path = [path stringByExpandingTildeInPath];
 	path = [path stringByStandardizingPath];
 
-	if ([dfm fileExistsAtPath: path isDirectory: &isDir])
+	path = unique_path(path);
+	if (!path)
 	{
-		if (isDir || !tryContinue)
-		{
-			if ((path = unique_path(path)) == nil)
-			{
-				return S2AS(_l(@"Could not find a unique file name."));
-			}
-		}
+		return S2AS(_l(@"Could not find a unique file name."));
 	}
 	
 	getter = AUTORELEASE([[DCCGetter alloc] initWithInfo: dict withFileName: path
