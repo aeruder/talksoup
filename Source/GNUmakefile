@@ -7,7 +7,7 @@ TalkSoup_OBJC_FILES = TalkSoup.m main.m Dummy.m Functions.m
 TalkSoup_RESOURCE_FILES = Defaults.plist
 TalkSoup_INCLUDE_FILES = TalkSoup.h
 
-TalkSoup_FRAMEWORKS = -lTalkSoupApp
+TalkSoup_FRAMEWORKS = -lTalkSoupBundles
 
 ADDITIONAL_OBJCFLAGS = -Wall
 
