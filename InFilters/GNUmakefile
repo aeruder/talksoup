@@ -1,5 +1,5 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-SUBPROJECTS =
+SUBPROJECTS = Highlighting
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
