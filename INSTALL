@@ -21,7 +21,13 @@ Copyright (C) 2002 Andy Ruder
 Comments are welcome.
 ===============================================================================
 
-The file INSTALL has installation instructions
+Very simple:
+
+1. make
+2. make install
+3. gopen Charla.app
+
+Enjoy!
 
 ===============================================================================
 Copyright (C) 2002 by Andy Ruder <aeruder@yahoo.com>

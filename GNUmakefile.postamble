@@ -1,5 +1,0 @@
-before-all::
-	$(MKDIRS) ./$(GNUSTEP_OBJ_DIR)/Source
-	$(MKDIRS) ./$(GNUSTEP_OBJ_DIR)/Source/TerminalView
-	$(MKDIRS) ./$(GNUSTEP_OBJ_DIR)/Source/NetClasses
-	$(MKDIRS) ./$(GNUSTEP_OBJ_DIR)/Source/Preferences
