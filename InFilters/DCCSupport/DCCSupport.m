@@ -1050,6 +1050,18 @@ static NSInvocation *invoc = nil;
 
 	return S2AS(_l(@"Directory does not exist. Try the -f flag."));
 }
+- (NSAttributedString *)commandDCCHELP: (NSString *)command connection: (id)connection
+{
+	return S2AS(_l(@"Usage:" @"\n" 
+	  @"/dcc (lists current connections and requests)" @"\n"
+	  @"/dcc get (receives a file)" @"\n"
+	  @"/dcc setdir (sets default download directory)" @"\n"
+	  @"/dcc send (sends a file)" @"\n"
+	  @"/dcc gettimeout (sets timeout on receiving files)" @"\n"
+	  @"/dcc sendtimeout (sets timeout on sending files)" @"\n"
+	  @"/dcc abort (aborts a connection)" @"\n"
+	  @"/dcc help (this help)"));
+}	
 - (NSAttributedString *)commandDCC: (NSString *)command connection: (id)connection
 {
 	id x = [command separateIntoNumberOfArguments: 2];
@@ -1069,14 +1081,7 @@ static NSInvocation *invoc = nil;
 		}
 	}
 	
-	return S2AS(_l(@"Usage:" @"\n" 
-	  @"/dcc list (lists current connections and requests)" @"\n"
-	  @"/dcc get (receives a file)" @"\n"
-	  @"/dcc setdir (sets default download directory)" @"\n"
-	  @"/dcc send (sends a file)" @"\n"
-	  @"/dcc gettimeout (sets timeout on receiving files)" @"\n"
-	  @"/dcc sendtimeout (sets timeout on sending files)" @"\n"
-	  @"/dcc abort (aborts a connection)"));
+	return [self commandDCCLIST: arg connection: connection];
 }	
 - init
 {
