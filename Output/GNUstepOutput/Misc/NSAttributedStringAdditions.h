@@ -21,6 +21,8 @@
 #import <Foundation/NSAttributedString.h>
 
 extern NSString *TypeOfColor;
+extern NSString *InverseTypeForeground;
+extern NSString *InverseTypeBackground;
 
 @class NSFont, NSColor;
  
@@ -30,8 +32,8 @@ extern NSString *TypeOfColor;
 @end
 
 @interface NSMutableAttributedString (OutputAdditions2)	  
-- fixInverseWithBackgroundColor: (NSColor *)bg withOldBackgroundColor: (NSColor *)obg
-   withForegroundColor: (NSColor *)fg withOldForegroundColor: (NSColor *)ofg;
++ (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString;
+- (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey;
 @end
 
 #endif

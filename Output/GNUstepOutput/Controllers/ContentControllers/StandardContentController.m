@@ -37,8 +37,6 @@
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSNull.h>
 
-static NSString *TypeOfColor = @"TypeOfColor";
- 
 @interface StandardContentController (PrivateMethods)
 - (NSColor *)colorForKey: (NSString *)aKey;
 - (void)viewSelected: (NSNotification *)aNotification;
@@ -316,7 +314,6 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	id controller = nil;
 	id string;
-	NSRange aRange;
 	
 	if (!aMessage) return;
 	
@@ -354,75 +351,9 @@ static NSString *TypeOfColor = @"TypeOfColor";
 
 	controller = [[controller chatView] textStorage];	
 	
-	if ([aMessage isKindOfClass: [NSAttributedString class]])
-	{
-		aRange = NSMakeRange(0, [aMessage length]);
-		// Change those attributes used by the underlying TalkSoup system into attributes
-		// used by AppKit
-		string = [aMessage substituteColorCodesIntoAttributedStringWithFont: chatFont];
-		
-		// NOTE: a large part of the code below sets an attribute called 'TypeOfColor' to the
-		// GNUstepOutput type of color.  This is used to more accurately change the colors should
-		// the colors change at a later time.
-		
-		// Set the foreground to the default background color when the foreground color
-		// does not already have a color and IRCReverse is set
-		[string setAttribute: NSForegroundColorAttributeName toValue:
-		  [self colorForKey: GNUstepOutputBackgroundColor]
-		  inRangesWithAttributes: [NSArray arrayWithObjects: NSForegroundColorAttributeName,
-		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    IRCReverseValue, nil] withRange: aRange];
-		
-		// Set the background to the default foreground color when the background color
-		// does not already have a color and IRCReverse is set.
-		[string setAttribute: NSBackgroundColorAttributeName toValue:
-		  [self colorForKey: GNUstepOutputTextColor]
-		  inRangesWithAttributes: [NSArray arrayWithObjects: NSBackgroundColorAttributeName,
-		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    IRCReverseValue, nil] withRange: aRange];		
-		
-		// When NSForegroundColorAttribute is not set, set the type of color to foreground color
-		[string setAttribute: TypeOfColor toValue: GNUstepOutputTextColor
-		  inRangesWithAttributes: 
-		    [NSArray arrayWithObjects: NSForegroundColorAttributeName,
-		      TypeOfColor, nil]
-		  matchingValues: 
-		    [NSArray arrayWithObjects: [NSNull null], [NSNull null], nil]
-		  withRange: aRange];
-		// and then set the actual color to the foreground color
-		[string setAttribute: NSForegroundColorAttributeName
-		  toValue: [self colorForKey: GNUstepOutputTextColor]
-		 inRangesWithAttribute: TypeOfColor
-		  matchingValue: GNUstepOutputTextColor
-		 withRange: aRange];
-		 
-		// set the other bracket colors type of color attribute 
-		[string setAttribute: NSForegroundColorAttributeName
-		  toValue: [self colorForKey: GNUstepOutputOtherBracketColor]
-		 inRangesWithAttribute: TypeOfColor
-		  matchingValue: GNUstepOutputOtherBracketColor
-		 withRange: aRange];
-		
-		// set the personal bracket colors type of color attribute
-		[string setAttribute: NSForegroundColorAttributeName
-		  toValue: [self colorForKey: GNUstepOutputPersonalBracketColor]
-		 inRangesWithAttribute: TypeOfColor
-		  matchingValue: GNUstepOutputPersonalBracketColor
-		 withRange: aRange];
-	}
-	else
-	{
-		// just make it all the foreground color if they just passed in a regular string
-		aRange = NSMakeRange(0, [[aMessage description] length]);
-		string = AUTORELEASE(([[NSMutableAttributedString alloc] 
-		  initWithString: [aMessage description]
-		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
-			 chatFont, NSFontAttributeName,
-			 TypeOfColor, GNUstepOutputTextColor,
-			 [self colorForKey: GNUstepOutputTextColor], NSForegroundColorAttributeName,
-		     nil]]));
-	}
-	
+	string = [NSMutableAttributedString 
+	  attributedStringWithGNUstepOutputPreferences: aMessage];
+
 	[controller appendAttributedString: string];
 	
 	if (hasEnd)

@@ -20,6 +20,7 @@
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
+#import "Misc/NSAttributedStringAdditions.h"
 #import "Models/Channel.h"
 #import "GNUstepOutput.h"
 #import <TalkSoupBundles/TalkSoup.h>
@@ -31,6 +32,7 @@
 #import <AppKit/NSTableColumn.h>
 #import <AppKit/NSTableView.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSTextStorage.h>
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
@@ -38,8 +40,7 @@
 #import <Foundation/NSNotification.h>
 
 @interface StandardChannelController (PreferencesCenter)
-- (void)backgroundChanged: (NSNotification *)aNotification;
-- (void)foregroundChanged: (NSNotification *)aNotification;
+- (void)colorChanged: (NSNotification *)aNotification;
 @end
 
 @implementation StandardChannelController
@@ -138,14 +139,24 @@
 	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(backgroundChanged:)
+	  selector: @selector(colorChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputBackgroundColor];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(foregroundChanged:)
+	  selector: @selector(colorChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputTextColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(colorChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputOtherBracketColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(colorChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputPersonalBracketColor];
 }
 - (void)dealloc
 {
@@ -184,26 +195,19 @@
 @end
 
 @implementation StandardChannelController (PreferencesCenter)
-- (void)backgroundChanged: (NSNotification *)aNotification
+- (void)colorChanged: (NSNotification *)aNotification
 {
-	id color;
+	id object;
 
-	color = [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor];
-	color = [NSColor colorFromEncodedData: color];
+	object = [aNotification object];
+	if ([object isEqualToString: GNUstepOutputBackgroundColor])
+	{
+		[chatView setBackgroundColor: [NSColor colorFromEncodedData:
+		  [_PREFS_ preferenceForKey: object]]];
+	}
 
-	[chatView setBackgroundColor: color];
-}
-- (void)foregroundChanged: (NSNotification *)aNotification
-{
-	id color;
-
-	color = [_PREFS_ preferenceForKey: GNUstepOutputTextColor];
-	color = [NSColor colorFromEncodedData: color];
-	/* FIXME
-	 * This probably needs to be done the way it used to be done.
-	 * It will be a lot more complicated than just this one call
-	 */
-	[chatView setTextColor: color];
+	[[chatView textStorage]
+	  updateAttributedStringForGNUstepOutputPreferences: object];
 }
 @end
 

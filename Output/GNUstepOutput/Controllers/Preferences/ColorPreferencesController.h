@@ -29,6 +29,7 @@ extern NSString *GNUstepOutputBackgroundColor;
 
 @class NSString, NSImage, PreferencesController;
 @class NSColorWell, NSView, NSImage;
+@class NSTextView, NSButton, NSMutableDictionary;
 
 @interface ColorPreferencesController : NSObject 
 	{
@@ -39,7 +40,11 @@ extern NSString *GNUstepOutputBackgroundColor;
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
 		BOOL activated;
+		NSTextView *textPreview;
+		NSMutableDictionary *lastApplied;
 	}
+- (void)setDefaultColors: (NSButton *)aButton;
+- (void)applyChanges: (NSButton *)aButton;
 - (void)setColorPreference: (NSColorWell *)aWell;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;

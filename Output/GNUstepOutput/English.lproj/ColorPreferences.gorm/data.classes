@@ -2,14 +2,16 @@
     ColorPreferencesController = {
 	Actions = (
 	    "setColorPreference:",
-	    "setDefaultColors:"
+	    "setDefaultColors:",
+	    "applyChanges:"
 	);
 	Outlets = (
 	    otherColorWell,
 	    personalColorWell,
 	    textColorWell,
 	    backgroundColorWell,
-	    preferencesView
+	    preferencesView,
+	    textPreview
 	);
 	Super = NSObject;
     };
@@ -152,7 +154,8 @@
 	    "yank:",
 	    "zoom:",
 	    "setColorPreference:",
-	    "setDefaultColors:"
+	    "setDefaultColors:",
+	    "applyChanges:"
 	);
 	Super = NSObject;
     };

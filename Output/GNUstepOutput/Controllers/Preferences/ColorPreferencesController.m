@@ -18,6 +18,7 @@
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Misc/NSColorAdditions.h"
+#import "Misc/NSAttributedStringAdditions.h"
 #import "GNUstepOutput.h"
 
 #import <AppKit/NSImage.h>
@@ -26,6 +27,11 @@
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSButton.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTextStorage.h>
+#import <AppKit/NSTextContainer.h>
+#import <AppKit/NSScrollView.h>
+#import <Foundation/NSNull.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
 
@@ -35,7 +41,7 @@ NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 @interface ColorPreferencesController (PrivateMethods)
-- (void)setDefaultColors: (NSButton *)aButton;
+- (void)saveFromPreferences;
 - (void)refreshFromPreferences;
 - (void)preferenceChanged: (NSNotification *)aNotification;
 @end
@@ -69,6 +75,9 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 		[self dealloc];
 		return nil;
 	}
+	
+	lastApplied = [NSMutableDictionary new];
+	[self saveFromPreferences];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
@@ -96,20 +105,129 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 	return self;
 }
+#define MARK [NSNull null]
 - (void)awakeFromNib
 {
+	id pubstring;
+	
 	NSWindow *tempWindow;
 
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+
+	[textPreview setHorizontallyResizable: NO];
+	[textPreview setVerticallyResizable: YES];
+	[textPreview setMinSize: NSMakeSize(0, 0)];
+	[textPreview setMaxSize: NSMakeSize(1e7, 1e7)];
+	[[textPreview textContainer] setContainerSize:
+	  NSMakeSize([textPreview frame].size.width, 1e7)];
+	[[textPreview textContainer] setWidthTracksTextView: YES];
+	[textPreview setTextContainerInset: NSMakeSize(2, 2)];
+	[textPreview setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[textPreview setFrameSize: [[textPreview enclosingScrollView] contentSize]];
+	[textPreview setEditable: NO];
+	[textPreview setSelectable: YES];
+	[textPreview setRichText: NO];
+	[textPreview setTextColor: [NSColor colorFromEncodedData: 
+	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
+	[textPreview setBackgroundColor: [NSColor colorFromEncodedData: 
+	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
+
+	pubstring = BuildAttributedString(
+	  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
+	  @"aeruder", 
+	  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">",
+	  @" ", _l(@"TalkSoup really works so wonderfully!"), @"\n", nil);
+	
+	[[textPreview textStorage] appendAttributedString:
+	  [NSMutableAttributedString 
+	  attributedStringWithGNUstepOutputPreferences: pubstring]];
+
+	pubstring = BuildAttributedString(
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"<", 
+	  @"ckchan", 
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @">",
+	  @" ", _l(@"you're so weird"), @"\n", nil);
+
+	[[textPreview textStorage] appendAttributedString:
+	  [NSMutableAttributedString 
+	  attributedStringWithGNUstepOutputPreferences: pubstring]];
+
+	pubstring = BuildAttributedString(
+	  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
+	  @"aeruder", 
+	  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">",
+	  @" ", _l(@"So... you're saying you like it too?"), nil);
+
+	[[textPreview textStorage] appendAttributedString:
+	  [NSMutableAttributedString 
+	  attributedStringWithGNUstepOutputPreferences: pubstring]];
 }
+#undef MARK
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(preferencesView);
 	RELEASE(preferencesIcon);
 	[super dealloc];
+}
+- (void)setDefaultColors: (NSButton *)aButton
+{
+	id txColor, otherColor, persColor, bgColor;
+
+	txColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputTextColor];
+	otherColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputOtherBracketColor];
+	persColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputPersonalBracketColor];
+	bgColor = [_PREFS_ defaultPreferenceForKey:
+	  GNUstepOutputBackgroundColor];
+
+	[_PREFS_ setPreference: txColor forKey:
+	  GNUstepOutputTextColor];
+	[_PREFS_ setPreference: otherColor forKey:
+	  GNUstepOutputOtherBracketColor];
+	[_PREFS_ setPreference: persColor forKey:
+	  GNUstepOutputPersonalBracketColor];
+	[_PREFS_ setPreference: bgColor forKey:
+	  GNUstepOutputBackgroundColor];
+
+	[self refreshFromPreferences];
+}
+- (void)applyChanges: (NSButton *)aButton
+{
+	NSString *x[] = {
+	  GNUstepOutputOtherBracketColor,
+	  GNUstepOutputPersonalBracketColor, 
+	  GNUstepOutputBackgroundColor,
+	  GNUstepOutputTextColor,
+	  nil
+	};
+	NSString **iter;
+	NSString *curr;
+
+	for (iter = x; *iter != nil; iter++)
+	{
+		curr = [_PREFS_ preferenceForKey: *iter];
+		if ([curr isEqualToString: [lastApplied objectForKey: *iter]])
+		{
+			continue;
+		}
+
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: DefaultsChangedNotification
+		 object: *iter
+		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+		  _GS_, @"Bundle",
+		  curr, @"New",
+		  self, @"Owner",
+		  [lastApplied objectForKey: *iter], @"Old",
+		  nil]];
+	}
+
+	[self saveFromPreferences];
 }
 - (void)setColorPreference: (NSColorWell *)aWell
 {
@@ -126,6 +244,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	else if (aWell == backgroundColorWell)
 	{
 		preference = GNUstepOutputBackgroundColor;
+		[textPreview setBackgroundColor: [aWell color]];
 	}
 	else if (aWell == textColorWell)
 	{
@@ -141,15 +260,8 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	
 	[_PREFS_ setPreference: newValue forKey: preference];
 
-	[[NSNotificationCenter defaultCenter]
-	 postNotificationName: DefaultsChangedNotification
-	 object: preference 
-	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
-	  _GS_, @"Bundle",
-	  newValue, @"New",
-	  self, @"Owner",
-	  oldValue, @"Old",
-	  nil]];
+	[[textPreview textStorage] 
+	  updateAttributedStringForGNUstepOutputPreferences: preference];
 }
 - (NSString *)preferencesName
 {
@@ -175,29 +287,25 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 @end
 
 @implementation ColorPreferencesController (PrivateMethods)
-- (void)setDefaultColors: (NSButton *)aButton
+- (void)saveFromPreferences
 {
 	id txColor, otherColor, persColor, bgColor;
 
-	txColor = [_PREFS_ defaultPreferenceForKey:
+	txColor = [_PREFS_ preferenceForKey:
 	  GNUstepOutputTextColor];
-	otherColor = [_PREFS_ defaultPreferenceForKey:
-	  GNUstepOutputOtherBracketColor];
-	persColor = [_PREFS_ defaultPreferenceForKey:
-	  GNUstepOutputPersonalBracketColor];
-	bgColor = [_PREFS_ defaultPreferenceForKey:
-	  GNUstepOutputBackgroundColor];
+	[lastApplied setObject: txColor forKey: GNUstepOutputTextColor];
 
-	[_PREFS_ setPreference: txColor forKey:
-	  GNUstepOutputTextColor];
-	[_PREFS_ setPreference: otherColor forKey:
+	otherColor = [_PREFS_ preferenceForKey:
 	  GNUstepOutputOtherBracketColor];
-	[_PREFS_ setPreference: persColor forKey:
-	  GNUstepOutputPersonalBracketColor];
-	[_PREFS_ setPreference: bgColor forKey:
-	  GNUstepOutputBackgroundColor];
+	[lastApplied setObject: otherColor forKey: GNUstepOutputOtherBracketColor];
 
-	[self refreshFromPreferences];
+	persColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputPersonalBracketColor];
+	[lastApplied setObject: persColor forKey: GNUstepOutputPersonalBracketColor];
+
+	bgColor = [_PREFS_ preferenceForKey:
+	  GNUstepOutputBackgroundColor];
+	[lastApplied setObject: bgColor forKey: GNUstepOutputBackgroundColor];
 }
 - (void)refreshFromPreferences
 {
