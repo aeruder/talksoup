@@ -386,7 +386,14 @@ static NSString *big_description = nil;
 	NSLog(@"Accepting...");
 	
 	where = [origData indexOfObject: object];
-	[data insertObject: object atIndex: row % ([data count] + 1)];
+	if (row >= [data count])
+	{
+		[data addObject: object];
+	}
+	else
+	{
+		[data insertObject: object atIndex: row];
+	}
 	
 	if (row <= where && origData == data) where++;
 

@@ -1,3 +1,6 @@
+2004-01-10 Andy Ruder <aeruder at ksu dot edu>
+ * Bundle Controller had a bug when dragging to bottom row
+
 2004-01-05 Andy Ruder <aeruder at ksu dot edu>
  * Updated the server list
  * Made the server list realphabetize on startup
