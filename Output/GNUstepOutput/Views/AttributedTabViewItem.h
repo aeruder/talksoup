@@ -26,7 +26,7 @@
 
 @interface AttributedTabViewItem : NSTabViewItem
 	{
-		NSAttributedString *attributedLabel;		
+		NSMutableAttributedString *attributedLabel;		
 	}
 - setAttributedLabel: (NSAttributedString *)label;
 - (NSAttributedString *)attributedLabel;

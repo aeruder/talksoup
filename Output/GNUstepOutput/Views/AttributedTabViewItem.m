@@ -25,30 +25,40 @@
 	id string;
 	
 	string = [self label];
+	
 	[self setLabel: @""];
 	[super drawLabel: shouldTruncateLabel inRect: tabRect];
-	[self setLabel: string];
+	[self setLabel: string]; 
 	
-	[attributedLabel drawInRect: tabRect];
-	
-	[string drawInRect: tabRect];
+	[attributedLabel drawAtPoint: NSMakePoint(tabRect.origin.x, NSMaxY(tabRect))];	
 }
 - setAttributedLabel: (NSAttributedString *)aString
 {
-	if (aString == attributedLabel) return self;
+	id mutable;
+	NSRange aRange;
+	
+	mutable = [[NSMutableAttributedString alloc] initWithAttributedString: aString];
+
+	aRange.location = 0;
+	aRange.length = [[mutable string] length];
+	
+	[mutable setAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+	  [[self tabView] font], NSFontAttributeName, nil] 
+	  range: aRange];
 	
 	RELEASE(attributedLabel);
-	attributedLabel = RETAIN(aString);
-
-	[[self tabView] setNeedsDisplay: YES];
+	attributedLabel = mutable;
 
 	[self setLabel: [attributedLabel string]];
+
+	[[self tabView] setNeedsDisplay: YES];
 
 	return self;
 }
 - (NSAttributedString *)attributedLabel
 {
-	return attributedLabel;
+	return AUTORELEASE([[NSAttributedString alloc] initWithAttributedString: 
+	  attributedLabel]);
 }
 @end
 
