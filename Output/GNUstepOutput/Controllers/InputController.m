@@ -199,7 +199,7 @@ id _output_ = nil;
 	if ([x count] == 0)
 	{
 		[controller showMessage:
-		  S2AS(_l(@"Usage: /server server [port]"))
+		  S2AS(_l(@"Usage: /server <server> [port]"))
 		  onConnection: nil];
 		return self;
 	}
@@ -225,15 +225,12 @@ id _output_ = nil;
 	if ([x count] == 0)
 	{
 		[controller showMessage: 
-		  S2AS(_l(@"Usage: /join channel1[,channel2...] [password1[,password2...]]"))
+		  S2AS(_l(@"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"))
 		  onConnection: nil];
 		return self;
 	}
 	
-	NSLog(@"Checking password...");
 	pass = ([x count] == 2) ? [x objectAtIndex: 1] : nil;
-
-	NSLog(@"%@",[_output_ connectionToConnectionController: controller]);
 	
 	[_TS_ joinChannel: S2AS([x objectAtIndex: 0]) withPassword: S2AS(pass) 
 	  onConnection: [_output_ connectionToConnectionController: controller]
@@ -250,7 +247,8 @@ id _output_ = nil;
 	if ([x count] == 0)
 	{
 		[controller showMessage: 
-		  S2AS(_l(@"Usage: /nick newnick")) onConnection: nil];
+		  S2AS(_l(@"Usage: /nick <newnick>")) onConnection: nil];
+		return self;
 	}
 	
 	if (!connection)
@@ -273,5 +271,57 @@ id _output_ = nil;
 		}
 	}
 	return self;
-}	
+}
+- commandMe: (NSString *)aString
+{
+	if ([aString length] == 0)
+	{
+		[controller showMessage: 
+		  S2AS(_l(@"Usage: /me <action>"))
+		  onConnection: nil];
+		return self;
+	}
+	
+	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
+	  currentViewName]) onConnection: [controller connection]
+	  sender: _output_];
+	return self;
+}
+- commandMsg: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	
+	if ([x count] < 2)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /msg <person> <message>"))
+		  onConnection: nil];
+		return self;
+	}
+	
+	[_TS_ sendMessage: S2AS([x objectAtIndex: 1]) to: 
+	  S2AS([x objectAtIndex: 0])
+	  onConnection: [controller connection] sender: _output_];
+
+	return self;
+}
+- commandQuery: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	id o;
+	
+	if ([x count] < 1)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /query name"))
+		 onConnection: nil];
+		return self;
+	}
+	
+	o = [x objectAtIndex: 0];
+	
+	[[controller contentController] addQueryWithName: o withLabel: o];
+	
+	return self;
+}
 @end

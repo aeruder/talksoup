@@ -364,18 +364,24 @@
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ messageReceived: message to: receiver from: S2AS(nick)
+	  onConnection: aConnection sender: control];
 	[super sendMessage: AS2S(message) to: AS2S(receiver)];
 	return self;
 }
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ noticeReceived: message to: receiver from: S2AS(nick)
+	  onConnection: aConnection sender: control];
 	[super sendNotice: AS2S(message) to: AS2S(receiver)];
 	return self;
 }
 - sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ actionReceived: anAction to: receiver from: S2AS(nick)
+	  onConnection: aConnection sender: control];
 	[super sendAction: AS2S(anAction) to: AS2S(receiver)];
 	return self;
 }
