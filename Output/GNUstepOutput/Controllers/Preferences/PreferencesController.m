@@ -566,7 +566,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	NSButtonCell *aCell;
 
 	aCell = [aMatrix selectedCell];
-	NSLog(@"Button clicked in preferences: %@", aCell);
 
 	if (![array containsObject: aCell])
 		return;
@@ -625,8 +624,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[bCell setShowsStateBy: NSPushInCellMask];
 	[bCell setBordered: YES];
 	[bCell setBezelStyle: NSRegularSquareBezelStyle];
-
-	NSLog(@"button cell created: %@", bCell);
 
 	[prefsModules addObject: aPreferencesModule];
 	[prefsList addColumnWithCells: [NSArray arrayWithObject: bCell]];
