@@ -25,6 +25,7 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSBundle.h>
 
 static id get_pref(NSString *x)
 {

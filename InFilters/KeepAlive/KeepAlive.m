@@ -22,6 +22,7 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSBundle.h>
 
 @implementation KeepAlive
 - fireTimer: (NSTimer *)aTimer

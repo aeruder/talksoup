@@ -22,6 +22,8 @@
 
 #import <Foundation/NSObject.h>
 
+@class NSBundle;
+
 #ifdef _l
 	#undef _l
 #endif

@@ -20,6 +20,7 @@
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSBundle.h>
 
 static NSAttributedString *decolor(id a)
 {

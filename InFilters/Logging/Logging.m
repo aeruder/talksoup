@@ -30,6 +30,7 @@
 #import <Foundation/NSCalendarDate.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSPathUtilities.h>
+#import <Foundation/NSBundle.h>
 
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;

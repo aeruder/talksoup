@@ -29,6 +29,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSBundle.h>
 
 static NSAttributedString *pipeit(NSAttributedString *a)
 {

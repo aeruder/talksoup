@@ -23,6 +23,7 @@
 #import <Foundation/NSCharacterSet.h>
 #import <Foundation/NSScanner.h>
 #import <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSBundle.h>
 
 #include <ctype.h>
 
