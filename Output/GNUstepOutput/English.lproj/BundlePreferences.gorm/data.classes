@@ -1,9 +1,14 @@
 {
     BundlePreferencesController = {
 	Actions = (
+	    "showingSelected:"
 	);
 	Outlets = (
-	    preferencesView
+	    preferencesView,
+	    descriptionText,
+	    availableTable,
+	    loadedTable,
+	    showingPopUp
 	);
 	Super = NSObject;
     };
@@ -144,7 +149,15 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "showingSelected:"
+	);
+	Super = NSObject;
+    };
+    NewClass = {
+	Actions = (
+	);
+	Outlets = (
 	);
 	Super = NSObject;
     };

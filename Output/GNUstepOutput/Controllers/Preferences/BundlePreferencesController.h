@@ -25,17 +25,29 @@
 @class PreferencesController;
 @class NSString, NSImage;
 @class NSView, NSImage;
+@class NSMutableArray, NSTextView, NSTableView, NSPopUpButton;
 
 @interface BundlePreferencesController : NSObject 
 	{
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
+		NSPopUpButton *showingPopUp;
+		NSTableView *loadedTable;
+		NSTableView *availableTable;
+		NSTextView *descriptionText;
+		NSMutableArray *availData;
+		NSMutableArray *loadData;
+		int currentShowing;
+		int currentlySelected;
+		id currentTable;
+		id otherTable;
 	}
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
 - (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
+- (void)showingSelected: (id)sender;
 @end
 
 #endif
