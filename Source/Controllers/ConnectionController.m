@@ -52,6 +52,7 @@
 static NSString *version_number = nil;
 static NSString *console_name = nil;
 static NSColor *highlight_color = nil;
+static NSColor *nick_color = nil;
 
 static NSArray *command_names = nil;
 
@@ -149,6 +150,8 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	console_name = [[NSString alloc] initWithString: @"console tab"];
 	highlight_color = RETAIN([NSColor colorWithCalibratedRed: 0.41
 	  green: 0.13 blue: 0.14 alpha: 1.0]);
+	nick_color = RETAIN([NSColor colorWithCalibratedRed: 0.13
+	  green: 0.14 blue: 0.41 alpha: 1.0]);
 }
 + (void)loadCommandNames
 {
@@ -425,7 +428,10 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		tab = NSMapGet(talkToHolder, view);
 		if ([tab isKindOfClass: [ColoredTabViewItem class]])
 		{
-			[tab setLabelColor: highlight_color];
+			if ([tab labelColor] != nick_color)
+			{
+				[tab setLabelColor: highlight_color];
+			}
 		}
 	}
 
@@ -622,6 +628,11 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 			{
 				completion = [temp2 substringToIndex: [completion length]];
 			}
+			if ([out count] == 1 && pos == 0) 
+			{
+				completion = [completion stringByAppendingString: @":"];
+			}
+				
 		}
 	}
 	
@@ -632,7 +643,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	else if ([out count] == 1)
 	{
 		[field setObjectValue: [NSString stringWithFormat: @"%@%@ ",
-		  [aString substringToIndex: pos], [out objectAtIndex: 0]]];
+		  [aString substringToIndex: pos], completion]];
 	}
 	else
 	{
@@ -641,6 +652,23 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		[self putMessage: [out componentsJoinedByString: @"     "] in: nil];
 	}
 }
+- (void)textFieldReceivedBacktab: (TabTextField *)field
+{
+	id view = [window tabView];	
+	int x = [view numberOfTabViewItems];
+	id tab = NSMapGet(talkToHolder, current);
+	int y;
+	
+	if (!tab) return;
+
+	y = [view indexOfTabViewItem: tab];
+	
+	if (y == NSNotFound) return;
+
+	y = (y + 1) % x;
+
+	[view selectTabViewItemAtIndex: y];
+}	
 @end
 
 @implementation ConnectionController (WindowDelegate)
@@ -767,7 +795,8 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		return;
 	}
 
-	[self putMessage: [NSString stringWithFormat: @"<%@> %@\n", nick, command]
+	[self putMessage: [NSString stringWithFormat: 
+	  @"\00302<\017%@\00302>\017 %@\n", nick, command]
 	  in: nil];
 	
 	[self sendMessage: command to: [current identifier]];
@@ -780,7 +809,8 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		return;
 	}
 
-	[self putMessage: [NSString stringWithFormat: @"* %@ %@\n", nick, argument]
+	[self putMessage: [NSString stringWithFormat: @"\002\00304*\017 %@ %@\n", 
+	  nick, argument]
 	  in: nil];
 	
 	[self sendAction: argument to: [current identifier]];
@@ -827,13 +857,15 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		
 		if ((object = [nameToTalk objectForKey: to]))
 		{
-			[self putMessage: [NSString stringWithFormat: @"<%@> %@",
+			[self putMessage: [NSString stringWithFormat: 
+			@"\00302<\017%@\00302>\017 %@",
 			    nick, message]
 			  in: object];
 		}
 		else
 		{
-			[self putMessage: [NSString stringWithFormat: @">%@< %@", 
+			[self putMessage: [NSString stringWithFormat: 
+			  @"\00302>\017%@\00302<\017 %@", 
 			    to, message]
 			  in: nil];
 		}
@@ -955,12 +987,12 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	if (args)
 	{
 		[self putMessage: [NSString stringWithFormat:
-		  @">%@< CTCP %@ %@", who, ctcp, args] in: nil];
+		  @"\00302>\017%@\00302<\017 CTCP %@ %@", who, ctcp, args] in: nil];
 	}
 	else
 	{
 		[self putMessage: [NSString stringWithFormat:
-		  @">%@< CTCP %@", who, ctcp] in: nil];
+		  @"\00302>\017%@\00302<\017 CTCP %@", who, ctcp] in: nil];
 	}
 	
 	[self sendCTCPRequest: ctcp withArgument: args
@@ -1138,6 +1170,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	if ([array count] == 0)
 	{
 		[self putMessage: @"Usage: /nick <nickname>" in: nil];
+		return;
 	}
 	
 	if (transport)
@@ -1437,6 +1470,8 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	id fromNick = ExtractIRCNick(sender);
 	id fromKey = [fromNick lowercaseIRCString];
 	id target;
+	id highlight = @"";
+	id endhighlight = @"";
 
 	target = [nameToChannel objectForKey: toKey];
 	if (!target)
@@ -1449,15 +1484,33 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		[self putMessage: aMessage in: console];
 	}
 	
+	if ([[aMessage lowercaseIRCString] rangeOfString: 
+	  [nick lowercaseIRCString]].location != NSNotFound)
+	{
+		ColoredTabViewItem *tab;
+
+		tab = NSMapGet(talkToHolder, target);
+		
+		if ([target isKindOfClass: [ChannelController class]] &&
+		    target != current)
+		{
+			[tab setLabelColor: nick_color];
+		}
+		highlight = @"\00302";
+		endhighlight = @"\017";
+	}
+	
 	if (target)
 	{
 		[self putMessage: [NSString stringWithFormat: 
-		  @"<%@> %@", fromNick, aMessage] in: target];
+		  @"\00302<\017%@%@%@\00302>\017 %@", highlight, fromNick, 
+		   endhighlight, aMessage] in: target];
 	}
 	else
 	{
 		[self putMessage: [NSString stringWithFormat:
-		  @"*%@* %@", fromNick, aMessage] in: nil];
+		  @"\00302*\017%@%@%@\00302*\017 %@", highlight, fromNick, endhighlight,
+		    aMessage] in: nil];
 	}
 
 	return self;
@@ -1469,6 +1522,8 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	id fromNick = ExtractIRCNick(sender);
 	id fromKey = [sender lowercaseIRCString];
 	id target;
+	id highlight = @"";
+	id endhighlight = @"";
 
 	target = [nameToChannel objectForKey: toKey];
 	if (!target)
@@ -1479,11 +1534,27 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		}
 	}
 
+	if ([[aMessage lowercaseIRCString] rangeOfString: 
+	  [nick lowercaseIRCString]].location != NSNotFound)
+	{
+		ColoredTabViewItem *tab;
+
+		tab = NSMapGet(talkToHolder, target);
+		
+		if ([target isKindOfClass: [ChannelController class]]
+		     && target != current)
+		{
+			[tab setLabelColor: nick_color];
+		}
+		highlight = @"\00302";
+		endhighlight = @"\017";
+	}
 
 	if (target)
 	{
 		[self putMessage: [NSString stringWithFormat: 
-		  @"<%@> %@", fromNick, aMessage] in: target];
+		  @"\00302<\017%@%@%@\00302>\017 %@", highlight, fromNick, endhighlight, 
+		    aMessage] in: target];
 	}
 	else
 	{
@@ -1492,7 +1563,9 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 			if (fromNick)
 			{
 				[self putMessage: [NSString stringWithFormat:
-				  @"*%@* %@", fromNick, aMessage] in: nil];
+				  @"\00302*\017%@%@%@\00302*\017 %@", highlight, fromNick, 
+				    endhighlight, 
+				    aMessage] in: nil];
 			}
 			else
 			{
@@ -1526,14 +1599,93 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	if (target)
 	{
 		[self putMessage: [NSString stringWithFormat: 
-		  @"* %@ %@", fromNick, aMessage] in: target];
+		  @"\002\00304*\017 %@ %@", fromNick, aMessage] in: target];
 	}
 	else
 	{
 		[self putMessage: [NSString stringWithFormat:
-		  @"* %@ %@", fromNick, aMessage] in: console];
+		  @"\002\00304*\017 %@ %@", fromNick, aMessage] in: console];
 	}
 
+	return self;
+}
+- modeChanged: (NSString *)mode on: (NSString *)anObject
+   withParams: (NSArray *)paramList from: (NSString *)aPerson
+{
+	id target;
+	
+	if ([mode isEqualToString: @"+v"] && [paramList count] > 0)
+	{
+		id chan, data, user;
+		anObject = [anObject lowercaseIRCString];
+		chan = [nameToChannel objectForKey: anObject];
+		data = [nameToChannelData objectForKey: anObject];
+		user = [data userWithName: [paramList objectAtIndex: 0]];
+
+		if (chan && user)
+		{
+			[user setUserMode: [user userMode] | (ChannelUserVoice)];
+			[[chan userTable] reloadData];
+		}
+	}
+	else if ([mode isEqualToString: @"-v"] && [paramList count] > 0)
+	{
+		id chan, data, user;
+		anObject = [anObject lowercaseIRCString];
+		chan = [nameToChannel objectForKey: anObject];
+		data = [nameToChannelData objectForKey: anObject];
+		user = [data userWithName: [paramList objectAtIndex: 0]];
+
+		if (chan && user)
+		{
+			[user setUserMode: [user userMode] & (~ChannelUserVoice)];
+			[[chan userTable] reloadData];
+		}
+	}
+	else if ([mode isEqualToString: @"+o"] && [paramList count] > 0)
+	{
+		id chan, data, user;
+		anObject = [anObject lowercaseIRCString];
+		chan = [nameToChannel objectForKey: anObject];
+		data = [nameToChannelData objectForKey: anObject];
+		user = [data userWithName: [paramList objectAtIndex: 0]];
+
+		if (chan && user)
+		{
+			[user setUserMode: [user userMode] | (ChannelUserOperator)];
+			[[chan userTable] reloadData];
+		}
+	}
+	else if ([mode isEqualToString: @"-o"] && [paramList count] > 0)
+	{
+		id chan, data, user;
+		anObject = [anObject lowercaseIRCString];
+		chan = [nameToChannel objectForKey: anObject];
+		data = [nameToChannelData objectForKey: anObject];
+		user = [data userWithName: [paramList objectAtIndex: 0]];
+
+		if (chan && user)
+		{
+			[user setUserMode: [user userMode] & (~ChannelUserOperator)];
+			[[chan userTable] reloadData];
+		}
+	}
+
+	target = [nameToTalk objectForKey: [anObject lowercaseIRCString]];
+	if (!paramList) paramList = [NSArray arrayWithObjects: nil];
+
+	if (target)
+	{
+		[self putMessage: [NSString stringWithFormat: @"%@ sets mode %@ %@", 
+		  ExtractIRCNick(aPerson), mode, [paramList componentsJoinedByString:
+		   @" "]] in: target];
+	}
+	else
+	{
+		[self putMessage: [NSString stringWithFormat: @"%@ sets mode %@ %@ %@",
+		  ExtractIRCNick(aPerson), mode, anObject,
+		   [paramList componentsJoinedByString: @" "]] in: console];
+	}
 	return self;
 }
 @end
@@ -1705,13 +1857,13 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		if ([argument length])
 		{
 			[self putMessage: [NSString stringWithFormat:
-			 @"-%@- %@ %@", ExtractIRCNick(aPerson), aCTCP, 
+			 @"\00302-\017%@\00302-\017 %@ %@", ExtractIRCNick(aPerson), aCTCP, 
 			  argument] in: nil];
 	 	}
 		else
 		{
 			[self putMessage: [NSString stringWithFormat:
-			 @"-%@- %@", ExtractIRCNick(aPerson), aCTCP,
+			 @"\00302-\017%@\00302-\017 %@", ExtractIRCNick(aPerson), aCTCP,
 			  ExtractIRCNick(aPerson)] in: nil];
 		}
 	}

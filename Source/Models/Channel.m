@@ -49,6 +49,19 @@ const int ChannelUserVoice = 2;
 {
 	return userName;
 }
+- (NSString *)attributedName
+{
+	if (userMode & ChannelUserOperator)
+	{
+		return [NSString stringWithFormat: @"@%@", userName];
+	}
+	if (userMode & ChannelUserVoice)
+	{
+		return [NSString stringWithFormat: @"+%@", userName];
+	}
+
+	return userName;
+}
 - setUserName: (NSString *)aName
 {
 	if (aName == userName) return self;
@@ -96,7 +109,7 @@ const int ChannelUserVoice = 2;
 - (NSString *)stringForObjectValue: (id)anObject
 {
 	if (![anObject isKindOfClass: [ChannelUser class]]) return nil;
-	return [anObject userName];
+	return [anObject attributedName];
 }
 - (BOOL)getObjectValue: (id *)obj forString: (NSString *)string
    errorDescription: (NSString **)error
@@ -193,6 +206,16 @@ const int ChannelUserVoice = 2;
 
 	return self;
 }
+- (ChannelUser *)userWithName: (NSString *)name
+{
+	int index;
+
+	index = [lowercaseList indexOfObject: [name lowercaseIRCString]];
+
+	if (index == NSNotFound) return nil;
+
+	return [userList objectAtIndex: index];
+}	
 - addServerUserList: (NSString *)aString
 {
 	NSEnumerator *iter;

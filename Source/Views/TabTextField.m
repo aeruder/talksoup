@@ -47,6 +47,21 @@
 				}
 			}
 		}
+		else if ([textMovement intValue] == NSBacktabTextMovement)
+		{
+			id del;
+			SEL sel;
+			del = [self delegate];
+			sel = NSSelectorFromString(@"textFieldReceivedBacktab:");
+
+			if (del && sel)
+			{
+				if ([del respondsToSelector: sel])
+				{
+					[del performSelector: sel withObject: self];
+				}
+			}
+		}
 		else
 		{
 			[super textDidEndEditing: aNotification];

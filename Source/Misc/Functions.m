@@ -81,6 +81,8 @@
 	two = [string substringWithRange: sub];
 
 	scan = [NSScanner scannerWithString: two];
+	[scan setCharactersToBeSkipped: [NSCharacterSet 
+	  characterSetWithCharactersInString: @""]];
 	if (![scan scanInt: &y]) return NO;
 
 	[self setScanLocation: sub.location + [scan scanLocation]];
@@ -168,6 +170,8 @@ static NSColor *colors[16] = { 0 };
 	}
 	
 	scan = [NSScanner scannerWithString: self];
+	[scan setCharactersToBeSkipped: [NSCharacterSet 
+	  characterSetWithCharactersInString: @""]];
 	
 	while ([scan isAtEnd] == NO)
 	{

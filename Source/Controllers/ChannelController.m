@@ -73,6 +73,8 @@
 	  NSMakeSize([talkView frame].size.width, 1e7)];
 	[[talkView textContainer] setWidthTracksTextView: YES];
 	[talkView setTextContainerInset: NSMakeSize(2, 0)];
+	[talkView setBackgroundColor: [NSColor colorWithCalibratedRed: 1.0
+	  green: 0.9725 blue: 0.8627 alpha: 1.0]];
 
 	[talkScroll setDocumentView: talkView];
 	[talkScroll setHasHorizontalScroller: NO];

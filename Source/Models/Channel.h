@@ -59,6 +59,7 @@ extern const int ChannelUserVoice;
 - removeUser: (NSString *)aString;
 - userRenamed: (NSString *)oldName to: (NSString *)newName;
 - (NSArray *)userList;
+- (ChannelUser *)userWithName: (NSString *)name;
 
 - addServerUserList: (NSString *)aString;
 - endServerUserList;

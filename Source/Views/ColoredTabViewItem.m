@@ -59,5 +59,9 @@
 
 	return self;
 }
+- (NSColor *)labelColor
+{
+	return color;
+}
 @end
 

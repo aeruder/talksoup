@@ -24,4 +24,5 @@
 		NSColor *color;
 	}
 - setLabelColor: (NSColor *)aColor;
+- (NSColor *)labelColor;
 @end
