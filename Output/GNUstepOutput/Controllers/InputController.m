@@ -338,7 +338,6 @@ id _output_ = nil;
 			  S2AS(_l(@"Usage: /close <name>")) 
 			  onConnection: nil];
 			return self;
-
 		}
 	}
 	else

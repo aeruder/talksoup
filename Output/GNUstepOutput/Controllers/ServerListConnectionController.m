@@ -30,6 +30,7 @@
 #include <Foundation/NSGeometry.h>
 
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSView.h>
 
 @implementation ServerListConnectionController
 - initWithServerListDictionary: (NSDictionary *)aInfo
@@ -75,7 +76,8 @@
 	{
 		NSRect a = NSRectFromString(tmp);
 		
-		[[[self contentController] window] setFrame: a display: YES];
+		[[[self contentController] window] setFrameOrigin: a.origin];
+		[[[self contentController] window] setContentSize: a.size];
 	}
 	
 	if ((tmp = [aInfo objectForKey: ServerListInfoServer]))
@@ -111,7 +113,6 @@
 	id window = [aNotification object];
 	id tmp;
 	
-	NSLog(@"Here goes...");
 	if ([[ServerListController serverInGroup: serverGroup row: serverRow]
 	  isEqual: serverInfo])
 	{	
@@ -122,10 +123,6 @@
 	
 		[ServerListController setServer: tmp inGroup: serverGroup
 		  row: serverRow];
-	}
-	else
-	{
-		NSLog(@"Not equal?");
 	}
 }
 @end
