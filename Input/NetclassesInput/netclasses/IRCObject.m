@@ -104,7 +104,7 @@ static NSData *IRC_new_line = nil;
 	id set = [NSCharacterSet whitespaceCharacterSet];\
 	__z = (__y);\
 	while (__z < __len && \
-	  [set characterIsMember: [(__string) characterAtIndex: __z]]) __z++\
+	  [set characterIsMember: [(__string) characterAtIndex: __z]]) __z++;\
 }
 
 static inline NSString *get_IRC_prefix(NSString *line, NSString **prefix)
