@@ -35,7 +35,7 @@
 	  BuildAttributedFormat(@"Received a CTCP PING from %@", 
 	  [IRCUserComponents(aPerson) objectAtIndex: 0]) in: ContentConsoleName];
 	
-	return [NSNull null];
+	return self;
 }
 - CTCPRequestVERSION: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {

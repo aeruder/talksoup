@@ -48,7 +48,7 @@
 	
 	[self updateTopicInspector];
 	
-	return [NSNull null];
+	return self;
 }
 // RPL_TOPIC (extension???)
 - numericHandler333: (NSArray *)arguments
@@ -76,7 +76,7 @@
 	
 	[self updateTopicInspector];
 	
-	return [NSNull null];
+	return self;
 }
 // RPL_NAMREPLY
 - numericHandler353: (NSArray *)arguments
@@ -92,7 +92,7 @@
 	[channel addServerUserList: [[arguments objectAtIndex: 2]
 	 string]];
 
-	return [NSNull null];
+	return self;
 }
 // RPL_ENDOFNAMES
 - numericHandler366: (NSArray *)arguments
@@ -110,7 +110,7 @@
 
 	[[cont tableView] reloadData]; 
 
-	return [NSNull null];
+	return self;
 }
 - numericHandler301: (NSArray *)arguments
 {

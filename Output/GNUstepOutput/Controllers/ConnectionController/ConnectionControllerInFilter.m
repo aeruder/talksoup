@@ -166,7 +166,7 @@
 		 withObject: aPerson];
 	}
 	
-	if ([where isKindOf: [NSNull class]]) return self;
+	if (where == self) return self;
 	
 	if ([argument length])
 	{
@@ -201,7 +201,7 @@
 		 withObject: aPerson];
 	}
 
-	if ([where isKindOf: [NSNull class]]) return self;
+	if (where == self) return self;
 	
 	if ([argument length])
 	{
@@ -407,7 +407,7 @@
 		where = [self performSelector: sel withObject: paramList];
 	}
 
-	if (![where isKindOf: [NSNull class]])
+	if (where != self)
 	{
 		[content putMessage: a in: where];
 	}
