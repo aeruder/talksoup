@@ -54,10 +54,9 @@
 {
 	return window;
 }
-- (void)setEntry: (id)sender
+- (void)setEntry: (NSTextField *)sender
 {
 	[okButton performClick: nil];
 }
-
 @end
  

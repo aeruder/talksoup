@@ -37,7 +37,7 @@
 - (NSTextField *)entryField;
 - (NSWindow *)window;
 
-- (void)setEntry: (id)sender;
+- (void)setEntry: (NSTextField *)sender;
 @end
 
 #endif 

@@ -310,7 +310,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		array = [[prefs objectAtIndex: first] objectForKey: ServerListInfoEntries];
 				
-		if (wasEditing != -1 || wasEditing < (int)[array count])
+		if (wasEditing != -1 && wasEditing < (int)[array count])
 		{
 			newOne = [array objectAtIndex: wasEditing];
 			[newOne setObject: server forKey: ServerListInfoServer];
