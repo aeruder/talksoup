@@ -2,6 +2,9 @@
  * Decided I'm actually going to try to use this change log.
  * Hopefully fixed problem with buttons not showing up in bundle setup gui
 
+2003-11-01 Andy Ruder <aeruder at ksu dot edu>
+ * TalkSoup compiles on OS X
+
 2003-09-10 Andy Ruder <aeruder at ksu dot edu>
  * Got bundle setup gui in
  * Added plugin descriptions to all distributed bundles
