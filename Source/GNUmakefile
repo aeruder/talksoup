@@ -6,6 +6,7 @@ SUBPROJECTS = TalkSoupBundles
 TalkSoup_OBJC_FILES = TalkSoup.m main.m Dummy.m Functions.m
 TalkSoup_RESOURCE_FILES = Defaults.plist
 
+TalkSoup_RESOURCE_FILES = Images/TalkSoup.tiff
 TalkSoup_LOCALIZED_RESOURCE_FILES = Localizable.strings
 
 TalkSoup_LANGUAGES = English

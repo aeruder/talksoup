@@ -6,7 +6,6 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 BUNDLE_EXTENSION =
 
-GNUstepOutput_RESOURCE_FILES = Images/TalkSoup.tiff
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \

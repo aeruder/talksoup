@@ -532,10 +532,6 @@ GNUstepOutput *_GS_ = nil;
 	  keyEquivalent: @"q"];
 	
 	[NSApp setMainMenu: menu];
-	[NSApp setApplicationIconImage: 
-	  AUTORELEASE([[NSImage alloc] initWithContentsOfFile:
-	  [[NSBundle bundleForClass: [self class]]
-	    pathForResource: @"TalkSoup" ofType: @"tiff"]])];
 }
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
