@@ -59,7 +59,7 @@ id _TSDummy_;
 @interface NSException (blah)
 @end
 
-#if 1
+#if 0
 @implementation NSException (blah)
 - (void)raise
 {
