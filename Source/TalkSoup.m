@@ -342,7 +342,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		{
 			if (next != output)
 			{
-				[aInvocation setArgument: &next atIndex: args - 1];
+				[aInvocation setArgument: &next atIndex: args + 1];
 				[self forwardInvocation: aInvocation];
 			}
 		}
@@ -375,7 +375,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		{
 			if (next != connection)
 			{
-				[aInvocation setArgument: &next atIndex: args - 1];
+				[aInvocation setArgument: &next atIndex: args + 1];
 				[self forwardInvocation: aInvocation];
 			}
 		}

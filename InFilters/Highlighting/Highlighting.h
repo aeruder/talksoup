@@ -25,14 +25,17 @@
 @class NSAttributedString;
 
 @interface Highlighting : NSObject
-- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin;
+- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
-- sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin;
+- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
-- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin;
+- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 @end
 
 

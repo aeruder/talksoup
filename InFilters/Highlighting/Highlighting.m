@@ -18,92 +18,110 @@
 #include "Highlighting.h"
 #include "TalkSoupBundles/TalkSoup.h"
 
+#include <Foundation/NSCharacterSet.h>
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
 
-static inline NSAttributedString 
-  *highlight_word(NSAttributedString *str, NSString *word, NSString *color)
+static BOOL has_name(NSString *str, NSString *name)
 {
-	id string = [[str string] lowercaseString];
-	int wordlen = [word length];
-	int stringlen = [string length];
-	NSMutableAttributedString *work =
-	  AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
-	id x;
-	NSRange currentRange = {0};
-
-	word = [word lowercaseString];
-	if ([word length] == 0) return nil;
+	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
+	 @".:, "];
+	NSRange cur = {0};
+	NSRange a = {0};
+	unichar x;
+	int len;
+	BOOL is = NO;
 	
-	x = [string componentsSeparatedByString: [NSString stringWithFormat:
-	 @" %@ ", word]];
+	a.length = len = [str length];
+	str = [str lowercaseString];
+	name = [name lowercaseString];
 	
-	if ([x count] == 1)
+	while (a.length >= 0)
 	{
-		return str;
-	}
-	else if ([x count] > 1)
-	{
-		int current;
-		int count = [x count];
-
-		for (current = 0; current < count; current++)
+		cur = [str rangeOfString: name options: 0 range: a];
+		
+		if (cur.location == NSNotFound) return NO;
+		
+		is = YES;
+		
+		if (cur.location + a.location > 0)
 		{
-			currentRange.length = [[x objectAtIndex: 0] length];
-			if (currentRange.length > 0)
-			{
-				[work appendAttributedString: [str attributedSubstringWithRange: 
-				  currentRange]];
-			}
-			if (current != count - 1)
-			{
-				currentRange.location += currentRange.length;
-				currentRange.length = wordlen + 2;
-				[work appendAttributedString: 
-				  [str attributedSubstringWithRange: currentRange]];
-				[work addAttribute: @"IRCColor" value: color 
-				  range: 
-				  NSMakeRange(currentRange.location + 1, currentRange.length - 1)];
-			}
-			currentRange.location += currentRange.length;
+			x = [str characterAtIndex: cur.location + a.location - 1];
+			is = [set characterIsMember: x];
 		}
+		if (cur.location + a.location + cur.length < len)
+		{
+			x = [str characterAtIndex: cur.location + a.location + cur.length];
+			is |= [set characterIsMember: x];
+		}
+		
+		if (is)
+		{
+			NSLog(@"It matches!!!");
+			return YES;
+		}
+		
+		a.location += cur.location + cur.length;
+		a.length = len - a.location;
 	}
-			
-	if ([string hasPrefix: [NSString stringWithFormat: @"%@ ", word]])
-	{
-		[work addAttribute: @"IRCColor" value: color
-		  range: NSMakeRange(0, wordlen)];
-	}
-
-	if ([string hasSuffix: [NSString stringWithFormat: @" %@", word]])
-	{
-		[work addAttribute: @"IRCColor" value: color
-		  range: NSMakeRange(stringlen - wordlen, wordlen)];
-	}
-
-	return work;
+	
+	return NO;
 }
 
 @implementation Highlighting
-- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin
+- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin
 {
-	[_TS_ sendMessage: highlight_word(message, [aConnection nick], IRCColorYellow)
-	  to: receiver onConnection: aConnection sender: self];
+	if (has_name([aMessage string], [connection nick]))
+	{
+		NSMutableAttributedString *x =
+		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
+		  sender]);
+		[x addAttribute: IRCColor value: IRCColorBlue range: 
+		  NSMakeRange(0, [sender length])];
+		sender = x;
+	}
+ 
+	[_TS_ messageReceived: aMessage to: to from: sender 
+	  onConnection: connection sender: self];
 	return self;
 }
-- sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin
+- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin
 {
-	[_TS_ sendNotice: highlight_word(message, [aConnection nick], IRCColorYellow)
-	  to: receiver onConnection: aConnection sender: self];
+	if (has_name([aMessage string], [connection nick]))
+	{
+		NSMutableAttributedString *x = 
+		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
+		  sender]);
+		[x addAttribute: IRCColor value: IRCColorBlue range: 
+		  NSMakeRange(0, [sender length])];
+		sender = x;		
+	}
+	else
+	
+	[_TS_ noticeReceived: aMessage to: to from: sender 
+	  onConnection: connection sender: self];
 	return self;
 }
-- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver
-   onConnection: aConnection sender: aPlugin;
+- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin
 {
-	[_TS_ sendMessage: highlight_word(anAction, [aConnection nick], IRCColorYellow)
-	  to: receiver onConnection: aConnection sender: self];
+	if (has_name([anAction string], [connection nick]))
+	{
+		NSMutableAttributedString *x =
+		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
+		  sender]);
+		[x addAttribute: IRCColor value: IRCColorBlue range: 
+		  NSMakeRange(0, [sender length])];
+		sender = x;		
+	}
+	
+	[_TS_ actionReceived: anAction to: to from: sender 
+	  onConnection: connection sender: self];
 	return self;
 }
 @end

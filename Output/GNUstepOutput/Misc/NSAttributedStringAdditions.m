@@ -16,7 +16,7 @@
  ***************************************************************************/
  
 #include "Misc/NSAttributedStringAdditions.h"
-
+#include "Misc/NSColorAdditions.h"
 #include "TalkSoupBundles/TalkSoup.h"
 
 #include <AppKit/NSColor.h>
@@ -26,50 +26,6 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSScanner.h>
 
-static inline NSColor *map_color(NSString *aName)
-{
-	static NSDictionary *colors = nil;
-	
-	if (!colors)
-	{
-	colors = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys:
-	  [NSColor colorWithCalibratedRed: 1.0
-	                green: 1.0 blue: 1.0 alpha: 1.0], IRCColorWhite, 
-	  [NSColor colorWithCalibratedRed: 0.0
-	                green: 0.0 blue: 0.0 alpha: 1.0], IRCColorBlack,
-	  [NSColor colorWithCalibratedRed: 0.0
-	                green: 0.0 blue: 1.0 alpha: 1.0], IRCColorBlue,
-	  [NSColor colorWithCalibratedRed: 0.0
-	                green: 1.0 blue: 0.0 alpha: 1.0], IRCColorGreen,
-	  [NSColor colorWithCalibratedRed: 1.0
-	                green: 0.0 blue: 0.0 alpha: 1.0], IRCColorRed,
-	  [NSColor colorWithCalibratedRed: 0.5
-	                green: 0.0 blue: 0.0 alpha: 1.0], IRCColorMaroon,
-	  [NSColor colorWithCalibratedRed: 0.5
-	                green: 0.0 blue: 0.5 alpha: 1.0], IRCColorMagenta,
-	  [NSColor colorWithCalibratedRed: 1.0
-	                green: 0.7 blue: 0.0 alpha: 1.0], IRCColorOrange,
-	  [NSColor colorWithCalibratedRed: 1.0
-	                green: 1.0 blue: 0.0 alpha: 1.0], IRCColorYellow,
-	  [NSColor colorWithCalibratedRed: 0.6
-	                green: 0.9 blue: 0.6 alpha: 1.0], IRCColorLightGreen,
-	  [NSColor colorWithCalibratedRed: 0.0
-	                green: 0.5 blue: 0.5 alpha: 1.0], IRCColorTeal,
-	  [NSColor colorWithCalibratedRed: 0.5
-	                green: 1.0 blue: 1.0 alpha: 1.0], IRCColorLightCyan,
-	  [NSColor colorWithCalibratedRed: 0.7
-	                green: 0.8 blue: 0.9 alpha: 1.0], IRCColorLightBlue,
-	  [NSColor colorWithCalibratedRed: 1.0
-	                green: 0.75 blue: 0.75 alpha: 1.0], IRCColorLightMagenta,
-	  [NSColor colorWithCalibratedRed: 0.5
-	                green: 0.5 blue: 0.5 alpha: 1.0], IRCColorGrey,
-	  [NSColor colorWithCalibratedRed: 0.8
-	                green: 0.8 blue: 0.8 alpha: 1.0], IRCColorLightGrey,
-	  nil]));
-	}
-	  
-	return [colors objectForKey: aName];
-}
 
 @implementation NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedString
@@ -93,26 +49,10 @@ static inline NSColor *map_color(NSString *aName)
 			if (![dict objectForKey: NSForegroundColorAttributeName])
 			{
 				id temp;
-				temp = map_color(obj);
+				temp = [NSColor colorFromIRCString: obj];
 				if (temp)
 				{
 					[dict setObject: temp forKey: NSForegroundColorAttributeName];
-				}
-				else
-				{
-					if ([obj hasPrefix: IRCColorCustom])
-					{
-						id scan;
-						float r=0.0,g=0.0,b=0.0;
-						scan = [NSScanner scannerWithString: obj];
-						[scan scanUpToCharactersFromSet: 
-						  [NSCharacterSet whitespaceCharacterSet] intoString: 0];
-						[scan scanFloat: &r];
-						[scan scanFloat: &g];
-						[scan scanFloat: &b];
-						[dict setObject: [NSColor colorWithCalibratedRed: r green: g
-						  blue: b alpha: 1.0] forKey: NSForegroundColorAttributeName];
-					}
 				}
 			}
 		}
@@ -120,7 +60,12 @@ static inline NSColor *map_color(NSString *aName)
 		{
 			if (![dict objectForKey: NSBackgroundColorAttributeName])
 			{
-				[dict setObject: map_color(obj) forKey: NSBackgroundColorAttributeName];
+				id temp;
+				temp = [NSColor colorFromIRCString: obj];
+				if (temp)
+				{
+					[dict setObject: temp forKey: NSBackgroundColorAttributeName];
+				}
 			}
 		}
 		if ([dict objectForKey: IRCUnderline])

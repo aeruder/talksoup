@@ -109,15 +109,18 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	[super dealloc];
 }
-- highlightTabWithName: (NSString *)aName withColor: (NSColor *)aColor
+- highlightTabWithName: (NSString *)aName withColor: (NSString *)aColorName
 {
 	NSString *lo = GNUstepOutputLowercase(aName);
 	id str = [nameToLabel objectForKey: lo];
 	id tab = [nameToTabItem objectForKey: lo];
 	id new = AUTORELEASE([[NSMutableAttributedString alloc] 
 	  initWithAttributedString: str]);
+	id aColor;
 		
 	if ([lo isEqualToString: current]) return self;
+	
+	aColor = [NSColor colorFromIRCString: aColorName];
 	
 	if (aColor)
 	{

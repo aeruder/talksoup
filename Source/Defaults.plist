@@ -3,7 +3,7 @@
 	Plugins = {
 		Input = "NetclassesInput.bundle";
 		OutFilters = ();
-		InFilters = ();
+		InFilters = ("Highlighting.bundle");
 		Output = "GNUstepOutput.bundle";
 	};
 }

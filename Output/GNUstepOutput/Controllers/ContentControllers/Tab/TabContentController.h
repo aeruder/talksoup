@@ -52,7 +52,7 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 }
 - setTextColor: (NSColor *)aColor;
 
-- highlightTabWithName: (NSString *)aName withColor: (NSColor *)aColor;
+- highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor;
 
 - (NSArray *)allViews;
 - (NSArray *)allChannelNames;

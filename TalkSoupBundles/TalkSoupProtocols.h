@@ -23,7 +23,9 @@
 
 @protocol TalkSoupPluginProtocol
 - pluginActivated;
+
 - pluginDeactivated;
+
 - controlObject: (id)aObject onConnection: aConnection sender: aPlugin;
 @end
 

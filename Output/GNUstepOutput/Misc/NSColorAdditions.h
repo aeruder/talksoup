@@ -23,6 +23,7 @@
 @interface NSColor (EncodingAdditions)
 + (NSString *)commonColorSpaceName;
 + colorFromEncodedData: (id)aData;
++ (NSColor *)colorFromIRCString: (NSString *)aString;
 - (id)encodeToData;
 @end
 
