@@ -21,6 +21,7 @@
 
 NSString *GNUstepOutputLowercase(NSString *aString);
 NSString *GNUstepOutputIdentificationForController(id controller);
+BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2);
 
 extern NSString *GNUstepOutputPersonalBracketColor;
 extern NSString *GNUstepOutputOtherBracketColor;

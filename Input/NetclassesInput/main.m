@@ -19,6 +19,12 @@
 
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSAttributedString.h>
+#include <Foundation/NSString.h>
+
+#ifndef AS2S
+	#define AS2S(_x) [(_x) string]
+#endif
 
 @interface NetclassesInput (PrivateNetclassesInput)
 - removeConnection: aConnection;
@@ -114,6 +120,7 @@
 }
 - (void)connectionLost
 {
+	waiting = NO;
 	[control removeConnection: self];
 	[super connectionLost];
 }
@@ -218,6 +225,12 @@
 }
 - nickChangedTo: (NSString *)newName from: (NSString *)aPerson
 {
+	if ([ExtractIRCNick([aPerson lowercaseString]) isEqualToString:
+	  [nick lowercaseString]])
+	{
+		[self setNickname: newName];
+	}
+	
 	[_TS_ nickChangedTo: S2AS(newName) from: S2AS(aPerson) onConnection: self
 	  sender: control];
 
@@ -293,78 +306,308 @@
 }
 - newNickNeededWhileRegistering
 {
+	waiting = YES;
+	
 	[_TS_ newNickNeededWhileRegisteringOnConnection: self sender: control];
-
-	return self;
-}
-- writeRawString: (NSString *)aString
-{
-	[self writeString: @"%@", aString];
 	
 	return self;
 }
-- (BOOL)respondsToSelector: (SEL)aSel
+- changeNick: (NSAttributedString *)aNick onConnection: aConnection 
+   sender: aPlugin
 {
-	if ([_TSDummy_ respondsToSelector: aSel])
+	if (!connected && waiting)
 	{
-		return YES;
+		[self setNickname: AS2S(aNick)];
 	}
-	return [super respondsToSelector: aSel];
-}
-- methodSignatureForSelector: (SEL)aSel
-{
-	if ([_TSDummy_ respondsToSelector: aSel])
-	{
-		return [_TSDummy_ methodSignatureForSelector: aSel];
-	}
-
-	return [super methodSignatureForSelector: aSel];
+			
+	[super changeNick: AS2S(aNick)];
+	
+	waiting = NO;
+	return self;
 }	
-- (void)forwardInvocation: (NSInvocation *)invocation
+- quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection
+   sender: aPlugin
 {
-	NSInvocation *invoc;
-	SEL sel;
-	id selS;
-	char buffer[64];
-	int num;
-	int x;
+	[super quitWithMessage: AS2S(aMessage)];
+	return self;
+}
+- partChannel: (NSAttributedString *)channel 
+   withMessage: (NSAttributedString *)aMessage 
+   onConnection: aConnection sender: aPlugin
+{
+	[super partChannel: AS2S(channel) withMessage: AS2S(aMessage)];
+	return self;
+}
+- joinChannel: (NSAttributedString *)channel 
+   withPassword: (NSAttributedString *)aPassword 
+   onConnection: aConnection sender: aPlugin
+{
+	[super joinChannel: AS2S(channel) withPassword: AS2S(aPassword)];
+	return self;
+}
+- sendCTCPReply: (NSAttributedString *)aCTCP 
+   withArgument: (NSAttributedString *)args
+   to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
+{
+	[super sendCTCPReply: AS2S(aCTCP) withArgument: AS2S(args)
+	  to: AS2S(aPerson)];
+	return self;
+}
+- sendCTCPRequest: (NSAttributedString *)aCTCP 
+   withArgument: (NSAttributedString *)args
+   to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
+{
+	[super sendCTCPRequest: AS2S(aCTCP) withArgument: AS2S(args)
+	  to: AS2S(aPerson)];
+	return self;
+} 
+- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection sender: aPlugin
+{
+	[super sendMessage: AS2S(message) to: AS2S(receiver)];
+	return self;
+}
+- sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection sender: aPlugin
+{
+	[super sendNotice: AS2S(message) to: AS2S(receiver)];
+	return self;
+}
+- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
+   onConnection: aConnection sender: aPlugin
+{
+	[super sendAction: AS2S(anAction) to: AS2S(receiver)];
+	return self;
+}
+- becomeOperatorWithName: (NSAttributedString *)aName 
+   withPassword: (NSAttributedString *)pass 
+   onConnection: aConnection sender: aPlugin
+{
+	[super becomeOperatorWithName: AS2S(aName) withPassword: AS2S(pass)];
+	return self;
+}
+- requestNamesOnChannel: (NSAttributedString *)aChannel 
+   fromServer: (NSAttributedString *)aServer 
+   onConnection: aConnection sender: aPlugin
+{
+	[super requestNamesOnChannel: AS2S(aChannel)
+	  fromServer: AS2S(aServer)];
+	return self;
+}
+- requestMOTDOnServer: (NSAttributedString *)aServer onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestMOTDOnServer: AS2S(aServer)];
+	return self;
+}
+- requestSizeInformationFromServer: (NSAttributedString *)aServer
+   andForwardTo: (NSAttributedString *)anotherServer onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestSizeInformationFromServer: AS2S(aServer)
+	  andForwardTo: AS2S(anotherServer)];
+	return self;
+}
+- requestVersionOfServer: (NSAttributedString *)aServer 
+   onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestVersionOfServer: AS2S(aServer)];
+	return self;
+}
+- requestServerStats: (NSAttributedString *)aServer 
+   for: (NSAttributedString *)query 
+   onConnection: aConnection sender: aPlugin
+{
+	[super requestServerStats: AS2S(aServer) for: AS2S(query)];
+	return self;
+}
+- requestServerLink: (NSAttributedString *)aLink 
+   from: (NSAttributedString *)aServer 
+   onConnection: aConnection sender: aPlugin
+{
+	[super requestServerLink: AS2S(aLink) from: AS2S(aServer)];
+	return self;
+}
+- requestTimeOnServer: (NSAttributedString *)aServer onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestTimeOnServer: AS2S(aServer)];
+	return self;
+}
+- requestServerToConnect: (NSAttributedString *)aServer 
+   to: (NSAttributedString *)connectServer
+   onPort: (NSAttributedString *)aPort onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestServerToConnect: AS2S(aServer) to: AS2S(connectServer)
+	  onPort: AS2S(aPort)];	
+	return self;
+}
+- requestTraceOnServer: (NSAttributedString *)aServer onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestTraceOnServer: AS2S(aServer)];
+	return self;
+}
+- requestAdministratorOnServer: (NSAttributedString *)aServer 
+   onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestAdministratorOnServer: AS2S(aServer)];
+	return self;
+}
+- requestInfoOnServer: (NSAttributedString *)aServer onConnection: aConnection
+   sender: aPlugin
+{
+	[super requestInfoOnServer: AS2S(aServer)];
+	return self;
+}
+- requestServiceListWithMask: (NSAttributedString *)aMask 
+   ofType: (NSAttributedString *)type 
+   onConnection: aConnection sender: aPlugin
+{
+	[super requestServiceListWithMask: AS2S(aMask)
+	  ofType: AS2S(type)];
+	return self;
+}
+- requestServerRehashOnConnection: aConnection sender: aPlugin
+{
+	[super requestServerRehash];
+	return self;
+}
+- requestServerShutdown
+{
+	[super requestServerShutdown];
+	return self;
+}
+- requestServerRestartOnConnection: aConnection sender: aPlugin
+{
+	[super requestServerRestart];
+	return self;
+}
+- requestUserInfoOnServer: (NSAttributedString *)aServer 
+   onConnection: aConnection 
+   sender: aPlugin
+{
+	[super requestUserInfoOnServer: AS2S(aServer)];
+	return self;
+}
+- areUsersOn: (NSAttributedString *)userList onConnection: aConnection
+  sender: aPlugin
+{
+	[super areUsersOn: AS2S(userList)];
+	return self;
+}
+- sendWallops: (NSAttributedString *)message onConnection: aConnection 
+   sender: aPlugin
+{
+	[super sendWallops: AS2S(message)];
+	return self;
+}
+- queryService: (NSAttributedString *)aService 
+   withMessage: (NSAttributedString *)aMessage 
+   onConnection: aConnection sender: aPlugin
+{
+	[super queryService: AS2S(aService)
+	  withMessage: AS2S(aMessage)];
+	return self;
+}
+- listWho: (NSAttributedString *)aMask onlyOperators: (BOOL)operators 
+   onConnection: aConnection sender: aPlugin
+{
+	[super listWho: AS2S(aMask) onlyOperators: operators];
+	return self;
+}
+- whois: (NSAttributedString *)aPerson onServer: (NSAttributedString *)aServer 
+   onConnection: aConnection sender: aPlugin
+{
+	[super whois: AS2S(aPerson) onServer: AS2S(aServer)];
+	return self;
+}
+- whowas: (NSAttributedString *)aPerson onServer: (NSAttributedString *)aServer
+   withNumberEntries: (NSAttributedString *)aNumber onConnection: aConnection 
+   sender: aPlugin
+{
+	[super whowas: AS2S(aPerson) onServer: AS2S(aServer)
+	  withNumberEntries: AS2S(aNumber)];
+	return self;
+}
+- kill: (NSAttributedString *)aPerson 
+   withComment: (NSAttributedString *)aComment 
+   onConnection: aConnection sender: aPlugin
+{
+	[super kill: AS2S(aPerson) withComment: AS2S(aComment)];
+	return self;
+}
+- setTopicForChannel: (NSAttributedString *)aChannel 
+   to: (NSAttributedString *)aTopic 
+   onConnection: aConnection sender: aPlugin
+{
+	[super setTopicForChannel: AS2S(aChannel) to: AS2S(aTopic)];
+	return self;
+}
+- setMode: (NSAttributedString *)aMode on: (NSAttributedString *)anObject 
+   withParams: (NSArray *)list onConnection: aConnection sender: aPlugin
+{
+	NSMutableArray *a;
+	NSEnumerator *iter;
+	id object;
 	
-	sel = [invocation selector];
-	selS = NSStringFromSelector(sel);
-	
-	NSLog(@"%@", selS);
-	
-	if ([_TSDummy_ respondsTo: sel]
-	    && [selS hasSuffix: @"nConnection:sender:"])
+	a = AUTORELEASE([NSMutableArray new]);
+	iter = [list objectEnumerator];
+	while ((object = [iter nextObject]))
 	{
-		selS = [selS substringToIndex: [selS length] - 
-		  [@"onConnection:sender:" length]];
-		
-		sel = NSSelectorFromString(selS);
-
-		if (![self respondsToSelector: sel])
-		{
-			[super forwardInvocation: invocation];
-		}
-
-		num = [[selS componentsSeparatedByString: @":"] count] - 1;
-
-		invoc = [NSInvocation invocationWithMethodSignature: 
-		  [self methodSignatureForSelector: sel]];
-		
-		[invoc setSelector: sel];
-		
-		for (x = 2; x < (num + 2); x++)
-		{
-			[invocation getArgument: buffer atIndex: x];
-			[invoc setArgument: buffer atIndex: x];
-		}
-
-		[invoc invokeWithTarget: self];
-		
-		return;
+		[a addObject: AS2S(object)];
 	}
 	
-	[super forwardInvocation: invocation];
+	[super setMode: AS2S(aMode) on: AS2S(anObject) withParams:
+	 a];
+	
+	return self;
+}					 
+- listChannel: (NSAttributedString *)aChannel 
+   onServer: (NSAttributedString *)aServer 
+   onConnection: aConnection sender: aPlugin
+{
+	[super listChannel: AS2S(aChannel) onServer: AS2S(aServer)];
+	return self;
+}
+- invite: (NSAttributedString *)aPerson to: (NSAttributedString *)aChannel 
+   onConnection: aConnection sender: aPlugin
+{
+	[super invite: AS2S(aPerson) to: AS2S(aChannel)];
+	return self;
+}
+- kick: (NSAttributedString *)aPerson offOf: (NSAttributedString *)aChannel 
+   for: (NSAttributedString *)reason 
+   onConnection: aConnection sender: aPlugin
+{
+	[super kick: AS2S(aPerson) offOf: AS2S(aChannel) for: AS2S(reason)];
+	return self;
+}
+- setAwayWithMessage: (NSAttributedString *)message onConnection: aConnection 
+   sender: aPlugin
+{
+	[super setAwayWithMessage: AS2S(message)];
+	return self;
+}
+- sendPingWithArgument: (NSAttributedString *)aString onConnection: aConnection 
+   sender: aPlugin
+{
+	[super sendPingWithArgument: AS2S(aString)];
+	return self;
+}
+- sendPongWithArgument: (NSAttributedString *)aString onConnection: aConnection 
+   sender: aPlugin
+{
+	[super sendPongWithArgument: AS2S(aString)];
+	return self;
+}
+- writeRawString: (NSAttributedString *)aString onConnection: aConnection
+   sender: aPlugin
+{
+	[super writeString: @"%@", AS2S(aString)];
+	return self;
 }
 @end

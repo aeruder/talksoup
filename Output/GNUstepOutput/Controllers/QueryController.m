@@ -47,6 +47,7 @@
 	[window close];
 	RELEASE(window);
 	window = RETAIN(x);
+	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
 - (void)dealloc
 {

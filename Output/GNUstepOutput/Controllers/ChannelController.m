@@ -32,6 +32,15 @@
 	id x;
 	[splitView setVertical: YES];
 
+	[chatView setHorizontallyResizable: NO];
+	[chatView setVerticallyResizable: YES];
+	[chatView setMinSize: NSMakeSize(0, 0)];
+	[chatView setMaxSize: NSMakeSize(1e7, 1e7)];
+	[[chatView textContainer] setContainerSize:
+	  NSMakeSize([chatView frame].size.width, 1e7)];
+	[[chatView textContainer] setWidthTracksTextView: YES];
+	[chatView setTextContainerInset: NSMakeSize(2, 0)];
+	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
 	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
@@ -41,6 +50,7 @@
 	[window close];
 	RELEASE(window);
 	window = RETAIN(x);
+	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
 - (void)dealloc
 {

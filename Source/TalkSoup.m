@@ -30,6 +30,16 @@ NSString *IRCDefaultsPassword = @"Password";
 id _TS_;
 id _TSDummy_;
 
+@interface NSException (blah)
+@end
+
+@implementation NSException (blah)
+/*- (void)raise
+{
+	abort();
+}*/
+@end
+
 @implementation TalkSoup
 + (TalkSoup *)sharedInstance
 {

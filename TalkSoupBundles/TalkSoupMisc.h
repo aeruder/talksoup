@@ -18,10 +18,16 @@
 #ifndef TALKSOUP_MISC_H
 #define TALKSOUP_MISC_H
 
+@class NSAttributedString;
+
 #include <Foundation/NSString.h>
 
 @interface NSString (Separation)
 - separateIntoNumberOfArguments: (int)num;
 @end
+
+NSAttributedString *BuildAttributedString(id aObject, ...);
+
+NSArray *IRCUserComponents(NSAttributedString *from);
 
 #endif

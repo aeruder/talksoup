@@ -247,6 +247,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	[tabItem setView: [query contentView]];
 
 	[tabView addTabViewItem: tabItem];
+	
+	[tabView selectTabViewItem: tabItem];
+	[tabView setNeedsDisplay: YES];
 
 	return self;
 }
@@ -279,9 +282,12 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabItem setAttributedLabel: aLabel];
 	
-	[tabItem setView: [[chan window] contentView]];
+	[tabItem setView: [chan contentView]];
 	
 	[tabView addTabViewItem: tabItem];
+	
+	[tabView selectTabViewItem: tabItem];
+	[tabView setNeedsDisplay: YES];
 	
 	return self;
 }

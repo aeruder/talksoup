@@ -43,8 +43,22 @@
 		NSAttributedString *personalRight;
 		NSAttributedString *otherLeft;
 		NSAttributedString *otherRight;
+		
+		BOOL registered;
 	}
 - initWithIRCInfoDictionary: (NSDictionary *)aDict;
+
+- setNick: (NSString *)aString;
+- (NSString *)nick;
+
+- setRealName: (NSString *)aString;
+- (NSString *)realName;
+
+- setUserName: (NSString *)aString;
+- (NSString *)userName;
+
+- setPassword: (NSString *)aString;
+- (NSString *)password;
 
 - connectToServer: (NSString *)aName onPort: (int)aPort;
 

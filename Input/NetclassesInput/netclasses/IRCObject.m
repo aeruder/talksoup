@@ -357,12 +357,6 @@ static void rec_nick(IRCObject *client, NSString *command,
 		return;
 	}
 	
-	if ([ExtractIRCNick(prefix) caseInsensitiveIRCCompare: [client nick]] 
-	      == NSOrderedSame)
-	{
-		[client setNickname: [paramList objectAtIndex: 0]];
-	}
-
 	[client nickChangedTo: [paramList objectAtIndex: 0] from: prefix];
 }
 

@@ -25,12 +25,12 @@
 	id string;
 	
 	string = [self label];
-	
+
 	[self setLabel: @""];
 	[super drawLabel: shouldTruncateLabel inRect: tabRect];
-	[self setLabel: string]; 
+	[self setLabel: string]; 	
 	
-	[attributedLabel drawAtPoint: NSMakePoint(tabRect.origin.x, NSMaxY(tabRect))];	
+	[attributedLabel drawAtPoint: NSMakePoint(tabRect.origin.x, NSMaxY(tabRect) + 2)];	
 }
 - setAttributedLabel: (NSAttributedString *)aString
 {

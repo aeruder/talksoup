@@ -165,8 +165,9 @@ id _output_ = nil;
 		if (commandSelector == 0 && connection)
 		{
 			NSLog(@"Couldn't find nothin', gonna try raw string...");
-			[_TS_ writeRawString: [NSString stringWithFormat: @"%@ %@", 
-			    substring, arguments]
+			[_TS_ writeRawString: 
+			S2AS(([NSString stringWithFormat: @"%@ %@", 
+			    substring, arguments]))
 			  onConnection: connection sender: _output_]; 
 		}
 		return;
@@ -193,18 +194,41 @@ id _output_ = nil;
 @end
 
 @implementation InputController (CommonCommands)
+- commandServer: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 3];
+	int aPort;
+
+	if ([x count] == 0)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /server server [port]"))
+		  onConnection: nil];
+		return self;
+	}
+
+	if ([x count] == 1)
+	{
+		aPort = 6667;
+	}
+	else
+	{
+		aPort = [[x objectAtIndex: 1] intValue];
+	}
+
+	[controller connectToServer: [x objectAtIndex: 0] onPort: aPort];
+
+	return self;
+}	
 - commandJoin: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 3];
 	id pass;
 	
-	NSLog(@"Welcome to the join command! %@ %@", aString, x);
-	
 	if ([x count] == 0)
 	{
-		NSLog(@"Bombing out...");
 		[controller showMessage: 
-		  S2AS(_l(@"Usage: /join channel1[,channel2...] password1[,password2...]"))
+		  S2AS(_l(@"Usage: /join channel1[,channel2...] [password1[,password2...]]"))
 		  onConnection: nil];
 		return self;
 	}
@@ -214,10 +238,43 @@ id _output_ = nil;
 
 	NSLog(@"%@",[_output_ connectionToConnectionController: controller]);
 	
-	[_TS_ joinChannel: [x objectAtIndex: 0] withPassword: pass 
+	[_TS_ joinChannel: S2AS([x objectAtIndex: 0]) withPassword: S2AS(pass) 
 	  onConnection: [_output_ connectionToConnectionController: controller]
 	  sender: _output_];
 	  
 	return self;
 }
+- commandNick: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	NSString *before;
+	id connection = [controller connection];
+	
+	if ([x count] == 0)
+	{
+		[controller showMessage: 
+		  S2AS(_l(@"Usage: /nick newnick")) onConnection: nil];
+	}
+	
+	if (!connection)
+	{
+		[controller setNick: [x objectAtIndex: 0]];
+		[[controller contentController] setNickViewString:
+		  [[controller connection] nick]];
+		return self;
+	}
+	
+	before = AUTORELEASE(RETAIN([connection nick]));
+	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
+	  sender: [_TS_ output]];
+	if (![connection connected])
+	{
+		if (![before isEqualToString: [connection nick]])
+		{
+			[[controller contentController] setNickViewString:
+			  [connection nick]];
+		}
+	}
+	return self;
+}	
 @end

@@ -46,6 +46,12 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	return string;
 }
 
+BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
+{
+	return [GNUstepOutputLowercase(aString) isEqualToString: 
+	  GNUstepOutputLowercase(aString2)];
+}
+
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";

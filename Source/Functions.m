@@ -19,6 +19,9 @@
 #include <Foundation/NSString.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSCharacterSet.h>
+#include <Foundation/NSAttributedString.h>
+
+#include <stdarg.h>
  
 static NSArray *get_first_word(NSString *arg)
 {
@@ -88,3 +91,59 @@ static NSArray *get_first_word(NSString *arg)
 	return array;
 }
 @end
+
+NSAttributedString *BuildAttributedString(id aObject, ...)
+{
+	va_list ap;
+	NSMutableAttributedString *str;
+	
+	if (aObject == nil) return AUTORELEASE([[NSAttributedString alloc] initWithString: @""]);
+	
+	str = AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
+	va_start(ap, aObject);
+	
+	do
+	{
+		if ([aObject isKindOf: [NSAttributedString class]])
+		{
+			[str appendAttributedString: aObject];
+		}
+		else
+		{
+			[str appendAttributedString: AUTORELEASE([[NSAttributedString alloc]
+			  initWithString: [aObject description]])];
+		}
+		
+		aObject = va_arg(ap, id);
+	} while (aObject != nil);
+
+	va_end(ap);
+
+	return str;
+}
+
+NSArray *IRCUserComponents(NSAttributedString *from)
+{
+	NSArray *components = [[from string] componentsSeparatedByString: @"!"];
+	NSAttributedString *string1, *string2;
+	NSRange aRange;
+	
+	aRange.location = 0;
+	aRange.length = [[components objectAtIndex: 0] length];
+	
+	string1 = [from attributedSubstringFromRange: aRange];
+	
+	aRange.location = aRange.length + 1;
+	
+	if (((int)[from length] - (int)aRange.location) <= 0)
+	{
+		string2 = AUTORELEASE([[NSAttributedString alloc] initWithString: @""]);
+	}
+	else
+	{
+		aRange.length = [from length] - aRange.length - 1;
+		string2 = [from attributedSubstringFromRange: aRange];
+	}
+	
+	return [NSArray arrayWithObjects: string1, string2, nil];
+}
