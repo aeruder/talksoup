@@ -1,3 +1,10 @@
+2003-12-17 Andy Ruder <aeruder at ksu dot edu>
+ * Finished all .nibs, got Server list working as well as all the other
+   things working on the OSX port.
+ * Slightly modified bundle loading to search for bundles in the .app resource
+   path.  Will make things simpler to produce distributable binary for
+   TalkSoup at some other time for OSX.
+
 2003-12-15 Andy Ruder <aeruder at ksu dot edu>
  * Lots of minor fixes to get OSX working.
  * Got Preferences, Bundle Setup, Channels, User lists working on OSX.
