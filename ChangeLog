@@ -1,3 +1,9 @@
+2004-01-05 Andy Ruder <aeruder at ksu dot edu>
+ * Updated the server list
+ * Made the server list realphabetize on startup
+ * Moved defaults into external files and into separate bundles
+ * Made Highlighting not screw up the preferences button in bundle setup
+
 2003-12-30 Andy Ruder <aeruder at ksu dot edu>
  * Added the ability for bundles to register preferences with 
    GNUstepOutputBundle
