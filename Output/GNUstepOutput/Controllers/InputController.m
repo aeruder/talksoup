@@ -863,7 +863,7 @@ static void send_message(id command, id name, id connection)
 	name = [content nameForViewController: view];
 	if ([x count] < 1)
 	{
-		if ([name isEqualToString: ContentConsoleName])
+		if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)])
 		{			
 			[controller showMessage:
 			  S2AS(_l(@"Usage: /close <tab label>")) 
@@ -875,6 +875,10 @@ static void send_message(id command, id name, id connection)
 	{
 		name = [x objectAtIndex: 0];
 	}
+	
+	/* Closing a tab could very well kill us...
+	 */
+	AUTORELEASE(RETAIN(self));
 
 	if ([controller dataForChannelWithName: name])
 	{

@@ -110,6 +110,7 @@
    atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController
 {
 	AttributedTabViewItem *tabItem;
+	int selected;
 	
 	tabItem = AUTORELEASE([AttributedTabViewItem new]);
 	
@@ -122,7 +123,11 @@
 	[tabItem setView: [aController contentView]];
 	[tabItem setAttributedLabel: aLabel];
 	
+	selected = [tabView indexOfTabViewItem: [tabView selectedTabViewItem]];
+	[tabView selectTabViewItemAtIndex: aIndex];
+	[tabView selectTabViewItemAtIndex: selected];
 	[tabView setNeedsDisplay: YES];
+	
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerAddedToMasterControllerNotification
