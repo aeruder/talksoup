@@ -288,6 +288,10 @@
 {
 	return nickView;
 }
+- (void)bringToFront
+{
+	[window makeKeyAndOrderFront: nil];
+}
 - (NSWindow *)window
 {
 	return window;

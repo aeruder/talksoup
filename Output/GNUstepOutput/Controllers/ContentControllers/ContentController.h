@@ -77,6 +77,7 @@ extern NSString *ContentConsoleName;
 - (NSTextField *)typeView;
 - (NSTextField *)nickView;
 
+- (void)bringToFront;
 - (NSWindow *)window;
 @end
 

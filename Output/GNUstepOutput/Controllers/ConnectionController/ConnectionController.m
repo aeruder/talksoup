@@ -98,6 +98,8 @@
 	nameToChannelData = [NSMutableDictionary new];
 	
 	[_GS_ addConnectionController: self];
+
+	[content bringNameToFront: ContentConsoleName];
 	
 	return self;
 }

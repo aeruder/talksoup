@@ -745,7 +745,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	view = [nameToBoth objectForKey: lowercase(aName)];
 	
 	if (master) {
-		[[master window] makeKeyAndOrderFront: nil];
+		[master bringToFront];
 		[master selectView: view];
 	}
 }
