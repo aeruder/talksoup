@@ -97,6 +97,8 @@
 	[[content window] setDelegate: nil];
 	[[content typeView] setTarget: nil];
 	[fieldEditor setKeyTarget: nil];
+	
+	AUTORELEASE(RETAIN(self));
 
 	[_GS_ removeConnectionController: self];
 	

@@ -397,6 +397,7 @@
 		[content setLabel: object
 		 forViewWithName: ContentConsoleName];
 		[[content window] setTitle: [object string]];
+		registered = YES;
 	}
 	
 	iter = [paramList objectEnumerator];
