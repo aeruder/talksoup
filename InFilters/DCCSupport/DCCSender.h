@@ -1,7 +1,7 @@
 /***************************************************************************
-                             DCCSupport.h
+                                DCCSender.h
                           -------------------
-    begin                : Wed Jul 2 18:58:30 CDT 2003
+    begin                : Wed Jan  7 21:13:07 CST 2004
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,37 +15,47 @@
  *                                                                         *
  ***************************************************************************/
 
-@class DCCSupport;
+@class DCCSender;
 
-@class NSBundle;
-
-#ifdef _l
-	#undef _l
-#endif
-
-#define _l(X) [[NSBundle bundleForClass: [DCCSupport class]] \
-               localizedStringForKey: (X) value: nil \
-               table: @"Localizable"]
-
-#ifndef DCCSUPPORT_H
-#define DCCSUPPORT_H
+#ifndef DCC_SENDER_H
+#define DCC_SENDER_H
 
 #import <Foundation/NSObject.h>
-#import <Foundation/NSMapTable.h>
 
-@class NSAttributedString, NSMutableArray;
+@class DCCSendObject, NSFileHandle, NSString, NSString;
+@class NSTimer, NSDictionary;
 
-@interface DCCSupport : NSObject
+@interface DCCSender : NSObject
 	{
-		NSMapTable *connectionMap;
-		id controller;
+		NSFileHandle *file;
+		NSString *path;
+		DCCSendObject *sender;
+		NSString *status;
+		NSString *receiver;
+		id connection;
+		id delegate;
+		NSTimer *cpsTimer;
+		int cps;
+		uint32_t oldTransferredBytes;
 	}
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   to: (NSAttributedString *)receiver
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin;
-@end
+- initWithFilename: (NSString *)path 
+    withConnection: aConnection to: (NSString *)receiver withDelegate: aDel;
 
+- (NSString *)status;
+
+- (NSDictionary *)info;
+
+- (NSHost *)localHost;
+- (NSHost *)remoteHost;
+
+- (NSString *)percentDone;
+
+- (int)cps;
+- cpsTimer: (NSTimer *)aTimer;
+
+- (NSString *)path;
+- (NSString *)receiver;
+
+- (void)abortConnection;
+@end
 #endif

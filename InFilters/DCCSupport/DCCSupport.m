@@ -19,6 +19,9 @@
 #import <netclasses/NetTCP.h>
 #import "DCCObject.h"
 #import "DCCSupport.h"
+#import "DCCSupportPreferencesController.h"
+#import "DCCSender.h"
+#import "DCCGetter.h"
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSInvocation.h>
@@ -173,388 +176,6 @@ static NSInvocation *invoc = nil;
 - (void)finishedSend: dcc onConnection: aConnection;
 - (NSMutableArray *)getConnectionTable: aConnection;
 @end
-
-
-
-
-
-
-@interface DCCGetter : NSObject
-	{
-		NSFileHandle *file;
-		NSString *path;
-		DCCObject *getter;
-		NSString *status;
-		id connection;
-		id delegate;
-		NSTimer *cpsTimer;
-		int cps;
-		uint32_t oldTransferredBytes;
-	}
-- initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath 
-    withConnection: aConnection withDelegate: aDel;
-
-- (NSString *)status;
-
-- (NSDictionary *)info;
-
-- (NSHost *)localHost;
-- (NSHost *)remoteHost;
-
-- (NSString *)percentDone;
-
-- (int)cps;
-- cpsTimer: (NSTimer *)aTimer;
-
-- (NSString *)path;
-
-- (void)abortConnection;
-@end
-
-
-
-
-
-@interface DCCSender : NSObject
-	{
-		NSFileHandle *file;
-		NSString *path;
-		DCCSendObject *sender;
-		NSString *status;
-		NSString *receiver;
-		id connection;
-		id delegate;
-		NSTimer *cpsTimer;
-		int cps;
-		uint32_t oldTransferredBytes;
-	}
-- initWithFilename: (NSString *)path 
-    withConnection: aConnection to: (NSString *)receiver withDelegate: aDel;
-
-- (NSString *)status;
-
-- (NSDictionary *)info;
-
-- (NSHost *)localHost;
-- (NSHost *)remoteHost;
-
-- (NSString *)percentDone;
-
-- (int)cps;
-- cpsTimer: (NSTimer *)aTimer;
-
-- (NSString *)path;
-- (NSString *)receiver;
-
-- (void)abortConnection;
-@end
-
-
-
-
-
-@implementation DCCGetter
-- initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath
-   withConnection: aConnection withDelegate: aDel
-{
-	id dfm;
-	BOOL isDir;
-	
-	if (!(self = [super init])) return nil;
-	
-	dfm = [NSFileManager defaultManager];
-	
-	if (![dfm fileExistsAtPath: aPath isDirectory: &isDir])
-	{
-		if (![dfm createFileAtPath: aPath contents: AUTORELEASE([NSData new]) attributes: nil])
-		{
-			RELEASE(self);
-			return nil;
-		}
-	}
-	else if (isDir)
-	{
-		RELEASE(self);
-		return nil;
-	}
-	
-	connection = RETAIN(aConnection);
-	
-	file = RETAIN([NSFileHandle fileHandleForWritingAtPath: aPath]);
-	
-	path = RETAIN(aPath);
-	getter = [[DCCReceiveObject alloc] initWithReceiveOfFile: aDict 
-	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_gettimeout) 
-	  withUserInfo: nil];
-	
-	delegate = aDel;
-	
-	return self;
-}
-- (void)dealloc
-{
-	[cpsTimer invalidate];
-	DESTROY(cpsTimer);
-	RELEASE(getter);
-	RELEASE(path);
-	RELEASE(file);
-	RELEASE(connection);
-	RELEASE(status);
-	
-	[super dealloc];
-}
-- cpsTimer: (NSTimer *)aTimer
-{
-	cps = ([getter transferredBytes] - oldTransferredBytes) / 5;
-	oldTransferredBytes = [getter transferredBytes];
-	return self;
-}
-- DCCInitiated: aConnection
-{
-	return self;
-}
-- DCCStatusChanged: (NSString *)aStatus forObject: aConnection
-{
-	if (status == aStatus) return self;
-	
-	if ([aStatus isEqualToString: DCCStatusTransferring])
-	{
-		[cpsTimer invalidate];
-		RELEASE(cpsTimer);
-		oldTransferredBytes = 0;
-		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
-		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
-		[delegate startedReceive: self onConnection: connection];
-	}
-		
-	RELEASE(status);
-	status = RETAIN(aStatus);
-	
-	return self;
-}
-- DCCReceivedData: (NSData *)data forObject: aConnection
-{
-	[file writeData: data];
-	
-	return self;
-}
-- DCCDone: aConnection
-{
-	[cpsTimer invalidate];
-	DESTROY(cpsTimer);
-	
-	[delegate finishedReceive: self onConnection: connection];
-	
-	return self;
-}
-- (NSString *)status
-{
-	return status;
-}
-- (NSDictionary *)info
-{
-	return [getter info];
-}
-- (NSHost *)localHost
-{
-	return [connection localHost];
-}
-- (NSHost *)remoteHost
-{
-	return [connection remoteHost];
-}
-- (NSString *)percentDone
-{
-	id dict = [getter info];
-	int length;
-	
-	length = [[dict objectForKey: DCCInfoFileSize] intValue];
-	
-	if (length < 0)
-	{
-		return @"??%";
-	}
-	
-	return [NSString stringWithFormat: @"%d%%", 
-	  ([getter transferredBytes] * 100) / length];
-}
-- (int)cps
-{
-	return cps;
-}
-- (NSString *)path
-{
-	return path;
-}
-- (void)abortConnection
-{
-	[getter abortConnection];
-}
-@end
-
-
-
-
-
-@implementation DCCSender
-- initWithFilename: (NSString *)aPath 
-    withConnection: aConnection to: (NSString *)aReceiver withDelegate: aDel;
-{
-	id dfm;
-	NSNumber *fileSize;
-	id dict;
-	
-	dfm = [NSFileManager defaultManager];
-	
-	if (!(dict = [dfm fileAttributesAtPath: aPath traverseLink: YES]))
-	{
-		return nil;
-	}
-	
-	fileSize = [dict objectForKey: NSFileSize];
-	
-	if (!(self = [super init])) return nil;
-	
-	file = RETAIN([NSFileHandle fileHandleForReadingAtPath: aPath]);
-	
-	if (!file) 
-	{
-		[self dealloc];
-		return nil;
-	}
-	
-	path = RETAIN(aPath);
-
-	receiver = RETAIN(aReceiver);
-	
-	connection = RETAIN(aConnection);
-	
-	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
-	  withSize: fileSize
-	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_sendtimeout) 
-	  withBlockSize: 2000 withUserInfo: nil];
-	
-	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
-	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
-	  to: S2AS(aReceiver) onConnection: aConnection withNickname: S2AS([aConnection nick])
-	  sender: [_TS_ pluginForOutput]];
-	
-	delegate = aDel;
-	
-	return self;
-}
-- (void)dealloc
-{
-	[cpsTimer invalidate];
-	DESTROY(cpsTimer);
-	RELEASE(sender);
-	RELEASE(path);
-	RELEASE(file);
-	RELEASE(connection);
-	RELEASE(status);
-	RELEASE(receiver);
-	
-	[super dealloc];
-}
-- cpsTimer: (NSTimer *)aTimer
-{
-	cps = ([sender transferredBytes] - oldTransferredBytes) / 5;
-	oldTransferredBytes = [sender transferredBytes];
-	return self;
-}
-- DCCInitiated: aConnection
-{
-	return self;
-}
-- DCCStatusChanged: (NSString *)aStatus forObject: aConnection
-{
-	if (status == aStatus) return self;
-	
-	if ([aStatus isEqualToString: DCCStatusTransferring])
-	{
-		[cpsTimer invalidate];
-		RELEASE(cpsTimer);
-		oldTransferredBytes = 0;
-		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
-		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
-		[delegate startedSend: self onConnection: connection];
-	}		
-		
-	RELEASE(status);
-	status = RETAIN(aStatus);
-	
-	return self;
-}
-- DCCNeedsMoreData: aConnection
-{
-	NSData *data;
-	
-	data = [file readDataOfLength: [sender blockSize]];
-	
-	[sender writeData: ([data length]) ? data : nil];
-	
-	return self;
-}
-- DCCDone: aConnection
-{
-	[cpsTimer invalidate];
-	DESTROY(cpsTimer);
-	
-	[delegate finishedSend: self onConnection: connection];
-	
-	return self;
-}
-- (NSString *)status
-{
-	return status;
-}
-- (NSDictionary *)info
-{
-	return [sender info];
-}
-- (NSHost *)localHost
-{
-	return [connection localHost];
-}
-- (NSHost *)remoteHost
-{
-	return [connection remoteHost];
-}
-- (NSString *)percentDone
-{
-	id dict = [sender info];
-	int length;
-	
-	length = [[dict objectForKey: DCCInfoFileSize] intValue];
-	
-	if (length < 0)
-	{
-		return @"??%";
-	}
-	
-	return [NSString stringWithFormat: @"%d%%", 
-	  ([sender transferredBytes] * 100) / length];
-}
-- (int)cps
-{
-	return cps;
-}
-- (NSString *)path
-{
-	return path;
-}
-- (NSString *)receiver
-{
-	return receiver;
-}
-- (void)abortConnection
-{
-	[sender abortConnection];
-}
-@end
-
-
-
 
 @implementation DCCSupport (PrivateSupport)
 - (void)startedSend: (id)dcc onConnection: aConnection
@@ -1098,12 +719,30 @@ static NSInvocation *invoc = nil;
 }	
 - pluginActivated
 {
+	controller = [DCCSupportPreferencesController new];
+
+#ifdef USE_APPKIT
+	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"AddBundlePreferencesController", @"Process",
+	  @"DCCSupport", @"Name",
+	  controller, @"Controller",
+	  nil] onConnection: nil withNickname: nil sender: self];
+#endif
+
 	[invoc setTarget: self];
 	[_TS_ addCommand: @"dcc" withInvocation: invoc];
 	return self;
 }
 - pluginDeactivated
 {
+#ifdef USE_APPKIT
+	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"RemoveBundlePreferencesController", @"Process",
+	  @"DCcSupport", @"Name", nil]
+	  onConnection: nil withNickname: nil sender: self];
+#endif
+	DESTROY(controller);
+
 	[invoc setTarget: nil];
 	[_TS_ removeCommand: @"dcc"];
 	return self;

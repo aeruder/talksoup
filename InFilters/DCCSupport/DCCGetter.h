@@ -1,7 +1,7 @@
 /***************************************************************************
-                             DCCSupport.h
+                                DCCGetter.h
                           -------------------
-    begin                : Wed Jul 2 18:58:30 CDT 2003
+    begin                : Wed Jan  7 21:08:21 CST 2004
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,37 +15,46 @@
  *                                                                         *
  ***************************************************************************/
 
-@class DCCSupport;
+@class DCCGetter;
 
-@class NSBundle;
-
-#ifdef _l
-	#undef _l
-#endif
-
-#define _l(X) [[NSBundle bundleForClass: [DCCSupport class]] \
-               localizedStringForKey: (X) value: nil \
-               table: @"Localizable"]
-
-#ifndef DCCSUPPORT_H
-#define DCCSUPPORT_H
+#ifndef DCC_GETTER_H
+#define DCC_GETTER_H
 
 #import <Foundation/NSObject.h>
-#import <Foundation/NSMapTable.h>
 
-@class NSAttributedString, NSMutableArray;
+@class DCCObject, NSFileHandle, NSString, NSTimer;
+@class NSDictionary, NSHost;
 
-@interface DCCSupport : NSObject
+@interface DCCGetter : NSObject
 	{
-		NSMapTable *connectionMap;
-		id controller;
+		NSFileHandle *file;
+		NSString *path;
+		DCCObject *getter;
+		NSString *status;
+		id connection;
+		id delegate;
+		NSTimer *cpsTimer;
+		int cps;
+		uint32_t oldTransferredBytes;
 	}
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   to: (NSAttributedString *)receiver
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin;
+- initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath 
+    withConnection: aConnection withDelegate: aDel;
+
+- (NSString *)status;
+
+- (NSDictionary *)info;
+
+- (NSHost *)localHost;
+- (NSHost *)remoteHost;
+
+- (NSString *)percentDone;
+
+- (int)cps;
+- cpsTimer: (NSTimer *)aTimer;
+
+- (NSString *)path;
+
+- (void)abortConnection;
 @end
 
 #endif
