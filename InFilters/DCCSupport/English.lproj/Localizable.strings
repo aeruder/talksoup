@@ -29,6 +29,7 @@
 "End of list." = "End of list.";
 "Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender." = "Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender.";
 "The specified index is invalid. Please see /dcc list." = "The specified index is invalid. Please see /dcc list.";
+"Invalid download directory, see /dcc setdir." = "Invalid download directory, see /dcc setdir.";
 "Could not find a unique file name." = "Could not find a unique file name.";
 "Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: " = "Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: ";
 "File exists at path." = "File exists at path.";
