@@ -74,12 +74,6 @@ extern GNUstepOutput *_GS_;
 - removeConnectionController: (ConnectionController *)aCont;
 - (NSArray *)connectionControllers;
 
-- newConnection: (id)connection sender: aPlugin;
-
-- consoleMessage: (NSAttributedString *)arg onConnection: (id)connection;
-- systemMessage: (NSAttributedString *)arg onConnection: (id)connection;
-- showMessage: (NSAttributedString *)arg onConnection: (id)connection;
-
 - (TopicInspectorController *)topicInspectorController;
 - (void)run;
 @end

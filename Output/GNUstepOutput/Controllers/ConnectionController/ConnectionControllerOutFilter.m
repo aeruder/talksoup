@@ -27,9 +27,10 @@
 
 @implementation ConnectionController (OutFilter)
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
-	id who = [connection nick];
 	id where = [receiver string];
 	
 	if (![content controllerForViewWithName: where])
@@ -43,22 +44,26 @@
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, FCAN, personalColor, @"<", 
-		  who, MARK, FCAN, personalColor, @">", 
+		  aNick, MARK, FCAN, personalColor, @">", 
 		  @" ", message, nil) in: where];
 	}
 	
 	return self;
 }
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
-	[self sendMessage: message to: receiver onConnection: aConnection sender: aPlugin];
+	[self sendMessage: message to: receiver onConnection: aConnection 
+	  withNickname: aNick sender: aPlugin];
 	return self;
 }
 - sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
-	id who = [aConnection nick];
 	id where = [receiver string];
 	
 	if (![content controllerForViewWithName: where])
@@ -66,13 +71,13 @@
 		[content putMessage: BuildAttributedString(
 		  MARK, FCAN, personalColor, @">", 
 		  receiver, MARK, FCAN, personalColor, @"<", 
-		  MARK, FCAN, personalColor, @" * ", who, @" ", anAction, nil) in: nil];
+		  MARK, FCAN, personalColor, @" * ", aNick, @" ", anAction, nil) in: nil];
 	}
 	else
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, FCAN, personalColor, @"* ", 
-		  who, @" ", anAction, nil) in: where];
+		  aNick, @" ", anAction, nil) in: where];
 	}
 	
 	return self;

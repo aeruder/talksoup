@@ -230,7 +230,9 @@
 			[_TS_ writeRawString: 
 			S2AS(([NSString stringWithFormat: @"%@ %@", 
 			    substring, arguments]))
-			  onConnection: connection sender: _GS_]; 
+			  onConnection: connection 
+			  withNickname: S2AS([connection nick])
+			  sender: _GS_];
 		}
 		return;
 	}
@@ -244,7 +246,8 @@
 	}
 
 	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
-	  onConnection: connection sender: _GS_];
+	  onConnection: connection withNickname: S2AS([connection nick]) 
+	  sender: _GS_];
 }
 @end
 
@@ -299,7 +302,7 @@
 	}
 	
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
-	  sender: _GS_];
+	  withNickname: S2AS([connection nick]) sender: _GS_];
 	
 	if (![connection connected])
 	{
@@ -311,6 +314,8 @@
 }
 - commandMe: (NSString *)aString
 {
+	id connection = [controller connection];
+
 	if ([aString length] == 0)
 	{
 		[controller showMessage: 
@@ -320,7 +325,8 @@
 	}
 	
 	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
-	  currentViewName]) onConnection: [controller connection]
+	  currentViewName]) onConnection: connection
+	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
 	return self;
 }
@@ -347,6 +353,7 @@
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
 	id o;
+	id connection = [controller connection];
 	
 	if ([x count] < 1)
 	{
@@ -368,7 +375,9 @@
 	{
 		[controller leaveChannel: o];
 		[_TS_ partChannel: S2AS(o) withMessage: S2AS(@"")
-		  onConnection: [controller connection] sender: _GS_];
+		  onConnection: connection 
+		  withNickname: S2AS([connection nick])
+		  sender: _GS_];
 	}
 	
 	[[controller contentController] closeViewWithName: o];
@@ -380,6 +389,7 @@
 	id x = [args separateIntoNumberOfArguments: 2];
 	id name, msg;
 	id content = [controller contentController];
+	id connection = [controller connection];
 	
 	msg = nil;
 	if (![content isChannelName: name = [content currentViewName]])
@@ -405,7 +415,9 @@
 	}
 	
 	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
-	  onConnection: [controller connection] sender: _GS_];
+	  onConnection: connection
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
 	
 	return self;
 }

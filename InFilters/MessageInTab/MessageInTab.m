@@ -23,6 +23,7 @@
 @implementation MessageInTab
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id name;
@@ -35,15 +36,18 @@
 		  @"OpenTab", @"Process",
 	 	  name, @"TabName",
 		  S2AS(name), @"TabLabel", nil] onConnection: connection
+		  withNickname: aNick
 		  sender: aPlugin];
 	}
 
 	[_TS_ messageReceived: aMessage to: to from: sender onConnection: connection
+	  withNickname: aNick
 	  sender: self];
 	return self;
 }
 - actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id name;
@@ -56,10 +60,11 @@
 		  @"OpenTab", @"Process",
 	 	  name, @"TabName",
 		  S2AS(name), @"TabName", nil]
-		  onConnection: connection sender: aPlugin];
+		  onConnection: connection withNickname: aNick sender: aPlugin];
 	}
 
 	[_TS_ actionReceived: anAction to: to from: sender onConnection: connection
+	  withNickname: aNick
 	  sender: self];
 	return self;
 }

@@ -358,14 +358,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	{
 		id connection;
 		NSDebugLLog(@"TalkSoup", @"Out %@ by %@", selString, sender);
-		if (![selString hasSuffix: @"Connection:sender:"])
-		{
-			[super forwardInvocation: aInvocation];
-			return;
-		}
 		if (index == ([out count] - 1))
 		{
-			[aInvocation getArgument: &connection atIndex: args];
+			[aInvocation getArgument: &connection atIndex: args - 1];
 			next = connection;
 		}
 		else
@@ -829,6 +824,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	[_TS_ joinChannel: S2AS([x objectAtIndex: 0]) withPassword: S2AS(pass) 
 	  onConnection: connection
+	  withNickname: S2AS([connection nick])
 	  sender: output];
 	  
 	return nil;
@@ -846,7 +842,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	[_TS_ sendMessage: S2AS([x objectAtIndex: 1]) to: 
 	  S2AS([x objectAtIndex: 0])
-	  onConnection: connection sender: output];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 
 	return nil;
 }
@@ -874,7 +872,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	
 	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
-	  onConnection: connection sender: output];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 	
 	return nil;
 }
@@ -891,7 +891,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	[_TS_ sendNotice: S2AS([x objectAtIndex: 1]) to: 
 	  S2AS([x objectAtIndex: 0])
-	  onConnection: connection sender: output];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 
 	return nil;
 }
@@ -908,6 +910,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	
 	[_TS_ setAwayWithMessage: S2AS(y) onConnection: connection
+	  withNickname: S2AS([connection nick])
 	  sender: output];
 	
 	return nil;
@@ -924,6 +927,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
+	  withNickname: S2AS([connection nick])
 	  sender: output];
 	
 	return nil;
@@ -933,7 +937,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	if (!connection) return NO_CONNECT;
 	
 	[_TS_ quitWithMessage: S2AS(aString) onConnection: connection
-	  sender: output];
+	  withNickname: S2AS([connection nick]) sender: output];
 	
 	return nil;
 }
@@ -968,7 +972,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	who = [array objectAtIndex: 0];
 
 	[_TS_ sendCTCPRequest: S2AS(ctcp) withArgument: S2AS(args)
-	  to: S2AS(who) onConnection: connection sender: output];
+	  to: S2AS(who) onConnection: connection 
+	  withNickname: S2AS([connection nick]) sender: output];
 	
 	return nil;
 }	
@@ -989,7 +994,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	who = [array objectAtIndex: 0];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"VERSION") withArgument: nil
-	  to: S2AS(who) onConnection: connection sender: output];
+	  to: S2AS(who) onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 	
 	return nil;
 }
@@ -1010,7 +1017,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	who = [array objectAtIndex: 0];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"CLIENTINFO") withArgument: nil
-	  to: S2AS(who) onConnection: connection sender: output];
+	  to: S2AS(who) onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 	
 	return nil;
 }
@@ -1031,7 +1040,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	who = [array objectAtIndex: 0];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"USERINFO") withArgument: nil
-	  to: S2AS(who) onConnection: connection sender: output];
+	  to: S2AS(who) onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: output];
 	
 	return nil;
 }
@@ -1057,7 +1068,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	
 	[_TS_ sendCTCPRequest: S2AS(@"PING") withArgument: S2AS(arg)
-	  to: S2AS(who) onConnection: connection sender: output];
+	  to: S2AS(who) onConnection: connection withNickname: S2AS([connection nick])
+	  sender: output];
 	
 	return nil;
 }

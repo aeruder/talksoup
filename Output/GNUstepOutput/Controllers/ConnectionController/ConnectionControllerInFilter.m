@@ -35,7 +35,8 @@
 #define MARK [NSNull null]
 
 @implementation ConnectionController (InFilter)
-- newConnection: (id)aConnection sender: aPlugin
+- newConnection: (id)aConnection withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
 	if (connection)
 	{
@@ -45,7 +46,8 @@
 	
 	return self;
 }
-- lostConnection: (id)aConnection sender: aPlugin
+- lostConnection: (id)aConnection withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	NSEnumerator *iter;
 	id object;
@@ -66,7 +68,9 @@
 	DESTROY(connection);	
 	return self;
 }
-- controlObject: (id)aObject onConnection: aConnection sender: aPlugin
+- controlObject: (id)aObject onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	id process;
 	if (![aObject isKindOf: [NSDictionary class]]) return self;
@@ -129,11 +133,14 @@
 	
 	return self;
 }
-- registeredWithServerOnConnection: (id)aConnection sender: aPlugin
+- registeredWithServerOnConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	return self;
 }
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	NSLog(@"Couldn't register: %@", [reason string]);
@@ -142,6 +149,7 @@
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
@@ -175,7 +183,9 @@
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
 	   @"CTCPReply%@:from:", [[aCTCP string] uppercaseString]]);
@@ -210,6 +220,7 @@
 	return self;
 }
 - errorReceived: (NSAttributedString *)anError onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	[self systemMessage: BuildAttributedFormat(_l(@"Error: %@"), anError)
@@ -218,14 +229,18 @@
 }
 - wallopsReceived: (NSAttributedString *)message 
    from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	return self;
 }
 - userKicked: (NSAttributedString *)aPerson 
    outOf: (NSAttributedString *)aChannel 
    for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([aChannel string]);
@@ -248,7 +263,9 @@
 	return self;
 }
 - invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	id name = [IRCUserComponents(inviter) objectAtIndex: 0];
 	
@@ -260,7 +277,9 @@
 }
 - modeChanged: (NSAttributedString *)aMode on: (NSAttributedString *)anObject 
    withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	Channel *chan;
 	unichar m;
@@ -345,7 +364,9 @@
 }
 - numericCommandReceived: (NSAttributedString *)command 
    withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {	
 	SEL sel = NSSelectorFromString([NSString stringWithFormat: 
 	  @"numericHandler%@:", [command string]]);
@@ -385,7 +406,9 @@
 }
 - nickChangedTo: (NSAttributedString *)newName 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	NSEnumerator *iter;
 	id object;
@@ -424,7 +447,9 @@
 }
 - channelJoined: (NSAttributedString *)channel 
    from: (NSAttributedString *)joiner 
-   onConnection: (id)aConnection sender: aPlugin
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	id name = [channel string];
 	id array = IRCUserComponents(joiner);
@@ -463,6 +488,7 @@
 - channelParted: (NSAttributedString *)channel 
    withMessage: (NSAttributedString *)aMessage
    from: (NSAttributedString *)parter onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	id name = [IRCUserComponents(parter) objectAtIndex: 0];
@@ -489,6 +515,7 @@
 }
 - quitIRCWithMessage: (NSAttributedString *)aMessage 
    from: (NSAttributedString *)quitter onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	id name = [IRCUserComponents(quitter) objectAtIndex: 0];
@@ -514,12 +541,14 @@
 }
 - topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	return self;
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	id who = [IRCUserComponents(sender) objectAtIndex: 0];
@@ -554,14 +583,17 @@
 }
 - noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	[self messageReceived: aMessage to: to from: sender onConnection: aConnection
+	  withNickname: aNick
 	  sender: aPlugin];
 	return self;
 }
 - actionReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	id who = [IRCUserComponents(sender) objectAtIndex: 0];
@@ -594,20 +626,25 @@
 }
 - pingReceivedWithArgument: (NSAttributedString *)arg 
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	[_TS_ sendPongWithArgument: arg onConnection: aConnection 
+	[_TS_ sendPongWithArgument: arg onConnection: aConnection
+	  withNickname: aNick
 	  sender: [_TS_ pluginForOutput]];
 
 	return self;
 }
 - pongReceivedWithArgument: (NSAttributedString *)arg 
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	return self;
 }
-- newNickNeededWhileRegisteringOnConnection: (id)aConnection sender: aPlugin
+- newNickNeededWhileRegisteringOnConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
 {
 	return self;
 }

@@ -22,13 +22,19 @@
 
 @interface ConnectionController (OutFilter)
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin;
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin;
 
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin;
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin;
 
 - sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
-   onConnection: aConnection sender: aPlugin;
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick
+   sender: aPlugin;
 @end
 
 #endif

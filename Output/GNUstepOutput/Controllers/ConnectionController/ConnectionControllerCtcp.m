@@ -27,6 +27,7 @@
 {
 	[_TS_ sendCTCPReply: S2AS(@"PING") withArgument: argument to: 
 	  [IRCUserComponents(aPerson) objectAtIndex: 0] onConnection: connection
+	  withNickname: S2AS([connection nick])
 	  sender: _GS_]; 
 	  
 	[content putMessage: 
@@ -41,7 +42,9 @@
 	  BuildAttributedFormat(@"TalkSoup.app %@", 
 	    [[[NSBundle mainBundle] infoDictionary] objectForKey: @"ApplicationRelease"])
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0] 
-	  onConnection: connection sender: _GS_];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
 
 	return nil;
 }
@@ -53,7 +56,9 @@
 		 @"http://www.freshmeat.net/talksoup/ or "
 		 @"http://andyruder.tripod.com", nil)
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
-	  onConnection: connection sender: _GS_];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
 
 	return nil;
 }
@@ -62,7 +67,9 @@
 	[_TS_ sendCTCPReply: S2AS(@"XYZZY") withArgument:
 	  S2AS(@"Nothing happened.") 
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
-	  onConnection: connection sender: _GS_];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
 	
 	return nil;
 }
@@ -70,7 +77,9 @@
 {
 	[_TS_ sendCTCPReply: S2AS(@"RFM") withArgument: S2AS(@"Problems? Blame RFM")
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
-	  onConnection: connection sender: _GS_];
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
 	
 	return nil;
 }

@@ -137,7 +137,8 @@ NSString *get_destination(NSString *to, NSString *from, NSString *nick)
 }
 
 NSAttributedString *do_highlighting(id cont, NSString *msg, 
-  NSAttributedString *from, NSArray *words, NSString *where, id connection)
+  NSAttributedString *from, NSArray *words, NSString *where, id connection,
+  NSAttributedString *aNick)
 {
 	NSString *userColor = get_pref(@"HighlightingUserColor");
 	NSString *refColor = get_pref(@"HighlightingTabReferenceColor");
@@ -166,7 +167,8 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 			  refColor, @"TabColor",
 			  where, @"TabName",
 			  [NSNull null], @"TabPriority",
-			  nil] onConnection: connection sender: cont];
+			  nil] onConnection: connection 
+			  withNickname: aNick sender: cont];
 		}
 		
 		if (userColor)
@@ -186,7 +188,8 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 			  @"HighlightTab", @"Process",
 			  anyColor, @"TabColor",
 			  where, @"TabName",
-			  nil] onConnection: connection sender: cont];
+			  nil] onConnection: connection 
+			  withNickname: aNick sender: cont];
 		}
 	}
 		
@@ -331,6 +334,7 @@ static NSInvocation *invoc = nil;
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
@@ -344,14 +348,15 @@ static NSInvocation *invoc = nil;
 	}
 	
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection);
+	  where, connection, aNick);
  
 	[_TS_ messageReceived: aMessage to: to from: sender 
-	  onConnection: connection sender: self];	
+	  onConnection: connection withNickname: aNick sender: self];	
 	return self;
 }
 - noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
@@ -364,14 +369,15 @@ static NSInvocation *invoc = nil;
 		[x addObjectsFromArray: words];
 	}
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection);
+	  where, connection, aNick);
 	
 	[_TS_ noticeReceived: aMessage to: to from: sender 
-	  onConnection: connection sender: self];
+	  onConnection: connection withNickname: aNick sender: self];
 	return self;
 }
 - actionReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
@@ -384,10 +390,10 @@ static NSInvocation *invoc = nil;
 		[x addObjectsFromArray: words];
 	}
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection); 
+	  where, connection, aNick); 
 	
 	[_TS_ actionReceived: aMessage to: to from: sender 
-	  onConnection: connection sender: self];
+	  onConnection: connection withNickname: aNick sender: self];
 	return self;
 }
 @end

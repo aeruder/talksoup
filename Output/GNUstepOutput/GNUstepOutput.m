@@ -226,7 +226,8 @@ GNUstepOutput *_GS_ = nil;
 {
 	return [NSArray arrayWithArray: connectionControllers];
 }
-- newConnection: (id)connection sender: aPlugin
+- newConnection: (id)connection withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
 	id controller;
 	id ident = [connection identification];
@@ -248,16 +249,19 @@ GNUstepOutput *_GS_ = nil;
 	NSMapInsert(connectionToConnectionController, connection, controller);
 	NSMapInsert(connectionToConnectionController, controller, connection);
 
-	[controller newConnection: connection sender: aPlugin];
+	[controller newConnection: connection withNickname: aNick
+	  sender: aPlugin];
 	
 	return self;
 }
-- lostConnection: (id)connection sender: aPlugin
+- lostConnection: (id)connection withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
 	id control;
 	control = NSMapGet(connectionToConnectionController, connection);
 	
-	[control lostConnection: connection sender: aPlugin];
+	[control lostConnection: connection withNickname: aNick
+	  sender: aPlugin];
 	
 	NSMapRemove(connectionToConnectionController, connection);
 	NSMapRemove(connectionToConnectionController, control);
@@ -298,7 +302,7 @@ GNUstepOutput *_GS_ = nil;
 {
 	NSString *selS = NSStringFromSelector(aSel);
 	
-	if ([selS hasSuffix: @"nConnection:sender:"]) return YES;
+	if ([selS hasSuffix: @"nConnection:withNickname:sender:"]) return YES;
 	
 	return [super respondsToSelector: aSel];
 }
@@ -320,7 +324,7 @@ GNUstepOutput *_GS_ = nil;
 	
 	[aInvoc retainArguments];
 	
-	if ([selS hasSuffix: @"nConnection:sender:"])
+	if ([selS hasSuffix: @"nConnection:withNickname:sender:"])
 	{
 		int num;
 		id connection;
@@ -328,7 +332,7 @@ GNUstepOutput *_GS_ = nil;
 		
 		num = [[selS componentsSeparatedByString: @":"] count] - 1;
 		
-		[aInvoc getArgument: &connection atIndex: num + 2 - 1 - 1];
+		[aInvoc getArgument: &connection atIndex: num + 2 - 1 - 1 - 1];
 		
 		object = NSMapGet(connectionToConnectionController, connection);
 		
@@ -571,11 +575,14 @@ GNUstepOutput *_GS_ = nil;
 	
 	if (connection)
 	{
+		connection = [connection connection];
 		[_TS_ setTopicForChannel: S2AS(channel) to: 
-		 S2AS([sender string]) onConnection: [connection connection]
+		 S2AS([sender string]) onConnection: connection
+		 withNickname: S2AS([connection nick])
 		 sender: self];
 		[_TS_ setTopicForChannel: S2AS(channel) to:
-		 nil onConnection: [connection connection]
+		 nil onConnection: connection
+		 withNickname: S2AS([connection nick])
 		 sender: self];
 	}
 	

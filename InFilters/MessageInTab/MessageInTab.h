@@ -27,10 +27,12 @@
 @interface MessageInTab : NSObject
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin;
 
 - actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick
    sender: aPlugin;
 @end
 

@@ -23,92 +23,127 @@
 @class NSAttributedString;
 
 @interface ConnectionController (InFilter)
-- newConnection: (id)connection sender: aPlugin;
+- newConnection: (id)aConnection withNickname: (NSAttributedString *)aNick
+   sender: aPlugin;
 
-- lostConnection: (id)aConnection sender: aPlugin;
+- lostConnection: (id)aConnection withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
-- controlObject: (id)aObject onConnection: aConnection sender: aPlugin;
+- controlObject: (id)aObject onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
-- registeredWithServerOnConnection: (id)aConnection sender: aPlugin;
+- registeredWithServerOnConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - errorReceived: (NSAttributedString *)anError onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - wallopsReceived: (NSAttributedString *)message 
    from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - userKicked: (NSAttributedString *)aPerson 
    outOf: (NSAttributedString *)aChannel 
    for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
-- modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
+- modeChanged: (NSAttributedString *)aMode on: (NSAttributedString *)anObject 
    withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - numericCommandReceived: (NSAttributedString *)command 
    withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - nickChangedTo: (NSAttributedString *)newName 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - channelJoined: (NSAttributedString *)channel 
    from: (NSAttributedString *)joiner 
-   onConnection: (id)aConnection sender: aPlugin;
+   onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - channelParted: (NSAttributedString *)channel 
    withMessage: (NSAttributedString *)aMessage
    from: (NSAttributedString *)parter onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - quitIRCWithMessage: (NSAttributedString *)aMessage 
    from: (NSAttributedString *)quitter onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - actionReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - pingReceivedWithArgument: (NSAttributedString *)arg 
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - pongReceivedWithArgument: (NSAttributedString *)arg 
    from: (NSAttributedString *)sender onConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
-- newNickNeededWhileRegisteringOnConnection: (id)aConnection sender: aPlugin;
+- newNickNeededWhileRegisteringOnConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 
 - consoleMessage: (NSAttributedString *)arg onConnection: (id)connection;
 

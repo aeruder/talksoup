@@ -96,7 +96,9 @@
 
 	[super dealloc];
 }
-- registeredWithServerOnConnection: (id)aConnection sender: aPlugin
+- registeredWithServerOnConnection: (id)aConnection 
+   withNickname: (NSAttributedString *)aNick
+	sender: aPlugin
 {
 	id tmp;
 	
@@ -105,7 +107,8 @@
 		[[self inputController] lineTyped: tmp];
 	}
 
-	return [super registeredWithServerOnConnection: aConnection sender: aPlugin];
+	return [super registeredWithServerOnConnection: aConnection 
+	  withNickname: aNick sender: aPlugin];
 }
 - (void)saveWindowStats: (NSNotification *)aNotification
 {
