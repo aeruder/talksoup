@@ -53,8 +53,6 @@
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
    withContentController: (id <ContentController>)aContent
 {
-	NSTextView *fieldEditor;
-	
 	if (!(self = [super init])) return nil;
 
 	if (!aDict)
@@ -100,10 +98,6 @@
 	[content setLabel: S2AS(_l(@"Unconnected")) 
 	  forName: ContentConsoleName];
 	[content setTitle: _l(@"Unconnected")];
-	
-	fieldEditor = [KeyTextView new];
-	[fieldEditor setFieldEditor: YES];
-	[content setFieldEditor: fieldEditor];
 
 	nameToChannelData = [NSMutableDictionary new];
 	inputToName = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);

@@ -28,16 +28,15 @@
 @interface InputController : NSObject <TypingController>
 	{
 		ConnectionController *controller;
-		int historyIndex;
+		unsigned historyIndex;
 		NSMutableArray *history;
 		NSMutableArray *modHistory;
 		KeyTextView *fieldEditor;
 		NSTextField *activeTextField;
+		NSMutableArray *tabCompletion;
+		unsigned tabCompletionIndex;
 	}
 - initWithConnectionController: (ConnectionController *)aController;
-
-- (void)previousHistoryItem: (NSText *)fieldEditor;
-- (void)nextHistoryItem: (NSText *)fieldEditor;
 
 - (void)commandTyped: (NSString *)aCommand;
 - (NSText *)fieldEditorForField: (NSTextField *)aField;

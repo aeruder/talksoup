@@ -134,7 +134,15 @@
 	
 	if ([tmp = [newInfo objectForKey: ServerListInfoCommands] length] > 0)
 	{
-		[[self inputController] lineTyped: tmp];
+		id views = [[content primaryMasterController]
+		  viewListForContentController: content];
+		id view = ([views count]) ? [view objectAtIndex: 0] : nil;
+		id input = [content typingControllerForView: view];
+
+		if (input) 
+		{
+			[input commandTyped: tmp];
+		}
 	}
 
 	return [super registeredWithServerOnConnection: aConnection 

@@ -59,53 +59,6 @@
 @end
 
 @implementation ConnectionController (TabCompletion)
-- (BOOL)keyPressed: (NSEvent *)aEvent sender: (id)sender
-{
-	NSString *characters = [aEvent characters];
-	unichar character = 0;
-	
-	if ([characters length] == 0)
-	{
-		return YES;
-	}
-
-   character = [characters characterAtIndex: 0];
-
-	if (character == NSTabCharacter)
-	{
-		[self tabPressed: sender];
-		return NO;
-	}
-	else
-	{
-		[self nonTabPressed: sender];
-	}
-	
-	if (character == NSUpArrowFunctionKey)
-	{
-		[inputController previousHistoryItem: sender];
-		return NO;
-	}
-	if (character == NSDownArrowFunctionKey)
-	{
-		[inputController nextHistoryItem: sender];
-		return NO;
-	}
-	if (character == NSPageUpFunctionKey)
-	{
-// FIXME		id x = [content controllerForViewWithName: [content currentViewName]];
-	//	[[x chatView] pageUp];
-		return NO;
-	}
-	if (character == NSPageDownFunctionKey)
-	{
-	//	id x = [content controllerForViewWithName: [content currentViewName]];
-	//	[[x chatView] pageDown];
-		return NO;
-	}
-	
-	return YES;
-}	
 @end
 
 @implementation ConnectionController (TabCompletionPrivate)

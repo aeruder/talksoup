@@ -73,8 +73,7 @@ Controllers/ConnectionController/ConnectionControllerCtcp.m \
 Controllers/ConnectionController/ConnectionControllerDelegate.m \
 Controllers/ConnectionController/ConnectionControllerInFilter.m \
 Controllers/ConnectionController/ConnectionControllerNumericCommands.m \
-Controllers/ConnectionController/ConnectionControllerOutFilter.m \
-Controllers/ConnectionController/ConnectionControllerTabCompletion.m
+Controllers/ConnectionController/ConnectionControllerOutFilter.m
 
 ContentController = Controllers/ContentControllers/StandardContentController.m \
 Controllers/ContentControllers/ContentController.m \
