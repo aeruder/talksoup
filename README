@@ -38,7 +38,8 @@ Output Plugins:
 Input Filters:
   
   *Highlighting: highlights keywords and nicknames and 
-    handles highlighting tabs as well
+    handles highlighting tabs as well.  See the /highlighting
+    command for configuration options. (Bundle must be loaded)
 
   *KeepAlive: sends a ping to the server every three minutes
     on every connection to keep you connected
@@ -55,9 +56,13 @@ Input Filters:
 Output Filters:
 
   *Colorizer: Lets you use %B for bold, %U for underline,
-  %O for clear all attributes, and %C(0-15),(0-15) to set
-  colors. (First number is the foreground color, second number 
-  is the background color).
+    %O for clear all attributes, and %C(0-15),(0-15) to set
+    colors. (First number is the foreground color, second number 
+    is the background color).
+
+  Piper: Lets you pipe outgoing messages through arbitrary
+    commands. See the /piper command when the bundle is loaded
+    to configure.
 
 * == Used by default
 
