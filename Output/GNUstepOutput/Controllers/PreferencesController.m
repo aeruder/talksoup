@@ -202,7 +202,7 @@
 	
 	while ((object = [iter nextObject]))
 	{
-		[object setPersonalColor: color];
+		[[object contentController] updatedColor: GNUstepOutputPersonalBracketColor];
 	}
 	
 	return self;
@@ -244,16 +244,16 @@
 	id color = [sender color];
 
 	color = [color encodeToData];	
-	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
+	[_GS_ setDefaultsObject: color forKey:
 	  GNUstepOutputOtherBracketColor];
 	
 	color = [NSColor colorFromEncodedData: color];
 		
-	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
+	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[object setOtherColor: color];
+		[[object contentController] updatedColor: GNUstepOutputOtherBracketColor];
 	}
 	
 	return self;
@@ -264,17 +264,14 @@
 	id object;
 	id color = [sender color];
 	
-	color = [color encodeToData];
-	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
-	  GNUstepOutputTextColor];
+	[_GS_ setDefaultsObject: [color encodeToData] 
+	  forKey: GNUstepOutputTextColor];
 	
-	color = [NSColor colorFromEncodedData: color];
-	
-	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
+	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[[object contentController] setTextColor: color];
+		[[object contentController] updatedColor: GNUstepOutputTextColor];
 	}
 
 	return self;

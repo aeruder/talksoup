@@ -92,14 +92,7 @@
 	
 	[[content window] makeFirstResponder: typeView];
 	
-	[self setOtherColor: [NSColor colorFromEncodedData: 
-	 [[_TS_ pluginForOutput] defaultsObjectForKey: 
-	   GNUstepOutputOtherBracketColor]]];
-	[self setPersonalColor: [NSColor colorFromEncodedData: 
-	 [[_TS_ pluginForOutput] defaultsObjectForKey:
-	   GNUstepOutputPersonalBracketColor]]];
-		
-	[[_TS_ pluginForOutput] addConnectionController: self];
+	[_GS_ addConnectionController: self];
 	
 	RETAIN(self);
 	
@@ -117,8 +110,6 @@
 	RELEASE(connection);
 	RELEASE(content);
 	RELEASE(tabCompletion);
-	RELEASE(personalColor);
-	RELEASE(otherColor);
 	RELEASE(nameToChannelData);
 	
 	[super dealloc];
@@ -266,54 +257,6 @@
 	}
 	
 	return a;
-}
-- (NSColor *)otherColor
-{
-	return otherColor;
-}
-- setOtherColor: (NSColor *)aColor
-{
-	NSEnumerator *iter;
-	id object;
-
-	if ([aColor isEqual: otherColor]) return self;
-
-	iter = [[content allViews] objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		object = [[object chatView] textStorage];
-		[object replaceAttribute: NSForegroundColorAttributeName 
-		  withExactValue: otherColor withValue: aColor withRange:
-		  NSMakeRange(0, [object length])];
-	}
-	
-	RELEASE(otherColor);
-	otherColor = RETAIN(aColor);
-	return self;
-}
-- (NSColor *)personalColor
-{
-	return personalColor;
-}
-- setPersonalColor: (NSColor *)aColor
-{
-	NSEnumerator *iter;
-	id object;
-
-	if ([aColor isEqual: personalColor]) return self;
-	
-	iter = [[content allViews] objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		object = [[object chatView] textStorage];
-		[object replaceAttribute: NSForegroundColorAttributeName 
-		  withExactValue: personalColor withValue: aColor withRange:
-		  NSMakeRange(0, [object length])];
-	}
-		
-	RELEASE(personalColor);
-	personalColor = RETAIN(aColor);
-	return self;
 }
 - leaveChannel: (NSString *)channel
 {

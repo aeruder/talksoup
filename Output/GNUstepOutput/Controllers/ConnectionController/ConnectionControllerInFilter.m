@@ -15,12 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #include "Controllers/ConnectionController.h"
 #include "Controllers/ContentController.h"
 #include "TalkSoupBundles/TalkSoup.h"
 #include "GNUstepOutput.h"
 #include "Models/Channel.h"
 #include "Controllers/ChannelController.h"
+#include "Misc/NSAttributedStringAdditions.h"
 
 #include <Foundation/NSEnumerator.h>
 #include <Foundation/NSString.h>
@@ -31,7 +33,6 @@
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSTableView.h>
 
-#define FCAN NSForegroundColorAttributeName
 #define MARK [NSNull null]
 
 @implementation ConnectionController (InFilter)
@@ -202,16 +203,18 @@
 	
 	if ([argument length])
 	{
-		str = BuildAttributedString(MARK, FCAN, otherColor, @"-",
+		str = BuildAttributedString(
+		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
 		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
-		  MARK, FCAN, otherColor, @"-",
+		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
 		  @" ", aCTCP, @" ", argument, nil);
 	}
 	else
 	{
-		str = BuildAttributedString(MARK, FCAN, otherColor, @"-",
+		str = BuildAttributedString(MARK, TypeOfColor, 
+		  GNUstepOutputOtherBracketColor, @"-",
 		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
-		  MARK, FCAN, otherColor, @"-",
+		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
 		  @" ", aCTCP, nil);
 	}
 
@@ -558,11 +561,14 @@
 	id privstring;
 	id pubstring;
 	
-	privstring = BuildAttributedString(MARK, FCAN, otherColor, @"*",
-	  MARK, FCAN, otherColor, who, MARK, FCAN, otherColor, @"*",
+	privstring = BuildAttributedString(
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"*",
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, who, 
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"*",
 	  @" ", aMessage, nil);
-	pubstring = BuildAttributedString(MARK, FCAN, otherColor, @"<",
-	  who, MARK, FCAN, otherColor, @">",
+	pubstring = BuildAttributedString(
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"<", who, 
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @">",
 	  @" ", aMessage, nil);
 	
 	string = pubstring;
@@ -626,8 +632,8 @@
 	}
 	
 	[content putMessage: BuildAttributedString(
-	  MARK, FCAN, otherColor, prefix, @" ",
-	  who, @" ", aMessage, nil) in: where];
+	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor,
+	  prefix, @" ", who, @" ", aMessage, nil) in: where];
 	
 	return self;
 }

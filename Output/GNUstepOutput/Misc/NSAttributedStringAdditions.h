@@ -20,6 +20,8 @@
 
 #include <Foundation/NSAttributedString.h>
 
+extern NSString *TypeOfColor;
+
 @class NSFont;
  
 @interface NSAttributedString (OutputAdditions)	  

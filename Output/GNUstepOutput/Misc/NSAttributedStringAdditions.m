@@ -26,6 +26,8 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSScanner.h>
 
+NSString *TypeOfColor = @"TypeOfColor";
+
 @implementation NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont: 
   (NSFont *)chatFont

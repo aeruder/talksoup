@@ -33,8 +33,12 @@ NSString *IRCColorFromUserColor(NSString *string);
    withRange: (NSRange)aRange;
 - (void)replaceAttribute: (NSString *)name withValue: (id)aVal
    withValue: (id)newVal withRange: (NSRange)aRange;
-- (void)replaceAttribute: (NSString *)name withExactValue: (id)aVal
-   withValue: (id)newVal withRange: (NSRange)aRange;
+- (void)setAttribute: (NSString *)name toValue: (id)aVal
+   inRangesWithAttribute: (NSString *)name2 matchingValue: (id)aVal2
+   withRange: (NSRange)aRange;
+- (void)setAttribute: (NSString *)name toValue: (id)aVal
+   inRangesWithAttributes: (NSArray *)name2 matchingValues: (NSArray *)aVal2
+   withRange: (NSRange)aRange;
 @end
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...);

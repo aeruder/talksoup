@@ -42,9 +42,6 @@
 		NSArray *tabCompletion;
 		int tabCompletionIndex;
 		
-		NSColor *personalColor;
-		NSColor *otherColor;
-		
 		NSMutableDictionary *nameToChannelData;
 		
 		BOOL registered;
@@ -76,11 +73,6 @@
 - (ContentController *)contentController;
 
 - (NSArray *)channelsWithUser: (NSString *)user;
-
-- (NSColor *)otherColor;
-- setOtherColor: (NSColor *)aColor;
-- (NSColor *)personalColor;
-- setPersonalColor: (NSColor *)aColor;
 
 - leaveChannel: (NSString *)channel;
 

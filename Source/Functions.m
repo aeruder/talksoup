@@ -167,6 +167,8 @@ static NSArray *get_first_word(NSString *arg)
 	NSDictionary *aDict;
 	NSMutableDictionary *aDict2;
 	
+	if ([self length] == 0) return;
+	
 	[self beginEditing];
 	
 	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
@@ -205,6 +207,8 @@ static NSArray *get_first_word(NSString *arg)
 	NSDictionary *aDict;
 	NSMutableDictionary *aDict2;
 	
+	if ([self length] == 0) return;
+	
 	[self beginEditing];
 	
 	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
@@ -237,12 +241,16 @@ static NSArray *get_first_word(NSString *arg)
 	
 	[self endEditing];
 }
-- (void)replaceAttribute: (NSString *)name withExactValue: (id)aVal
-   withValue: (id)newVal withRange: (NSRange)aRange
+- (void)setAttribute: (NSString *)name toValue: (id)aVal
+   inRangesWithAttribute: (NSString *)name2 matchingValue: (id)aVal2
+   withRange: (NSRange)aRange
 {
 	NSRange effect;
 	NSDictionary *aDict;
 	NSMutableDictionary *aDict2;
+	id temp;
+	
+	if ([self length] == 0) return;
 	
 	[self beginEditing];
 	
@@ -250,7 +258,8 @@ static NSArray *get_first_word(NSString *arg)
 	
 	while (1)
 	{
-		if ([aDict objectForKey: name] == aVal)
+		temp = [aDict objectForKey: name2];
+		if ([temp isEqual: aVal2] || temp == aVal2)
 		{
 			if (effect.location + effect.length > aRange.location + aRange.length)
 			{
@@ -258,8 +267,69 @@ static NSArray *get_first_word(NSString *arg)
 			}
 				
 			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
-			[aDict2 setObject: newVal forKey: name];
-			[self setAttributes: aDict2 range: effect];			
+			[aDict2 setObject: aVal forKey: name];
+			[self setAttributes: aDict2 range: effect];
+		}
+			
+		effect.location = effect.location + effect.length;
+		if (effect.location < aRange.length + aRange.location)
+		{
+			aDict = [self attributesAtIndex: effect.location 
+			  effectiveRange: &effect];
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	[self endEditing];
+}
+- (void)setAttribute: (NSString *)name toValue: (id)aVal
+   inRangesWithAttributes: (NSArray *)name2 matchingValues: (NSArray *)aVal2
+   withRange: (NSRange)aRange
+{
+	NSRange effect;
+	NSDictionary *aDict;
+	NSMutableDictionary *aDict2;
+	id temp;
+	id object1;
+	id object2;
+	BOOL doIt;
+	NSEnumerator *iter1;
+	NSEnumerator *iter2;
+	
+	if ([self length] == 0) return;
+	
+	[self beginEditing];
+	
+	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
+	
+	while (1)
+	{
+		iter1 = [name2 objectEnumerator];
+		iter2 = [aVal2 objectEnumerator];
+		doIt = YES;
+		while ((object1 = [iter1 nextObject]) && (object2 = [iter2 nextObject]))
+		{
+			temp = [aDict objectForKey: object1];
+			if (![temp isEqual: object2] && (temp || 
+			  ![object2 isKindOf: [NSNull class]]))
+			{
+				doIt = NO;
+				break;
+			}
+		}
+		if (doIt)
+		{
+			if (effect.location + effect.length > aRange.location + aRange.length)
+			{
+				effect.length = aRange.location + aRange.length - effect.location;
+			}
+				
+			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
+			[aDict2 setObject: aVal forKey: name];
+			[self setAttributes: aDict2 range: effect];
 		}
 			
 		effect.location = effect.location + effect.length;

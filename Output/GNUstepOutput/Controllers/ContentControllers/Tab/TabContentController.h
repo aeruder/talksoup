@@ -49,13 +49,13 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 	NSMapTable *tabItemToName;
 	NSMapTable *bothToName;
 	NSString *current;
-	NSColor *textColor;
 	ConnectionController *connection;
 	NSFont *chatFont;
 }
 - initWithConnectionController: (ConnectionController *)connect;
 
-- setTextColor: (NSColor *)aColor;
+- updatedColor: (NSString *)aKey;
+- (NSColor *)colorForKey: (NSString *)aKey;
 
 - highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor
    withPriority: (BOOL)prio;

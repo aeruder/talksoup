@@ -38,6 +38,7 @@
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSNull.h>
 
 #include "GNUstepOutput.h"
 
@@ -70,9 +71,6 @@ NSString *ContentConsoleName = @"Content Console Name";
 	  NSObjectMapValueCallBacks, 10);
 	
 	highlightedTabs = [NSMutableArray new];
-	
-	textColor = RETAIN([NSColor colorFromEncodedData: 
-	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
 	
 	chatFont = 
 	  RETAIN([NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
@@ -108,7 +106,6 @@ NSString *ContentConsoleName = @"Content Console Name";
 	[tabView setDelegate: nil];
 	[typeView setTarget: nil];
 	RELEASE(highlightedTabs);
-	RELEASE(textColor);
 	RELEASE(typeView);
 	RELEASE(nickView);
 	RELEASE(tabView);
@@ -122,6 +119,33 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(current);
 	
 	[super dealloc];
+}
+- updatedColor: (NSString *)aKey
+{
+	NSEnumerator *iter;
+	id object;
+	id color;
+	
+	iter = [[nameToBoth allValues] objectEnumerator];
+
+	color = [self colorForKey: aKey];
+	
+	while ((object = [iter nextObject]))
+	{
+		object = [[object chatView] textStorage];
+		[object setAttribute: NSForegroundColorAttributeName
+		  toValue: color
+		 inRangesWithAttribute: TypeOfColor
+		  matchingValue: aKey
+		 withRange: NSMakeRange(0, [object length])];
+	}
+
+	return self;
+}
+- (NSColor *)colorForKey: (NSString *)aKey
+{
+	return [NSColor colorFromEncodedData: [_GS_ defaultsObjectForKey:
+	  aKey]];
 }
 - highlightTabWithName: (NSString *)aName withColor: (NSString *)aColorName
    withPriority: (BOOL)prior
@@ -149,27 +173,6 @@ NSString *ContentConsoleName = @"Content Console Name";
 		[highlightedTabs removeObject: lo];
 	}
 
-	return self;
-}
-- setTextColor: (NSColor *)aColor
-{
-	NSEnumerator *iter;
-	id object;
-
-	if ([aColor isEqual: textColor]) return self;
-	
-	iter = [[nameToBoth allValues] objectEnumerator];
-	
-	while ((object = [iter nextObject]))
-	{
-		object = [[object chatView] textStorage];
-		[object replaceAttribute: NSForegroundColorAttributeName 
-		  withExactValue: textColor withValue: aColor withRange:
-		  NSMakeRange(0, [object length])];
-	}
-		
-	RELEASE(textColor);
-	textColor = RETAIN(aColor);
 	return self;
 }
 - (NSArray *)allViews
@@ -279,6 +282,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 - putMessage: (id)aString in: (id)aChannel withEndLine: (BOOL)aBool
 {
 	id controller = nil;
+	id string;
+	NSRange aRange;
 	
 	if (!aString) return self;
 	
@@ -314,23 +319,46 @@ NSString *ContentConsoleName = @"Content Console Name";
 		controller = [nameToBoth objectForKey: current];
 	}
 	
-	if ([aString isKindOf: [NSString class]])
+	if ([aString isKindOf: [NSAttributedString class]])
 	{
-		[[[controller chatView] textStorage] appendAttributedString: 
-		 AUTORELEASE(([[NSAttributedString alloc] initWithString: aString
+		aRange = NSMakeRange(0, [aString length]);
+		string = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
+		[string setAttribute: TypeOfColor toValue: GNUstepOutputTextColor
+		  inRangesWithAttributes: 
+		    [NSArray arrayWithObjects: NSForegroundColorAttributeName,
+		      TypeOfColor, nil]
+		  matchingValues: 
+		    [NSArray arrayWithObjects: [NSNull null], [NSNull null], nil]
+		  withRange: aRange];
+		[string setAttribute: NSForegroundColorAttributeName
+		  toValue: [self colorForKey: GNUstepOutputTextColor]
+		 inRangesWithAttribute: TypeOfColor
+		  matchingValue: GNUstepOutputTextColor
+		 withRange: aRange];
+		[string setAttribute: NSForegroundColorAttributeName
+		  toValue: [self colorForKey: GNUstepOutputOtherBracketColor]
+		 inRangesWithAttribute: TypeOfColor
+		  matchingValue: GNUstepOutputOtherBracketColor
+		 withRange: aRange];
+		[string setAttribute: NSForegroundColorAttributeName
+		  toValue: [self colorForKey: GNUstepOutputPersonalBracketColor]
+		 inRangesWithAttribute: TypeOfColor
+		  matchingValue: GNUstepOutputPersonalBracketColor
+		 withRange: aRange];
+	}
+	else
+	{
+		aRange = NSMakeRange(0, [[aString description] length]);
+		string = AUTORELEASE(([[NSMutableAttributedString alloc] 
+		  initWithString: [aString description]
 		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
-		    textColor, NSForegroundColorAttributeName,
 			 chatFont, NSFontAttributeName,
-		     nil]]))];
+			 TypeOfColor, GNUstepOutputTextColor,
+			 [self colorForKey: GNUstepOutputTextColor], NSForegroundColorAttributeName,
+		     nil]]));
 	}
-	else if ([aString isKindOf: [NSAttributedString class]])
-	{
-		aString = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
-	   
-		[aString addAttributeIfNotPresent: NSForegroundColorAttributeName value: textColor
-		  withRange: NSMakeRange(0, [aString length])];
-		[[[controller chatView] textStorage] appendAttributedString: aString];
-	}
+	
+	[[[controller chatView] textStorage] appendAttributedString: string];
 	
 	if (aBool)
 	{
@@ -624,7 +652,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	{
 		object = [[object chatView] textStorage];
 		[object replaceAttribute: NSFontAttributeName 
-		  withExactValue: chatFont withValue: aFont withRange:
+		  withValue: chatFont withValue: aFont withRange:
 		  NSMakeRange(0, [object length])];
 	}
 

@@ -86,9 +86,9 @@
 	[userColumn setDataCell: x];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputTextColor]]];
 	 
 	[splitView addSubview: userScroll];
 	[splitView setDelegate: self];

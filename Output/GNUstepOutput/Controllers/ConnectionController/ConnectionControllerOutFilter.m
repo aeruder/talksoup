@@ -18,11 +18,12 @@
 #include "Controllers/ConnectionController.h"
 #include "Controllers/ContentController.h"
 #include "TalkSoupBundles/TalkSoup.h"
+#include "Misc/NSAttributedStringAdditions.h"
+#include "GNUstepOutput.h"
 
 #include <AppKit/NSAttributedString.h>
 #include <Foundation/NSNull.h>
 
-#define FCAN NSForegroundColorAttributeName
 #define MARK [NSNull null]
 
 @implementation ConnectionController (OutFilter)
@@ -36,15 +37,16 @@
 	if (![content controllerForViewWithName: where])
 	{
 		[content putMessage: BuildAttributedString(
-		  MARK, FCAN, personalColor, @">", 
-		  receiver, MARK, FCAN, personalColor, @"<", 
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
+		  receiver, 
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
 		  @" ", message, nil) in: nil];
 	}
 	else
 	{
 		[content putMessage: BuildAttributedString(
-		  MARK, FCAN, personalColor, @"<", 
-		  aNick, MARK, FCAN, personalColor, @">", 
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
+		  aNick, MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
 		  @" ", message, nil) in: where];
 	}
 	
@@ -69,14 +71,15 @@
 	if (![content controllerForViewWithName: where])
 	{
 		[content putMessage: BuildAttributedString(
-		  MARK, FCAN, personalColor, @">", 
-		  receiver, MARK, FCAN, personalColor, @"<", 
-		  MARK, FCAN, personalColor, @" * ", aNick, @" ", anAction, nil) in: nil];
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
+		  receiver, MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, 
+		  @" * ", aNick, @" ", anAction, nil) in: nil];
 	}
 	else
 	{
 		[content putMessage: BuildAttributedString(
-		  MARK, FCAN, personalColor, @"* ", 
+		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"* ", 
 		  aNick, @" ", anAction, nil) in: where];
 	}
 	
