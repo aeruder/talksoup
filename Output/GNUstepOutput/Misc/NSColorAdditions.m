@@ -25,6 +25,8 @@
 
 static NSColor *common_color = nil;
 
+#define COL_CON 1000
+
 static inline NSColor *map_color(NSString *aName)
 {
 	static NSDictionary *colors = nil;
@@ -71,12 +73,17 @@ static inline NSColor *map_color(NSString *aName)
 	{
 		id scan;
 		float r=0.0,g=0.0,b=0.0;
+		int ri=0,gi=0,bi=0;
 		scan = [NSScanner scannerWithString: aName];
-		[scan scanUpToCharactersFromSet: 
+		[scan scanUpToCharactersFromSet:
 		  [NSCharacterSet whitespaceCharacterSet] intoString: 0];
-		[scan scanFloat: &r];
-		[scan scanFloat: &g];
-		[scan scanFloat: &b];
+		[scan scanInt: &ri];
+		[scan scanInt: &gi];
+		[scan scanInt: &bi];
+		
+		r = ri / (float)COL_CON;
+		g = gi / (float)COL_CON;
+		b = bi / (float)COL_CON;		
 		
 		return [NSColor colorWithCalibratedRed: r green: g
 		  blue: b alpha: 1.0];
@@ -106,8 +113,10 @@ static inline NSColor *map_color(NSString *aName)
 }
 - (id)encodeToData
 {
-	return [NSString stringWithFormat: @"IRCColorCustom %f %f %f",
-	  [self redComponent], [self greenComponent], [self blueComponent]];
+	return [NSString stringWithFormat: @"IRCColorCustom %d %d %d",
+	  (int)([self redComponent] * COL_CON),
+	  (int)([self greenComponent] * COL_CON), 
+	  (int)([self blueComponent] * COL_CON)];
 }
 @end
 

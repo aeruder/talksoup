@@ -1,8 +1,8 @@
 {
 	GNUstepOutput = {
-	    BackgroundColor = "IRCColorCustom 1.000000 0.972500 0.862700";
-	    OtherBracketColor = "IRCColorCustom 0.000000 0.000000 1.000000";
-	    PersonalBracketColor = "IRCColorCustom 1.000000 0.000000 0.000000";
+	    BackgroundColor = "IRCColorCustom 1000 973 863";
+	    OtherBracketColor = "IRCColorCustom 0 0 1000";
+	    PersonalBracketColor = "IRCColorCustom 1000 0 0";
 	    ServerList = (
 		{
 		    Entries = (
@@ -234,12 +234,12 @@
 		    Name = UnderNet;
 		}
 	    );
-	    TextColor = "IRCColorCustom 0.000000 0.000000 0.000000";
+	    TextColor = "IRCColorCustom 0 0 0";
 	};
 	Highlighting = {
 	    ExtraWords = ();
-	    TabAnythingColor = "IRCColorCustom 0.41 0.13 0.14";
-	    TabReferenceColor = "IRCColorCustom 0.13 0.14 0.41";
+	    TabAnythingColor = "IRCColorCustom 410 130 140";
+	    TabReferenceColor = "IRCColorCustom 130 140 410";
 	    UserColor = IRCColorBlue;
 	};
 	Nick = TalkSoup;

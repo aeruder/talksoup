@@ -37,8 +37,8 @@ static id get_pref(NSString *x)
 			[[NSUserDefaults standardUserDefaults] setObject:
 			  object = [NSDictionary dictionaryWithObjectsAndKeys: 
 			  IRCColorBlue, @"UserColor",
-			  @"IRCColorCustom 0.13 0.14 0.41", @"TabReferenceColor",
-			  @"IRCColorCustom 0.41 0.13 0.14", @"TabAnythingColor",
+			  @"IRCColorCustom 130 140 410", @"TabReferenceColor",
+			  @"IRCColorCustom 410 130 140", @"TabAnythingColor",
 			  nil] forKey: @"Highlighting"];
 		}
 	}
