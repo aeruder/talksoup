@@ -16,15 +16,21 @@
  ***************************************************************************/
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/PreferencesController.h"
+#import "GNUstepOutput.h"
 
+#import <AppKit/NSImage.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSColorWell.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSNotification.h>
 
 @implementation ColorPreferencesController
 - init
 {
+	id path;
 	if (!(self = [super init])) return nil;
 
 	if (!([NSBundle loadNibNamed: @"ColorPreferences" owner: self]))
@@ -32,6 +38,28 @@
 		[self dealloc];
 		return nil;
 	}
+
+	path = [[NSBundle bundleForClass: [GNUstepOutput class]] 
+	  pathForResource: @"color_prefs" ofType: @"tiff"];
+	if (!path) 
+	{
+		NSLog(@"Could not find color_prefs.tiff");
+		[self dealloc];
+		return nil;
+	}
+
+	preferencesIcon = [[NSImage alloc] initWithContentsOfFile:
+	  path];
+	if (!preferencesIcon)
+	{
+		NSLog(@"Could not load image %@", path);
+		[self dealloc];
+		return nil;
+	}
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: PreferencesModuleAdditionNotification 
+	 object: self];
 
 	return self;
 }
@@ -45,13 +73,17 @@
 }
 - (void)dealloc
 {
-	[preferencesView dealloc];
+	RELEASE(preferencesView);
+	RELEASE(preferencesIcon);
 	[super dealloc];
+}
+- (NSString *)preferencesName
+{
+	return @"Color";
 }
 - (NSImage *)preferencesIcon
 {
-	// FIXME
-	return nil;
+	return preferencesIcon;
 }
 - (NSView *)preferencesView
 {
@@ -60,10 +92,12 @@
 }
 - (void)activate
 {
+	NSLog(@"Activated!");
 	// FIXME
 }
 - (void)deactivate
 {
+	NSLog(@"Deactivated!");
 	// FIXME
 }
 @end

@@ -4,8 +4,8 @@ APP_NAME = GNUstepOutput
 
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = ColorPreferences.gorm Preferences.gorm GNUstepOutput.gorm
 
-GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff \
- AllLanguages/Defaults.plist
+GNUstepOutput_RESOURCE_FILES = Images/color_prefs.tiff Images/common_ret.tiff\
+ Images/common_retH.tiff AllLanguages/Defaults.plist
 
 GNUstepOutput_LANGUAGES = English
 

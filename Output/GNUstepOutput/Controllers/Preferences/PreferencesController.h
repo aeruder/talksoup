@@ -33,11 +33,19 @@ extern NSString *GNUstepOutputScrollBack;
 
 #import <Foundation/NSObject.h>
 
-@class NSView;
+@class NSView, NSString, NSImage;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
+
+/* object: the preferences module */
+extern NSString *PreferencesModuleAdditionNotification;
+
+/* object: the preferences module */
+extern NSString *PreferencesModuleRemovalNotification;
 
 @protocol GNUstepOutputPrefsModule
 - (NSView *)preferencesView;
+- (NSImage *)preferencesIcon;
+- (NSString *)preferencesName;
 - (void)activate;
 - (void)deactivate;
 @end
@@ -48,8 +56,8 @@ extern NSString *GNUstepOutputScrollBack;
 		NSWindow *window;
 		NSMatrix *prefsList;
 		NSView *preferencesView;
-		int currentPrefs;
 		NSMutableArray *prefsModules;
+		id currentPrefs;
 	}
 - (NSWindow *)window;
 

@@ -20,8 +20,9 @@
 #ifndef COLOR_PREFERENCES_CONTROLLER_H
 #define COLOR_PREFERENCES_CONTROLLER_H
 
-#include "Controllers/Preferences/PreferencesController.h"
+#import <Foundation/NSObject.h>
 
+@class NSString, NSImage;
 @class NSColorWell, NSView, NSImage;
 
 @interface ColorPreferencesController : NSObject 
@@ -31,7 +32,9 @@
 		NSColorWell *backgroundColor;
 		NSColorWell *textColor;
 		NSView *preferencesView;
+		NSImage *preferencesIcon;
 	}
+- (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
 - (void)activate;

@@ -46,6 +46,12 @@
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
 
+/* object: the preferences module */
+NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNotification";
+
+/* object: the preferences module */
+NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
+
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
@@ -61,20 +67,38 @@ NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
+@interface PreferencesController (PrivateMethods)
+- (void)buttonClicked: (NSMatrix *)aCell;
+
+- (void)registerPreferencesModule: aPreferencesModule;
+- (void)unregisterPreferencesModule: aPreferencesModule;
+
+- (void)preferencesModuleAdded: (NSNotification *)aNotification;
+- (void)preferencesModuleRemoved: (NSNotification *)aNotification;
+@end
+
 @implementation PreferencesController
 - init
 {
-	NSLog(@"It works?!");
 	if (!(self = [super init])) return self;
 
 	prefsModules = [NSMutableArray new];
 
-	NSLog(@"Loading bundle...\n");
 	if (![NSBundle loadNibNamed: @"Preferences" owner: self])
 	{
 		[self dealloc];
 		return nil;
 	}
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferencesModuleAdded:)
+	  name: PreferencesModuleAdditionNotification
+	  object: nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferencesModuleRemoved:)
+	  name: PreferencesModuleRemovalNotification
+	  object: nil];
 	
 	return self;
 }	
@@ -84,26 +108,20 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	 * from preferences.app.  Why redo what works
 	 * so nicely? 
 	 */
-	NSLog(@"awakeFromNib!!!\n");
-
 	prefsList = AUTORELEASE([[NSMatrix alloc] initWithFrame: 
 	  NSMakeRect(0, 0, 64*30, 64)]);
 	[prefsList setCellClass: [NSButtonCell class]];
 	[prefsList setCellSize: NSMakeSize(64, 64)];
 	[prefsList setMode: NSRadioModeMatrix];
 	[prefsList setIntercellSpacing: NSZeroSize];
+
+	[prefsList setTarget: self];
+	[prefsList setAction: @selector(buttonClicked:)];
 	
 	[scrollView setDocumentView: prefsList];
 	[scrollView setHasHorizontalScroller: YES];
 	[scrollView setHasVerticalScroller: NO];
 	[scrollView setBorderType: NSBezelBorder];
-
-	id tmp = [ColorPreferencesController new];
-	NSLog(@"ColorPreferencesController: %@\n", tmp);
-	tmp = [tmp preferencesView];
-	[tmp setFrame: [preferencesView frame]];
-	[tmp setFrameOrigin: NSMakePoint(0,0)];
-	[preferencesView addSubview: tmp];
 }
 - (void)dealloc
 {
@@ -114,7 +132,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 }
 - (NSWindow *)window 
 {
-	NSLog(@"Wiondow!!!\n");
 	return window;
 }
 - (BOOL)setCurrentModule: aPrefsModule
@@ -122,10 +139,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	// FIXME
 }
 - (void)refreshCurrentPanel
-{
-	// FIXME
-}
-- (void)refreshAvailablePreferences
 {
 	// FIXME
 }
@@ -469,4 +482,132 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[_GS_ setPreferencesController: nil];
 }
 */
+@end
+
+@implementation PreferencesController (PrivateMethods)
+- (void)buttonClicked: (NSMatrix *)aMatrix
+{
+	id array = [prefsList cells];
+	int index;
+	id module;
+	id object;
+	NSView *view;
+	NSArray *subviews;
+	NSEnumerator *iter;
+	NSButtonCell *aCell;
+
+	aCell = [aMatrix selectedCell];
+	NSLog(@"Button clicked in preferences: %@", aCell);
+
+	if (![array containsObject: aCell])
+		return;
+
+	index = [array indexOfObject: aCell];
+
+	if (index >= [prefsModules count])
+		return;
+
+	module = [prefsModules objectAtIndex: index];
+
+	if (currentPrefs == module) 
+		return;
+
+	view = [module preferencesView];
+	if (!view) 
+		return;
+
+	[currentPrefs deactivate];
+	iter = [[preferencesView subviews] objectEnumerator];
+	while ((object = [iter nextObject])) 
+	{
+		[preferencesView removeSubview: object];
+	}
+
+	[view setFrame: [preferencesView frame]];
+	[view setFrameOrigin: NSMakePoint(0,0)];
+	[preferencesView addSubview: view];
+	currentPrefs = module;
+	[module activate];
+}
+- (void)registerPreferencesModule: aPreferencesModule
+{
+	id bCell;
+	id icon;
+	id name;
+	
+	if (!(aPreferencesModule)) 
+		return;
+	
+	if (!(icon = [aPreferencesModule preferencesIcon]))
+		return;
+
+	if (!(name = [aPreferencesModule preferencesName]))
+		return;
+
+	bCell = AUTORELEASE([NSButtonCell new]);
+	if (!(bCell))
+		return;
+
+	[bCell setImage: icon];
+	[bCell setButtonType: NSOnOffButton];
+	[bCell setTitle: name];
+	[bCell setImagePosition: NSImageOnly];
+	[bCell setShowsStateBy: NSPushInCellMask];
+	[bCell setBordered: YES];
+	[bCell setBezelStyle: NSThickerSquareBezelStyle];
+
+	NSLog(@"button cell created: %@", bCell);
+
+	[prefsModules addObject: aPreferencesModule];
+	[prefsList addColumnWithCells: [NSArray arrayWithObject: bCell]];
+	[prefsList sizeToCells];
+	[prefsList setNeedsDisplay: YES];
+
+	// If its the first one, we should auto-click it
+	if ([prefsModules count] == 1)
+	{
+		[prefsList selectCellAtRow: 0 column: 0];
+		[self buttonClicked: prefsList];
+	}
+}
+- (void)unregisterPreferencesModule: aPreferencesModule
+{
+	int index;
+	if (!(aPreferencesModule))
+		return;
+
+	if (!([prefsModules containsObject: aPreferencesModule]))
+		return;
+
+	index = [prefsModules indexOfObject: aPreferencesModule];
+
+	[prefsModules removeObjectAtIndex: index];
+	[prefsList removeColumn: index];
+	[prefsList sizeToCells];
+	[prefsList setNeedsDisplay: YES];
+}
+- (void)preferencesModuleAdded: (NSNotification *)aNotification
+{
+	id object;
+
+	if (![[aNotification name] isEqualToString: PreferencesModuleAdditionNotification])
+		return;
+
+	if (!(object = [aNotification object]))
+		return;
+
+	[self registerPreferencesModule: object];
+}	
+- (void)preferencesModuleRemoved: (NSNotification *)aNotification;
+{
+	id object;
+
+	if (![[aNotification name] isEqualToString: PreferencesModuleRemovalNotification])
+		return;
+
+	if (!(object = [aNotification object]))
+		return;
+
+	[self unregisterPreferencesModule: object];
+}
 @end

@@ -19,6 +19,7 @@
 
 #import "Controllers/ConnectionController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
@@ -548,6 +549,7 @@ GNUstepOutput *_GS_ = nil;
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 		prefs = [PreferencesController new];
+		AUTORELEASE([ColorPreferencesController new]);
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {

@@ -79,7 +79,7 @@
 	
 	[tabView setNeedsDisplay: YES];
 
-	[NSNotificationCenter 
+	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerAddedToMasterControllerNotification
 	 object: aContentController userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
 	  [NSNumber numberWithInt: aIndex], @"Index",
