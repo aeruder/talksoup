@@ -23,39 +23,29 @@
 #import <Foundation/NSObject.h>
 
 @class NSPopUpButton, NSTableView, NSTextView, NSWindow;
-@class NSTableColumn, NSButton, NSImage;
+@class NSTableColumn, NSButton, NSMutableArray;
 
 @interface BundleConfigureController : NSObject
 	{
-		NSButton *middleButton;
-		NSButton *upButton;
-		NSButton *downButton;
+		NSButton *preferencesButton;
 		NSPopUpButton *showingPopUp;
 		NSTableView *loadedTable;
 		NSTableView *availableTable;
 		NSTextView *descriptionText;
 		NSWindow *window;
-		NSTableColumn *availCol;
-		NSTableColumn *loadCol;
-		id loadData[2];
-		id availData[2];
+		NSMutableArray *availData;
+		NSMutableArray *loadData;
 		id defaults[2];
 		int currentShowing;
 		id currentTable;
 		id otherTable;
-		NSImage *upImage;
-		NSImage *downImage;
-		NSImage *leftImage;
-		NSImage *rightImage;
 	}
 
 - (NSWindow *)window;
 
-- (void)upHit: (id)sender;
 - (void)refreshHit: (id)sender;
-- (void)downHit: (id)sender;
-- (void)middleHit: (id)sender;
 - (void)showingSelected: (id)sender;
+- (void)preferencesHit: (id)sender;
 
 @end
 

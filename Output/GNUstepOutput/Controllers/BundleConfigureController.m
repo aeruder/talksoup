@@ -25,161 +25,122 @@
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSTableColumn.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSPasteboard.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSImage.h>
 #import <AppKit/NSTextStorage.h>
 #import <AppKit/NSFont.h>
 
-@interface BundleDataSource : NSObject
-	{
-		NSMutableArray *bundleList;
-	}
-- setBundleList: (NSArray *)aList;
-- (NSMutableArray *)bundleList;
-@end
+static NSString *bundlePboardType = @"bundlePboardType";
+static NSString *big_description = nil;
 
 @interface BundleConfigureController (PrivateStuff)
-- (void)reloadDefaultsInList: (int)aList;
-- (void)updateButtons;
+- (void)saveDefaults;
+- (void)reloadDefaultsInList;
+- (void)activateList;
+- (void)refreshList;
+- (void)setupList;
+- (void)updateButton;
 - (NSAttributedString *)descriptionForSelected: (int)row;
-- (void)loadBundlesInList: (int)aList;
-- (void)setupLists;
 @end
 
 @implementation BundleConfigureController (PrivateStuff)
-- (void)loadBundlesInList: (int)aList
+- (void)saveDefaults
 {
-	if (!aList)
-	{
-		[_TS_ setActivatedInFilters: [loadData[0] bundleList]];
-	}
-	else
-	{
-		[_TS_ setActivatedOutFilters: [loadData[1] bundleList]];
-	}
+	defaults[0] = RETAIN([NSArray arrayWithArray: [_TS_ activatedInFilters]]);
+	defaults[1] = RETAIN([NSArray arrayWithArray: [_TS_ activatedOutFilters]]);
+}
+- (void)reloadDefaultsInList
+{
+	SEL aSel;
+	id data;
+
+	aSel = (!currentShowing) ? @selector(setActivatedInFilters:) : 
+	  @selector(setActivatedOutFilters:);
+	data = (!currentShowing) ? defaults[0] : defaults[1];
+
+	[_TS_ performSelector: aSel withObject: data];
+}
+- (void)activateList
+{
+	SEL aSel;
+
+	aSel = (!currentShowing) ? @selector(setActivatedInFilters:) : 
+	  @selector(setActivatedOutFilters:);
+
+	[_TS_ performSelector: aSel withObject: loadData];
 	[_TS_ savePluginList];
 }
-- (void)setupLists
+- (void)refreshList
 {
-	id y;
+	SEL aSel1, aSel2;
+
+	aSel1 = (!currentShowing) ? @selector(activatedInFilters) : 
+	  @selector(activatedOutFilters);
+	aSel2 = (!currentShowing) ? @selector(allInFilters) : 
+	  @selector(allOutFilters);
+
+	loadData = RETAIN([NSMutableArray arrayWithArray: 
+	  [_TS_ performSelector: aSel1]]);
 	
-	defaults[0] = RETAIN([NSArray arrayWithArray: [_TS_ activatedInFilters]]);
+	availData = RETAIN([NSMutableArray arrayWithArray: 
+	  [[_TS_ performSelector: aSel2] allKeys]]);
+	[availData removeObjectsInArray: loadData];
 
-	[loadData[0] setBundleList: defaults[0]];
-	y = [NSMutableArray arrayWithArray: 
-	  [[_TS_ allInFilters] allKeys]];
-
-	[y removeObjectsInArray: defaults[0]];
-
-	[availData[0] setBundleList: y];
-	
-	defaults[1] = RETAIN([NSArray arrayWithArray: [_TS_ activatedOutFilters]]);
-
-	[loadData[1] setBundleList: defaults[1]];
-	y = [NSMutableArray arrayWithArray: 
-	  [[_TS_ allOutFilters] allKeys]];
-
-	[y removeObjectsInArray: defaults[1]];
-
-	[availData[1] setBundleList: y];
-
-	[availableTable reloadData];
-	[loadedTable reloadData];
-}	
-- (void)reloadDefaultsInList: (int)aList
-{
-	id x;
-	
-	[loadData[aList] setBundleList: defaults[aList]];
-	x = (!aList) ? [NSMutableArray arrayWithArray: 
-	  [[_TS_ allInFilters] allKeys]] : [NSMutableArray arrayWithArray:
-	  [[_TS_ allOutFilters] allKeys]];
-
-	[x removeObjectsInArray: defaults[aList]];
-
-	[availData[aList] setBundleList: x];
-
-	if (!aList)
-	{
-		[_TS_ setActivatedInFilters: defaults[0]];
-	}
-	else
-	{
-		[_TS_ setActivatedOutFilters: defaults[1]];
-	}
-	
 	[availableTable reloadData];
 	[loadedTable reloadData];
 }
-- (void)updateButtons
+- (void)setupList
+{
+	[self refreshList];
+	[preferencesButton setEnabled: NO];
+	[preferencesButton setBordered: NO];
+	
+	[availableTable deselectAll: nil];
+	[loadedTable deselectAll: nil];
+	[availableTable setNeedsDisplay: YES];
+	[loadedTable setNeedsDisplay: YES];
+
+	[[descriptionText textStorage] setAttributedString: 
+	  S2AS(big_description)];
+	[descriptionText scrollPoint: NSMakePoint(0, 0)];
+}
+- (void)updateButton
 {
 	if (currentTable == loadedTable)
 	{
-		[middleButton setImage: rightImage];
-		[middleButton setEnabled: YES];
-		[middleButton setBordered: YES];
-		[upButton setEnabled: YES];
-		[upButton setBordered: YES];
-		[downButton setEnabled: YES];
-		[downButton setBordered: YES];
-	}
-	else if (currentTable == availableTable)
-	{
-		[middleButton setImage: leftImage];
-		[middleButton setEnabled: YES];
-		[middleButton setBordered: YES];
-		[upButton setEnabled: NO];
-		[upButton setBordered: NO];
-		[downButton setEnabled: NO];
-		[downButton setBordered: NO];
+		[preferencesButton setEnabled: NO];
+		[preferencesButton setBordered: YES];
 	}
 	else
 	{
-		[middleButton setEnabled: NO];
-		[middleButton setBordered: NO];
-		[upButton setEnabled: NO];
-		[upButton setBordered: NO];
-		[downButton setEnabled: NO];
-		[downButton setBordered: NO];
+		[preferencesButton setEnabled: NO];
+		[preferencesButton setBordered: NO];
 	}
 }
 - (NSAttributedString *)descriptionForSelected: (int)row
 {
 	id object = nil;
+	SEL aSel;
 
-	if (currentTable == loadedTable)
+	object = (currentTable == loadedTable) ? [loadData objectAtIndex: row]
+	  : [availData objectAtIndex: row];
+	aSel = (!currentShowing) ? @selector(pluginForInFilter:)
+	  : @selector(pluginForOutFilter:);
+
+	object = [_TS_ performSelector: aSel withObject: object];
+
+	if ([object respondsToSelector: @selector(pluginDescription)] &&
+	  (object = [object pluginDescription]))
 	{
-		object = [[loadData[currentShowing] bundleList] 
-		  objectAtIndex: row];
-	}
-	else if (currentTable == availableTable)
-	{
-		object = [[availData[currentShowing] bundleList]
-		 objectAtIndex: row];
-	}
-	
-	if (object && currentShowing == 0)
-	{
-		object = [_TS_ pluginForInFilter: object];
-	}
-	else
-	{
-		object = [_TS_ pluginForOutFilter: object];
-	}
-		
-	if ([object respondsToSelector: @selector(pluginDescription)] && 
-	    (object = [object pluginDescription]))
-	{
-		return  [object substituteColorCodesIntoAttributedStringWithFont:
+		return [object substituteColorCodesIntoAttributedStringWithFont:
 		  [NSFont systemFontOfSize: 0.0]];
 	}
-	
-	return S2AS(@"No description available.");
+
+	return S2AS(_l(@"No description available."));
 }
 @end
-
-static NSString *big_description = nil;
 
 @implementation BundleConfigureController
 + (void)initialize
@@ -197,11 +158,9 @@ static NSString *big_description = nil;
 	 
 	 @"Above are two tables of bundles.  On the left, there is a "
 	 @"table showing the loaded bundles and the order they are loaded "
-	 @"in.  The arrows on the left can be used to move the selected "
-	 @"bundle up and down throughout the list of loaded bundles.  On "
-	 @"the right is the bundles which can be loaded but currently are "
-	 @"not.  Use the arrow in the center to move bundles between "
-	 @"the two tables.\n\n"
+	 @"in.  On the right, there is a table showing the bundles which can "
+	 @"be loaded but currently are not.  You may click and drag these "
+	 @"various bundles to/from the table on the left to load/unload them.\n\n"
 
 	 @"All the changes will be automatically applied to TalkSoup.  If "
 	 @"you should want to revert to the bundles that were loaded when you "
@@ -213,48 +172,38 @@ static NSString *big_description = nil;
 }
 - (void)awakeFromNib
 {
-	NSFont *aFont;
 	NSCell *x;
-	id bundle;
-	
-	bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
-
-	rightImage = [[NSImage alloc] initWithContentsOfFile: 
-	  [bundle pathForImageResource: @"RightArrow.tiff"]];
-	leftImage = [[NSImage alloc] initWithContentsOfFile: 
-	  [bundle pathForImageResource: @"LeftArrow"]];
-	upImage = [[NSImage alloc] initWithContentsOfFile: 
-	  [bundle pathForImageResource: @"UpArrow"]];
-	downImage = [[NSImage alloc] initWithContentsOfFile: 
-	  [bundle pathForImageResource: @"DownArrow"]];
-	[upButton setImage: upImage];
-	[downButton setImage: downImage];
-
-	[availableTable setDelegate: self];
-	[loadedTable setDelegate: self];
-	
-	availCol = RETAIN([availableTable tableColumnWithIdentifier: @"available"]);
-	loadCol = RETAIN([loadedTable tableColumnWithIdentifier: @"loaded"]);
-
-	loadData[0] = [BundleDataSource new];
-	availData[0] = [BundleDataSource new];
-	loadData[1] = [BundleDataSource new];
-	availData[1] = [BundleDataSource new];
-
-	[self setupLists];
-
-	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
+	id availCol, loadCol;
+	id aFont;
 	
 	aFont = [NSFont systemFontOfSize: 0.0];
 
+	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
 	[x setFont: aFont];
+
+	[availableTable setDelegate: self];
+	[availableTable setDataSource: self];
 	[availableTable setRowHeight: [aFont pointSize] * 1.5];
-	[loadedTable setRowHeight: [aFont pointSize] * 1.5];
-	
+	[availableTable registerForDraggedTypes: [NSArray arrayWithObject:
+	  bundlePboardType]];
+	availCol = [availableTable tableColumnWithIdentifier: @"available"];
 	[availCol setDataCell: x];
-	[loadCol setDataCell: x];
 	[[availCol headerCell] setFont: aFont];
+	
+	[loadedTable setDelegate: self];
+	[loadedTable setDataSource: self];
+	[loadedTable setRowHeight: [aFont pointSize] * 1.5];
+	[loadedTable registerForDraggedTypes: [NSArray arrayWithObject:
+	  bundlePboardType]];
+	loadCol = [loadedTable tableColumnWithIdentifier: @"loaded"];
+	[loadCol setDataCell: x];
 	[[loadCol headerCell] setFont: aFont];
+
+	[showingPopUp selectItemAtIndex: 0];
+	[showingPopUp setEnabled: YES];
+	
+	[self saveDefaults];
+	[self setupList];
 
 	[descriptionText setHorizontallyResizable: NO];
 	[descriptionText setVerticallyResizable: YES];
@@ -264,31 +213,17 @@ static NSString *big_description = nil;
 	[descriptionText setTextContainerInset: NSMakeSize(2, 2)];
 	[descriptionText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
-	[showingPopUp selectItemAtIndex: 0];
-	[self showingSelected: showingPopUp];
-	[showingPopUp setEnabled: YES];
-
 	[window makeKeyAndOrderFront: nil];
 }	
 - (void)dealloc
 {
 	[availableTable setDataSource: nil];
 	[loadedTable setDataSource: nil];
-	[availableTable setDelegate: nil];
-	[loadedTable setDelegate: nil];
 	
-	RELEASE(upImage);
-	RELEASE(downImage);
-	RELEASE(leftImage);
-	RELEASE(rightImage);
-	RELEASE(availData[0]);
-	RELEASE(loadData[0]);
-	RELEASE(availData[1]);
-	RELEASE(loadData[1]);
+	RELEASE(availData);
+	RELEASE(loadData);
 	RELEASE(defaults[0]);
 	RELEASE(defaults[1]);
-	RELEASE(availCol);
-	RELEASE(loadCol);
 	RELEASE(window);
 
 	[super dealloc];
@@ -297,92 +232,15 @@ static NSString *big_description = nil;
 {
 	return window;
 }
-- (void)upHit: (id)sender
-{
-	int row;
-	NSMutableArray *x;
-	id object;
-	
-	if (currentTable != loadedTable) return;
-
-	row = [currentTable selectedRow];
-
-	if (row == 0) return;
-
-	x = [loadData[currentShowing] bundleList];
-
-	object = [x objectAtIndex: row];
-	[x removeObjectAtIndex: row];
-	[x insertObject: object atIndex: row - 1];
-	
-	[loadedTable reloadData];
-	[self loadBundlesInList: currentShowing];
-
-	[loadedTable selectRow: row - 1 byExtendingSelection: NO];
-}
 - (void)refreshHit: (id)sender
 {
 	[_TS_ refreshPluginList];
-	[self reloadDefaultsInList: currentShowing];
-	[self showingSelected: showingPopUp];
+	[self reloadDefaultsInList];
+	[self setupList];
 }
-- (void)downHit: (id)sender
-{	
-	int row;
-	NSMutableArray *x;
-	id object;
-	
-	if (currentTable != loadedTable) return;
-
-	row = [currentTable selectedRow];
-
-	x = [loadData[currentShowing] bundleList];
-	
-	if (row == (int)([x count] - 1)) return;
-
-	object = [x objectAtIndex: row];
-	[x removeObjectAtIndex: row];
-	[x insertObject: object atIndex: row + 1];
-	
-	[loadedTable reloadData];
-	[self loadBundlesInList: currentShowing];
-
-	[loadedTable selectRow: row + 1 byExtendingSelection: NO];
-}
-- (void)middleHit: (id)sender
+- (void)preferencesHit: (id)sender
 {
-	id from = [currentTable dataSource];
-	id to = [otherTable dataSource];
-	int row = [currentTable selectedRow];
-	int rows;
-	id object;
-
-	object = [[from bundleList] objectAtIndex: row];
-	[[from bundleList] removeObjectAtIndex: row];
-
-	[[to bundleList] addObject: object];
-
-	[loadedTable reloadData];
-	[availableTable reloadData];
-	[self loadBundlesInList: currentShowing];
-
-	rows = [[from bundleList] count];
-
-	if (rows == 0)
-	{
-		[self showingSelected: showingPopUp];
-	}
-	else
-	{
-		if (row == rows) row--;
-		if ([[currentTable delegate] tableView: currentTable
-		   shouldSelectRow: row])
-		{
-			[currentTable selectRow: row 
-			  byExtendingSelection: NO];
-		}
-	}
-}	
+}
 - (void)showingSelected: (id)sender
 {
 	int index = [sender indexOfSelectedItem];
@@ -390,39 +248,25 @@ static NSString *big_description = nil;
 	if (index < 0) index = 0;
 	if (index > 1) index = 1;
 
-	[availableTable setDataSource: 
-	  availData[index]];
-	[loadedTable setDataSource: 
-	  loadData[index]];
-	
 	currentShowing = index;
-	currentTable = nil;
-	
-	[availableTable deselectAll: nil];
-	[loadedTable deselectAll: nil];
-	[availableTable setNeedsDisplay: YES];
-	[loadedTable setNeedsDisplay: YES];
-
-	[[descriptionText textStorage] setAttributedString: 
-	  S2AS(big_description)];
-	[descriptionText scrollPoint: NSMakePoint(0, 0)];
-	
-	[self updateButtons];
+	[self setupList];
 }
 - (BOOL)tableView: (NSTableView *)aTableView shouldSelectRow: (int)aRow
 {
-	currentTable = aTableView;
-
-	if (currentTable == availableTable)
+	if (aTableView == availableTable)
 	{
+		if ([availData count] == 0) return NO;
 		otherTable = loadedTable;
 	}
 	else
 	{
+		if ([loadData count] == 0) return NO;
 		otherTable = availableTable;
 	}
 
-	[self updateButtons];
+	currentTable = aTableView;
+
+	[self updateButton];
 	[otherTable deselectAll: nil];
 	[otherTable setNeedsDisplay: YES];
 	[currentTable setNeedsDisplay: YES];
@@ -433,44 +277,102 @@ static NSString *big_description = nil;
 
 	return YES;
 }
-@end
-
-@implementation BundleDataSource
-- init
-{
-	if (!(self = [super init])) return nil;
-
-	bundleList = [NSMutableArray new];
-
-	return self;
-}
-- (void)dealloc
-{
-	RELEASE(bundleList);
-
-	[super dealloc];
-}
-- setBundleList: (NSArray *)aList
-{
-	[bundleList removeAllObjects];
-	[bundleList addObjectsFromArray: aList];
-
-	return self;
-}
-- (NSMutableArray *)bundleList
-{
-	return bundleList;
-}
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
 {
-	return [bundleList count];
+	id data;
+
+	data = (aTableView == availableTable) ? availData : loadData;
+
+	if ([data count] == 0) return 1;
+	return [data count];
 }
 - (id)tableView: (NSTableView *)aTableView
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
   row: (int)rowIndex
 {
-	return [bundleList objectAtIndex: rowIndex];
+	id data;
+
+	data = (aTableView == availableTable) ? availData : loadData;
+	
+	if ([data count] == 0) return _l(@"Drag to here");
+
+	return [data objectAtIndex: rowIndex];
+}
+- (BOOL)tableView: (NSTableView *)tableView writeRows: (NSArray *)rows
+ toPasteboard: (NSPasteboard *)pboard
+{
+	NSMutableArray *theData;
+	id data;
+
+	data = (tableView == availableTable) ? availData : loadData;
+	
+	if ([data count] == 0) return NO;
+
+	theData = [[NSMutableArray alloc] initWithCapacity: 1];
+
+	[theData addObject: AUTORELEASE([[data objectAtIndex: 
+	  [[rows objectAtIndex: 0] intValue]] copy])];
+
+	[pboard declareTypes: [NSArray arrayWithObject: bundlePboardType]
+	  owner: nil];
+	[pboard setPropertyList: theData forType: bundlePboardType];
+
+	NSLog(@"Copying...");
+	RELEASE(theData);
+
+	return YES;
+}
+- (NSDragOperation) tableView: (NSTableView *)aTableView
+  validateDrop: (id <NSDraggingInfo>) info
+  proposedRow: (int)row 
+  proposedDropOperation: (NSTableViewDropOperation)operation
+{
+	if ([info draggingSourceOperationMask] & 
+	  (NSDragOperationGeneric | NSDragOperationCopy)) 
+	{
+		NSLog(@"Validating good...");
+		return NSDragOperationGeneric;
+	}
+	NSLog(@"Validating bad...");
+
+	return NSDragOperationNone;
+}
+- (BOOL)tableView: (NSTableView *)aTableView 
+  acceptDrop: (id <NSDraggingInfo>)info
+  row: (int)row dropOperation: (NSTableViewDropOperation)operation
+{
+	id origData;
+	id data;
+	id object;
+	int where;
+
+	data = (aTableView == availableTable) ? availData : loadData;
+
+	object = AUTORELEASE(RETAIN([[[info draggingPasteboard] 
+	  propertyListForType: bundlePboardType] objectAtIndex: 0]));
+
+	origData = ([availData containsObject: object]) ? availData : loadData;
+	
+	if ((data == origData) && (data == availData)) return NO;
+
+	NSLog(@"Accepting...");
+	
+	where = [origData indexOfObject: object];
+	[data insertObject: object atIndex: row % ([data count] + 1)];
+	
+	if (row <= where && origData == data) where++;
+
+	[origData removeObjectAtIndex: where];
+	
+	[self activateList];
+	[self refreshList];
+	
+	where = [data indexOfObject: object];
+	if ([[aTableView delegate] tableView: aTableView
+	  shouldSelectRow: where])
+	{
+		[aTableView selectRow: where byExtendingSelection: NO];
+	}
+	return YES;
 }
 @end
-
-

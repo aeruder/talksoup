@@ -1,11 +1,9 @@
 {
     BundleConfigureController = {
 	Actions = (
-	    "upHit:",
 	    "refreshHit:",
-	    "downHit:",
 	    "showingSelected:",
-	    "middleHit:"
+	    "preferencesHit:"
 	);
 	Outlets = (
 	    showingPopUp,
@@ -13,9 +11,7 @@
 	    availableTable,
 	    descriptionText,
 	    window,
-	    middleButton,
-	    downButton,
-	    upButton
+	    preferencesButton
 	);
 	Super = NSObject;
     };
@@ -159,15 +155,13 @@
 	    "useStandardLigatures:",
 	    "yank:",
 	    "zoom:",
-	    "upHit:",
 	    "refreshHit:",
 	    "cancelHit:",
 	    "okHit:",
-	    "downHit:",
 	    "leftHit:",
 	    "rightHit:",
 	    "showingSelected:",
-	    "middleHit:"
+	    "preferencesHit:"
 	);
 	Super = NSObject;
     };
