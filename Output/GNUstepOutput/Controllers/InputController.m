@@ -363,7 +363,7 @@ static void send_message(id command, id name, id connection)
 	
 	o = [x objectAtIndex: 0];
 	
-	[[controller contentController] addQueryWithName: o withLabel: o];
+	[[controller contentController] addQueryWithName: o withLabel: S2AS(o)];
 	
 	return self;
 }
