@@ -6,18 +6,33 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 BUNDLE_EXTENSION =
 
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
-                                         Localizable.strings Preferences.gorm \
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.nib \
+                                         ServerEditor.nib ServerList.nib \
+                                         NamePrompt.nib GroupEditor.nib \
+                                         ServerEditor.nib TopicInspector.nib \
+                                         BundleConfigure.nib
+else
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \
                                          NamePrompt.gorm GroupEditor.gorm \
                                          ServerEditor.gorm TopicInspector.gorm \
                                          BundleConfigure.gorm
+endif
 
 GNUstepOutput_RESOURCE_FILES = Images/UpArrow.tiff \
  Images/RightArrow.tiff Images/LeftArrow.tiff \
- Images/DownArrow.tiff Images/TalkSoup.tiff \
+ Images/DownArrow.tiff \
  Images/common_ret.tiff Images/common_retH.tiff
 
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+GNUstepOutput_RESOURCE_FILES += AllLanguages/Channel.nib AllLanguages/Query.nib \
+                                AllLanguages/Content.nib
+else
+GNUstepOutput_RESOURCE_FILES += AllLanguages/Channel.gorm AllLanguages/Query.gorm \
+                                AllLanguages/Content.gorm
+endif
+	
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
