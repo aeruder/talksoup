@@ -535,3 +535,10 @@ GNUstepOutput *_GS_ = nil;
 	return NO;
 }
 @end
+
+int main(void)
+{
+	[NSAutoreleasePool new];
+	[[GNUstepOutput new] run];
+	return 0;
+}

@@ -1,6 +1,6 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-BUNDLE_NAME = GNUstepOutput
+APP_NAME = GNUstepOutput
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/Output
@@ -61,9 +61,9 @@ GNUstepOutput_LANGUAGES = English
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-GNUstepOutput_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+GNUstepOutput_GUI_LIBS = -framework TalkSoupGUIs $(ADDITIONAL_FRAMEWORK_DIRS)
 else
-GNUstepOutput_BUNDLE_LIBS = -lTalkSoupBundles $(GUI_LIBS)
+GNUstepOutput_GUI_LIBS = -lTalkSoupGUIs $(GUI_LIBS)
 endif
 
 ConnectionController = Controllers/ConnectionController/ConnectionController.m \
@@ -77,7 +77,9 @@ Controllers/ConnectionController/ConnectionControllerTabCompletion.m
 ContentController = Controllers/ContentControllers/StandardContentController.m \
 Controllers/ContentControllers/ContentController.m \
 Controllers/ContentControllers/Tab/TabContentController.m \
-Controllers/ContentControllers/Tab/TabMasterController.m
+Controllers/ContentControllers/Tab/TabMasterController.m \
+Controllers/ContentControllers/StandardChannelController.m \
+Controllers/ContentControllers/StandardQueryController.m
 
 Preferences = Controllers/Preferences/GeneralPreferencesController.m \
 Controllers/Preferences/BundlePreferencesController.m \
@@ -86,18 +88,8 @@ Controllers/Preferences/FontPreferencesController.m \
 Controllers/Preferences/PreferencesController.m
 
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-              Controllers/InputController.m\
-              Controllers/PreferencesController.m \
-              Controllers/NamePromptController.m \
-              Controllers/ServerListController.m \
-              Controllers/GroupEditorController.m \
-              Controllers/ServerEditorController.m \
-              Controllers/ServerListConnectionController.m \
               Controllers/TopicInspectorController.m \
-			  $(Preferences) \
-              $(ConnectionController) \
 			  $(ContentController)
-
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/KeyTextView.m
@@ -111,5 +103,5 @@ GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
                            $(Models)
 						   
 -include GNUmakefile.preamble
-include $(GNUSTEP_MAKEFILES)/bundle.make
+include $(GNUSTEP_MAKEFILES)/application.make
 -include GNUmakefile.postamble
