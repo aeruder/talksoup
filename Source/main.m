@@ -75,8 +75,6 @@ int main(void)
 	
 	defaultPlugins = GetSetting(@"Plugins");
 	
-	NSLog(@"Default Plugins: %@", defaultPlugins);
-	
 	[_TS_ setInput: [defaultPlugins objectForKey: @"Input"]];
 	[_TS_ setOutput: [defaultPlugins objectForKey: @"Output"]];
 	[_TS_ setActivatedInFilters: [defaultPlugins objectForKey: @"InFilters"]];
