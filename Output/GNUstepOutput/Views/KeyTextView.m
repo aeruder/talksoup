@@ -33,7 +33,7 @@
 }
 - (void)keyDown: (NSEvent *)theEvent
 {
-	BOOL (*function)(NSEvent *, id);
+	BOOL (*function)(id, SEL, NSEvent *, id);
 	
 	if (!keyTarget || !keyAction)
 	{
@@ -41,11 +41,12 @@
 		return;
 	}
 	
-	function = (BOOL (*)(NSEvent *, id))[keyTarget methodForSelector: keyAction];
+	function = (BOOL (*)(id, SEL, NSEvent *, id))
+	   [keyTarget methodForSelector: keyAction];
 	
 	if (function)
 	{
-		if ((function(theEvent, self)))
+		if ((function(keyTarget, keyAction, theEvent, self)))
 			[super keyDown: theEvent];
 	}
 	else
