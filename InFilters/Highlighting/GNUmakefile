@@ -25,6 +25,7 @@ endif
 
 Highlighting_LANGUAGES = English
 Highlighting_LOCALIZED_RESOURCE_FILES += Localizable.strings
+Highlighting_RESOURCE_FILES = AllLanguages/Defaults.plist
 
 Highlighting_PRINCIPAL_CLASS = Highlighting
 

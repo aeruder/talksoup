@@ -169,13 +169,9 @@ static NSInvocation *invoc = nil;
 	[invoc retainArguments];
 	[invoc setTarget: self];
 	[invoc setSelector: @selector(commandHighlighting:connection:)];
-	highlighting_defaults = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys: 
-	  IRCColorBlue, @"UserColor",
-	  @"IRCColorCustom 130 140 410", @"TabReferenceColor",
-	  @"IRCColorCustom 410 130 140", @"TabAnythingColor",
-	  [NSArray arrayWithObjects: nil], @"ExtraWords",
-	  @"YES", @"ShouldDoNick",
-	  nil]));
+	highlighting_defaults = [[NSDictionary alloc] initWithContentsOfFile:
+	  [[NSBundle bundleForClass: [Highlighting class]] 
+	  pathForResource: @"Defaults" ofType: @"plist"]];
 }	
 + (NSDictionary *)defaultSettings
 {
@@ -392,21 +388,27 @@ static NSInvocation *invoc = nil;
 - pluginActivated
 {
 	main_controller = controller = [HighlightingPreferencesController new];
+
+#ifdef USE_APPKIT
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"AddBundlePreferencesController", @"Process",
 	  @"Highlighting", @"Name",
 	  controller, @"Controller",
 	  nil] onConnection: nil withNickname: nil sender: self];
+#endif
 
 	[_TS_ addCommand: @"highlighting" withInvocation: invoc];
 	return self;
 }
 - pluginDeactivated
 {
+#ifdef USE_APPKIT
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"RemoveBundlePreferencesController", @"Process",
 	  @"Highlighting", @"Name", nil]
 	  onConnection: nil withNickname: nil sender: self];
+#endif
+
 	DESTROY(controller);
 	main_controller = nil;
 
