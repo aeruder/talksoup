@@ -94,8 +94,6 @@
 	
 	[_GS_ addConnectionController: self];
 	
-	RETAIN(self);
-	
 	return self;
 } 	 
 - (void)dealloc

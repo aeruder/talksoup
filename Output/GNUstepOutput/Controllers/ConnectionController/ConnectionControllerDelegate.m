@@ -22,6 +22,7 @@
 #include "Controllers/ChannelController.h"
 #include "Controllers/InputController.h"
 #include "Models/Channel.h"
+#include "Views/KeyTextView.h"
 
 #include <Foundation/NSNotification.h>
 #include <AppKit/NSTabView.h>
@@ -89,10 +90,12 @@
 	{
 		[[_TS_ pluginForInput] closeConnection: connection];
 	}
-	[_GS_ removeConnectionController: self];
 	
 	[[content window] setDelegate: nil];
-	RELEASE(self);
+	[[content typeView] setTarget: nil];
+	[fieldEditor setKeyTarget: nil];
+
+	[_GS_ removeConnectionController: self];
 }
 - (void)windowDidBecomeKey: (NSNotification *)aNotification
 {

@@ -62,6 +62,8 @@
 	[userName setTarget: nil];
 	[userName setDelegate: nil];
 	[window setDelegate: nil];
+	[setFontButton setTarget: nil];
+	[resetButton setTarget: nil];
 	RELEASE(personalBracketColor);
 	RELEASE(backgroundColor);
 	RELEASE(otherBracketColor);
@@ -72,6 +74,8 @@
 	RELEASE(password);
 	RELEASE(resetButton);
 	RELEASE(window);
+	RELEASE(fontField);
+	RELEASE(setFontButton);
 	[super dealloc];
 }
 - (void)loadCurrentDefaults

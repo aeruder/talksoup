@@ -117,6 +117,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(nameToLabel);
 	RELEASE(nameToTabItem);
 	RELEASE(current);
+	RELEASE(chatFont);
 	
 	[super dealloc];
 }

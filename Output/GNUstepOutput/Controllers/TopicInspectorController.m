@@ -47,6 +47,19 @@
 	[topicText setTextContainerInset: NSMakeSize(2, 0)];
 	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
+- (void)dealloc
+{
+	RELEASE(nothingView);
+	RELEASE(contentView);
+	RELEASE(window);
+	RELEASE(dateField);
+	RELEASE(authorField);
+	RELEASE(channelField);
+	RELEASE(topicText);
+	RELEASE(connection);
+
+	[super dealloc];
+}	
 - setTopic: (NSString *)aTopic inChannel: (NSString *)aChannel
    setBy: (NSString *)author onDate: (NSString *)date
    forConnectionController: (ConnectionController *)aConnection

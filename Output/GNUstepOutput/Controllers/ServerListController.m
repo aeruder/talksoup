@@ -190,7 +190,6 @@ static int sort_server_dictionary(id first, id second, void *x)
 	[browser setDoubleAction: @selector(connectHit:)];
 	[browser setDelegate: self];
 	[window setDelegate: self];
-	RETAIN(self);
 	[window makeKeyAndOrderFront: nil];
 	
 	[_GS_ addServerList: self];
@@ -209,7 +208,6 @@ static int sort_server_dictionary(id first, id second, void *x)
 	RELEASE(editButton);
 	RELEASE(serverColumn);
 	RELEASE(connectButton);
-	[window close];
 	[[editor window] close];
 	
 	[super dealloc];
@@ -527,10 +525,9 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if ([aNotification object] == window)
 	{
-		[_GS_ removeServerList: self];
 		[window setDelegate: nil];
 		DESTROY(window);
-		RELEASE(self);
+		[_GS_ removeServerList: self];
 	}
 	else if ([aNotification object] == [editor window])
 	{
