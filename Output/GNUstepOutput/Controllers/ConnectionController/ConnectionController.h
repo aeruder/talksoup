@@ -78,8 +78,6 @@
 - (NSArray *)channelsWithUser: (NSString *)user;
 
 - leaveChannel: (NSString *)channel;
-
-- (KeyTextView *)fieldEditor;
 @end
 
 #endif
