@@ -2,6 +2,10 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 FRAMEWORK_NAME = TalkSoupBundles
 
+TalkSoupBundles_LANGUAGES = English
+
+TalkSoupBundles_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 TalkSoupBundles_HEADER_FILES = TalkSoup.h TalkSoupProtocols.h TalkSoupMisc.h
 TalkSoupBundles_OBJC_FILES = TalkSoup.m Functions.m Dummy.m
 TalkSoupBundles_CURRENT_VERSION_NAME=0.82
