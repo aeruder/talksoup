@@ -32,7 +32,7 @@ extern NSString *ContentControllerQueryType;
 
 extern NSString *ContentConsoleName;
 
-@protocol ContentControllerQueryView
+@protocol ContentControllerQueryView < NSObject >
 + (NSString *)standardNib;
 - (NSTextView *)chatView;
 - (NSView *)contentView;
@@ -43,14 +43,15 @@ extern NSString *ContentConsoleName;
 //- (NSAttributedString *)presentationName;
 //@end
 
-@protocol ContentControllerChannelView < ContentControllerQueryView >
+@protocol ContentControllerChannelView < ContentControllerQueryView, NSObject >
 - (Channel *)channelSource;
 - (void)attachChannelSource: (Channel *)aChannel;
 - (void)detachChannelSource;
+- (void)refreshFromChannelSource;
 @end
 
 
-@protocol MasterController
+@protocol MasterController <NSObject>
 - addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController;
 - addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
@@ -74,8 +75,8 @@ extern NSString *ContentConsoleName;
 @end
 
 
-@protocol ContentController
-- setFieldEditor: (NSText *)aFieldEditor;
+@protocol ContentController <NSObject>
+- (void)setFieldEditor: (NSText *)aFieldEditor;
 - (NSText *)fieldEditor;
 
 - (NSArray *)masterControllers;
@@ -95,23 +96,32 @@ extern NSString *ContentConsoleName;
 - (NSArray *)allViewsOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
-- putMessage: (NSAttributedString *)aMessage in: (id)aName;
-- putMessage: (NSAttributedString *)aMessage in: (id)aName 
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName;
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd;
-- putMessageInAll: (NSAttributedString *)aMessage;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage;
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     withEndLine: (BOOL)hasEnd;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
+- (void)addControllerOfType: (NSString *)aType withName: (NSString *)aName 
+   withLabel: (NSAttributedString *)aLabel 
+   inMasterController: (id <MasterController>)aMaster;
+- (void)removeControllerWithName: (NSString *)aName;
+- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName;
+
 - (NSString *)presentationalNameForName: (NSString *)aName;
+- (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName;
+
 - (NSAttributedString *)labelForName: (NSString *)aName;
+- (void)setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName;
 
 - (NSString *)nickname;
-- setNickname: (NSString *)aNickname;
+- (void)setNickname: (NSString *)aNickname;
 
 - (NSString *)title;
 - (void)setTitle: (NSString *)aTitle;
@@ -176,7 +186,7 @@ extern NSString *ContentControllerSelectedNameNotification;
 	object:       The content controller
 	
 	userinfo:
-   @"OldLabel": The old label
+	@"OldLabel": The old label
 	@"Label":    The new label
 	@"View":     The view controller
 	@"Content":  The content controller

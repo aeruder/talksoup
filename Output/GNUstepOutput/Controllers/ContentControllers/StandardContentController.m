@@ -655,7 +655,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [nameToLabel objectForKey: lowercase(aName)];
 }
-- setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName
+- (void)setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName
 {
 	id label;
 	id lo;
@@ -666,20 +666,20 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (!(label = [nameToLabel objectForKey: lo]))
 	{
-		return self;
+		return;
 	}
 	
 	if (!(cont = [nameToBoth objectForKey: lo]))
 	{
-		return self;
+		return;
 	}
 	
 	if (!(mast = [nameToMasterController objectForKey: lo]))
 	{
-		return self;
+		return;
 	}
 	
-	if (label == aLabel) return self;
+	if (label == aLabel) return;
 	
 	[nameToLabel setObject: aLabel forKey: lowercase(aName)];
 	
@@ -693,7 +693,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	  mast, @"Master",
 	  nil]];
 
-	return self;
+	return;
 }
 - (NSString *)presentationalNameForName: (NSString *)aName
 {
@@ -703,7 +703,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return nickname;
 }
-- setNickname: (NSString *)aNickname
+- (void)setNickname: (NSString *)aNickname
 {
 	if (aNickname == nickname) return self;
 	
@@ -717,7 +717,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	  self, @"Content",
 	  nil]];
 
-	return self;
+	return;
 }
 - (NSString *)title
 {

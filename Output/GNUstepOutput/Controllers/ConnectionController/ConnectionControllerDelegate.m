@@ -18,8 +18,8 @@
 #import "Controllers/ConnectionController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "GNUstepOutput.h"
-#import "Controllers/ContentController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Controllers/InputController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Models/Channel.h"
@@ -32,56 +32,58 @@
 #import <AppKit/NSTextField.h>
 
 @implementation ConnectionController (TableViewTarget)
-- (void)doubleClickedUser: (NSTableView *)sender
-{
-	id name = [content currentViewName];
-	id channel;
-	id user;
-	
-	if ([[content controllerForViewWithName: name] tableView]
-	    == sender)
-	{
-		if ((channel = [nameToChannelData objectForKey: 
-		  GNUstepOutputLowercase(name)]))
-		{
-			user = [[[channel userList] objectAtIndex: [sender clickedRow]]
-			  userName];
-			[content addQueryWithName: user 
-			  withLabel: S2AS(user)];
-		}
-	}
-}
+// FIXME this needs to be replaced by a  notification
+//- (void)doubleClickedUser: (NSTableView *)sender
+//{
+//	id name = [content currentViewName];
+//	id channel;
+//	id user;
+//	
+//	if ([[content controllerForViewWithName: name] tableView]
+//	    == sender)
+//	{
+//		if ((channel = [nameToChannelData objectForKey: 
+//		  GNUstepOutputLowercase(name)]))
+//		{
+//			user = [[[channel userList] objectAtIndex: [sender clickedRow]]
+//			  userName];
+//			[content addQueryWithName: user 
+//			  withLabel: S2AS(user)];
+//		}
+//	}
+//}
 @end
 
 @implementation ConnectionController (ApplicationDelegate)
-- (void)selectNextTab: (id)sender
-{
-	id tabs = [content tabView];
-	int total = [tabs numberOfTabViewItems];
-	int current = [tabs indexOfTabViewItem: 
-	  [tabs selectedTabViewItem]];
-	
-	current = (current + 1) % total;
-	
-	[tabs selectTabViewItemAtIndex: current];
-}
-- (void)selectPreviousTab: (id)sender
-{
-	id tabs = [content tabView];
-	int total = [tabs numberOfTabViewItems];
-	int current = [tabs indexOfTabViewItem: 
-	  [tabs selectedTabViewItem]];
-	
-	current--;
-	
-	if (current < 0) current = total - 1;
-	
-	[tabs selectTabViewItemAtIndex: current];
-}
-- (void)closeCurrentTab: (id)sender
-{
-	[inputController lineTyped: @"/close"];
-}
+// FIXME I don't understand why this is here.
+//- (void)selectNextTab: (id)sender
+//{
+//	id tabs = [content tabView];
+//	int total = [tabs numberOfTabViewItems];
+//	int current = [tabs indexOfTabViewItem: 
+//	  [tabs selectedTabViewItem]];
+//	
+//	current = (current + 1) % total;
+//	
+//	[tabs selectTabViewItemAtIndex: current];
+//}
+//- (void)selectPreviousTab: (id)sender
+//{
+//	id tabs = [content tabView];
+//	int total = [tabs numberOfTabViewItems];
+//	int current = [tabs indexOfTabViewItem: 
+//	  [tabs selectedTabViewItem]];
+//	
+//	current--;
+//	
+//	if (current < 0) current = total - 1;
+//	
+//	[tabs selectTabViewItemAtIndex: current];
+//}
+//- (void)closeCurrentTab: (id)sender
+//{
+//	[inputController lineTyped: @"/close"];
+//}
 @end
 
 @implementation ConnectionController (WindowDelegate)

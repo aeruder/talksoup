@@ -51,11 +51,9 @@
 - initWithIRCInfoDictionary: (NSDictionary *)aDict;
 
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
-   withContentController: (ContentController *)aContent;
+   withContentController: (id <ContentController>)aContent;
 
 - connectToServer: (NSString *)aName onPort: (int)aPort;
-
-- updateTopicInspector;
 
 - (Channel *)dataForChannelWithName: (NSString *)aName;
 
@@ -73,7 +71,7 @@
 
 - (id)connection;
 
-- (ContentController *)contentController;
+- (id <ContentController>)contentController;
 
 - (NSArray *)channelsWithUser: (NSString *)user;
 

@@ -16,8 +16,8 @@
  ***************************************************************************/
 
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Models/Channel.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "GNUstepOutput.h"
@@ -48,8 +48,6 @@
 	[data setTopicAuthor: @""];
 	[data setTopicDate: @""];
 	
-	[self updateTopicInspector];
-	
 	return self;
 }
 // RPL_TOPIC (extension???)
@@ -76,8 +74,6 @@
 	[data setTopicAuthor: [who string]];
 	[data setTopicDate: [date string]];
 	
-	[self updateTopicInspector];
-	
 	return self;
 }
 // RPL_NAMREPLY
@@ -100,7 +96,7 @@
 - numericHandler366: (NSArray *)arguments
 {
 	id name = GNUstepOutputLowercase([[arguments objectAtIndex: 0] string]);
-	id cont = [content controllerForViewWithName: name];
+	id cont = [content controllerForName: name];
 	id channel = [nameToChannelData objectForKey: name];
 
 	if (!channel)
@@ -110,7 +106,7 @@
 
 	[channel endServerUserList];
 
-	[[cont tableView] reloadData]; 
+	[cont refreshFromChannelSource];
 
 	return self;
 }

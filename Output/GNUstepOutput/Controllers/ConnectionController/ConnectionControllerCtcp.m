@@ -17,7 +17,7 @@
  
 #import "Controllers/ConnectionController.h"
 #import <TalkSoupBundles/TalkSoup.h>
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "GNUstepOutput.h"
 
 #import <Foundation/NSAttributedString.h>

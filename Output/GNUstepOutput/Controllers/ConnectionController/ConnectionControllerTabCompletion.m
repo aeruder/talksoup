@@ -18,8 +18,8 @@
 #import "Controllers/ConnectionController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "Controllers/InputController.h"
-#import "Controllers/ContentController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "GNUstepOutput.h"
 #import "Views/KeyTextView.h"
 #import "Views/ScrollingTextView.h"
@@ -93,14 +93,14 @@
 	}
 	if (character == NSPageUpFunctionKey)
 	{
-		id x = [content controllerForViewWithName: [content currentViewName]];
-		[[x chatView] pageUp];
+// FIXME		id x = [content controllerForViewWithName: [content currentViewName]];
+	//	[[x chatView] pageUp];
 		return NO;
 	}
 	if (character == NSPageDownFunctionKey)
 	{
-		id x = [content controllerForViewWithName: [content currentViewName]];
-		[[x chatView] pageDown];
+	//	id x = [content controllerForViewWithName: [content currentViewName]];
+	//	[[x chatView] pageDown];
 		return NO;
 	}
 	
@@ -129,7 +129,8 @@
 }
 - (void)extraTabPressed: (id)sender
 {
-	id field = [content typeView];
+	// FIXME
+/*	id field = [content typeView];
 	NSString *typed = [field stringValue];
 	int start;
 	NSRange range;
@@ -152,9 +153,11 @@
 	  [typed substringToIndex: start], 
 	  [tabCompletion objectAtIndex: tabCompletionIndex]]];
 	tabCompletionIndex = (tabCompletionIndex + 1) % [tabCompletion count];
+*/
 }
 - (void)firstTabPressed: (id)sender
 {
+	/* FIXME
 	id field = [content typeView];
 	NSString *typed = [field stringValue];
 	NSArray *possibleCompletions;
@@ -212,6 +215,7 @@
 		tabCompletionIndex = -1;
 		tabCompletion = RETAIN(possibleCompletions);
 	}
+	*/
 }
 - (NSArray *)completionsInArray: (NSArray *)x
   startingWith: (NSString *)pre
@@ -289,10 +293,10 @@
 	NSEnumerator *iter;
 	id object;
 	
-	iter = [[content allViews] objectEnumerator];
+	iter = [[content allNames] objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
-		[x addObject: [content viewNameForController: object]];
+		[x addObject: object];
 	}
 	
 	return [self completionsInArray: x startingWith: pre
@@ -301,6 +305,7 @@
 - (NSArray *)nameStartingWith: (NSString *)pre 
   largestValue: (NSString **)large
 {
+	/*
 	NSMutableArray *x = AUTORELEASE([NSMutableArray new]);
 	NSEnumerator *iter;
 	id object;
@@ -316,6 +321,8 @@
 	
 	return [self completionsInArray: x startingWith: pre
 	  largestValue: large];
+	FIXME*/
+	return AUTORELEASE([NSArray new]);
 }
 @end
 

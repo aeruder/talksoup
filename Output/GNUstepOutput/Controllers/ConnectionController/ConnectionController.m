@@ -18,6 +18,8 @@
 #import "Controllers/ConnectionController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
+#import "Controllers/ContentControllers/Tab/TabContentController.h"
+#import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Controllers/InputController.h"
@@ -49,9 +51,9 @@
 	  withContentController: nil];
 } 	 
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
-   withContentController: (ContentController *)aContent
+   withContentController: (id <ContentController>)aContent
 {
-	id fieldEditor;
+	NSTextView *fieldEditor;
 	
 	if (!(self = [super init])) return nil;
 
@@ -76,24 +78,22 @@
 	
 	if (!aContent)
 	{
-		content = [[ContentController alloc] initWithConnectionController: self];
-		[NSBundle loadNibNamed: @"Content" owner: content];
+		content = [[TabContentController alloc] initWithConnectionController: self];
 	}
 	else
 	{
 		content = RETAIN(aContent);
-		[content setConnectionController: self];
 	}
 
-	[content setNickViewString: preNick];
-	[[content window] setDelegate: self];
+	[content setNickname: preNick];
 	
 	[content setLabel: S2AS(_l(@"Unconnected")) 
-	  forViewWithName: ContentConsoleName];
-	[[content window] setTitle: _l(@"Unconnected")];
+	  forName: ContentConsoleName];
+	[content setTitle: _l(@"Unconnected")];
 	
 	fieldEditor = [KeyTextView new];
 	[fieldEditor setFieldEditor: YES];
+	[content setFieldEditor: fieldEditor];
 
 	nameToChannelData = [NSMutableDictionary new];
 	
@@ -147,35 +147,12 @@
 	  withIdentification: ident];
 	
 	[content setLabel: S2AS(_l(@"Connecting")) 
-	  forViewWithName: ContentConsoleName];
-	[[content window] setTitle: [NSString stringWithFormat: 
+	  forName: ContentConsoleName];
+	[content setTitle: [NSString stringWithFormat: 
 	  _l(@"Connecting to %@"), typedHost]];
 	
 	registered = NO;
 	
-	return self;
-}
-- updateTopicInspector
-{
-	id topic;
-	id data;
-	id current;
-	
-	topic = [_GS_ topicInspectorController];
-		
-	if ((data = [nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase(current = [content currentViewName])]))
-	{
-		[topic setTopic: [data topic] inChannel: current
-		  setBy: [data topicAuthor] onDate: [data topicDate]
-		  forConnectionController: self];
-	}
-	else
-	{
-		[topic setTopic: nil inChannel: nil
-		  setBy: nil onDate: nil
-		  forConnectionController: nil];
-	}
 	return self;
 }
 - (Channel *)dataForChannelWithName: (NSString *)aName
@@ -246,7 +223,7 @@
 {
 	return connection;
 }
-- (ContentController *)contentController
+- (id <ContentController>)contentController
 {
 	return content;
 }
@@ -269,15 +246,13 @@
 }
 - leaveChannel: (NSString *)channel
 {
-	id view = [content controllerForViewWithName: channel];
-	id object = [view tableView];
-		
-	[object setDataSource: nil];
-	[object setTarget: nil];
+	id view = [content controllerForName: channel];
+	
+	[view detachChannelSource];
 		
 	[nameToChannelData removeObjectForKey: channel];
 	[content setLabel: BuildAttributedString(@"(", channel, @")", nil)
-	  forViewWithName: channel];
+	  forName: channel];
 
 	return self;
 }

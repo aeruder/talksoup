@@ -52,7 +52,7 @@
 
 - initWithMasterController: (id <MasterController>) aMaster;
 
-- setFieldEditor: (NSText *)aFieldEditor;
+- (void)setFieldEditor: (NSText *)aFieldEditor;
 - (NSText *)fieldEditor;
 
 - (NSArray *)masterControllers;
@@ -92,13 +92,14 @@
 - removeControllerWithName: (NSString *)aName;
 - renameControllerWithName: (NSString *)aName to: (NSString *)newName;
 
-- (NSAttributedString *)labelForName: (NSString *)aName;
-- setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName;
-
 - (NSString *)presentationalNameForName: (NSString *)aName;
+- (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName;
+
+- (NSAttributedString *)labelForName: (NSString *)aName;
+- (void)setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName;
 
 - (NSString *)nickname;
-- setNickname: (NSString *)aNickname;
+- (void)setNickname: (NSString *)aNickname;
 
 - (NSString *)title;
 - (void)setTitle: (NSString *)aTitle;

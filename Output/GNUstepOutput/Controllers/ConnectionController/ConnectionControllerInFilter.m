@@ -17,11 +17,12 @@
 
 
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "GNUstepOutput.h"
 #import "Models/Channel.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Misc/NSAttributedStringAdditions.h"
 
 #import <Foundation/NSEnumerator.h>
@@ -63,8 +64,8 @@
 	[self systemMessage: S2AS(_l(@"Disconnected")) onConnection: aConnection];
 	
 	[content setLabel: S2AS(_l(@"Unconnected")) 
-	  forViewWithName: ContentConsoleName];
-	[[content window] setTitle: _l(@"Unconnected")];
+	  forName: ContentConsoleName];
+	[content setTitle: _l(@"Unconnected")];
 	
 	RELEASE(preNick);
 	preNick = RETAIN([aConnection nick]);
@@ -76,6 +77,7 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
+	/* This stuff needs a big fat FIXME
 	id process;
 	if (![aObject isKindOfClass: [NSDictionary class]]) return self;
 	
@@ -136,12 +138,13 @@
 	}
 	
 	return self;
+	*/
 }
 - registeredWithServerOnConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	[content setNickViewString: [aConnection nick]];
+	[content setNickname: [aConnection nick]];
 	return self;
 }
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)aConnection 
@@ -259,7 +262,7 @@
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([aChannel string]);
-	id view = [content controllerForViewWithName: lowChan];
+	id view = [content controllerForName: lowChan];
 
 	if (GNUstepOutputCompare([aPerson string], [connection nick]))
 	{
@@ -268,7 +271,7 @@
 	else
 	{
 		[[nameToChannelData objectForKey: lowChan] removeUser: [aPerson string]];
-		[[view tableView] reloadData];
+		[view refreshFromChannelSource];
 	}
 	
 	[content putMessage: 
@@ -348,8 +351,8 @@
 						user = [chan userWithName: 
 						  [[paramList objectAtIndex: argindex] string]];
 						[user setOperator: add];
-						[[[content controllerForViewWithName: [anObject string]] tableView] 
-						   reloadData];
+						[[content controllerForName: [anObject string]] 
+						   refreshFromChannelSource];
 						argindex++;
 					}
 					break;
@@ -360,8 +363,8 @@
 						user = [chan userWithName: 
 						  [[paramList objectAtIndex: argindex] string]];
 						[user setVoice: add];
-						[[[content controllerForViewWithName: [anObject string]] tableView] 
-						   reloadData];
+						[[content controllerForName: [anObject string]]
+						   refreshFromChannelSource];
 						argindex++;
 					}
 					break;
@@ -395,8 +398,8 @@
 	{
 		object = [IRCUserComponents(sender) objectAtIndex: 0];
 		[content setLabel: object
-		 forViewWithName: ContentConsoleName];
-		[[content window] setTitle: [object string]];
+		 forName: ContentConsoleName];
+		[content setTitle: [object string]];
 		registered = YES;
 	}
 	
@@ -435,7 +438,7 @@
 	if (GNUstepOutputCompare([newName string], [connection nick]))
 	{
 		[self setNick: [newName string]];
-		[content setNickViewString: [newName string]];
+		[content setNickname: [newName string]];
 	}
 	
 	array = [self channelsWithUser: [oldName string]];
@@ -445,19 +448,18 @@
 		[[nameToChannelData objectForKey: 
 		  GNUstepOutputLowercase(object)] userRenamed: [oldName string] 
 		  to: [newName string]];
-		[[[content controllerForViewWithName: object] tableView]
-		  reloadData];
+		[[content controllerForName: object] refreshFromChannelSource];
 	}
 	
 	[content putMessage: BuildAttributedFormat(
 	  _l(@"%@ is now known as %@"), oldName, newName)
 	  in: array];
 	  
-	if ([content controllerForViewWithName: [oldName string]])
+	if ([content controllerForName: [oldName string]])
 	{
-		[content renameViewWithName: [oldName string] to: [newName string]];
+		[content renameControllerWithName: [oldName string] to: [newName string]];
 		[content setLabel: S2AS([newName string]) 
-		  forViewWithName: [newName string]];
+		  forName: [newName string]];
 	}
 	  
 	return self;
@@ -477,28 +479,23 @@
 		id x;
 		id object;
 
-		[content addChannelWithName: name withLabel: channel];
-		[content focusViewWithName: name];
+		[content addControllerOfType: ContentControllerChannelType withName: name
+		  withLabel: channel inMasterController: [content primaryMasterController]];
+		// FIXME [content focusViewWithName: name];
 		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
 		  initWithIdentifier: lowName]) forKey: lowName];
 				
-		object = [[content controllerForViewWithName: lowName] tableView];
-		[object setDataSource: x];
-		[object setTarget: self];
-		[object setDoubleAction: @selector(doubleClickedUser:)];
+		[[content controllerForName: lowName] attachChannelSource: x];
 	}
 	else
 	{
 		[[nameToChannelData objectForKey: lowName] addUser: 
 		  [[array objectAtIndex: 0] string]];
-		[[[content controllerForViewWithName: lowName] tableView]
-		  reloadData];
+		[[content controllerForName: lowName] refreshFromChannelSource];
 	}
 	
 	[content putMessage: BuildAttributedFormat(_l(@"%@ (%@) has joined %@"),
 	  [array objectAtIndex: 0], [array objectAtIndex: 1], channel) in: name];
-	
-	[self updateTopicInspector];
 	
 	return self;
 }
@@ -510,7 +507,7 @@
 {
 	id name = [IRCUserComponents(parter) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([channel string]);
-	id view = [content controllerForViewWithName: lowChan];
+	id view = [content controllerForName: lowChan];
 
 	if (GNUstepOutputCompare([name string], [connection nick]))
 	{
@@ -519,7 +516,7 @@
 	else
 	{
 		[[nameToChannelData objectForKey: lowChan] removeUser: [name string]];
-		[[view tableView] reloadData];
+		[view refreshFromChannelSource];
 	}
 	
 	if (view)
@@ -546,8 +543,7 @@
 		id low = GNUstepOutputLowercase(object);
 		[[nameToChannelData objectForKey: low] 
 		  removeUser: [name string]];
-		[[[content controllerForViewWithName: low] tableView]
-		  reloadData];
+		[[content controllerForName: low] refreshFromChannelSource];
 	}
 	
 	[content putMessage:
@@ -594,7 +590,7 @@
 	
 	if (GNUstepOutputCompare([to string], [connection nick]))
 	{
-		if (![content controllerForViewWithName: where = whos])
+		if (![content controllerForName: where = whos])
 		{
 			where = nil;
 			string = privstring;
@@ -602,7 +598,7 @@
 	}
 	else
 	{
-		if (![content controllerForViewWithName: where = [to string]])
+		if (![content controllerForName: where = [to string]])
 		{
 			where = nil;
 			string = privstring;
@@ -635,7 +631,7 @@
 	
 	if (GNUstepOutputCompare([to string], [connection nick]))
 	{
-		if (![content controllerForViewWithName: where = whos])
+		if (![content controllerForName: where = whos])
 		{
 			where = nil;
 			prefix = @"***";
@@ -643,7 +639,7 @@
 	}
 	else
 	{
-		if (![content controllerForViewWithName: where = [to string]])
+		if (![content controllerForName: where = [to string]])
 		{
 			where = nil;
 			prefix = @"***";

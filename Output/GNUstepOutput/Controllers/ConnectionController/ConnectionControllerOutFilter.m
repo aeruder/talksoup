@@ -16,7 +16,8 @@
  ***************************************************************************/
 
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "Misc/NSAttributedStringAdditions.h"
 #import "GNUstepOutput.h"
@@ -34,7 +35,7 @@
 {
 	id where = [receiver string];
 	
-	if (![content controllerForViewWithName: where])
+	if (![content controllerForName: where])
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
@@ -68,7 +69,7 @@
 {
 	id where = [receiver string];
 	
-	if (![content controllerForViewWithName: where])
+	if (![content controllerForName: where])
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
