@@ -52,6 +52,7 @@ extern NSString *IRCColorLightBlue;
 extern NSString *IRCColorLightMagenta;
 extern NSString *IRCColorGrey;
 extern NSString *IRCColorLightGrey;
+extern NSString *IRCColorCustom;
 
 // Keys
 extern NSString *IRCBold;
