@@ -182,7 +182,7 @@ Questions covered in this FAQ:
     Well, you may be wondering why the tab doesn't turn red when someone
     private messages you and the new tab is opened.  Well, that's because
     TalkSoup goes through the filters in order!  First the 
-    Highlighting    will run, but at that point, there is no open tab 
+    Highlighting will run, but at that point, there is no open tab 
     for that person, so no highlighting will be done.  Now, if you type:
 
     /load in Highlighting
