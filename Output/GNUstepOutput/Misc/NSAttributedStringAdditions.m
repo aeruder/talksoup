@@ -82,7 +82,6 @@ static inline NSColor *map_color(NSString *aName)
 	
 	all.length = len;
 	
-	NSLog(@"%@", self);
 	while (all.length > 0)
 	{
 		dict = [NSMutableDictionary dictionaryWithDictionary: 
