@@ -20,6 +20,11 @@
 #include <AppKit/NSAttributedString.h>
 
 @implementation AttributedTabViewItem
+- (void)dealloc
+{
+	DESTROY(attributedLabel);
+	[super dealloc];
+}
 - (void)drawLabel: (BOOL)shouldTruncateLabel inRect: (NSRect)tabRect
 {
 	id string;
