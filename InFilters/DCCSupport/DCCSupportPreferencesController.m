@@ -46,6 +46,8 @@
 #else
 - (void)awakeFromNib
 {
+	[blockSizeField setNextKeyView: portRangeField];
+	[portRangeField setNextKeyView: blockSizeField];
 	[self reloadData];
 }
 - (void)reloadData
