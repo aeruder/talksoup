@@ -195,7 +195,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 
 static NSInvocation *invoc = nil;
 
-#define COLOR_MSG S2AS(@"Colors are any color string listed by /colors")
+#define COLOR_MSG @"The color is any color listed by typing /colors"
 							  
 @implementation Highlighting
 + (void)initialize
@@ -227,8 +227,8 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color that the person will turn who says your nickname "
-			  @"or a word specified in your extra words field.", @"\n",
+			  @"Usage: /highlighting usercolor <color>", @"\n",
+			  @"This sets the color a person will change if that person says your nickname. ",
 			  COLOR_MSG, nil);
 		}
 		
@@ -236,7 +236,7 @@ static NSInvocation *invoc = nil;
 		
 		if (!val)
 		{
-			return COLOR_MSG;
+			return S2AS(COLOR_MSG);
 		}
 		
 		set_pref(@"HighlightingUserColor", val);
@@ -246,8 +246,9 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color that the tab will turn when a person says either "
-			  @"your nickname or a word specified in your extra words field.", @"\n",
+			  @"Usage: /highlighting tabreferencecolor <color>", @"\n",
+			  @"This sets the color that the tab will turn when a person says "
+			  @"your nickname. ",
 			  COLOR_MSG, nil);
 		}
 		
@@ -255,7 +256,7 @@ static NSInvocation *invoc = nil;
 		
 		if (!val)
 		{
-			return COLOR_MSG;
+			return S2AS(COLOR_MSG);
 		}
 		
 		set_pref(@"HighlightingTabReferenceColor", val);
@@ -265,8 +266,8 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color that the tab will change when a person says something.",
-			  @"\n",
+			  @"Usage: /highlighting tabanythingcolor <color>", @"\n",
+			  @"This sets the color that the tab will change when a person says anything. ",
 			  COLOR_MSG, nil);
 		}
 		
@@ -274,7 +275,7 @@ static NSInvocation *invoc = nil;
 		
 		if (!val)
 		{
-			return COLOR_MSG;
+			return S2AS(COLOR_MSG);
 		}
 		
 		set_pref(@"HighlightingTabAnythingColor", val);
@@ -288,16 +289,16 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Other words that can be said to activate the highlighting.  "
-			  @"The value should be a list of words separated by '^' or "
-			  @"nil to clear the list.", @"\n", 
-			  @"The list is currently: ", val, 
-			  nil);
+			  @"Usage: /highlighting extrawords <words>", @"\n",
+			  @"This sets other words that activate the highlighting besides your "
+			  @"nickname. The argument should be a list of words separated by "
+			  @"'^'.  If you simply specify '^', it will clear the list.", @"\n",
+			  @"The list is currently: ", val, nil);
 		}
 		
 		val = [[x objectAtIndex: 1] componentsSeparatedByString: @"^"];
 		
-		if ([[x objectAtIndex: 1] caseInsensitiveCompare: @"nil"] == NSOrderedSame)
+		if ([[x objectAtIndex: 1] caseInsensitiveCompare: @"^"] == NSOrderedSame)
 		{
 			val = nil;
 		}
@@ -308,10 +309,10 @@ static NSInvocation *invoc = nil;
 	{
 		return BuildAttributedString([NSNull null], IRCBold, [NSNull null], 
 		  @"Highlighting.bundle Configurator:", @"\n",
-		  @"Usage: /highlighting <key> <value>", @"\n",
-		  @"Possible keys: usercolor, tabreferencecolor, tabanythingcolor, extrawords", 
-		  @"\n",
-		  @"Leaving the value field blank will result in help for a particular option.",
+		  @"Usage: /highlighting usercolor", @"\n",
+		  @"or: /highlighting tabreferencecolor", @"\n",
+		  @"or: /highlighting tabanythingcolor", @"\n",
+		  @"or: /highlighting extrawords",		  
 		  nil);
 	}
 
