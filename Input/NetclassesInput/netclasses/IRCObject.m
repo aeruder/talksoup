@@ -843,7 +843,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 			 format: @"[IRCObject changeNick: '%@'] Unusable nickname given",
 			  aNick];
 		}
-		if (!connected && transport)
+		if (!connected)
 		{
 			[self setNick: aNick];
 		}

@@ -49,7 +49,7 @@ static id get_pref(NSString *x)
 static BOOL has_name(NSString *str, NSString *name)
 {
 	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
-	 @".:, "];
+	 @".:,- "];
 	NSRange cur = {0};
 	NSRange a = {0};
 	unichar x;
@@ -76,7 +76,7 @@ static BOOL has_name(NSString *str, NSString *name)
 		if (cur.location + a.location + cur.length < len)
 		{
 			x = [str characterAtIndex: cur.location + a.location + cur.length];
-			is |= [set characterIsMember: x];
+			is &= [set characterIsMember: x];
 		}
 		
 		if (is)
@@ -91,92 +91,117 @@ static BOOL has_name(NSString *str, NSString *name)
 	return NO;
 }
 
+NSString *get_destination(NSString *to, NSString *from, NSString *nick)
+{
+	id name = to;
+	if ([[name lowercaseString] isEqualToString: [nick lowercaseString]])
+	{
+		name = from;
+	}
+	return name;
+}
+
+NSAttributedString *do_highlighting(id cont, NSString *msg, 
+  NSAttributedString *from, NSArray *words, NSString *where, id connection)
+{
+	NSString *userColor = get_pref(@"HighlightingUserColor");
+	NSString *refColor = get_pref(@"HighlightingTabReferenceColor");
+	NSString *anyColor = get_pref(@"HighlightingTabAnythingColor");
+	NSEnumerator *iter;
+	id object;
+	BOOL does = NO;
+	
+	iter = [words objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		if (has_name(msg, object))
+		{
+			does = YES;
+			break;
+		}
+	}
+	
+	if (does)
+	{
+		if (refColor)
+		{
+			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+			  refColor, @"TabColor",
+			  where, @"TabName",
+			  [NSNull null], @"TabPriority",
+			  nil] onConnection: connection sender: cont];
+		}
+		
+		if (userColor)
+		{
+			object = AUTORELEASE([[NSMutableAttributedString alloc]
+			  initWithAttributedString: from]);
+			[object addAttribute: IRCColor value: userColor range: 
+			  NSMakeRange(0, [object length])];
+			return object;
+		}
+	}
+	else
+	{
+		if (anyColor)
+		{
+			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+			  anyColor, @"TabColor",
+			  where, @"TabName",
+			  nil] onConnection: connection sender: cont];
+		}
+	}
+		
+	return from;
+}
+
 @implementation Highlighting
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
    sender: aPlugin
 {
-	id color1 = get_pref(@"HighlightingUserColor");
-	id myColor = get_pref(@"HighlightingTabReferenceColor");
-	id anyColor = get_pref(@"HighlightingTabAnythingColor");
-	
-	id name = [to string];
-	if ([[name lowercaseString] isEqualToString: 
+	id from = [IRCUserComponents(sender) objectAtIndex: 0];
+	id where = get_destination([to string], [from string], [connection nick]);
+	id words = get_pref(@"HighlightingExtraWords");
+	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
+
+	if (![[[from string] lowercaseString] isEqualToString: 
 	  [[connection nick] lowercaseString]])
 	{
-		name = [[IRCUserComponents(to) objectAtIndex: 0] string];
-	}
-	
-	if (has_name([aMessage string], [connection nick]) && color1)
-	{
-		NSMutableAttributedString *x =
-		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
-		  sender]);
-		[x addAttribute: IRCColor value: color1 range: 
-		  NSMakeRange(0, [sender length])];
-		sender = x;
-	
-		if (myColor)
+		if ([words isKindOf: [NSArray class]])
 		{
-			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-			  myColor, @"TabColor",
-			  name, @"TabName",
-			  [NSNull null], @"TabPriority",
-			  nil] onConnection: connection sender: aPlugin];
+			[x addObjectsFromArray: words];
 		}
-	}
-	else if (anyColor)
-	{
-		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-		  anyColor, @"TabColor",
-		  name, @"TabName",
-		  nil] onConnection: connection sender: aPlugin];
-	}		
+		sender = do_highlighting(self, [aMessage string], sender, x, 
+		  where, connection);
  
+ 	}
+	
 	[_TS_ messageReceived: aMessage to: to from: sender 
-	  onConnection: connection sender: self];
+	  onConnection: connection sender: self];	
 	return self;
 }
 - noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
    sender: aPlugin
 {
-	id color1 = get_pref(@"HighlightingUserColor");
-	id myColor = get_pref(@"HighlightingTabReferenceColor");
-	id anyColor = get_pref(@"HighlightingTabAnythingColor");
-	
-	id name = [to string];
-	if ([[name lowercaseString] isEqualToString: 
+	id from = [IRCUserComponents(sender) objectAtIndex: 0];
+	id where = get_destination([to string], [from string], [connection nick]);
+	id words = get_pref(@"HighlightingExtraWords");
+	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
+
+	if (![[[from string] lowercaseString] isEqualToString: 
 	  [[connection nick] lowercaseString]])
 	{
-		name = [[IRCUserComponents(to) objectAtIndex: 0] string];
-	}
-	
-	if (has_name([aMessage string], [connection nick]) && color1)
-	{
-		NSMutableAttributedString *x =
-		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
-		  sender]);
-		[x addAttribute: IRCColor value: color1 range: 
-		  NSMakeRange(0, [sender length])];
-		sender = x;
-	
-		if (myColor)
+		if ([words isKindOf: [NSArray class]])
 		{
-			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-			  myColor, @"TabColor",
-			  name, @"TabName",
-			  [NSNull null], @"TabPriority",
-			  nil] onConnection: connection sender: aPlugin];
+			[x addObjectsFromArray: words];
 		}
-	}
-	else if (anyColor)
-	{
-		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-		  anyColor, @"TabColor",
-		  name, @"TabName",
-		  nil] onConnection: connection sender: aPlugin];
-	}		
+		sender = do_highlighting(self, [aMessage string], sender, x, 
+		  where, connection);
+ 
+ 	}
 	
 	[_TS_ noticeReceived: aMessage to: to from: sender 
 	  onConnection: connection sender: self];
@@ -186,42 +211,21 @@ static BOOL has_name(NSString *str, NSString *name)
    from: (NSAttributedString *)sender onConnection: (id)connection 
    sender: aPlugin
 {
-	id color1 = get_pref(@"HighlightingUserColor");
-	id myColor = get_pref(@"HighlightingTabReferenceColor");
-	id anyColor = get_pref(@"HighlightingTabAnythingColor");
-	
-	id name = [to string];
-	if ([[name lowercaseString] isEqualToString: 
+	id from = [IRCUserComponents(sender) objectAtIndex: 0];
+	id where = get_destination([to string], [from string], [connection nick]);
+	id words = get_pref(@"HighlightingExtraWords");
+	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
+
+	if (![[[from string] lowercaseString] isEqualToString: 
 	  [[connection nick] lowercaseString]])
 	{
-		name = [[IRCUserComponents(to) objectAtIndex: 0] string];
-	}
-	
-	if (has_name([aMessage string], [connection nick]) && color1)
-	{
-		NSMutableAttributedString *x =
-		 AUTORELEASE([[NSMutableAttributedString alloc] initWithAttributedString:
-		  sender]);
-		[x addAttribute: IRCColor value: color1 range: 
-		  NSMakeRange(0, [sender length])];
-		sender = x;
-	
-		if (myColor)
+		if ([words isKindOf: [NSArray class]])
 		{
-			[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-			  myColor, @"TabColor",
-			  name, @"TabName",
-			  [NSNull null], @"TabPriority",
-			  nil] onConnection: connection sender: aPlugin];
+			[x addObjectsFromArray: words];
 		}
-	}
-	else if (anyColor)
-	{
-		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys: 
-		  anyColor, @"TabColor",
-		  name, @"TabName",
-		  nil] onConnection: connection sender: aPlugin];
-	}		
+		sender = do_highlighting(self, [aMessage string], sender, x, 
+		  where, connection); 
+ 	}
 	
 	[_TS_ actionReceived: aMessage to: to from: sender 
 	  onConnection: connection sender: self];
