@@ -38,6 +38,8 @@ NSString *IRCColorFromUserColor(NSString *string);
 @end
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...);
+// This only understands '%@' which will ALWAYS be interepretted literally
+NSMutableAttributedString *BuildAttributedFormat(id aObject, ...);
 
 NSArray *IRCUserComponents(NSAttributedString *from);
 

@@ -357,6 +357,76 @@ NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 	return str;
 }
 
+NSMutableAttributedString *BuildAttributedFormat(id aObject, ...)
+{
+	va_list ap;
+	NSMutableAttributedString *str;
+	NSString *format;
+	NSRange range;
+	NSRange tmpr;
+	int len;
+	id tmp = nil;
+	
+	str = AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
+
+	if (aObject == nil) return str;
+
+	if ([aObject isKindOf: [NSString class]])
+	{
+		aObject = AUTORELEASE([[NSAttributedString alloc] 
+		  initWithString: aObject]);
+	}
+	else if (![aObject isKindOf: [NSAttributedString class]])
+	{
+		return str;
+	}	
+	
+	va_start(ap, aObject);
+	
+	format = [aObject string];
+	range.location = 0;
+	range.length = len = [format length];
+	
+	while (range.location < len)
+	{
+		tmpr = [format rangeOfString: @"%@" options: 0 range: range];
+		
+		if (tmpr.location == NSNotFound)
+		{
+			[str appendAttributedString: [aObject attributedSubstringFromRange: range]];
+			return str;
+		}
+		else
+		{
+			NSRange oldRange = range;
+			
+			range.location = tmpr.location + 2;
+			range.length = len - range.location;
+			
+			tmpr.length = tmpr.location - oldRange.location;
+			tmpr.location = oldRange.location;
+			
+			[str appendAttributedString: [aObject attributedSubstringFromRange: tmpr]];
+			tmp = va_arg(ap, id);
+			if ([tmp isKindOf: [NSString class]])
+			{
+				tmp = AUTORELEASE([[NSAttributedString alloc] initWithString:
+				  tmp]);
+			}
+			else if (![tmp isKindOf: [NSAttributedString class]])
+			{
+				tmp = AUTORELEASE([[NSAttributedString alloc] initWithString:
+				  [tmp description]]);
+			}
+			
+			[str appendAttributedString: tmp];
+		}
+	}	
+	va_end(ap);
+	
+	return str;
+}
+
 NSArray *IRCUserComponents(NSAttributedString *from)
 {
 	NSArray *components = [[from string] componentsSeparatedByString: @"!"];
