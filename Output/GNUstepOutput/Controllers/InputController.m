@@ -303,8 +303,8 @@ static void send_message(id command, id name, id connection)
 		  S2AS(_l(@"gettimeofday() failed")) onConnection: nil];
 		return self;
 	}
-	arg = [NSString stringWithFormat: @"%u.%u", (unsigned)tz.tv_sec, 
-	  (unsigned)tz.tv_usec];
+	arg = [NSString stringWithFormat: @"%u.%u", (unsigned)tv.tv_sec, 
+	  (unsigned)(tv.tv_usec / 1000)];
 	
 	connection = [controller connection];
 	

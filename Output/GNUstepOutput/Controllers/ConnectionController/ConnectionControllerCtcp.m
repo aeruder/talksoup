@@ -23,7 +23,65 @@
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSNull.h>
 
+#include <sys/time.h>
+#include <time.h>
+
 @implementation ConnectionController (CTCP)
+- CTCPReplyPING: (NSAttributedString *)argument from: (NSAttributedString *)aPerson
+{
+	NSString *now;
+	NSString *then;
+	NSString *results;
+	struct timeval tv = {0, 0};
+	int sec;
+	int microsec;
+
+	if (gettimeofday(&tv, NULL) == -1)
+	{
+		[content putMessage: S2AS(_l(@"gettimeofday() failed"))
+		  in: ContentConsoleName];
+		return nil;
+	}
+	
+	now = [NSString stringWithFormat: @"%u.%u", 
+	  (unsigned)tv.tv_sec, (unsigned)(tv.tv_usec / 1000)];
+	then = [argument string];
+
+	results = [now commonPrefixWithString: then options: 0];
+
+	if ([results length] == [now length])
+	{
+		sec = 0;
+		microsec = 0;
+	}
+	else
+	{
+		id a1, a2;
+		now = [now substringFromIndex: [results length]];
+		a1 = [now componentsSeparatedByString: @"."];
+		then = [then substringFromIndex: [results length]];
+		a2 = [then componentsSeparatedByString: @"."];
+
+		if ([a1 count] != 2 || [a2 count] != 2) return nil;
+
+		sec = [[a1 objectAtIndex: 0] intValue] - 
+		  [[a2 objectAtIndex: 0] intValue];
+		microsec = [[a1 objectAtIndex: 1] intValue] - 
+		  [[a2 objectAtIndex: 1] intValue];
+
+		if (microsec < 0)
+		{
+			sec -= 1;
+			microsec = 0 - microsec;
+		}
+	}
+
+	[content putMessage: BuildAttributedFormat(_l(@"CTCP PING reply from %@: %@"),
+	  aPerson, [NSString stringWithFormat: @"%u.%03u", sec, microsec])
+	  in: nil];
+
+	return self;
+}
 - CTCPRequestPING: (NSAttributedString *)argument from: (NSAttributedString *)aPerson
 {
 	[_TS_ sendCTCPReply: S2AS(@"PING") withArgument: argument to: 
