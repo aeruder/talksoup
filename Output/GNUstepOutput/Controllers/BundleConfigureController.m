@@ -81,9 +81,11 @@ static NSString *big_description = nil;
 	aSel2 = (!currentShowing) ? @selector(allInFilters) : 
 	  @selector(allOutFilters);
 
+	RELEASE(loadData);
 	loadData = RETAIN([NSMutableArray arrayWithArray: 
 	  [_TS_ performSelector: aSel1]]);
 	
+	RELEASE(availData);
 	availData = RETAIN([NSMutableArray arrayWithArray: 
 	  [[_TS_ performSelector: aSel2] allKeys]]);
 	[availData removeObjectsInArray: loadData];
@@ -397,6 +399,7 @@ static NSString *big_description = nil;
 	[self activateList];
 	[self refreshList];
 	
+	data = (aTableView == availableTable) ? availData : loadData;
 	where = [data indexOfObject: object];
 	if ([[aTableView delegate] tableView: aTableView
 	  shouldSelectRow: where])
