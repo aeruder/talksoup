@@ -772,6 +772,8 @@ static NSString *unique_path(NSString *path)
 	  @"/dcc gettimeout (sets timeout on receiving files)" @"\n"
 	  @"/dcc sendtimeout (sets timeout on sending files)" @"\n"
 	  @"/dcc abort (aborts a connection)" @"\n"
+	  @"/dcc blocksize (sets the block size on sending files)" @"\n"
+	  @"/dcc portrange (sets allowable ports for sending files)" @"\n"
 	  @"/dcc help (this help)"));
 }	
 - (NSAttributedString *)commandDCC: (NSString *)command connection: (id)connection
