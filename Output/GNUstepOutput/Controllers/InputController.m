@@ -138,34 +138,24 @@ static void send_message(id command, id name, id connection)
 - (void)lineTyped: (NSString *)command
 {
 	NSArray *lines;
-	NSEnumerator *iter;
-	id object;
+	NSEnumerator *iter, *iter2;
+	id object, object2;
 
-	if ([lines = [command componentsSeparatedByString: @"\r\n"] count] > 1)
-	{
-		NSEnumerator *iter2;
-		id object2;
+	lines = [command componentsSeparatedByString: @"\r\n"];
 		
-		iter = [lines objectEnumerator];
-		while ((object = [iter nextObject]))
+	iter = [lines objectEnumerator];
+	while ((object = [iter nextObject]))
+	{
+		iter2 = [[object componentsSeparatedByString: @"\n"]
+		  objectEnumerator];
+		while ((object2 = [iter2 nextObject]))
 		{
-			iter2 = [[object componentsSeparatedByString: @"\n"]
-			  objectEnumerator];
-			while ((object2 = [iter2 nextObject]))
+			if (![object2 isEqualToString: @""])
 			{
 				[self singleLineTyped: object2];
 			}
 		}
 	}
-	else
-	{
-		lines = [command componentsSeparatedByString: @"\n"];
-		iter = [lines objectEnumerator];
-		while ((object = [iter nextObject]))
-		{
-			[self singleLineTyped: object];
-		}
-	}	
 }
 - (void)enterPressed: (id)sender
 {
@@ -177,13 +167,10 @@ static void send_message(id command, id name, id connection)
 		return;
 	}
 	
-	[self lineTyped: string];
-	
 	[modHistory removeAllObjects];
 	[modHistory addObject: @""];
 	
-	[history addObject: string];	
-	historyIndex = [history count];
+	[self lineTyped: string];
 	
 	[sender setStringValue: @""];
 	[[[controller contentController] window] makeFirstResponder: sender];
@@ -195,6 +182,9 @@ static void send_message(id command, id name, id connection)
 {
 	id connection;
 	id name;
+	
+	[history addObject: command];	
+	historyIndex = [history count];
 	
 	connection = AUTORELEASE(RETAIN(
 	  [_GS_ connectionToConnectionController: controller]));
