@@ -456,7 +456,8 @@ PreferencesController *_PREFS_ = nil;
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
-	id blah = [StandardContentController new];
+	id blah = [TabContentController new];
+	[[[blah primaryMasterController] window] makeKeyAndOrderFront: nil];
 }
 - (void)openTopicInspector: (NSNotification *)aNotification
 {
