@@ -386,4 +386,19 @@
 {
 	[_GS_ setPreferencesController: nil];
 }
+- (void)windowDidBecomeKey: (NSNotification *)aNotification
+{
+	NSFont *font;
+	id panel;
+
+	font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+
+	panel = [NSFontPanel sharedFontPanel];
+
+	[[NSFontManager sharedFontManager] setSelectedFont: font
+	  isMultiple: NO];
+	
+	if ([panel isVisible]) [panel orderFront: self];
+}
 @end

@@ -721,7 +721,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	if ([x count] < 1)
 	{
-		return S2AS(_(@"Usage: /load <in/out> <name>"));
+		return S2AS(_(@"Usage: /load <in/out>"));
 	}
 	
 	first = [x objectAtIndex: 0];
@@ -737,7 +737,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	else
 	{
-		return S2AS(_(@"Usage: /load <in/out> <name>"));
+		return S2AS(_(@"Usage: /load <in/out>"));
 	}
 	
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
@@ -745,6 +745,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	if (!second || ![array containsObject: second])
 	{
 		return BuildAttributedString(
+		  _(@"Usage: /load <in/out> <filter>"), @"\n",
 		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
@@ -769,7 +770,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	if ([x count] < 1)
 	{
-		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+		return S2AS(_(@"Usage: /unload <in/out>"));
 	}
 	
 	first = [x objectAtIndex: 0];
@@ -785,7 +786,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	else
 	{
-		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+		return S2AS(_(@"Usage: /unload <in/out>"));
 	}
 	
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
@@ -793,6 +794,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	if (!second || ![array containsObject: second])
 	{
 		return BuildAttributedString(
+		  _(@"Usage: /unload <in/out> <filter>"), @"\n", 
 		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
