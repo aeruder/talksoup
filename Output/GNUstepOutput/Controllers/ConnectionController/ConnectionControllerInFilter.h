@@ -43,12 +43,14 @@
 
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson 
    onConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 

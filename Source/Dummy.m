@@ -272,13 +272,14 @@
 
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin { return nil; }
 
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
+   to: (NSAttributedString *)receiver from: (NSAttributedString *)aPerson 
    onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin { return nil; }

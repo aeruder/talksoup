@@ -31,12 +31,14 @@ static NSAttributedString *debold(id a)
 @implementation Debold
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson 
    onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	[_TS_ CTCPReplyReceived: aCTCP withArgument: debold(argument)
+	  to: receiver
 	  from: aPerson onConnection: connection withNickname: aNick
 	  sender: self];
 	return self;

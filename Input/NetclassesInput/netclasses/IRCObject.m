@@ -299,12 +299,12 @@ static void rec_ccustom(IRCObject *client, NSString *prefix,
 	if ([command isEqualToString: @"NOTICE"])
 	{
 		[client CTCPReplyReceived: ctcp withArgument: rest
-		  from: prefix];
+		  to: to from: prefix];
 	}
 	else
 	{
 		[client CTCPRequestReceived: ctcp withArgument: rest
-		  from: prefix];
+		  to: to from: prefix];
 	}
 }
 
@@ -1679,12 +1679,14 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	return self;
 }	
 - CTCPRequestReceived: (NSString *)aCTCP
-   withArgument: (NSString *)argument from: (NSString *)aPerson
+   withArgument: (NSString *)argument to: (NSString *)receiver
+   from: (NSString *)aPerson
 {
 	return self;
 }
 - CTCPReplyReceived: (NSString *)aCTCP
-   withArgument: (NSString *)argument from: (NSString *)aPerson
+   withArgument: (NSString *)argument to: (NSString *)receiver
+   from: (NSString *)aPerson
 {
 	return self;
 }

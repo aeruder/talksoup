@@ -176,19 +176,21 @@
 	return self;
 }
 - CTCPRequestReceived: (NSString *)aCTCP
-   withArgument: (NSString *)argument from: (NSString *)aPerson;
+   withArgument: (NSString *)argument 
+   to: (NSString *)receiver from: (NSString *)aPerson;
 {
 	[_TS_ CTCPRequestReceived: S2AS(aCTCP) withArgument: S2AS(argument)
-	  from: S2AS(aPerson) onConnection: self 
+	  to: S2AS(receiver) from: S2AS(aPerson) onConnection: self 
 	  withNickname: S2AS(nick)
 	  sender: control];
 	return self;
 }
 - CTCPReplyReceived: (NSString *)aCTCP
-   withArgument: (NSString *)argument from: (NSString *)aPerson
+   withArgument: (NSString *)argument to: (NSString *)receiver
+   from: (NSString *)aPerson
 {
 	[_TS_ CTCPReplyReceived: S2AS(aCTCP) withArgument: S2AS(argument)
-	  from: S2AS(aPerson) onConnection: self 
+	  to: S2AS(receiver) from: S2AS(aPerson) onConnection: self 
 	  withNickname: S2AS(nick)
 	  sender: control];
 	return self;

@@ -32,13 +32,14 @@ static NSAttributedString *decolor(id a)
 @implementation Decolorizer
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson 
    onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	[_TS_ CTCPReplyReceived: aCTCP withArgument: decolor(argument)
-	  from: aPerson onConnection: connection withNickname: aNick
+	  to: receiver from: aPerson onConnection: connection withNickname: aNick
 	  sender: self];
 	return self;
 }

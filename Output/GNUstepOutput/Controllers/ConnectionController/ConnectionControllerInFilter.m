@@ -149,6 +149,7 @@
 }
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
@@ -185,7 +186,8 @@
 }
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
+   to: (NSAttributedString *)receiver 
+	from: (NSAttributedString *)aPerson 
    onConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
@@ -559,8 +561,6 @@
 	   [IRCUserComponents(aPerson) objectAtIndex: 0], channel, aTopic)
 	  in: [channel string]];
 	
-	[_TS_ setTopicForChannel: S2AS([channel string]) to: nil onConnection: aConnection
-	  withNickname: S2AS([aConnection nick]) sender: _GS_];
 	return self;
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to

@@ -27,6 +27,7 @@
 @interface Deunderline : NSObject
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson 
    onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 

@@ -115,7 +115,8 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC (%@)\n", 
+	  [NSDate date], [aConnection nick], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -138,7 +139,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REPLY %@ %@\n", 
+	  [NSDate date], [aConnection nick], [aPerson string], [aCTCP string], 
+	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -160,7 +163,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
+	  [NSDate date], [aConnection nick], [aPerson string], [aCTCP string], 
+	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -181,7 +186,8 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
+	  [NSDate date], [aConnection nick], [receiver string], [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -202,7 +208,8 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
+	  [NSDate date], [aConnection nick], [receiver string], [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -223,7 +230,8 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] * %@:%@ %@\n", 
+	  [NSDate date], [aConnection nick], [receiver string], [anAction string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -242,21 +250,26 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] Connection Terminated\n", 
+	  [NSDate date]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
+	
+	NSMapRemove(files, connection);
 
 	return self;
 }	
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	id x = NSMapGet(files, connection);
 
-	[_TS_ CTCPRequestReceived: aCTCP withArgument: argument from: aPerson
+	[_TS_ CTCPRequestReceived: aCTCP withArgument: argument 
+	  to: receiver from: aPerson
 	  onConnection: connection withNickname: aNick sender: self];
 	
 	if (!x)
@@ -264,7 +277,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
+	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
+	  [receiver string], [aCTCP string], [argument string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -272,6 +287,7 @@ static NSInvocation *invoc = nil;
 }
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson 
    onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 
@@ -279,7 +295,8 @@ static NSInvocation *invoc = nil;
 {
 	id x = NSMapGet(files, connection);
 
-	[_TS_ CTCPReplyReceived: aCTCP withArgument: argument from: aPerson
+	[_TS_ CTCPReplyReceived: aCTCP withArgument: argument 
+	  to: receiver from: aPerson
 	  onConnection: connection withNickname: aNick sender: self];
 	
 	if (!x)
@@ -287,7 +304,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@ %@\n", 
+	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  [receiver string], [aCTCP string], [argument string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -307,7 +326,8 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] ERROR: %@\n", [NSDate date],
+	  [anError string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -329,7 +349,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] Wallops(%@): %@\n", 
+	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string], 
+	  [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -352,7 +374,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ was kicked from %@ by %@ (%@)\n", 
+	  [NSDate date], [aPerson string], [aChannel string], 
+	  [[IRCUserComponents(kicker) objectAtIndex: 0] string], [reason string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -373,7 +397,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has invited you to %@\n", 
+	  [NSDate date], [[IRCUserComponents(inviter) objectAtIndex: 0] string], 
+	  [[IRCUserComponents(inviter) objectAtIndex: 1] string], [aChannel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -386,6 +412,9 @@ static NSInvocation *invoc = nil;
    sender: aPlugin
 {
 	id x = NSMapGet(files, connection);
+	NSMutableString *str;
+	NSEnumerator *iter;
+	id object;
 
 	[_TS_ modeChanged: mode on: anObject withParams: paramList from: aPerson
 	  onConnection: connection withNickname: aNick sender: self];
@@ -394,8 +423,23 @@ static NSInvocation *invoc = nil;
 	{
 		return self;
 	}
+	
+	iter = [paramList objectEnumerator];
+	str = AUTORELEASE([NSMutableString new]);
+	object = [iter nextObject];
+	
+	while (object)
+	{
+		[str appendString: [object string]];
+		if ((object = [object nextObject]))
+		{
+			[str appendString: @" "];
+		}
+	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ sets mode %@ %@ %@\n", 
+	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
+	  [mode string], [anObject string], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -408,6 +452,9 @@ static NSInvocation *invoc = nil;
    sender: aPlugin
 {
 	id x = NSMapGet(files, connection);
+	NSMutableString *str;
+	NSEnumerator *iter;
+	id object;
 
 	[_TS_ numericCommandReceived: command withParams: paramList from: sender
 	  onConnection: connection withNickname: aNick sender: self];
@@ -417,7 +464,21 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	iter = [paramList objectEnumerator];
+	str = AUTORELEASE([NSMutableString new]);
+	object = [iter nextObject];
+	
+	while (object)
+	{
+		[str appendString: [object string]];
+		if ((object = [object nextObject]))
+		{
+			[str appendString: @" "];
+		}
+	}
+	
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@\n", 
+	  [NSDate date], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -439,7 +500,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ is now known as %@\n", 
+	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  [newName string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -461,7 +524,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has joined %@\n", 
+	  [NSDate date], [[IRCUserComponents(joiner) objectAtIndex: 0] string],
+	  [[IRCUserComponents(joiner) objectAtIndex: 1] string], [channel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -483,7 +548,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has parted %@(%@)\n", 
+	  [NSDate date], [[IRCUserComponents(parter) objectAtIndex: 0] string],
+	  [channel string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -504,7 +571,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC(%@)\n", 
+	  [NSDate date], [[IRCUserComponents(quitter) objectAtIndex: 0] string],
+	  [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -525,7 +594,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] %@ changed the topic in %@ to '%@'\n", 
+	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  [channel string], [aTopic string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -546,7 +617,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
+	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  [to string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -567,7 +640,9 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
+	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  [to string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -588,527 +663,13 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@]\n", [NSDate date]] 
+	[x writeData: [[NSString stringWithFormat: @"[%@] * %@:%@ %@\n", 
+	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  [to string], [anAction string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
 	return self;
 }
 @end
-/*
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
-	   @"CTCPRequest%@:from:", [[aCTCP string] uppercaseString]]);
-	id str;
-	id where;
-	
-	where = ContentConsoleName;
-	
-	if (sid && [self respondsToSelector: sid])
-	{
-		where = [self performSelector: sid withObject: argument
-		 withObject: aPerson];
-	}
-	
-	if (where == self) return self;
-	
-	if ([argument length])
-	{
-		str = BuildAttributedFormat(_l(@"Received a CTCP '%@ %@' from %@"), 
-		  aCTCP, argument, [IRCUserComponents(aPerson) objectAtIndex: 0]);
-	}
-	else
-	{
-		str = BuildAttributedFormat(_l(@"Received a CTCP %@ from %@"),
-		  aCTCP, [IRCUserComponents(aPerson) objectAtIndex: 0]);
-	}
-	
-	[content putMessage: str in: where];
-	
-	return self;
-}
-- CTCPReplyReceived: (NSAttributedString *)aCTCP
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	SEL sid = NSSelectorFromString([NSString stringWithFormat: 
-	   @"CTCPReply%@:from:", [[aCTCP string] uppercaseString]]);
-	id str;
-	id where = nil;
-	
-	if (sid && [self respondsToSelector: sid])
-	{
-		where = [self performSelector: sid withObject: argument
-		 withObject: aPerson];
-	}
 
-	if (where == self) return self;
-	
-	if ([argument length])
-	{
-		str = BuildAttributedString(
-		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
-		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
-		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
-		  @" ", aCTCP, @" ", argument, nil);
-	}
-	else
-	{
-		str = BuildAttributedString(MARK, TypeOfColor, 
-		  GNUstepOutputOtherBracketColor, @"-",
-		  [IRCUserComponents(aPerson) objectAtIndex: 0], 
-		  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"-",
-		  @" ", aCTCP, nil);
-	}
-
-	[content putMessage: str in: where];
-
-	return self;
-}
-- errorReceived: (NSAttributedString *)anError onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[self systemMessage: BuildAttributedFormat(_l(@"Error: %@"), anError)
-	  onConnection: nil];
-	
-	return self;
-}
-- wallopsReceived: (NSAttributedString *)message 
-   from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[content putMessage: BuildAttributedFormat(_l(@"Wallops(%@): %@"),
-	  sender, message) in: ContentConsoleName];
-	  
-	return self;
-}
-- userKicked: (NSAttributedString *)aPerson 
-   outOf: (NSAttributedString *)aChannel 
-   for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
-	id lowChan = GNUstepOutputLowercase([aChannel string]);
-	id view = [content controllerForViewWithName: lowChan];
-
-	if (GNUstepOutputCompare([aPerson string], [connection nick]))
-	{
-		[self leaveChannel: lowChan];
-	}
-	else
-	{
-		[[nameToChannelData objectForKey: lowChan] removeUser: [aPerson string]];
-		[[view tableView] reloadData];
-	}
-	
-	[content putMessage: 
-	  BuildAttributedFormat(_l(@"%@ was kicked from %@ by %@ (%@)"), aPerson,
-	  aChannel, name, reason) 
-	  in: [aChannel string]];
-	return self;
-}
-- invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id name = [IRCUserComponents(inviter) objectAtIndex: 0];
-	
-	[content putMessage: 
-	  BuildAttributedFormat(_l(@"You have been invited to %@ by %@"), 
-	  aChannel, name)
-	  in: nil];
-	return self;
-}
-- modeChanged: (NSAttributedString *)aMode on: (NSAttributedString *)anObject 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	Channel *chan;
-	unichar m;
-	BOOL add = YES;
-	int argindex = 0;
-	id mode = [aMode string];
-	int modeindex;
-	int modelen = [mode length];
-	int argcnt = [paramList count];
-	id who = [IRCUserComponents(aPerson) objectAtIndex: 0];
-	
-	id params;
-	NSEnumerator *iter;
-	id object = nil;
-	
-	iter = [paramList objectEnumerator];
-	params = AUTORELEASE([NSMutableAttributedString new]);
-	
-	while ((object = [iter nextObject]))
-	{
-		[params appendAttributedString: S2AS(@" ")];
-		[params appendAttributedString: object];
-	}
-		
-	chan = [nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase([anObject string])];
-
-	for (modeindex = 0; modeindex < modelen; modeindex++)
-	{
-		m = [mode characterAtIndex: modeindex];
-		switch (m)
-		{
-			case '+':
-				add = YES;
-				continue;
-			case '-':
-				add = NO;
-				continue;
-			default:
-				break;
-		}
-				
-		if (chan)
-		{
-			switch (m)
-			{
-				case 'o':
-					if (argindex < argcnt)
-					{
-						id user;
-						user = [chan userWithName: 
-						  [[paramList objectAtIndex: argindex] string]];
-						[user setOperator: add];
-						[[[content controllerForViewWithName: [anObject string]] tableView] 
-						   reloadData];
-						argindex++;
-					}
-					break;
-				case 'v':
-					if (argindex < argcnt)
-					{
-						id user;
-						user = [chan userWithName: 
-						  [[paramList objectAtIndex: argindex] string]];
-						[user setVoice: add];
-						[[[content controllerForViewWithName: [anObject string]] tableView] 
-						   reloadData];
-						argindex++;
-					}
-					break;
-				default:
-					break;
-			}
-		}
-	}
-	
-	[content putMessage: 
-	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@%@"), who, aMode, anObject,
-	  params) in: [anObject string]];
-	
-	return self;
-}
-- numericCommandReceived: (NSAttributedString *)command 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{	
-	SEL sel = NSSelectorFromString([NSString stringWithFormat: 
-	  @"numericHandler%@:", [command string]]);
-	NSMutableAttributedString *a = 
-	  AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
-	NSEnumerator *iter;
-	id object;
-	id where;
-	
-	if ([connection connected] && !registered)
-	{
-		object = [IRCUserComponents(sender) objectAtIndex: 0];
-		[content setLabel: object
-		 forViewWithName: ContentConsoleName];
-		[[content window] setTitle: [object string]];
-	}
-	
-	iter = [paramList objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		[a appendAttributedString: object];
-		[a appendAttributedString: S2AS(@" ")];
-	}
-	
-	where = ContentConsoleName;
-	
-	if ([self respondsToSelector: sel])
-	{
-		where = [self performSelector: sel withObject: paramList];
-	}
-
-	if (where != self)
-	{
-		[content putMessage: a in: where];
-	}
-	
-	return self;
-}
-- nickChangedTo: (NSAttributedString *)newName 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	NSEnumerator *iter;
-	id object;
-	id array;
-	NSAttributedString *oldName = [IRCUserComponents(aPerson) objectAtIndex: 0];
-	
-	if (GNUstepOutputCompare([newName string], [connection nick]))
-	{
-		[self setNick: [newName string]];
-		[content setNickViewString: [newName string]];
-	}
-	
-	array = [self channelsWithUser: [oldName string]];
-	iter = [array objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		[[nameToChannelData objectForKey: 
-		  GNUstepOutputLowercase(object)] userRenamed: [oldName string] 
-		  to: [newName string]];
-		[[[content controllerForViewWithName: object] tableView]
-		  reloadData];
-	}
-	
-	[content putMessage: BuildAttributedFormat(
-	  _l(@"%@ is now known as %@"), oldName, newName)
-	  in: array];
-	  
-	if ([content controllerForViewWithName: [oldName string]])
-	{
-		[content renameViewWithName: [oldName string] to: [newName string]];
-		[content setLabel: S2AS([newName string]) 
-		  forViewWithName: [newName string]];
-	}
-	  
-	return self;
-}
-- channelJoined: (NSAttributedString *)channel 
-   from: (NSAttributedString *)joiner 
-   onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id name = [channel string];
-	id array = IRCUserComponents(joiner);
-	id lowName = GNUstepOutputLowercase(name);
-
-	if (GNUstepOutputCompare([[array objectAtIndex: 0] string], [aConnection nick]))
-	{
-		id x;
-		id object;
-
-		[content addChannelWithName: name withLabel: channel];
-		[content focusViewWithName: name];
-		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
-		  initWithIdentifier: lowName]) forKey: lowName];
-				
-		object = [[content controllerForViewWithName: lowName] tableView];
-		[object setDataSource: x];
-		[object setTarget: self];
-		[object setDoubleAction: @selector(doubleClickedUser:)];
-	}
-	else
-	{
-		[[nameToChannelData objectForKey: lowName] addUser: 
-		  [[array objectAtIndex: 0] string]];
-		[[[content controllerForViewWithName: lowName] tableView]
-		  reloadData];
-	}
-	
-	[content putMessage: BuildAttributedFormat(_l(@"%@ (%@) has joined %@"),
-	  [array objectAtIndex: 0], [array objectAtIndex: 1], channel) in: name];
-	
-	[self updateTopicInspector];
-	
-	return self;
-}
-- channelParted: (NSAttributedString *)channel 
-   withMessage: (NSAttributedString *)aMessage
-   from: (NSAttributedString *)parter onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id name = [IRCUserComponents(parter) objectAtIndex: 0];
-	id lowChan = GNUstepOutputLowercase([channel string]);
-	id view = [content controllerForViewWithName: lowChan];
-
-	if (GNUstepOutputCompare([name string], [connection nick]))
-	{
-		[self leaveChannel: lowChan];
-	}
-	else
-	{
-		[[nameToChannelData objectForKey: lowChan] removeUser: [name string]];
-		[[view tableView] reloadData];
-	}
-	
-	if (view)
-	{
-		[content putMessage: BuildAttributedFormat(_l(@"%@ has left %@ (%@)"), 
-		  name, channel, aMessage) in: lowChan];
-	}
-	
-	return self;
-}
-- quitIRCWithMessage: (NSAttributedString *)aMessage 
-   from: (NSAttributedString *)quitter onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id name = [IRCUserComponents(quitter) objectAtIndex: 0];
-	id array = [self channelsWithUser: [name string]];
-	NSEnumerator *iter;
-	id object;
-	
-	iter = [array objectEnumerator];
-	while ((object = [iter nextObject]))
-	{
-		id low = GNUstepOutputLowercase(object);
-		[[nameToChannelData objectForKey: low] 
-		  removeUser: [name string]];
-		[[[content controllerForViewWithName: low] tableView]
-		  reloadData];
-	}
-	
-	[content putMessage:
-	  BuildAttributedFormat(_l(@"%@ has quit IRC (%@)"), name, aMessage)
-	  in: array];
-		
-	return self;
-}
-- topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
-   from: (NSAttributedString *)aPerson onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[content putMessage:
-	  BuildAttributedFormat(_l(@"%@ changed the topic in %@ to '%@'"),
-	   [IRCUserComponents(aPerson) objectAtIndex: 0], channel, aTopic)
-	  in: [channel string]];
-	
-	[_TS_ setTopicForChannel: S2AS([channel string]) to: nil onConnection: aConnection
-	  withNickname: S2AS([aConnection nick]) sender: _GS_];
-	return self;
-}
-- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id who = [IRCUserComponents(sender) objectAtIndex: 0];
-	id whos = [who string];
-	id where;
-	id string;
-	id privstring;
-	id pubstring;
-	
-	privstring = BuildAttributedString(
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"*",
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, who, 
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"*",
-	  @" ", aMessage, nil);
-	pubstring = BuildAttributedString(
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @"<", who, 
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor, @">",
-	  @" ", aMessage, nil);
-	
-	string = pubstring;
-	
-	if (GNUstepOutputCompare([to string], [connection nick]))
-	{
-		if (![content controllerForViewWithName: where = whos])
-		{
-			where = nil;
-			string = privstring;
-		}
-	}
-	else
-	{
-		if (![content controllerForViewWithName: where = [to string]])
-		{
-			where = nil;
-			string = privstring;
-		}
-	}
-	
-	[content putMessage: string in: where];
-	
-	return self;
-}
-- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[self messageReceived: aMessage to: to from: sender onConnection: aConnection
-	  withNickname: aNick
-	  sender: aPlugin];
-	return self;
-}
-- actionReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	id who = [IRCUserComponents(sender) objectAtIndex: 0];
-	id whos = [who string];
-	id where;
-	NSString *prefix = @"*";
-	
-	if (GNUstepOutputCompare([to string], [connection nick]))
-	{
-		if (![content controllerForViewWithName: where = whos])
-		{
-			where = nil;
-			prefix = @"***";
-		}
-	}
-	else
-	{
-		if (![content controllerForViewWithName: where = [to string]])
-		{
-			where = nil;
-			prefix = @"***";
-		}
-	}
-	
-	[content putMessage: BuildAttributedString(
-	  MARK, TypeOfColor, GNUstepOutputOtherBracketColor,
-	  prefix, @" ", who, @" ", aMessage, nil) in: where];
-	
-	return self;
-}
-- pingReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[_TS_ sendPongWithArgument: arg onConnection: aConnection
-	  withNickname: aNick
-	  sender: _GS_];
-
-	return self;
-}
-*/

@@ -186,10 +186,12 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 - couldNotRegister: (NSString *)reason;
 
 - CTCPRequestReceived: (NSString *)aCTCP 
-   withArgument: (NSString *)argument from: (NSString *)aPerson;
+   withArgument: (NSString *)argument to: (NSString *)receiver
+   from: (NSString *)aPerson;
 
 - CTCPReplyReceived: (NSString *)aCTCP
-   withArgument: (NSString *)argument from: (NSString *)aPerson;
+   withArgument: (NSString *)argument to: (NSString *)receiver
+   from: (NSString *)aPerson;
 
 - errorReceived: (NSString *)anError;
 
