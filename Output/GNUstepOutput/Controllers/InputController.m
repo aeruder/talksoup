@@ -32,6 +32,31 @@
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTextStorage.h>
 
+static void send_message(id command, id name, id connection)
+{
+	NSRange aRange = NSMakeRange(0, [command length]);
+	id substring;
+	id nick = S2AS([connection nick]);
+	
+	name = S2AS(name);
+	
+	while (aRange.length >= 450)
+	{
+		substring = [command substringWithRange: NSMakeRange(aRange.location, 450)];
+		aRange.location += 450;
+		aRange.length -= 450;
+		[_TS_ sendMessage: S2AS(substring) to: name onConnection: connection
+		  withNickname: nick sender: _GS_];
+	}
+	
+	if (aRange.length > 0)
+	{
+		[_TS_ sendMessage: 
+		  S2AS([command substringWithRange: aRange])
+		  to: name onConnection: connection withNickname: nick sender: _GS_];
+	}
+}	
+
 @interface InputController (PrivateInputController)
 - (void)singleLineTyped: (NSString *)aLine;
 @end
@@ -245,9 +270,7 @@
 		return;
 	}
 
-	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
-	  onConnection: connection withNickname: S2AS([connection nick]) 
-	  sender: _GS_];
+	send_message(command, name, connection); 	
 }
 @end
 
