@@ -1,3 +1,7 @@
+2003-12-07 Andy Ruder <aeruder at ksu dot edu>
+ * Made the serverlist reuse unconnected windows (with an option to force a
+   new window)
+
 2003-12-06 Andy Ruder <aeruder at ksu dot edu>
  * Made a makefile fix that should disable AppKit from being linked in on OSX
    where it need not be.
