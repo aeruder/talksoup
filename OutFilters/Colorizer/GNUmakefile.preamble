@@ -1,0 +1,5 @@
+
+ADDITIONAL_INCLUDE_DIRS = -I. -I../../Source
+
+ADDITIONAL_OBJCFLAGS = -Wall -Wno-protocol
+
