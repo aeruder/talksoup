@@ -26,6 +26,7 @@ Questions covered in this FAQ:
 1. Overview
     1.1 What is GNUstep? Where do I get it?
     1.2 What is so special about TalkSoup?
+	1.3 what is a bundle? a filter? a plug-in?
     
 2. Installation
     2.1 How do I install TalkSoup as a regular user?
@@ -73,6 +74,17 @@ Questions covered in this FAQ:
     So if you wrote this 'fortune' output filter, it would work with the
     ncurses output plugin as well as the QT or GNUstep output plugin.
     
+1.3 What is a bundle? A filter? A plug-in?
+	
+	Throughout the source as well as the documentation for TalkSoup,
+	these terms are used fairly interchangeably.  A plug-in, or bundle
+	is simply something that you can load into TalkSoup to extend its'
+	code at runtime.  This is helpful because these plug-ins can
+	be loaded and unloaded and dynamically added to TalkSoup.  So,
+	for example, you could find a plug-in (or bundle or filter) made
+	for TalkSoup out on the interweb, compile it, and load it straight
+	into TalkSoup while it's still running!
+
 2. Installation
 2.1 How do I install TalkSoup as a regular user?
         
