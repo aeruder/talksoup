@@ -267,19 +267,10 @@
 	iter = [paramList objectEnumerator];
 	params = AUTORELEASE([NSMutableAttributedString new]);
 	
-	object = [iter nextObject];
-	if (object)
-	{
-		[params setAttributedString: object];
-	}
-	
 	while ((object = [iter nextObject]))
 	{
-		if (object)
-		{
-			[params appendAttributedString: S2AS(@" ")];
-			[params appendAttributedString: object];
-		}
+		[params appendAttributedString: S2AS(@" ")];
+		[params appendAttributedString: object];
 	}
 		
 	chan = [nameToChannelData objectForKey: 
@@ -335,7 +326,7 @@
 	}
 	
 	[content putMessage: 
-	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@ %@"), who, aMode, anObject,
+	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@%@"), who, aMode, anObject,
 	  params) in: [anObject string]];
 	
 	return self;
