@@ -1,5 +1,6 @@
 2004-01-10 Andy Ruder <aeruder at ksu dot edu>
  * Bundle Controller had a bug when dragging to bottom row
+ * GNUstepOutput will make sure bundle prefs are closed when they are unloaded
 
 2004-01-05 Andy Ruder <aeruder at ksu dot edu>
  * Updated the server list

@@ -17,7 +17,14 @@
 
 @class DCCSupport;
 
-@class NSBundle;
+@class NSBundle, NSString;
+
+extern NSString *DCCDownloadDirectory;
+extern NSString *DCCCompletedDirectory;
+extern NSString *DCCPortRange;
+extern NSString *DCCGetTimeout;
+extern NSString *DCCSendTimeout;
+extern NSString *DCCDefault;
 
 #ifdef _l
 	#undef _l
@@ -33,19 +40,33 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>
 
-@class NSAttributedString, NSMutableArray;
+@class NSAttributedString, NSMutableArray, NSDictionary;
 
 @interface DCCSupport : NSObject
 	{
 		NSMapTable *connectionMap;
 		id controller;
 	}
+
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
    to: (NSAttributedString *)receiver
    from: (NSAttributedString *)aPerson onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
+@end
+
+@interface DCCSupport (PrivateSupport)
++ (NSDictionary *)defaultSettings;
++ (id)defaultsObjectForKey: aKey;
++ (id)defaultDefaultsForKey: aKey;
++ (void)setDefaultsObject: aObject forKey: aKey;
+
+- (void)startedReceive: dcc onConnection: aConnection;
+- (void)finishedReceive: dcc onConnection: aConnection;
+- (void)startedSend: dcc onConnection: aConnection;
+- (void)finishedSend: dcc onConnection: aConnection;
+- (NSMutableArray *)getConnectionTable: aConnection;
 @end
 
 #endif

@@ -21,6 +21,7 @@
 #define DCC_GETTER_H
 
 #import <Foundation/NSObject.h>
+#include <stdint.h>
 
 @class DCCObject, NSFileHandle, NSString, NSTimer;
 @class NSDictionary, NSHost;

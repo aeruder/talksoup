@@ -18,10 +18,23 @@
 #import "DCCSender.h"
 
 #import "DCCObject.h"
+#import "DCCSupport.h"
+#import <TalkSoupBundles/TalkSoup.h>
+
 #import <Foundation/NSFileHandle.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSDictionary.h>
+#import <Foundation/NSHost.h>
+#import <Foundation/NSFileManager.h> 
+
+#define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
+#define set_default(_x, _y) \
+{	[DCCSupport setDefaultsObject: _y forKey: _x];\
+	[controller reloadData];}
+
+#define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
+#define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
 
 @implementation DCCSender
 - initWithFilename: (NSString *)aPath 
@@ -58,7 +71,7 @@
 	
 	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
 	  withSize: fileSize
-	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_sendtimeout) 
+	  withDelegate: self withTimeout: GET_DEFAULT_INT(DCCSendTimeout) 
 	  withBlockSize: 2000 withUserInfo: nil];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"DCC") 

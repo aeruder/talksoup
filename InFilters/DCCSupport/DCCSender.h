@@ -21,9 +21,10 @@
 #define DCC_SENDER_H
 
 #import <Foundation/NSObject.h>
+#include <stdint.h>
 
 @class DCCSendObject, NSFileHandle, NSString, NSString;
-@class NSTimer, NSDictionary;
+@class NSTimer, NSDictionary, NSHost;
 
 @interface DCCSender : NSObject
 	{

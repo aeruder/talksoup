@@ -28,7 +28,8 @@ DCCSupport_LOCALIZED_RESOURCE_FILES += Localizable.strings
 
 DCCSupport_PRINCIPAL_CLASS = DCCSupport
 
-DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m DCCSupportPreferencesController.m
+DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m DCCSupportPreferencesController.m \
+ DCCSender.m DCCGetter.m
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 DCCSupport_BUNDLE_LIBS = -framework netclasses -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)

@@ -404,7 +404,7 @@ static NSInvocation *invoc = nil;
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"RemoveBundlePreferencesController", @"Process",
 	  @"Highlighting", @"Name", nil]
-	  onConnection: nil withNickname: nil sender: self];
+	  onConnection: nil withNickname: nil sender: [_TS_ pluginForInput]];
 #endif
 
 	DESTROY(controller);

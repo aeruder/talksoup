@@ -18,11 +18,23 @@
 #import "DCCGetter.h"
 
 #import "DCCObject.h"
+#import "DCCSupport.h"
+#import <TalkSoupBundles/TalkSoup.h>
+
 #import <Foundation/NSFileHandle.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSHost.h>
+#import <Foundation/NSFileManager.h> 
+
+#define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
+#define set_default(_x, _y) \
+{	[DCCSupport setDefaultsObject: _y forKey: _x];\
+	[controller reloadData];}
+
+#define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
+#define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
 
 @implementation DCCGetter
 - initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath
@@ -55,7 +67,7 @@
 	
 	path = RETAIN(aPath);
 	getter = [[DCCReceiveObject alloc] initWithReceiveOfFile: aDict 
-	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_gettimeout) 
+	  withDelegate: self withTimeout: GET_DEFAULT_INT(DCCGetTimeout) 
 	  withUserInfo: nil];
 	
 	delegate = aDel;

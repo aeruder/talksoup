@@ -95,15 +95,67 @@ static NSString *unique_path(NSString *path)
 	return nil;
 }
 
-@interface DCCSupport (PrivateSupport)
-- (void)startedReceive: dcc onConnection: aConnection;
-- (void)finishedReceive: dcc onConnection: aConnection;
-- (void)startedSend: dcc onConnection: aConnection;
-- (void)finishedSend: dcc onConnection: aConnection;
-- (NSMutableArray *)getConnectionTable: aConnection;
-@end
-
 @implementation DCCSupport (PrivateSupport)
++ (NSDictionary *)defaultSettings
+{
+	return default_dict;
+}	
++ (void)setDefaultsObject: aObject forKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
+	{
+		NSMutableDictionary *y;
+		id tmp;
+		
+		aKey = [aKey substringFromIndex: [DCCDefault length]];
+		tmp = [object objectForKey: DCCDefault];
+		
+		if (!tmp)
+		{
+			y = AUTORELEASE([NSMutableDictionary new]);
+		}
+		else
+		{
+			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
+		}
+		
+		if (aObject)
+		{
+			[y setObject: aObject forKey: aKey];
+		}
+		else
+		{
+			[y removeObjectForKey: aKey];
+		}
+		
+		[object setObject: y forKey: DCCDefault];
+	}
+}
++ (id)defaultsObjectForKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
+	{
+		aKey = [aKey substringFromIndex: [DCCDefault length]];
+		object = [object objectForKey: DCCDefault];
+		if (!(object))
+		{
+			[[NSUserDefaults standardUserDefaults] setObject:
+			  object = default_dict forKey: DCCDefault];
+		}
+		return (object = [object objectForKey: aKey]) ? object : 
+		  [default_dict objectForKey: aKey];
+	}
+	
+	return [object objectForKey: aKey];
+}
++ (id)defaultDefaultsForKey: aKey
+{
+	return [default_dict objectForKey: aKey];
+}
 - (void)startedSend: (id)dcc onConnection: aConnection
 {
 	id path = [dcc path];
@@ -219,66 +271,6 @@ static NSString *unique_path(NSString *path)
 	default_dict = [[NSDictionary alloc] initWithContentsOfFile:
 	  [[NSBundle bundleForClass: [DCCSupport class]]
 	  pathForResource: @"Defaults" ofType: @"plist"]];
-}
-+ (NSDictionary *)defaultSettings
-{
-	return default_dict;
-}	
-+ (void)setDefaultsObject: aObject forKey: aKey
-{
-	id object = [NSUserDefaults standardUserDefaults];
-	
-	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
-	{
-		NSMutableDictionary *y;
-		id tmp;
-		
-		aKey = [aKey substringFromIndex: [DCCDefault length]];
-		tmp = [object objectForKey: DCCDefault];
-		
-		if (!tmp)
-		{
-			y = AUTORELEASE([NSMutableDictionary new]);
-		}
-		else
-		{
-			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
-		}
-		
-		if (aObject)
-		{
-			[y setObject: aObject forKey: aKey];
-		}
-		else
-		{
-			[y removeObjectForKey: aKey];
-		}
-		
-		[object setObject: y forKey: DCCDefault];
-	}
-}
-+ (id)defaultsObjectForKey: aKey
-{
-	id object = [NSUserDefaults standardUserDefaults];
-	
-	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
-	{
-		aKey = [aKey substringFromIndex: [DCCDefault length]];
-		object = [object objectForKey: DCCDefault];
-		if (!(object))
-		{
-			[[NSUserDefaults standardUserDefaults] setObject:
-			  object = default_dict forKey: DCCDefault];
-		}
-		return (object = [object objectForKey: aKey]) ? object : 
-		  [default_dict objectForKey: aKey];
-	}
-	
-	return [object objectForKey: aKey];
-}
-+ (id)defaultDefaultsForKey: aKey
-{
-	return [default_dict objectForKey: aKey];
 }
 - (NSAttributedString *)commandDCCABORT: (NSString *)command connection: (id)connection
 {
@@ -726,8 +718,8 @@ static NSString *unique_path(NSString *path)
 #ifdef USE_APPKIT
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"RemoveBundlePreferencesController", @"Process",
-	  @"DCcSupport", @"Name", nil]
-	  onConnection: nil withNickname: nil sender: self];
+	  @"DCCSupport", @"Name", nil]
+	  onConnection: nil withNickname: nil sender: [_TS_ pluginForInput]];
 #endif
 	DESTROY(controller);
 
