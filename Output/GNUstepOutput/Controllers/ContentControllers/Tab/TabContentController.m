@@ -64,7 +64,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	  NSObjectMapValueCallBacks, 10);
 	
 	textColor = RETAIN([NSColor colorFromEncodedData: 
-	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputTextColor]]);
+	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
 	
 	return self;
 }	

@@ -209,7 +209,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 		NSLog(@"Connection came through but there is no related"
 		      @"connection controller waiting for that connection..."
 		      @"closing connection...");
-		[[_TS_ input] closeConnection: connection];
+		[[_TS_ pluginForInput] closeConnection: connection];
 		return self;
 	}
 	

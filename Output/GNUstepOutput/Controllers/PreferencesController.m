@@ -24,6 +24,7 @@
 #include "GNUstepOutput.h"
 #include "TalkSoupBundles/TalkSoup.h"
 
+#include <Foundation/NSNotification.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSEnumerator.h>
 #include <Foundation/NSArray.h>
@@ -36,6 +37,14 @@
 @implementation PreferencesController
 - (void)dealloc
 {
+	[nick setTarget: nil];
+	[nick setDelegate: nil];
+	[realName setTarget: nil];
+	[realName setDelegate: nil];
+	[password setTarget: nil];
+	[password setDelegate: nil];
+	[userName setTarget: nil];
+	[userName setDelegate: nil];
 	RELEASE(personalBracketColor);
 	RELEASE(backgroundColor);
 	RELEASE(otherBracketColor);
@@ -50,7 +59,7 @@
 }
 - (void)loadCurrentDefaults
 {	
-	id output = [_TS_ output];
+	id output = [_TS_ pluginForOutput];
 	id y;
 	
 	y = [NSColor colorFromEncodedData: 
@@ -76,18 +85,22 @@
 	y = [output defaultsObjectForKey: IRCDefaultsNick];
 	[nick setStringValue: y];
 	[self nickSet: nick];
+	[nick setDelegate: self];
 	
 	y = [output defaultsObjectForKey: IRCDefaultsRealName];
 	[realName setStringValue: y];
 	[self realNameSet: realName];
+	[realName setDelegate: self];
 	
 	y = [output defaultsObjectForKey: IRCDefaultsUserName];
 	[userName setStringValue: y];
 	[self userNameSet: userName];
+	[userName setDelegate: self];
 	
 	y = [output defaultsObjectForKey: IRCDefaultsPassword];
 	[password setStringValue: y];
 	[self passwordSet: password];
+	[password setDelegate: self];
 }
 - nickSet: (NSTextField *)sender
 {
@@ -95,7 +108,7 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ output] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsNick];
 	}
 	  	
@@ -107,7 +120,7 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ output] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsPassword];
 	}
 	
@@ -119,7 +132,7 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ output] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsUserName];
 	}
 	
@@ -127,11 +140,11 @@
 }
 - realNameSet: (NSTextField *)sender
 {
-	id array = [[sender stringValue] separateIntoNumberOfArguments: 2];
+	id array = [[sender stringValue] separateIntoNumberOfArguments: 1];
 
 	if ([array count] != 0)
 	{
-		[[_TS_ output] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsRealName];
 	}
 	
@@ -143,10 +156,10 @@
 	id object;
 	id color = GNUstepOutputColor([sender color]);
 
-	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
+	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputPersonalBracketColor];
 		
-	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
+	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -163,10 +176,10 @@
 	id object2;
 	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
+	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputBackgroundColor];
 			
-	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
+	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -186,10 +199,10 @@
 	id object;
 	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
+	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputOtherBracketColor];
 		
-	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
+	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -204,10 +217,10 @@
 	id object;
 	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
+	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputTextColor];
 	
-	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
+	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -218,7 +231,7 @@
 }
 - resetColors: (NSButton *)sender
 {
-	id output = [_TS_ output];
+	id output = [_TS_ pluginForOutput];
 	id y;
 	
 	y = [NSColor colorFromEncodedData: 
@@ -247,6 +260,30 @@
 {
 	return window;
 }
+- (void)controlTextDidChange: (NSNotification *)aNotification
+{
+	id obj;
+	
+	obj = [aNotification object];
+	
+	if (obj == realName)
+	{
+		[self realNameSet: realName];
+	}
+	else if (obj == userName)
+	{
+		[self userNameSet: userName];
+	}
+	else if (obj == password)
+	{
+		[self passwordSet: password];
+	}
+	else if (obj == nick)
+	{
+		[self nickSet: nick];
+	}
+}
+
 @end
 
 

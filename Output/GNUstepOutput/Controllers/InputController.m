@@ -44,7 +44,7 @@ id _output_ = nil;
 	
 	if (!(_output_))
 	{
-		_output_ = RETAIN([_TS_ output]);
+		_output_ = RETAIN([_TS_ pluginForOutput]);
 	}
 	
 	if (![_output_ isKindOf: [GNUstepOutput class]])
@@ -261,7 +261,7 @@ id _output_ = nil;
 	
 	before = AUTORELEASE(RETAIN([connection nick]));
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
-	  sender: [_TS_ output]];
+	  sender: _output_];
 	if (![connection connected])
 	{
 		if (![before isEqualToString: [connection nick]])

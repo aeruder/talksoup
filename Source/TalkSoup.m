@@ -21,6 +21,10 @@
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSException.h>
+#include <Foundation/NSFileManager.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSBundle.h>
+#include <Foundation/NSPathUtilities.h>
 
 NSString *IRCDefaultsNick =  @"Nick";
 NSString *IRCDefaultsRealName = @"RealName";
@@ -64,6 +68,121 @@ id _TSDummy_;
 @end
 #endif
 
+static inline id activate_bundle(NSDictionary *a, NSString *name)
+{
+	id dir;
+	id bundle;
+	
+	if (!name)
+	{
+		NSLog(@"Can't activate a bundle with a nil name!");
+		return nil;
+	}
+	
+	if (!(dir = [a objectForKey: name]))
+	{
+		NSLog(@"Could not load '%@' from '%@'", name, [a allValues]);
+		return nil;
+	}
+	
+	bundle = [NSBundle bundleWithPath: dir];
+	if (!bundle)
+	{
+		NSLog(@"Could not load '%@' from '%@'", name, dir);
+		return nil;
+	}
+	
+	return AUTORELEASE([[[bundle principalClass] alloc] init]);
+}
+static inline void carefully_add_bundles(NSMutableDictionary *a, NSArray *arr)
+{
+	NSEnumerator *iter;
+	id object;
+	id bundle;
+	
+	iter = [arr objectEnumerator];
+	while ((object = [iter nextObject]))
+	{
+		bundle = [object lastPathComponent];
+		if (![a objectForKey: bundle])
+		{
+			[a setObject: object forKey: bundle];
+		}
+	}
+}	
+static inline NSArray *get_directories_with_talksoup()
+{
+	NSArray *x;
+	NSMutableArray *y;
+	NSFileManager *fm;
+	id object;
+	NSEnumerator *iter;
+	BOOL isDir;
+
+	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, 
+	  NSAllDomainsMask, YES);
+
+	fm = [NSFileManager defaultManager];
+
+	iter = [x objectEnumerator];
+	y = [NSMutableArray new];
+
+	NSLog(@"%@", x);
+	while ((object = [iter nextObject]))
+	{
+		object = [object stringByAppendingString: @"/TalkSoup"];
+		
+		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
+		{
+			[y addObject: object];
+		}
+	}
+
+	x = [NSArray arrayWithArray: y];
+	RELEASE(y);
+
+	return x;
+}
+static inline NSArray *get_bundles_in_directory(NSString *dir)
+{
+	NSFileManager *fm;
+	NSEnumerator *iter;
+	id object;
+	BOOL isDir;
+	NSMutableArray *y;
+	NSArray *x;
+	
+	fm = [NSFileManager defaultManager];
+	
+	x = [fm directoryContentsAtPath: dir];
+
+	if (!x)
+	{
+		return AUTORELEASE([NSArray new]);
+	}
+	
+	y = [NSMutableArray new];
+
+	iter = [x objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		object = [NSString stringWithFormat: @"%@/%@", dir, object];
+		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
+		{
+			if ([object hasSuffix: @".bundle"])
+			{
+				[y addObject: object];
+			}
+		}
+	}
+
+	x = [NSArray arrayWithArray: y];
+	RELEASE(y);
+
+	return x;
+}
+
 @implementation TalkSoup
 + (TalkSoup *)sharedInstance
 {
@@ -85,13 +204,58 @@ id _TSDummy_;
 	
 	if (!(self = [super init])) return nil;
 
-	outFilters = [NSMutableArray new];
-	inFilters = [NSMutableArray new];
+	[self refreshPluginList];
 	commandList = [NSMutableDictionary new];
-
+		
+	activatedInFilters = [NSMutableArray new];
+	inObjects = [NSMutableDictionary new];
+	
+	activatedOutFilters = [NSMutableArray new];
+	outObjects = [NSMutableDictionary new];
+	
 	_TS_ = RETAIN(self);
 	
 	return self;
+}
+- (void)refreshPluginList
+{
+	NSArray *dirList;
+	id object;
+	NSEnumerator *iter;
+	id arr;
+	
+	dirList = get_directories_with_talksoup();
+
+	iter = [dirList objectEnumerator];
+	
+	RELEASE(inputNames);
+	RELEASE(outputNames);
+	RELEASE(inNames);
+	RELEASE(outNames);
+
+	inputNames = [NSMutableDictionary new];
+	outputNames = [NSMutableDictionary new];
+	inNames = [NSMutableDictionary new];
+	outNames = [NSMutableDictionary new];
+	
+	while ((object = [iter nextObject]))
+	{
+		arr = get_bundles_in_directory(
+		  [object stringByAppendingString: @"/Input"]);
+		carefully_add_bundles(inputNames, arr);
+		
+		arr = get_bundles_in_directory(
+		  [object stringByAppendingString: @"/InFilter"]);
+		carefully_add_bundles(inNames, arr);
+
+		arr = get_bundles_in_directory(
+		  [object stringByAppendingString: @"/OutFilter"]);
+		carefully_add_bundles(outNames, arr);
+		
+		arr = get_bundles_in_directory(
+		  [object stringByAppendingString: @"/Output"]);
+		carefully_add_bundles(outputNames, arr);
+	}
 }
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
@@ -152,8 +316,8 @@ id _TSDummy_;
 	in = [NSMutableArray arrayWithObjects: input, nil];
 	out = [NSMutableArray arrayWithObjects: output, nil];
 
-	[in addObjectsFromArray: inFilters];
-	[out addObjectsFromArray: outFilters];
+	[in addObjectsFromArray: activatedInFilters];
+	[out addObjectsFromArray: activatedOutFilters];
 
 	[aInvocation getArgument: &sender atIndex: args + 1];
 
@@ -217,34 +381,214 @@ id _TSDummy_;
 		}
 	}
 }
-- (id)input
+- (NSString *)input
 {
-	return input;
+	return activatedInput;
 }
-- (NSMutableArray *)inFilters
+- (NSString *)output
 {
-	return inFilters;
+	return activatedOutput;
 }
-- (NSMutableArray *)outFilters
+- (NSDictionary *)allInputs
 {
-	return outFilters;
+	return [NSDictionary dictionaryWithDictionary: inputNames];
 }
-- (id)output
+- (NSDictionary *)allOutputs
+{
+	return [NSDictionary dictionaryWithDictionary: outputNames];
+}
+- setInput: (NSString *)aInput
+{
+	if (activatedInput) return self;
+	
+	input = RETAIN(activate_bundle(inputNames, aInput));
+	
+	if (input)
+	{
+		activatedInput = RETAIN(aInput);
+	}
+	
+	return self;
+}			
+- setOutput: (NSString *)aOutput
+{
+	if (activatedOutput) return self;
+	
+	output = RETAIN(activate_bundle(outputNames, aOutput));
+	
+	if (output)
+	{
+		activatedOutput = RETAIN(aOutput);
+	}
+	
+	return self;
+}
+- (NSArray *)activatedInFilters
+{
+	return [NSArray arrayWithArray: activatedInFilters];
+}
+- (NSArray *)activatedOutFilters
+{
+	return [NSArray arrayWithArray: activatedOutFilters];
+}
+- (NSDictionary *)allInFilters
+{
+	return [NSDictionary dictionaryWithDictionary: inNames];
+}
+- (NSDictionary *)allOutFilters
+{
+	return [NSDictionary dictionaryWithDictionary: outNames];
+}
+- activateInFilter: (NSString *)aFilt
+{
+	if (!aFilt) return self;
+	id obj;
+	
+	if ((obj = [inObjects objectForKey: aFilt]))
+	{
+		if ([activatedInFilters containsObject: obj])
+		{
+			[activatedInFilters removeObject: obj];
+		}
+		[activatedInFilters addObject: obj];
+		return self;
+	}
+	
+	obj = activate_bundle(inNames, aFilt);
+	if (!obj)
+	{
+		return self;
+	}
+	[inObjects setObject: obj forKey: aFilt];
+	[activatedInFilters addObject: obj];
+	
+	return self;
+}
+- activateOutFilter: (NSString *)aFilt
+{
+	if (!aFilt) return self;
+	id obj;
+	
+	if ((obj = [outObjects objectForKey: aFilt]))
+	{
+		if ([activatedOutFilters containsObject: obj])
+		{
+			[activatedOutFilters removeObject: obj];
+		}
+		[activatedOutFilters addObject: obj];
+		return self;
+	}
+	
+	obj = activate_bundle(outNames, aFilt);
+	if (!obj)
+	{
+		return self;
+	}
+	[outObjects setObject: obj forKey: aFilt];
+	[activatedOutFilters addObject: obj];
+	
+	return self;
+}	
+- deactivateInFilter: (NSString *)aFilt
+{
+	id obj;
+	if (!aFilt) return self;
+	
+	if ((obj = [inObjects objectForKey: aFilt]))
+	{
+		[activatedInFilters removeObject: obj];
+	}
+	
+	return self;
+}	
+- deactivateOutFilter: (NSString *)aFilt
+{
+	id obj;
+	if (!aFilt) return self;
+	
+	if ((obj = [outObjects objectForKey: aFilt]))
+	{
+		[activatedOutFilters removeObject: obj];
+	}
+	
+	return self;
+}
+- setActivatedInFilters: (NSArray *)filters
+{
+	NSEnumerator *iter;
+	id object;
+	
+	[activatedInFilters removeAllObjects];
+	
+	iter = [filters objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[self activateInFilter: object];
+	}
+	return self;
+}	
+- setActivatedOutFilters: (NSArray *)filters
+{
+	NSEnumerator *iter;
+	id object;
+	
+	[activatedOutFilters removeAllObjects];
+	
+	iter = [filters objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[self activateOutFilter: object];
+	}
+	return self;
+}
+- (id)pluginForOutput
 {
 	return output;
 }
-- setInput: (id)aInput
+- (id)pluginForOutFilter: (NSString *)aFilt
 {
-	RELEASE(input);
-	input = RETAIN(aInput);
-
-	return self;
-}
-- setOutput: (id)aOutput
-{
-	RELEASE(output);
-	output = RETAIN(aOutput);
+	id obj;
 	
-	return self;
+	if (!aFilt) return nil;
+	
+	if ((obj = [outObjects objectForKey: aFilt]))
+	{
+		return obj;
+	}
+	
+	obj = activate_bundle(outNames, aFilt);
+	
+	if (obj)
+	{
+		[outObjects setObject: obj forKey: aFilt];
+	}
+	
+	return obj;
+}
+- (id)pluginForInFilter: (NSString *)aFilt
+{
+	id obj;
+	
+	if (!aFilt) return nil;
+	
+	if ((obj = [inObjects objectForKey: aFilt]))
+	{
+		return obj;
+	}
+	
+	obj = activate_bundle(inNames, aFilt);
+	
+	if (obj)
+	{
+		[inObjects setObject: obj forKey: aFilt];
+	}
+	
+	return obj;
+}
+- (id)pluginForInput
+{
+	return input;
 }
 @end

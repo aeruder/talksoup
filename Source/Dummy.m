@@ -21,6 +21,9 @@
 #include <Foundation/NSArray.h>
 
 @implementation TalkSoupDummyProtocolClass
+- controlObject: (id)aObject onConnection: aConnection sender: aPlugin
+	{ return nil; }
+	
 - changeNick: (NSAttributedString *)aNick onConnection: aConnection 
    sender: aPlugin 
    { return nil; }

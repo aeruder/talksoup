@@ -40,9 +40,9 @@
 	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputTextColor]]];
+	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]];
 		  
 	x = RETAIN([window contentView]);
 	[window close];

@@ -21,6 +21,10 @@
 @class NSInvocation, NSMutableArray, NSString, NSAttributedString;
 @class NSHost, NSMutableDictionary;
 
+@protocol TalkSoupPluginProtocol
+- controlObject: (id)aObject onConnection: aConnection sender: aPlugin;
+@end
+
 @protocol TalkSoupInputPluginProtocol 
 - initiateConnectionToHost: (NSHost *)aHost onPort: (int)aPort
    withTimeout: (int)seconds withNickname: (NSString *)nickname 
@@ -32,7 +36,7 @@
 - (NSArray *)connections;
 @end
 
-@protocol TalkSoupOutFilterProtocol
+@protocol TalkSoupOutFilterProtocol < TalkSoupPluginProtocol >
 - changeNick: (NSAttributedString *)aNick onConnection: aConnection 
    sender: aPlugin; 
 
@@ -190,7 +194,7 @@
 - (NSHost *)host;
 @end
 
-@protocol TalkSoupInFilterProtocol
+@protocol TalkSoupInFilterProtocol < TalkSoupPluginProtocol >
 - newConnection: (id)connection sender: aPlugin;
 
 - lostConnection: (id)connection sender: aPlugin;

@@ -17,12 +17,6 @@
 
 @class TalkSoup, TalkSoupDummyProtocolClass, NSString, NSArray;
 
-extern void BuildPluginList();
-extern NSArray *InputPluginList;
-extern NSArray *InFilterPluginList;
-extern NSArray *OutFilterPluginList;
-extern NSArray *OutputPluginList;
-
 // Defaults stuff
 extern NSString *IRCDefaultsNick;
 extern NSString *IRCDefaultsRealName;
@@ -79,26 +73,56 @@ extern id _TSDummy_;
 
 @interface TalkSoup : NSObject
 	{
+		NSMutableDictionary *inputNames;
+		NSString *activatedInput;
 		id input;
-		NSMutableArray *outFilters;
-		NSMutableArray *inFilters;
+
+		NSMutableDictionary *outputNames;
+		NSString *activatedOutput;
 		id output;
+		
+		NSMutableDictionary *inNames;
+		NSMutableArray *activatedInFilters;
+		NSMutableDictionary *inObjects;
+		
+		NSMutableDictionary *outNames;
+		NSMutableArray *activatedOutFilters;
+		NSMutableDictionary *outObjects;
+				
 		NSMutableDictionary *commandList;
 	}
 + (TalkSoup *)sharedInstance;
+
+- (void)refreshPluginList;
 
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand;
 - addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc;
 - removeCommand: (NSString *)aCommand;
 - (NSArray *)allCommands;
 
-- (id)input;
-- (NSMutableArray *)inFilters;
-- (NSMutableArray *)outFilters;
-- (id)output;
+- (NSString *)input;
+- (NSString *)output;
+- (NSDictionary *)allInputs;
+- (NSDictionary *)allOutputs;
+- setInput: (NSString *)aInput;
+- setOutput: (NSString *)aOutput;
 
-- setInput: (id)aInput;
-- setOutput: (id)aOutput;
+- (NSArray *)activatedInFilters;
+- (NSArray *)activatedOutFilters;
+- (NSDictionary *)allInFilters;
+- (NSDictionary *)allOutFilters;
+
+- activateInFilter: (NSString *)aFilt;
+- activateOutFilter: (NSString *)aFilt;
+- deactivateInFilter: (NSString *)aFilt;
+- deactivateOutFilter: (NSString *)aFilt;
+- setActivatedInFilters: (NSArray *)filters;
+- setActivatedOutFilters: (NSArray *)filters;
+
+- (id)pluginForOutput;
+- (id)pluginForOutFilter: (NSString *)aFilt;
+- (id)pluginForInFilter: (NSString *)aFilt;
+- (id)pluginForInput;
 @end
   
 #endif
