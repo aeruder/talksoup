@@ -56,13 +56,13 @@
    withMessage: (NSAttributedString *)aMessage 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
-	sender: aPlugin;
+   sender: aPlugin;
 
 - joinChannel: (NSAttributedString *)channel 
    withPassword: (NSAttributedString *)aPassword 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
-	sender: aPlugin;
+   sender: aPlugin;
 
 - sendCTCPReply: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)args
@@ -75,7 +75,7 @@
    withArgument: (NSAttributedString *)args
    to: (NSAttributedString *)aPerson onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
-	sender: aPlugin; 
+   sender: aPlugin; 
   
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection 
@@ -85,12 +85,12 @@
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection
    withNickname: (NSAttributedString *)aNick 
-	sender: aPlugin;
+   sender: aPlugin;
 
 - sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
-	sender: aPlugin;
+   sender: aPlugin;
 
 - becomeOperatorWithName: (NSAttributedString *)aName 
    withPassword: (NSAttributedString *)pass 
@@ -105,7 +105,7 @@
 
 - requestMOTDOnServer: (NSAttributedString *)aServer onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick    
-	sender: aPlugin;
+   sender: aPlugin;
 
 - requestSizeInformationFromServer: (NSAttributedString *)aServer
    andForwardTo: (NSAttributedString *)anotherServer onConnection: aConnection 
