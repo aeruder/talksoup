@@ -30,6 +30,7 @@
 #include <AppKit/NSTableColumn.h>
 #include <AppKit/NSScrollView.h>
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSFont.h>
 
 @implementation ChannelController
 - (void)awakeFromNib
