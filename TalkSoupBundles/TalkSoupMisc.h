@@ -18,8 +18,8 @@
 #ifndef TALKSOUP_MISC_H
 #define TALKSOUP_MISC_H
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSString.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSString.h>
 
 NSArray *PossibleUserColors(void);
 NSString *IRCColorFromUserColor(NSString *string);

@@ -65,8 +65,8 @@ extern NSString *IRCReverseValue;
 #ifndef TALKSOUP_H
 #define TALKSOUP_H
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSMapTable.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
 
 #include "TalkSoupProtocols.h"
 #include "TalkSoupMisc.h"
