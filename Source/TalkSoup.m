@@ -707,7 +707,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
 	
-	return S2AS(_(@"Saved loaded bundles into preferences"));
+	return S2AS(_(@"The loaded bundles will now load automagically on TalkSoup"
+	              @"startup."));
 }
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
 {
