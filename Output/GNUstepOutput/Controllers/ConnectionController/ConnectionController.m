@@ -255,6 +255,10 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 {
 	return content;
 }
+- (void)setContentController: (id <ContentController>)aController
+{
+	ASSIGN(content, aController);
+}
 - (NSArray *)channelsWithUser: (NSString *)user
 {
 	NSEnumerator *iter;

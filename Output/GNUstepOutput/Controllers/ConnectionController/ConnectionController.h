@@ -80,6 +80,7 @@
 - (id)connection;
 
 - (id <ContentController>)contentController;
+- (void)setContentController: (id <ContentController>)aController;
 
 - (NSArray *)channelsWithUser: (NSString *)user;
 

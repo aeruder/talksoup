@@ -162,6 +162,8 @@ PreferencesController *_PREFS_ = nil;
 }
 - removeConnectionController: (ConnectionController *)aCont
 {
+	[pendingIdentToConnectionController removeObjectsForKeys: 
+	  [pendingIdentToConnectionController allKeysForObject: aCont]]; 
 	[connectionControllers removeObject: aCont];
 	return self;
 }
@@ -185,16 +187,6 @@ PreferencesController *_PREFS_ = nil;
 	}
 	
 	return arr;
-}
-- addServerList: (ServerListController *)aCont
-{
-	[serverLists addObject: aCont];
-	return self;
-}
-- removeServerList: (ServerListController *)aCont
-{
-	[serverLists removeObject: aCont];
-	return self;
 }
 - (NSArray *)connectionControllers
 {
@@ -449,9 +441,11 @@ PreferencesController *_PREFS_ = nil;
 	{
 		id masters;
 		id object2;
+		id iter2;
 
 		masters = [[object contentController] masterControllers];
-		while ((object2 = [iter nextObject]))
+		iter2 = [masters objectEnumerator];
+		while ((object2 = [iter2 nextObject]))
 		{
 			[[object2 window] close];
 		}
@@ -493,17 +487,3 @@ PreferencesController *_PREFS_ = nil;
 }
 @end
 
-@interface GNUstepOutput (Delegate)
-@end
-
-@implementation GNUstepOutput (Delegate)
-- (void)windowWillClose: (NSNotification *)aNotification
-{
-	if ([aNotification object] == [topic window])
-	{
-		[[topic topicText] setKeyTarget: nil];
-		AUTORELEASE(topic);
-		topic = nil;
-	}
-}
-@end

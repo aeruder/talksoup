@@ -39,11 +39,6 @@ extern NSString *ContentConsoleName;
 - (void)appendAttributedString: (NSAttributedString *)aString;
 @end
 
-//@protocol ContentControllerChannelName < ContentControllerChannelName >
-//- (NSString *)stringName;
-//- (NSAttributedString *)presentationName;
-//@end
-
 @protocol ContentControllerChannelController 
               < ContentControllerQueryController, NSObject >
 - (Channel *)channelSource;

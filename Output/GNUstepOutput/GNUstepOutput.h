@@ -78,9 +78,6 @@ extern PreferencesController *_PREFS_;
 
 - (NSArray *)unconnectedConnectionControllers;
 
-- addServerList: (ServerListController *)aServer;
-- removeServerList: (ServerListController *)aServer;
-
 - (TopicInspectorController *)topicInspectorController;
 - (void)run;
 @end

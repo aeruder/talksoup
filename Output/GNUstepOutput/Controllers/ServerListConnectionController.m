@@ -39,27 +39,36 @@
  inGroup: (int)group atRow: (int)row withContentController: (id)aContent
 {
 	id tmp;
+	id tmppref;
 	
 	tmp = [NSMutableDictionary dictionaryWithDictionary: aInfo];
 	if ([[tmp objectForKey: IRCDefaultsNick] length] == 0)
 	{
-		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsNick]
-		  forKey: IRCDefaultsNick];
+		tmppref = [_PREFS_ preferenceForKey: IRCDefaultsNick];
+		if (tmppref)
+			[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsNick]
+			  forKey: IRCDefaultsNick];
 	}
 	if ([[tmp objectForKey: IRCDefaultsUserName] length] == 0)
 	{
-		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsUserName]
-		  forKey: IRCDefaultsUserName];
+		tmppref = [_PREFS_ preferenceForKey: IRCDefaultsUserName];
+		if (tmppref)
+			[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsUserName]
+			  forKey: IRCDefaultsUserName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsRealName] length] == 0)
 	{
-		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsRealName]
-		  forKey: IRCDefaultsRealName];
+		tmppref = [_PREFS_ preferenceForKey: IRCDefaultsRealName];
+		if (tmppref)
+			[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsRealName]
+			  forKey: IRCDefaultsRealName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsPassword] length] == 0)
 	{
-		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsPassword]
-		  forKey: IRCDefaultsPassword];
+		tmppref = [_PREFS_ preferenceForKey: IRCDefaultsPassword];
+		if (tmppref)
+			[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsPassword]
+			  forKey: IRCDefaultsPassword];
 	}
 	
 	if (!(self = [super initWithIRCInfoDictionary: tmp 
@@ -104,6 +113,11 @@
 		[invoc setArgument: &tmp atIndex: 3];
 	}		
 	
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(windowWillClose:)
+	  name: NSWindowWillCloseNotification 
+	  object: nil];
+
 	[super newConnection: aConnection withNickname: aNick sender: aPlugin];
 	
 	return self;
@@ -117,6 +131,8 @@
 	
 	[super lostConnection: aConnection withNickname: aNick
 	  sender: aPlugin];
+
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
 	return self;
 }
@@ -151,8 +167,9 @@
 }
 - (void)windowWillClose: (NSNotification *)aNotification
 {	
-	/* FIXME
-	id window = [content window];
+	id window = [aNotification object];
+	id master = [content masterControllerForName: ContentConsoleName];
+	if ([master window] != window) return;
 	
 	[newInfo setObject: NSStringFromRect([window frame]) 
 	  forKey: ServerListInfoWindowFrame];
@@ -170,8 +187,7 @@
 		  row: serverRow];
 	}
 
-	[super windowWillClose: aNotification];	  
-	*/
+	[super windowWillClose: aNotification];
 }
 @end
 

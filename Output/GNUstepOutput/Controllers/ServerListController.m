@@ -244,6 +244,35 @@ static int sort_server_dictionary(id first, id second, void *x)
 
 	return hadOne;
 }
++ (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row
+{
+	id tmp = [ServerListController serverListPreferences]; 
+	id array;
+	
+	if (group >= (int)[tmp count] || group < 0) return;
+	
+	array = [[tmp objectAtIndex: group]
+	  objectForKey: ServerListInfoEntries];
+	  
+	if (row >= (int)[tmp count] || row < 0) return;
+	
+	[array replaceObjectAtIndex: row withObject: x];
+
+	[ServerListController saveServerListPreferences: tmp];
+}
++ (NSDictionary *)serverInGroup: (int)group row: (int)row
+{
+	id tmp = [self serverListPreferences];
+	
+	if (group >= (int)[tmp count] || group < 0) return nil;
+	
+	tmp = [[tmp objectAtIndex: group] 
+	  objectForKey: ServerListInfoEntries];
+	
+	if (row >= (int)[tmp count] || row < 0) return nil;
+	
+	return [tmp objectAtIndex: row];
+}
 - (BOOL)saveServerListPreferences: (NSArray *)aPrefs
 {
 	AUTORELEASE(cached);
@@ -260,35 +289,6 @@ static int sort_server_dictionary(id first, id second, void *x)
 	}
 
 	return cached;
-}
-- (NSDictionary *)serverInGroup: (int)group row: (int)row
-{
-	id tmp = [self serverListPreferences];
-	
-	if (group >= (int)[tmp count] || group < 0) return nil;
-	
-	tmp = [[tmp objectAtIndex: group] 
-	  objectForKey: ServerListInfoEntries];
-	
-	if (row >= (int)[tmp count] || row < 0) return nil;
-	
-	return [tmp objectAtIndex: row];
-}
-- (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row
-{
-	id tmp = [self serverListPreferences]; 
-	id array;
-	
-	if (group >= (int)[tmp count] || group < 0) return;
-	
-	array = [[tmp objectAtIndex: group]
-	  objectForKey: ServerListInfoEntries];
-	  
-	if (row >= (int)[tmp count] || row < 0) return;
-	
-	[array replaceObjectAtIndex: row withObject: x];
-
-	[self saveServerListPreferences: tmp];
 }
 - (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row
 {
@@ -337,8 +337,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	tmp = [self serverListPreferences];
 	[browser reloadColumn: 0];
 	
-	[_GS_ addServerList: self];
-	
+	RETAIN(self);
 	wasEditing = -1;
 }
 - (void)dealloc
@@ -624,7 +623,6 @@ static int sort_server_dictionary(id first, id second, void *x)
 - (void)connectHit: (NSButton *)sender
 {
 	id tmp = [self serverListPreferences];
-	id win;
 	id aContent = nil;
 	
 	int first, row;
@@ -639,29 +637,31 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	if (row >= (int)[tmp count]) return;
 
+	/* FIXME */
 	if ([forceButton state] == NSOffState)
 	{
 		id tmpArray;
 		tmpArray = [_GS_ unconnectedConnectionControllers];
 		if ([tmpArray count])
 		{
-			aContent = RETAIN([[tmpArray objectAtIndex: 0] contentController]);
+			id aConnect;
+			aConnect = [tmpArray objectAtIndex: 0];
+			aContent = RETAIN([aConnect contentController]);
 			AUTORELEASE(aContent);
-			[[aContent window] close]; // Cause the connection controller to
-			                           // die
+			[aConnect setContentController: nil];
 		}
 	}	
 
-	AUTORELEASE(win = [[ServerListConnectionController alloc]
+	AUTORELEASE(aContent = [[ServerListConnectionController alloc]
 	  initWithServerListDictionary: [tmp objectAtIndex: row]
 	  inGroup: first atRow: row withContentController: aContent]);
 
-	// FIXME win = [[win contentController] window];
+	aContent = [aContent contentController];
 	
 	[[editor window] close];
 	[window close];
 
-	// [win makeKeyAndOrderFront: nil];	
+	[[[aContent primaryMasterController] window] makeKeyAndOrderFront: nil];	
 }
 - (void)forceHit: (NSButton *)sender
 {
@@ -687,8 +687,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		[window setDelegate: nil];
 		[browser setDelegate: nil];
 		[browser setTarget: nil];
-		AUTORELEASE(RETAIN(self));
-		[_GS_ removeServerList: self];
+		AUTORELEASE(self);
 	}
 	else if ([aNotification object] == [editor window])
 	{
