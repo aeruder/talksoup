@@ -25,16 +25,17 @@
 #import "Misc/NSObjectAdditions.h"
 #import "GNUstepOutput.h"
 
-#import <Foundation/NSBundle.h>
-#import <Foundation/NSInvocation.h>
-#import <Foundation/NSCharacterSet.h>
-#import <Foundation/NSArray.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSEnumerator.h>
-#import <Foundation/NSSet.h>
 #import <AppKit/NSTextField.h>
-#import <AppKit/NSWindow.h>
 #import <AppKit/NSTextStorage.h>
+#import <AppKit/NSWindow.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSBundle.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSSet.h>
+#import <Foundation/NSString.h>
 
 #include <sys/time.h>
 #include <time.h>
@@ -70,11 +71,13 @@ static void send_message(id command, id name, id connection)
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
 
 - (void)previousHistoryItem: (NSText *)aFieldEditor;
+
+- (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender;
+
+- (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender;
 @end
 
 @interface InputController (TabCompletion)
-- (BOOL)keyPressed: (NSEvent *)aEvent sender: (id)sender;
-
 - (void)nonTabPressed: (id)sender;
 
 - (void)tabPressed: (id)sender;
@@ -113,15 +116,22 @@ static void send_message(id command, id name, id connection)
 	[modHistory addObject: @""];
 
 	fieldEditor = [KeyTextView new];
+	[fieldEditor setDelegate: self];
 	[fieldEditor setFieldEditor: YES];
 	[fieldEditor setKeyTarget: self];
-	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
+	[fieldEditor setKeyAction: @selector(fieldKeyPressed:sender:)];
+
+	[(KeyTextView *)[view chatView] setKeyTarget: self];
+	[(KeyTextView *)[view chatView] 
+	  setKeyAction: @selector(chatKeyPressed:sender:)];
 
 	return self;
 }
 - (void)dealloc
 {
 	[fieldEditor setKeyTarget: nil];
+	[fieldEditor setDelegate: nil];
+	[(KeyTextView *)[view chatView] setKeyTarget: nil];
 	RELEASE(fieldEditor);
 	RELEASE(modHistory);
 	RELEASE(history);
@@ -129,11 +139,27 @@ static void send_message(id command, id name, id connection)
 	RELEASE(view);
 	[super dealloc];
 }
+- (void)losingFieldEditorForField: (NSTextField *)aField
+   forMasterController: (id <MasterController>)aMaster
+{
+	int modIndex;
+
+	modIndex = [history count] - historyIndex;
+
+	[modHistory replaceObjectAtIndex: modIndex withObject: 
+	  [aField stringValue]];
+}
 - (NSText *)fieldEditorForField: (NSTextField *)aField 
             forMasterController: (id <MasterController>)aMaster
 {
+	int modIndex;
+
+	modIndex = [history count] - historyIndex;
+
 	lastMaster = aMaster;
 	activeTextField = aField;
+
+	[aField setStringValue: [modHistory objectAtIndex: modIndex]];
 	return fieldEditor;
 }
 - (void)commandTyped: (NSString *)command
@@ -322,10 +348,14 @@ static void send_message(id command, id name, id connection)
 
 	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 }
-@end
+- (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender
+{
+	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+	[fieldEditor keyDown: aEvent];
 
-@implementation InputController (TabCompletion)
-- (BOOL)keyPressed: (NSEvent *)aEvent sender: (id)sender
+	return NO;
+}
+- (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender
 {
 	NSString *characters = [aEvent characters];
 	unichar character = 0;
@@ -370,6 +400,9 @@ static void send_message(id command, id name, id connection)
 	
 	return YES;
 }	
+@end
+
+@implementation InputController (TabCompletion)
 - (void)nonTabPressed: (id)sender
 {
 	if (tabCompletion)

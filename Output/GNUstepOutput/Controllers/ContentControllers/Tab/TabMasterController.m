@@ -108,6 +108,7 @@
 	NSMapInsert(tabToViewController, tabItem, aController);
 	
 	[tabView insertTabViewItem: tabItem atIndex: aIndex];
+	numItems++;
 	[tabItem setView: [aController contentView]];
 	[tabItem setAttributedLabel: aLabel];
 	
@@ -121,6 +122,13 @@
 	  aController, @"View",
 	  aContentController, @"Content",
 	  nil]];
+
+	/* If its the first one, we need to force the selection 
+	 */
+	if (numItems == 1) 
+	{
+		[self selectViewController: aController];
+	}
 }
 - (void)selectViewController: (id <ContentControllerQueryController>)aController
 {
@@ -129,8 +137,10 @@
 	tab = NSMapGet(viewControllerToTab, aController);
 	content = NSMapGet(viewControllerToContent, aController);
 
-	NSLog(@"Selecting view!");
 	if (!tab || !content) return;
+
+	[typingController losingFieldEditorForField: typeView
+	  forMasterController: self];
 
 	selectedController = aController;
 
@@ -146,6 +156,9 @@
 	RELEASE(typingController);
 	typingController = RETAIN([content 
 	     typingControllerForViewController: aController]);
+
+	[typeView abortEditing];
+	[window makeFirstResponder: typeView]; 
 }
 - (void)selectViewControllerAtIndex: (unsigned)aIndex
 {
@@ -192,6 +205,16 @@
 	NSMapRemove(viewControllerToContent, aController);
 	NSMapRemove(tabToViewController, tab);
 	
+	numItems--;
+
+	if (aController == selectedController) 
+	{
+		[typingController losingFieldEditorForField: typeView
+		  forMasterController: self];
+		selectedController = nil;
+		DESTROY(typingController);
+	}
+		
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
 	 object: content userInfo: userInfo];
@@ -372,14 +395,15 @@
 
 	content = NSMapGet(viewControllerToContent, selectedController);
 
-	[[content typingControllerForViewController: selectedController] 
-	   commandTyped: [aField stringValue]];
+	[typingController commandTyped: [aField stringValue]];
 }
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
 	/* Basically we just need to force the 
 	 * notification to happen */
 	[self selectViewController: selectedController];
+
+	[window makeFirstResponder: typeView]; 
 }
 - (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
 {
@@ -389,9 +413,7 @@
 
 	content = NSMapGet(viewControllerToContent, selectedController);
 
-	NSLog(@"Requested field editor. content: %@", content);
-
-	return [[content typingControllerForViewController: selectedController]
+	return [typingController
 	  fieldEditorForField: typeView forMasterController: self];
 }
 - (void)tabView: (NSTabView *)tabView 

@@ -93,6 +93,8 @@ extern NSString *ContentConsoleName;
 @end
 
 @protocol TypingController <NSObject>
+- (void)losingFieldEditorForField: (NSTextField *)aField
+   forMasterController: (id <MasterController>)aMaster;
 - (NSText *)fieldEditorForField: (NSTextField *)aField
             forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
