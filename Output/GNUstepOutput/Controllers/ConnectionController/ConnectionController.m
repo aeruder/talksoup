@@ -51,7 +51,7 @@
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
    withContentController: (ContentController *)aContent
 {
-	id typeView;
+	id fieldEditor;
 	
 	if (!(self = [super init])) return nil;
 
@@ -92,11 +92,10 @@
 	  forViewWithName: ContentConsoleName];
 	[[content window] setTitle: _l(@"Unconnected")];
 	
-	typeView = [content typeView];
+	fieldEditor = [KeyTextView new];
+	[fieldEditor setFieldEditor: YES];
 
 	nameToChannelData = [NSMutableDictionary new];
-	
-	[[content window] makeFirstResponder: typeView];
 	
 	[_GS_ addConnectionController: self];
 	
@@ -109,7 +108,6 @@
 	RELEASE(userName);
 	RELEASE(password);
 	RELEASE(realName);
-	RELEASE(fieldEditor);
 	RELEASE(inputController);
 	RELEASE(connection);
 	RELEASE(content);
@@ -143,10 +141,10 @@
 	  onConnectionController: self];
 	  
 	[[_TS_ pluginForInput] initiateConnectionToHost: aHost onPort: aPort
-   withTimeout: 30 withNickname: preNick 
-   withUserName: userName withRealName: realName 
-   withPassword: password 
-	withIdentification: ident];
+	  withTimeout: 30 withNickname: preNick 
+	  withUserName: userName withRealName: realName 
+	  withPassword: password 
+	  withIdentification: ident];
 	
 	[content setLabel: S2AS(_l(@"Connecting")) 
 	  forViewWithName: ContentConsoleName];
@@ -282,9 +280,5 @@
 	  forViewWithName: channel];
 
 	return self;
-}
-- (KeyTextView *)fieldEditor
-{
-	return fieldEditor;
 }
 @end

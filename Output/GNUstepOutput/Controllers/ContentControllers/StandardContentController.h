@@ -26,7 +26,7 @@
 #import <Foundation/NSMapTable.h>
 
 @class NSMutableArray, NSMutableDictionary, NSArray, NSString, NSAttributedString;
-@class NSFont;
+@class NSFont, NSText;
 
 @interface StandardContentController : NSObject < ContentController >
 	{
@@ -44,12 +44,16 @@
 		Class channelClass;
 		Class queryClass;
 		NSFont *chatFont;
+		NSText *fieldEditor;
 	}
 + (Class)masterClass;
 + (Class)queryClass;
 + (Class)channelClass;
 
 - initWithMasterController: (id <MasterController>) aMaster;
+
+- setFieldEditor: (NSText *)aFieldEditor;
+- (NSText *)fieldEditor;
 
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;

@@ -22,7 +22,7 @@
 
 @class NSString, KeyTextView, ContentController, NSArray;
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
-@class NSDictionary;
+@class NSDictionary, InputController;
 
 #import "Controllers/ContentControllers/ContentController.h"
 #import <Foundation/NSObject.h>
@@ -37,7 +37,8 @@
 		NSString *password;
 		NSString *realName;
 		
-		KeyTextView *fieldEditor;
+		InputController *inputController;
+
 		id connection;
 		id <ContentController> content;
 		NSArray *tabCompletion;

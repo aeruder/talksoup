@@ -25,7 +25,7 @@
 @protocol ContentControllerDelegate;
 
 @class ConnectionController, NSView, NSString, NSAttributedString;
-@class NSArray, NSTextView, NSTextField, NSWindow, Channel;
+@class NSArray, NSTextView, NSTextField, NSWindow, Channel, NSText;
 
 extern NSString *ContentControllerChannelType;
 extern NSString *ContentControllerQueryType;
@@ -75,6 +75,9 @@ extern NSString *ContentConsoleName;
 
 
 @protocol ContentController
+- setFieldEditor: (NSText *)aFieldEditor;
+- (NSText *)fieldEditor;
+
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;

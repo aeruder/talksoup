@@ -85,6 +85,8 @@
 @end
 
 @implementation ConnectionController (WindowDelegate)
+	// FIXME -- need to be replaced by the notification system.
+/*
 - (void)windowWillClose: (NSNotification *)aNotification
 {	
 	id controller;
@@ -131,5 +133,6 @@
 {
 	[self updateTopicInspector];
 }
+*/
 @end
 

@@ -94,6 +94,14 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [self initWithMasterController: nil];
 }
+- (void)setFieldEditor: (NSText *)aFieldEditor
+{
+	ASSIGN(fieldEditor, aFieldEditor);
+}
+- (NSText *)fieldEditor
+{
+	return fieldEditor;
+}
 // FIXME a dealloc needs to be written
 /* Returns an array of all master controllers that are used by any of the channels or 
  * queries within this controller
