@@ -334,76 +334,94 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	menu = AUTORELEASE([NSMenu new]);
 
 // Info	
-	item = [menu addItemWithTitle: @"Info" action: 0 keyEquivalent: @""];
+	item = [menu addItemWithTitle: _l(@"Info") action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 
-	[tempMenu addItemWithTitle: @"Info Panel..."
+	[tempMenu addItemWithTitle: _l(@"Info Panel...")
 	  action: @selector(orderFrontStandardInfoPanel:)
 	  keyEquivalent: @""];
 	
-	[tempMenu addItemWithTitle: @"Preferences..."
+	[tempMenu addItemWithTitle: _l(@"Preferences...")
 	  action: @selector(loadPreferencesPanel:)
 	  keyEquivalent: @"P"];
 
 // Connection
-	item = [menu addItemWithTitle: @"Connection" action: 0
+	item = [menu addItemWithTitle: _l(@"Connection") action: 0
 	  keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 	
-	[tempMenu addItemWithTitle: @"Connect To..." 
+	[tempMenu addItemWithTitle: _l(@"Open Connection...") 
 	  action: @selector(openServerList:)
-	  keyEquivalent: @"n"];
+	  keyEquivalent: @"o"];
 	
-	[tempMenu addItemWithTitle: @"Connect To Server..." 
+	[tempMenu addItemWithTitle: _l(@"Connect To Server...") 
 	  action: @selector(openNamePrompt:)
 	  keyEquivalent: @"N"];
 	
-	[tempMenu addItemWithTitle: @"Unconnected Window" 
+	[tempMenu addItemWithTitle: _l(@"Unconnected Window") 
 	  action: @selector(openEmptyWindow:)
 	  keyEquivalent: @"u"];
+
+// Tabs
+	item = [menu addItemWithTitle: _l(@"Tab") action: 0
+	  keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
 	
+	item = [tempMenu addItemWithTitle: _l(@"Next Tab")
+	  action: @selector(selectPreviousTab:)
+	  keyEquivalent: @"n"];
+	
+	item = [tempMenu addItemWithTitle: _l(@"Previous Tab")
+	  action: @selector(selectNextTab:)
+	  keyEquivalent: @"p"];
+	
+	item = [tempMenu addItemWithTitle: _l(@"Close Tab")
+	  action: @selector(closeCurrentTab:)
+	  keyEquivalent: @"X"];
+
 // Edit	
-	item = [menu addItemWithTitle: @"Edit" action: 0 keyEquivalent: @""];
+	item = [menu addItemWithTitle: _l(@"Edit") action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 
-	[tempMenu addItemWithTitle: @"Cut"
+	[tempMenu addItemWithTitle: _l(@"Cut")
 	  action: @selector(cut:)
 	  keyEquivalent: @"x"];
-	[tempMenu addItemWithTitle: @"Copy"
+	[tempMenu addItemWithTitle: _l(@"Copy")
 	  action: @selector(copy:)
 	  keyEquivalent: @"c"];
-	[tempMenu addItemWithTitle: @"Paste"
+	[tempMenu addItemWithTitle: _l(@"Paste")
 	  action: @selector(paste:)
 	  keyEquivalent: @"v"];
-	[tempMenu addItemWithTitle: @"Delete"
+	[tempMenu addItemWithTitle: _l(@"Delete")
 	  action: @selector(delete:)
 	  keyEquivalent: @""];
-	[tempMenu addItemWithTitle: @"Select All"
+	[tempMenu addItemWithTitle: _l(@"Select All")
 	  action: @selector(selectAll:)
 	  keyEquivalent: @"a"];
 
 // Windows
-	item = [menu addItemWithTitle: @"Windows" action: 0 keyEquivalent: @""];
+	item = [menu addItemWithTitle: _l(@"Windows") action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 	[NSApp setWindowsMenu: tempMenu];
 
 // Services
-	item = [menu addItemWithTitle: @"Services" action: 0 keyEquivalent: @""];
+	item = [menu addItemWithTitle: _l(@"Services") action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 	[NSApp setServicesMenu: tempMenu];
 
 // Hide
-	[menu addItemWithTitle: @"Hide"
+	[menu addItemWithTitle: _l(@"Hide")
 	  action: @selector(hide:)
 	  keyEquivalent: @"h"];
 
 // Quit
-	[menu addItemWithTitle: @"Quit" action: @selector(terminate:)
+	[menu addItemWithTitle: _l(@"Quit") action: @selector(terminate:)
 	  keyEquivalent: @"q"];
 	
 	[NSApp setMainMenu: menu];
@@ -434,12 +452,12 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 }
 - (void)openServerList: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: @"ServerList" owner: 
+	[NSBundle loadNibNamed: _l(@"ServerList") owner: 
 	  AUTORELEASE([ServerListController new])];
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: @"NamePrompt" owner:
+	[NSBundle loadNibNamed: _l(@"NamePrompt") owner:
 	  AUTORELEASE([NamePromptController new])];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification

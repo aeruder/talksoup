@@ -85,7 +85,6 @@ static inline NSColor *map_color(NSString *aName)
 	return [colors objectForKey: aName];
 }
 
-
 @implementation NSColor (EncodingAdditions)
 + (NSString *)commonColorSpaceName
 {
