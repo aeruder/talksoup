@@ -41,7 +41,6 @@
 
 	RELEASE(string);
 	
-	tabRect.size.height += 5;
 	[attributedLabel drawInRect: tabRect];	
 }
 - setLabelColor: (NSColor *)aColor
