@@ -21,10 +21,19 @@
 #include <Foundation/NSArray.h>
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
+#include "Functions.h"
 
-#ifndef AS2S
-	#define AS2S(_x) [(_x) string]
+#ifdef S2AS
+	#undef S2AS
 #endif
+
+#define S2AS(_x) NetClasses_AttributedStringFromString((_x))
+
+#ifdef AS2S
+	#undef AS2S
+#endif
+
+#define AS2S(_x) NetClasses_StringFromAttributedString((_x))
 
 @interface NetclassesInput (PrivateNetclassesInput)
 - removeConnection: aConnection;
@@ -131,7 +140,6 @@
 	[_TS_ newConnection: self sender: control];
 	return x;
 }
-#define S2AS(_x) AUTORELEASE([[NSAttributedString alloc] initWithString: (_x)])
 - registeredWithServer
 {
 	[_TS_ registeredWithServerOnConnection: self sender: control];

@@ -12,7 +12,7 @@ NetclassesInput_FRAMEWORKS = -lTalkSoupApp
 netclasses = netclasses/NetBase.m netclasses/NetTCP.m netclasses/LineObject.m \
              netclasses/IRCObject.m
 
-main = main.m
+main = main.m Functions.m
 
 NetclassesInput_OBJC_FILES = $(netclasses) $(main)
 
