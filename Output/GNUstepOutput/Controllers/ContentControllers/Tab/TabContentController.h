@@ -30,6 +30,8 @@ extern NSString *ContentConsoleName;
 @class NSTabViewItem, NSArray;
 @class NSColor;
 
+NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString *str);
+
 @interface ContentController : NSObject
 {
 	NSTextField *typeView;

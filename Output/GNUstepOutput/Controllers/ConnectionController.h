@@ -21,7 +21,7 @@
 #define CONNECTION_CONTROLLER_H
 
 @class NSString, NSAttributedString, NSDictionary, InputController, ContentController;
-@class NSColor, NSMutableDictionary, TabTextView;
+@class NSColor, NSMutableDictionary, TabTextView, Channel;
 
 #include <Foundation/NSObject.h>
 
@@ -51,6 +51,10 @@
 	}
 - initWithIRCInfoDictionary: (NSDictionary *)aDict;
 
+- connectToServer: (NSString *)aName onPort: (int)aPort;
+
+- (Channel *)dataForChannelWithName: (NSString *)aName;
+
 - setNick: (NSString *)aString;
 - (NSString *)nick;
 
@@ -63,8 +67,6 @@
 - setPassword: (NSString *)aString;
 - (NSString *)password;
 
-- connectToServer: (NSString *)aName onPort: (int)aPort;
-
 - (InputController *)inputController;
 
 - (id)connection;
@@ -73,7 +75,9 @@
 
 - (NSArray *)channelsWithUser: (NSString *)user;
 
+- (NSColor *)otherColor;
 - setOtherColor: (NSColor *)aColor;
+- (NSColor *)personalColor;
 - setPersonalColor: (NSColor *)aColor;
 
 - newConnection: (id)connection sender: aPlugin;

@@ -22,6 +22,7 @@
 #include "Controllers/InputController.h"
 #include "Views/AttributedTabViewItem.h"
 #include "Misc/NSColorAdditions.h"
+#include "Misc/NSAttributedStringAdditions.h"
 #include <AppKit/NSColor.h>
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSWindow.h>
@@ -31,6 +32,7 @@
 #include <AppKit/NSTabViewItem.h>
 #include <AppKit/NSTextStorage.h>
 #include <AppKit/NSTextView.h>
+#include <AppKit/NSTableView.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSArray.h>
@@ -259,9 +261,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 	}
 	else if ([aString isKindOf: [NSAttributedString class]])
 	{
-		NSLog(@"Using %p", textColor);		
-		aString = AUTORELEASE([[NSMutableAttributedString alloc] 
-		   initWithAttributedString: aString]);
+		aString = [aString substituteColorCodesIntoAttributedString];
+	   
 		[aString addAttributeIfNotPresent: NSForegroundColorAttributeName value: textColor
 		  withRange: NSMakeRange(0, [aString length])];
 		[[[controller chatView] textStorage] appendAttributedString: aString];
@@ -397,6 +398,41 @@ NSString *ContentConsoleName = @"Content Console Name";
 }
 - closeViewWithName: (NSString *)aName
 {
+	id lo = GNUstepOutputLowercase(aName);
+	id view;
+	id tab;
+	
+	view = [nameToBoth objectForKey: lo];
+	if (!view)
+	{
+		return self;
+	}
+	
+	if ([view respondsToSelector: @selector(tableView)])
+	{
+		[[view tableView] setDataSource: nil];
+		[[view tableView] setTarget: nil];
+	}
+
+	tab = [nameToTabItem objectForKey: lo];
+
+	if ([tabView selectedTabViewItem] == tab)
+	{
+		[tabView selectPreviousTabViewItem: nil];
+	}
+	
+	[tabView removeTabViewItem: tab];
+		
+	[nameToChannel removeObjectForKey: lo];
+	[nameToQuery removeObjectForKey: lo];
+	[nameToBoth removeObjectForKey: lo];
+	[nameToPresentation removeObjectForKey: lo];
+	[nameToLabel removeObjectForKey: lo];
+	[nameToTabItem removeObjectForKey: lo];
+	
+	NSMapRemove(tabItemToName, tab);
+	NSMapRemove(bothToName, view);
+	
 	return self;
 }
 - renameViewWithName: (NSString *)aName to: (NSString *)newName

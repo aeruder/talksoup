@@ -313,7 +313,7 @@ id _output_ = nil;
 	if ([x count] < 1)
 	{
 		[controller showMessage:
-		  S2AS(_l(@"Usage: /query name"))
+		  S2AS(_l(@"Usage: /query <name>"))
 		 onConnection: nil];
 		return self;
 	}
@@ -322,6 +322,40 @@ id _output_ = nil;
 	
 	[[controller contentController] addQueryWithName: o withLabel: o];
 	
+	return self;
+}
+- commandClose: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	id o;
+	
+	if ([x count] < 1)
+	{
+		if ([(o = [[controller contentController] currentViewName])
+		     isEqualToString: ContentConsoleName])
+		{			
+			[controller showMessage:
+			  S2AS(_l(@"Usage: /close <name>")) 
+			  onConnection: nil];
+			return self;
+
+		}
+	}
+	else
+	{
+		o = [x objectAtIndex: 0];
+	}
+
+	if ([controller dataForChannelWithName: o])
+	{
+		[controller channelParted: S2AS(o) withMessage: S2AS(@"") from: 
+		  S2AS([[controller connection] nick]) onConnection: nil sender: nil];
+		[_TS_ partChannel: S2AS(o) withMessage: S2AS(@"")
+		  onConnection: [controller connection] sender: _output_];
+	}
+	
+	[[controller contentController] closeViewWithName: o];
+
 	return self;
 }
 @end
