@@ -110,14 +110,24 @@ NSString *ContentConsoleName = @"Content Console Name";
 	{
 		NSEnumerator *iter;
 		id object;
+		id string;
 
 		iter = [[nameToBoth allValues] objectEnumerator];
 		while ((object = [iter nextObject]))
 		{
 			object = [[object chatView] textStorage];
+			
+			string = AUTORELEASE([[NSMutableAttributedString alloc] 
+			  initWithAttributedString: object]);
+			[string replaceAttribute: NSForegroundColorAttributeName 
+			  withValue: textColor withValue: aColor withRange:
+			  NSMakeRange(0, [string length])];
+			[object setAttributedString: string];
+
+/*			object = [[object chatView] textStorage];
 			[object replaceAttribute: NSForegroundColorAttributeName 
 			  withValue: textColor withValue: aColor withRange:
-			  NSMakeRange(0, [object length])];
+			  NSMakeRange(0, [object length])];*/
 		}
 		
 		RELEASE(textColor);
