@@ -68,6 +68,10 @@ extern NSString *ContentConsoleName;
 
 - (unsigned)indexForView: (id <ContentControllerQueryView>)aView;
 - (unsigned)count;
+
+- (NSAttributedString *)labelForView: (id <ContentControllerQueryView>)aView;
+- (void)setLabel: (NSAttributedString *)aLabel 
+    forView: (id <ContentControllerQueryView>)aView;
 	 
 - (NSArray *)containedContentControllers;
 - (NSArray *)viewListForContentController: 

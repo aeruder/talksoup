@@ -78,12 +78,22 @@
 	
 	if (!aContent)
 	{
+		// FIXME
+		// This needs to use the correct content controller
+		// which is probably stored in defaults.
+		// Also needs to handle the possibility of putting
+		// them into an existing master controller
 		content = [TabContentController new];
 	}
 	else
 	{
+		// Does this even make sense???
 		content = RETAIN(aContent);
 	}
+	[content addControllerOfType: ContentControllerQueryType 
+	  withName: ContentConsoleName 
+	  withLabel: AUTORELEASE([NSAttributedString new])
+	  inMasterController: nil];
 
 	[content setNickname: preNick];
 	

@@ -683,6 +683,8 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	if (label == aLabel) return;
 	
 	[nameToLabel setObject: aLabel forKey: lowercase(aName)];
+
+	[mast setLabel: aLabel forView: cont];
 	
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerChangedLabelNotification

@@ -47,6 +47,13 @@
 	NSLog(@"TabMasterController created!");
 	return self;
 }
+- (void)awakeFromNib
+{
+	id object;
+	while ([tabView numberOfTabViewItems] && 
+	       (object = [tabView tabViewItemAtIndex: 0])) 
+		[tabView removeTabViewItem: object];
+}
 - (void)dealloc
 {
 	NSFreeMapTable(viewToTab);
@@ -247,6 +254,31 @@
 - (unsigned)count
 {
 	return [indexToView count];
+}
+- (NSAttributedString *)labelForView: (id <ContentControllerQueryView>)aView
+{
+	AttributedTabViewItem *tab;
+
+	tab = NSMapGet(viewToTab, aView);
+	if (!tab) return nil;
+
+	return [tab attributedLabel];
+}
+- (void)setLabel: (NSAttributedString *)aLabel 
+    forView: (id <ContentControllerQueryView>)aView
+{
+	AttributedTabViewItem *tab;
+
+	if (!aLabel) {
+		aLabel = AUTORELEASE([NSAttributedString new]);
+	}
+
+	if (!aView) return;
+
+	tab = NSMapGet(viewToTab, aView);
+	if (!tab) return;
+
+	[tab setAttributedLabel: aLabel];
 }
 - (NSArray *)containedContentControllers
 {
