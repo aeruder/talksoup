@@ -257,14 +257,21 @@ NSArray *IRCUserComponents(NSAttributedString *from)
 {
 	NSArray *components = [[from string] componentsSeparatedByString: @"!"];
 	NSAttributedString *string1, *string2;
-	NSRange aRange;
+	NSRange aRange = {0, 0};
 	
-	aRange.location = 0;
-	aRange.length = [[components objectAtIndex: 0] length];
+	if (from)
+	{	
+		aRange.location = 0;
+		aRange.length = [[components objectAtIndex: 0] length];
 	
-	string1 = [from attributedSubstringFromRange: aRange];
+		string1 = [from attributedSubstringFromRange: aRange];
 	
-	aRange.location = aRange.length + 1;
+		aRange.location = aRange.length + 1;
+	}
+	else
+	{
+		string1 = AUTORELEASE([[NSAttributedString alloc] initWithString: @""]);
+	}
 	
 	if (((int)[from length] - (int)aRange.location) <= 0)
 	{

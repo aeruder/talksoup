@@ -27,13 +27,35 @@ NSString *IRCDefaultsRealName = @"RealName";
 NSString *IRCDefaultsUserName = @"UserName";
 NSString *IRCDefaultsPassword = @"Password";
 
+NSString *IRCColor = @"IRCColor";
+NSString *IRCBackgroundColor = @"IRCBackgroundColor";
+NSString *IRCColorWhite = @"IRCColorWhite";
+NSString *IRCColorBlack = @"IRCColorBlack";
+NSString *IRCColorBlue = @"IRCColorBlue";
+NSString *IRCColorGreen = @"IRCColorGreen";
+NSString *IRCColorRed = @"IRCColorRed";
+NSString *IRCColorMaroon = @"IRCColorMaroon";
+NSString *IRCColorMagenta = @"IRCColorMagenta";
+NSString *IRCColorOrange = @"IRCColorOrange";
+NSString *IRCColorYellow = @"IRCColorYellow";
+NSString *IRCColorLightGreen = @"IRCColorLightGreen";
+NSString *IRCColorTeal = @"IRCColorTeal";
+NSString *IRCColorLightCyan = @"IRCColorLightCyan";
+NSString *IRCColorLightBlue = @"IRCColorLightBlue";
+NSString *IRCColorLightMagenta = @"IRCColorLightMagenta";
+NSString *IRCColorGrey = @"IRCColorGrey";
+NSString *IRCColorLightGrey = @"IRCColorLightGrey";
+NSString *IRCBold = @"IRCBold";
+NSString *IRCUnderline = @"IRCUnderline";
+
+
 id _TS_;
 id _TSDummy_;
 
 @interface NSException (blah)
 @end
 
-#if 0
+#if 1
 @implementation NSException (blah)
 - (void)raise
 {
