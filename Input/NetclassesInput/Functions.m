@@ -79,6 +79,7 @@ static NSCharacterSet *color_control = nil;
 static NSCharacterSet *bold_control = nil;
 static NSCharacterSet *underline_control = nil;
 static NSCharacterSet *clear_control = nil;
+static NSCharacterSet *reverse_control = nil;
 static NSString *colors[16] = { 0 };
 	
 static void initialize_stuff(void)
@@ -158,7 +159,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		{
 			if (![dict objectForKey: IRCBold])
 			{
-				[dict setObject: @"bold"
+				[dict setObject: IRCBoldValue
 				  forKey: IRCBold];
 			}
 			else
@@ -170,7 +171,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
-				[dict setObject: @"ul"
+				[dict setObject: IRCUnderlineValue
 				  forKey: IRCUnderline];
 			}
 			else
@@ -186,7 +187,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		{
 			if (![dict objectForKey: IRCReverse])
 			{
-				[dict setObject: @"reverse"
+				[dict setObject: IRCReverseValue
 				  forKey: IRCReverse];
 			}
 			else

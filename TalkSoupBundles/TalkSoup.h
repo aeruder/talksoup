@@ -56,8 +56,11 @@ extern NSString *IRCColorCustom;
 
 // Keys
 extern NSString *IRCBold;
+extern NSString *IRCBoldValue;
 extern NSString *IRCUnderline;
+extern NSString *IRCUnderlineValue;
 extern NSString *IRCReverse;
+extern NSString *IRCReverseValue;
 
 #ifndef TALKSOUP_H
 #define TALKSOUP_H

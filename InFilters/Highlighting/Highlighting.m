@@ -310,7 +310,7 @@ static NSInvocation *invoc = nil;
 	}
 	else
 	{
-		return BuildAttributedString([NSNull null], IRCBold, @"bold", 
+		return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, 
 		  @"Highlighting Configurator:", @"\n",
 		  @"Type /highlighting usercolor", @"\n",
 		  @"or /highlighting tabreferencecolor", @"\n",

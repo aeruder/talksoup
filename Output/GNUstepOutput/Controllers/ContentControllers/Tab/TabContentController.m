@@ -157,7 +157,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 		  toValue: color
 		 inRangesWithAttribute: TypeOfColor
 		  matchingValue: aKey
-		 withRange: NSMakeRange(0, [object length])];
+		 withRange: NSMakeRange(0, [[object textStorage] length])];
 		if ([aKey isEqualToString: GNUstepOutputBackgroundColor])
 		{
 			[object setBackgroundColor: color];
@@ -361,19 +361,16 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	{
 		aRange = NSMakeRange(0, [aString length]);
 		string = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
-		[string setAttribute: IRCReverse toValue: @"reverse"
-		  inRangesWithAttribute: IRCReverse notMatchingValue: nil 
-		  withRange: aRange];
 		[string setAttribute: NSForegroundColorAttributeName toValue:
 		  [self colorForKey: GNUstepOutputBackgroundColor]
 		  inRangesWithAttributes: [NSArray arrayWithObjects: NSForegroundColorAttributeName,
 		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    @"reverse", nil] withRange: aRange];
+		    IRCReverseValue, nil] withRange: aRange];
 		[string setAttribute: NSBackgroundColorAttributeName toValue:
 		  [self colorForKey: GNUstepOutputTextColor]
 		  inRangesWithAttributes: [NSArray arrayWithObjects: NSBackgroundColorAttributeName,
 		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    @"reverse", nil] withRange: aRange];		
+		    IRCReverseValue, nil] withRange: aRange];		
 		[string setAttribute: TypeOfColor toValue: GNUstepOutputTextColor
 		  inRangesWithAttributes: 
 		    [NSArray arrayWithObjects: NSForegroundColorAttributeName,

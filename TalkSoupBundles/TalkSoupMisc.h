@@ -39,12 +39,6 @@ NSString *IRCColorFromUserColor(NSString *string);
 - (void)setAttribute: (NSString *)name toValue: (id)aVal
    inRangesWithAttributes: (NSArray *)name2 matchingValues: (NSArray *)aVal2
    withRange: (NSRange)aRange;
-- (void)setAttribute: (NSString *)name toValue: (id)aVal
-   inRangesWithAttribute: (NSString *)name2 notMatchingValue: (id)aVal2
-   withRange: (NSRange)aRange;
-- (void)setAttribute: (NSString *)name toValue: (id)aVal
-   inRangesWithAttributes: (NSArray *)name2 notMatchingValues: (NSArray *)aVal2
-   withRange: (NSRange)aRange;
 @end
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...);

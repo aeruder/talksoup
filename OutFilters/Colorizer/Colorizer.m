@@ -186,7 +186,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		{
 			if (![dict objectForKey: IRCBold])
 			{
-				[dict setObject: @"bold"
+				[dict setObject: IRCBoldValue
 				  forKey: IRCBold];
 			}
 			else
@@ -198,7 +198,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
-				[dict setObject: @"ul"
+				[dict setObject: IRCUnderlineValue
 				  forKey: IRCUnderline];
 			}
 			else
@@ -214,7 +214,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		{
 			if (![dict objectForKey: IRCReverse])
 			{
-				[dict setObject: @"reverse"
+				[dict setObject: IRCReverseValue
 				  forKey: IRCReverse];
 			}
 			else

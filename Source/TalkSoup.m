@@ -55,8 +55,11 @@ NSString *IRCColorGrey = @"IRCColorGrey";
 NSString *IRCColorLightGrey = @"IRCColorLightGrey";
 NSString *IRCColorCustom = @"IRCColorCustom";
 NSString *IRCBold = @"IRCBold";
+NSString *IRCBoldValue = @"IRCBoldValue";
 NSString *IRCUnderline = @"IRCUnderline";
+NSString *IRCUnderlineValue = @"IRCUnderlineValue";
 NSString *IRCReverse = @"IRCReverse";
+NSString *IRCReverseValue = @"IRCReverseValue";
 
 id _TS_;
 id _TSDummy_;
@@ -742,11 +745,11 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
 {
 	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
-	  MARK, IRCBold, @"bold", _(@"Output: "), activatedOutput, @"\n",
-	  MARK, IRCBold, @"bold", _(@"Input: "), activatedInput, @"\n",
-	  MARK, IRCBold, @"bold", _(@"Output Filters: "), [[self activatedOutFilters]
+	  MARK, IRCBold, IRCBoldValue, _(@"Output: "), activatedOutput, @"\n",
+	  MARK, IRCBold, IRCBoldValue, _(@"Input: "), activatedInput, @"\n",
+	  MARK, IRCBold, IRCBoldValue, _(@"Output Filters: "), [[self activatedOutFilters]
 	    componentsJoinedByString: @", "], @"\n",
-	  MARK, IRCBold, @"bold", _(@"Input Filters: "), [[self activatedInFilters]
+	  MARK, IRCBold, IRCBoldValue, _(@"Input Filters: "), [[self activatedInFilters]
 	    componentsJoinedByString: @", "], nil);
 }
 - (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
@@ -785,7 +788,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /load <in/out> <filter>"), @"\n",
-		  MARK, IRCBold, @"bold", _(@"Possible filters: "), 
+		  MARK, IRCBold, IRCBoldValue, _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	
@@ -834,7 +837,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /unload <in/out> <filter>"), @"\n", 
-		  MARK, IRCBold, @"bold", _(@"Possible filters: "), 
+		  MARK, IRCBold, IRCBoldValue, _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	

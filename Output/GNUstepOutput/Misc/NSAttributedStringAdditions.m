@@ -131,17 +131,17 @@ NSString *TypeOfColor = @"TypeOfColor";
 			if (![dict objectForKey: IRCColor])
 			{
 				if ([[dict objectForKey: NSBackgroundColorAttributeName]
-				  isEqual: obg])
+				  isEqual: ofg])
 				{
-					[dict setObject: bg forKey: NSBackgroundColorAttributeName];
+					[dict setObject: fg forKey: NSBackgroundColorAttributeName];
 				}
 			}
 			if (![dict objectForKey: IRCBackgroundColor])
 			{
 				if ([[dict objectForKey: NSForegroundColorAttributeName]
-				  isEqual: ofg])
+				  isEqual: obg])
 				{
-					[dict setObject: fg forKey: NSForegroundColorAttributeName];
+					[dict setObject: bg forKey: NSForegroundColorAttributeName];
 				}
 			}
 		}
