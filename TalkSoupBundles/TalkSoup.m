@@ -155,6 +155,8 @@ static inline NSArray *get_directories_with_talksoup()
 		}
 	}
 
+	[y addObject: [[NSBundle mainBundle] resourcePath]];
+
 	x = [NSArray arrayWithArray: y];
 	RELEASE(y);
 

@@ -99,7 +99,6 @@
    sender: aPlugin;
 
 - requestNamesOnChannel: (NSAttributedString *)aChannel 
-   fromServer: (NSAttributedString *)aServer 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
@@ -153,12 +152,6 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 
-- requestServiceListWithMask: (NSAttributedString *)aMask 
-   ofType: (NSAttributedString *)type 
-   onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin;
-
 - requestServerRehashOnConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
@@ -181,12 +174,6 @@
    sender: aPlugin;
 
 - sendWallops: (NSAttributedString *)message onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin;
-
-- queryService: (NSAttributedString *)aService 
-   withMessage: (NSAttributedString *)aMessage 
-   onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;
 

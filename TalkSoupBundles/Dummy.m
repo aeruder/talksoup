@@ -89,7 +89,6 @@
    sender: aPlugin { return nil; }
 
 - requestNamesOnChannel: (NSAttributedString *)aChannel 
-   fromServer: (NSAttributedString *)aServer 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin { return nil; }
@@ -144,12 +143,6 @@
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin { return nil; }
 
-- requestServiceListWithMask: (NSAttributedString *)aMask 
-   ofType: (NSAttributedString *)type 
-   onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick
-   sender: aPlugin { return nil; }
-
 - requestServerRehashOnConnection: aConnection 
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin { return nil; }
@@ -178,12 +171,6 @@
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin 
    { return nil; }
-
-- queryService: (NSAttributedString *)aService 
-   withMessage: (NSAttributedString *)aMessage 
-   onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick
-   sender: aPlugin { return nil; }
 
 - listWho: (NSAttributedString *)aMask onlyOperators: (BOOL)operators 
    onConnection: aConnection 
