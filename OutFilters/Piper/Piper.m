@@ -77,10 +77,19 @@ static NSAttributedString *pipeit(NSAttributedString *a)
 		[fdin closeFile];
 		newData = [fdout readDataToEndOfFile];
 		
-		str = AUTORELEASE([[NSString alloc] initWithData: newData 
+		str = AUTORELEASE([[NSMutableString alloc] initWithData: newData 
 		  encoding: NSUTF8StringEncoding]);
 		
+		[task terminate];
+		
 		if (!str) return a;
+
+		[str replaceOccurrencesOfString: @"\r\n" withString: @" " options: 0
+		  range: NSMakeRange(0, [str length])];
+		[str replaceOccurrencesOfString: @"\r" withString: @" " options: 0
+		  range: NSMakeRange(0, [str length])];
+		[str replaceOccurrencesOfString: @"\n" withString: @" " options: 0
+		  range: NSMakeRange(0, [str length])];
 	}
 	
 	return AUTORELEASE([[NSAttributedString alloc] initWithString: str]);
