@@ -29,6 +29,9 @@
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;
 
+#define USE_DATE [[NSDate date] descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S" \
+  timeZone: nil locale: nil]
+
 @implementation Logging
 + (void)initialize
 {
@@ -61,6 +64,10 @@ static NSInvocation *invoc = nil;
 		}
 		else
 		{
+			[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING DEACTIVATED\n",
+			  USE_DATE]
+			  dataUsingEncoding: [NSString defaultCStringEncoding]
+			  allowLossyConversion: YES]];
 			NSMapRemove(files, connection);
 			return S2AS(@"Logging turned off.");
 		}
@@ -89,6 +96,11 @@ static NSInvocation *invoc = nil;
 	
 	NSMapInsert(files, connection, x);
 	
+	[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING ACTIVATED\n",
+	  USE_DATE]
+	  dataUsingEncoding: [NSString defaultCStringEncoding]
+	  allowLossyConversion: YES]];
+	
 	return S2AS(@"Logging turned on.");
 }
 - pluginActivated
@@ -116,7 +128,7 @@ static NSInvocation *invoc = nil;
 	}
 	
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC (%@)\n", 
-	  [NSDate date], [aConnection nick], [aMessage string]] 
+	  USE_DATE, [aConnection nick], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -140,7 +152,7 @@ static NSInvocation *invoc = nil;
 	}
 	
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REPLY %@ %@\n", 
-	  [NSDate date], [aConnection nick], [aPerson string], [aCTCP string], 
+	  USE_DATE, [aConnection nick], [aPerson string], [aCTCP string], 
 	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -164,7 +176,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
-	  [NSDate date], [aConnection nick], [aPerson string], [aCTCP string], 
+	  USE_DATE, [aConnection nick], [aPerson string], [aCTCP string], 
 	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -187,7 +199,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
-	  [NSDate date], [aConnection nick], [receiver string], [message string]] 
+	  USE_DATE, [aConnection nick], [receiver string], [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -209,7 +221,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
-	  [NSDate date], [aConnection nick], [receiver string], [message string]] 
+	  USE_DATE, [aConnection nick], [receiver string], [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -231,7 +243,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] * %@:%@ %@\n", 
-	  [NSDate date], [aConnection nick], [receiver string], [anAction string]] 
+	  USE_DATE, [aConnection nick], [receiver string], [anAction string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -251,7 +263,11 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] Connection Terminated\n", 
-	  [NSDate date]] 
+	  USE_DATE] 
+	  dataUsingEncoding: [NSString defaultCStringEncoding]
+	  allowLossyConversion: YES]];
+	[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING DEACTIVATED\n",
+	  USE_DATE]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 	
@@ -278,7 +294,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
-	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
+	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
 	  [receiver string], [aCTCP string], [argument string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -305,7 +321,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@ %@\n", 
-	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
 	  [receiver string], [aCTCP string], [argument string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -326,7 +342,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] ERROR: %@\n", [NSDate date],
+	[x writeData: [[NSString stringWithFormat: @"[%@] ERROR: %@\n", USE_DATE,
 	  [anError string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -350,7 +366,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] Wallops(%@): %@\n", 
-	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string], 
+	  USE_DATE, [[IRCUserComponents(sender) objectAtIndex: 0] string], 
 	  [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -375,7 +391,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ was kicked from %@ by %@ (%@)\n", 
-	  [NSDate date], [aPerson string], [aChannel string], 
+	  USE_DATE, [aPerson string], [aChannel string], 
 	  [[IRCUserComponents(kicker) objectAtIndex: 0] string], [reason string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -398,7 +414,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has invited you to %@\n", 
-	  [NSDate date], [[IRCUserComponents(inviter) objectAtIndex: 0] string], 
+	  USE_DATE, [[IRCUserComponents(inviter) objectAtIndex: 0] string], 
 	  [[IRCUserComponents(inviter) objectAtIndex: 1] string], [aChannel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -438,7 +454,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ sets mode %@ %@ %@\n", 
-	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
+	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
 	  [mode string], [anObject string], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -478,7 +494,7 @@ static NSInvocation *invoc = nil;
 	}
 	
 	[x writeData: [[NSString stringWithFormat: @"[%@] (%@) %@\n", 
-	  [NSDate date], [command string], str] 
+	  USE_DATE, [command string], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 
@@ -501,7 +517,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ is now known as %@\n", 
-	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
 	  [newName string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -525,7 +541,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has joined %@\n", 
-	  [NSDate date], [[IRCUserComponents(joiner) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(joiner) objectAtIndex: 0] string],
 	  [[IRCUserComponents(joiner) objectAtIndex: 1] string], [channel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -549,7 +565,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has parted %@(%@)\n", 
-	  [NSDate date], [[IRCUserComponents(parter) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(parter) objectAtIndex: 0] string],
 	  [channel string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -572,7 +588,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC(%@)\n", 
-	  [NSDate date], [[IRCUserComponents(quitter) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(quitter) objectAtIndex: 0] string],
 	  [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -595,7 +611,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] %@ changed the topic in %@ to '%@'\n", 
-	  [NSDate date], [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
 	  [channel string], [aTopic string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -618,7 +634,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
-	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(sender) objectAtIndex: 0] string],
 	  [to string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -641,7 +657,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> %@\n", 
-	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(sender) objectAtIndex: 0] string],
 	  [to string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -664,7 +680,7 @@ static NSInvocation *invoc = nil;
 	}
 
 	[x writeData: [[NSString stringWithFormat: @"[%@] * %@:%@ %@\n", 
-	  [NSDate date], [[IRCUserComponents(sender) objectAtIndex: 0] string],
+	  USE_DATE, [[IRCUserComponents(sender) objectAtIndex: 0] string],
 	  [to string], [anAction string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -672,4 +688,6 @@ static NSInvocation *invoc = nil;
 	return self;
 }
 @end
+
+#undef USE_DATE
 
