@@ -15,10 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "TalkSoupBundles/TalkSoup.h"
 #include "Controllers/InputController.h"
-
 #include "Controllers/ContentController.h"
+#include "GNUstepOutput.h"
 
+#include <Foundation/NSCharacterSet.h>
+#include <Foundation/NSArray.h>
+#include <Foundation/NSString.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSWindow.h>
 
@@ -89,7 +93,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 }
 
 @interface InputController (PrivateInputController)
-- singleLineTyped: (NSString *)aLine;
+- (void)singleLineTyped: (NSString *)aLine;
 @end
 
 @implementation InputController
@@ -97,7 +101,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 {
 	if (!(self = [super init])) return nil;
 
-	content = RETAIN(aContent);
+	content = aContent;
 	output = [_TS_ output];
 	
 	if (![output isKindOf: [GNUstepOutput class]])
@@ -116,7 +120,6 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	id object;
 	
 	command = AUTORELEASE(RETAIN([sender stringValue]));
-	[[content window] makeFirstResponder: sender];
 
 	if ([lines = [command componentsSeparatedByString: @"\r\n"] count] > 1)
 	{
@@ -143,12 +146,21 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 			[self singleLineTyped: object];
 		}
 	}	
+	
+	[sender setStringValue: @""];
+	[[content window] makeFirstResponder: sender];
 }
 @end
 
 @implementation InputController (PrivateInputController)
-- (void)lineTyped: (NSString *)command
+- (void)singleLineTyped: (NSString *)command
 {
+	id connection;
+	
+	connection = AUTORELEASE(RETAIN([output connectionToContent: content]));
+	
+	NSLog(@"Here we are!!!!!!! %@ %@", command, connection);
+	
 	if ([command length] == 0)
 	{
 		return;
@@ -176,7 +188,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 			substring = [array objectAtIndex: 0];
 		}
 		
-		substring = [substring lowercaseIRCString];
+		substring = GNUstepOutputLowercase(substring);
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
 		  @"command%@:", [substring capitalizedString]]);
 		
@@ -191,24 +203,27 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 				commandSelector = 0;
 			}
 		}
-		if (commandSelector == 0)
+		if (commandSelector == 0 && connection)
 		{
-			[self writeString: @"%@ %@", substring, arguments]; 
+			[_TS_ writeRawString: [NSString stringWithFormat: @"%@ %@", 
+			    substring, arguments]
+			  onConnection: [output connectionToContent: content] sender: output]; 
 		}
 		return;
 	}
 
-	if (current == console)
+	if (!connection) return;
+	
+	if ([content currentViewName] == ContentConsoleName)
 	{
-		[self putMessage: @"Join a channel first.\n" in: console];
 		return;
 	}
 
-	[self putMessage: [NSString stringWithFormat: 
-	  @"\00302<\017%@\00302>\017 %@\n", nick, command]
-	  in: nil];
-	
-	[self sendMessage: command to: [current identifier]];
+	[_TS_ sendMessage: S2AS(command) to: S2AS([content currentViewName])
+	  onConnection: connection sender: output];
+	[_TS_ messageReceived: S2AS(command) to: S2AS([content currentViewName])
+	  from: S2AS([connection nick]) onConnection: connection 
+	  sender: [_TS_ input]];
 }
 @end
 

@@ -46,6 +46,13 @@ extern NSString *ContentConsoleName;
 	NSString *current;
 	InputController *inputController;
 }
+- (NSTextField *)typeView;
+
+- (NSTextField *)nickView;
+
+- (NSTabView *)tabView;
+
+- (NSWindow *)window;
 
 - (NSAttributedString *)labelForViewWithName: (NSString *)aChannel;
 

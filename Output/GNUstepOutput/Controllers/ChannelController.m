@@ -22,13 +22,27 @@
 @implementation ChannelController
 - (void)awakeFromNib
 {
+	id x;
 	[splitView setVertical: YES];
+	
+	x = RETAIN([window contentView]);
+	[window close];
+	RELEASE(window);
+	window = RETAIN(x);
+}
+- (void)dealloc
+{
+	RELEASE(window);
+	RELEASE(chatView);
+	RELEASE(splitView);
+	RELEASE(tableView);
+	[super dealloc];
 }
 - (id)chatView
 {
 	return chatView;
 }
-- (id)window
+- (id)contentView
 {
 	return window;
 }

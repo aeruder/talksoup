@@ -33,6 +33,11 @@
 
 NSString *ContentConsoleName = @"Content Console Name";
 
+@interface ContentController (WindowTabViewDelegate)
+- (void)tabView: (NSTabView *)aTabView
+  didSelectTabViewItem: (NSTabViewItem *)tabViewItem;
+@end
+
 @implementation ContentController
 - init
 {
@@ -49,7 +54,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	  NSObjectMapValueCallBacks, 10);
 	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
-	
+
 	return self;
 }	
 - (void)awakeFromNib
@@ -58,10 +63,17 @@ NSString *ContentConsoleName = @"Content Console Name";
 	{
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
 	}
-
+	
+	inputController = [[InputController alloc] initWithContentController: self];
+	
+	[typeView setTarget: inputController];
+	[typeView setAction: @selector(enterPressed:)];
+	
+	[tabView setDelegate: self];
+	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
 	  _l(@"Unconnected")])];
-
+	
 	[window makeKeyAndOrderFront: nil];
 }
 - (void)dealloc
@@ -69,6 +81,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	NSFreeMapTable(bothToName);
 	NSFreeMapTable(tabItemToName);
 
+	[tabView setDelegate: nil];
+	[typeView setTarget: nil];
+	RELEASE(inputController);
 	RELEASE(typeView);
 	RELEASE(nickView);
 	RELEASE(tabView);
@@ -80,8 +95,24 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(nameToLabel);
 	RELEASE(nameToTabItem);
 	RELEASE(inputController);
-
+	
 	[super dealloc];
+}
+- (NSTextField *)typeView
+{
+	return typeView;
+}
+- (NSTextField *)nickView
+{
+	return nickView;
+}
+- (NSTabView *)tabView
+{
+	return tabView;
+}
+- (NSWindow *)window
+{
+	return window;
 }
 - (NSAttributedString *)labelForViewWithName: (NSString *)aChannel
 {
@@ -199,7 +230,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabItem setAttributedLabel: aLabel];
 
-	[tabItem setView: [[query window] contentView]];
+	[tabItem setView: [query contentView]];
 
 	[tabView addTabViewItem: tabItem];
 
@@ -262,5 +293,25 @@ NSString *ContentConsoleName = @"Content Console Name";
 - (NSString *)currentViewName
 {
 	return [nameToPresentation objectForKey: current];
+}
+@end
+
+@implementation ContentController (WindowTabViewDelegate)
+- (void)tabView: (NSTabView *)aTabView
+  didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	id name;
+	
+	name = NSMapGet(tabItemToName, tabViewItem);
+	
+	if (name == nil || tabView != aTabView)
+	{
+		NSLog(@"Got a message from the wrong tab view or tab view item isn't there...");
+		return;
+	}
+
+	RELEASE(current);	
+	current = RETAIN(name);
+	[window makeFirstResponder: typeView];
 }
 @end

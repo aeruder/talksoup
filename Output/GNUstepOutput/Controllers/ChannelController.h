@@ -30,9 +30,9 @@
 		id window;
 	}
 
-- (id)chatView;
+- (id)chatView; 
 
-- (id)window;
+- (id)contentView;
 
 - (id)splitView;
 

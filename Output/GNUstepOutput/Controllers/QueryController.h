@@ -24,13 +24,14 @@
 
 @interface QueryController : NSObject
 	{
+		id contentView;
 		id window;
 		id chatView;
 	}
 
-- (id)chatView;
+- (id)contentView;
 
-- (id)window;
+- (id)chatView;
 
 @end
 
