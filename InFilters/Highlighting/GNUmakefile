@@ -3,7 +3,7 @@ BUNDLE_NAME = Highlighting
 
 BUNDLE_EXTENSION = .bundle
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/ApplicationSupport/TalkSoup/InFilters
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
 Highlighting_PRINCIPAL_CLASS = Highlighting
 

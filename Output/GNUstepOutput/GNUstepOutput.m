@@ -339,7 +339,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 - (void)applicationWillFinishLaunching: (NSNotification *)aNotification
 {
 	NSMenu *menu;
-	NSMenuItem *item;
+	id item;
 	NSMenu *tempMenu;
 	unichar leftKey = NSLeftArrowFunctionKey;
 	unichar rightKey = NSRightArrowFunctionKey;

@@ -2,7 +2,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = GNUstepOutput
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/ApplicationSupport/TalkSoup/Output
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/Output
 
 BUNDLE_EXTENSION = .bundle
 
