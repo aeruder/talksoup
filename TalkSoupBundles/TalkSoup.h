@@ -40,6 +40,7 @@ extern NSString *IRCDefaultsPassword;
 
 // Key
 extern NSString *IRCColor;
+extern NSString *IRCBackgroundColor;
 // Values
 extern NSString *IRCColorWhite;
 extern NSString *IRCColorBlack;
@@ -57,6 +58,11 @@ extern NSString *IRCColorLightBlue;
 extern NSString *IRCColorLightMagenta;
 extern NSString *IRCColorGrey;
 extern NSString *IRCColorLightGrey;
+
+// Keys
+extern NSString *IRCBold;
+extern NSString *IRCUnderline;
+
 
 #ifndef TALKSOUP_H
 #define TALKSOUP_H
