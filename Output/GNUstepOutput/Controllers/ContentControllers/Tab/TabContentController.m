@@ -63,6 +63,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	
+	highlightedTabs = [NSMutableArray new];
+	
 	textColor = RETAIN([NSColor colorFromEncodedData: 
 	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
 	
@@ -91,6 +93,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabView setDelegate: nil];
 	[typeView setTarget: nil];
+	RELEASE(highlightedTabs);
 	RELEASE(textColor);
 	RELEASE(typeView);
 	RELEASE(nickView);
@@ -105,6 +108,34 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(current);
 	
 	[super dealloc];
+}
+- highlightTabWithName: (NSString *)aName withColor: (NSColor *)aColor
+{
+	NSString *lo = GNUstepOutputLowercase(aName);
+	id str = [nameToLabel objectForKey: lo];
+	id tab = [nameToTabItem objectForKey: lo];
+	id new = AUTORELEASE([[NSMutableAttributedString alloc] 
+	  initWithAttributedString: str]);
+		
+	if ([lo isEqualToString: current]) return self;
+	
+	if (aColor)
+	{
+		[new addAttribute: NSForegroundColorAttributeName value: aColor
+		  range: NSMakeRange(0, [new length])];
+		[tab setAttributedLabel: new];
+		if (![highlightedTabs containsObject: lo])
+		{
+			[highlightedTabs addObject: lo];
+		}
+	}
+	else
+	{
+		[tab setAttributedLabel: str];
+		[highlightedTabs removeObject: lo];
+	}
+
+	return self;
 }
 - setTextColor: (NSColor *)aColor
 {
@@ -532,6 +563,12 @@ NSString *ContentConsoleName = @"Content Console Name";
 		return;
 	}
 
+	if ([highlightedTabs containsObject: name])
+	{
+		[(AttributedTabViewItem *)tabViewItem setAttributedLabel: 
+		  [nameToLabel objectForKey: name]];
+	}
+	
 	RELEASE(current);	
 	current = RETAIN(name);
 	[window makeFirstResponder: typeView];

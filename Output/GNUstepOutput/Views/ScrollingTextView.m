@@ -26,6 +26,10 @@
 #include <math.h>
 
 @implementation ScrollingTextView
+- (BOOL)acceptsFirstResponder
+{
+	return NO;
+}
 - (void)setFrame: (NSRect)frameRect
 {
 	BOOL scroll = NO;

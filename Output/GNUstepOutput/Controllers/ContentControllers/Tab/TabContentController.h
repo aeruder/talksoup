@@ -44,12 +44,15 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 	NSMutableDictionary *nameToPresentation;
 	NSMutableDictionary *nameToLabel;
 	NSMutableDictionary *nameToTabItem;
+	NSMutableArray *highlightedTabs;
 	NSMapTable *tabItemToName;
 	NSMapTable *bothToName;
 	NSString *current;
 	NSColor *textColor;
 }
 - setTextColor: (NSColor *)aColor;
+
+- highlightTabWithName: (NSString *)aName withColor: (NSColor *)aColor;
 
 - (NSArray *)allViews;
 - (NSArray *)allChannelNames;
