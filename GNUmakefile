@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME=TalkSoup
-VERSION=0.82pre1
+VERSION=0.82pre2
 
 SUBPROJECTS = Source Input Output InFilters OutFilters
 
