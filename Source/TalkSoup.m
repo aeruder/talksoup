@@ -188,6 +188,22 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	return x;
 }
 
+static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names,
+  NSMutableDictionary *objects)
+{
+	NSEnumerator *iter;
+	id object;
+	
+	if (!names) return;
+	
+	iter = [objects keyEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[new setObject: [names objectForKey: object] forKey: object];
+	}
+}
+		
 @implementation TalkSoup
 + (TalkSoup *)sharedInstance
 {
@@ -230,39 +246,60 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	id object;
 	NSEnumerator *iter;
 	id arr;
+	id inputNames2, outputNames2, inNames2, outNames2;
 	
 	dirList = get_directories_with_talksoup();
 
 	iter = [dirList objectEnumerator];
+
+	inputNames2 = [NSMutableDictionary new];
+	outputNames2 = [NSMutableDictionary new];
+	inNames2 = [NSMutableDictionary new];
+	outNames2 = [NSMutableDictionary new];
+	
+	while ((object = [iter nextObject]))
+	{
+		arr = get_bundles_in_directory(
+		 [object stringByAppendingString: @"/Input"]);
+		carefully_add_bundles(inputNames2, arr);
+		
+		arr = get_bundles_in_directory(
+		 [object stringByAppendingString: @"/InFilters"]);
+		carefully_add_bundles(inNames2, arr);
+
+		arr = get_bundles_in_directory(
+		 [object stringByAppendingString: @"/OutFilters"]);
+		carefully_add_bundles(outNames2, arr);
+		
+		arr = get_bundles_in_directory(
+		 [object stringByAppendingString: @"/Output"]);
+		carefully_add_bundles(outputNames2, arr);
+	}
+	
+	if (activatedInput)
+	{
+		[inputNames2 setObject: [inputNames objectForKey: activatedInput] forKey: 
+		  activatedInput];
+	}
+	
+	if (activatedOutput)
+	{
+		[outputNames2 setObject: [outputNames objectForKey: activatedOutput] forKey:
+		  activatedOutput];
+	}
+	
+	add_old_entries(inNames2, inNames, inObjects);
+	add_old_entries(outNames2, outNames, outObjects);
 	
 	RELEASE(inputNames);
 	RELEASE(outputNames);
 	RELEASE(inNames);
 	RELEASE(outNames);
 
-	inputNames = [NSMutableDictionary new];
-	outputNames = [NSMutableDictionary new];
-	inNames = [NSMutableDictionary new];
-	outNames = [NSMutableDictionary new];
-	
-	while ((object = [iter nextObject]))
-	{
-		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/Input"]);
-		carefully_add_bundles(inputNames, arr);
-		
-		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/InFilters"]);
-		carefully_add_bundles(inNames, arr);
-
-		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/OutFilters"]);
-		carefully_add_bundles(outNames, arr);
-		
-		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/Output"]);
-		carefully_add_bundles(outputNames, arr);
-	}
+	inputNames = inputNames2;
+	outputNames = outputNames2;
+	inNames = inNames2;
+	outNames = outNames2;
 }
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
@@ -718,6 +755,8 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	id first, second;
 	id array = nil;
 	BOOL isIn = NO;
+	
+	[self refreshPluginList];
 	
 	if ([x count] < 1)
 	{

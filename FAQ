@@ -166,6 +166,12 @@ Questions covered in this FAQ:
     preferences by typing /saveloaded.  Also, keep in mind that order is
     important.
 
+	Due to a deficiency in the Objective-C compiler, the bundles
+	can NOT be unloaded, they can be merely deactivated.  So, if
+	you update a bundle, don't expect that unloading and then loading
+	that bundle will get you using the update.  You must restart
+	TalkSoup to use the updated bundle.
+
 3.4 Is order important on the input/output filters?
     
     YES!  To illustrate how it can make a difference, here's an
