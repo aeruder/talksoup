@@ -2,8 +2,8 @@
                                 DCCGetter.h
                           -------------------
     begin                : Wed Jan  7 21:08:21 CST 2004
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

@@ -2,8 +2,8 @@
                                 Channel.h
                           -------------------
     begin                : Tue Apr  8 17:15:55 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

@@ -2,8 +2,8 @@
                                 NSAttributedStringAdditions.m
                           -------------------
     begin                : Mon Apr 28 06:48:06 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

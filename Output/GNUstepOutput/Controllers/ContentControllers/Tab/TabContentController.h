@@ -2,7 +2,7 @@
                         TabContentController.h
                           -------------------
     begin                : Fri Aug 27 11:56:47 CDT 2004
-    copyright            : (C) 2004 by Andrew Ruder
+    copyright            : (C) 2005 by Andrew Ruder
     email                : aeruder@ksu.edu
  ***************************************************************************/
 

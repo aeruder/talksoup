@@ -2,8 +2,8 @@
                                 InputController.h
                           -------------------
     begin                : Thu Mar 13 13:18:48 CST 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

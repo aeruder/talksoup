@@ -2,8 +2,8 @@
                               Logging.m
                           -------------------
     begin                : Sat Jun 27 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************
@@ -119,7 +119,7 @@ static NSInvocation *invoc = nil;
 	 @"log that connection.  To set up persistent logging, please "
 	 @"see the FAQ distributed with TalkSoup."),
 	 @"\n\n",
-	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
+	 _l(@"Copyright (C) 2005 by Andrew Ruder"),
 	 nil);
 }
 - pluginActivated

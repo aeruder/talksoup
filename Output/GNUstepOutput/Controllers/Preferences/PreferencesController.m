@@ -2,10 +2,10 @@
                          PreferencesController.m
                           -------------------
     begin                : Thu Apr  3 08:09:15 CST 2003
-    copyright            : (C) 2003 by Andy Ruder
+    copyright            : (C) 2005 by Andrew Ruder
 	                       w/ much of the code borrowed from Preferences.app
 						   by Jeff Teunissen
-    email                : aeruder@yahoo.com
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

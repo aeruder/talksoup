@@ -2,8 +2,8 @@
                              KeepAlive.h
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

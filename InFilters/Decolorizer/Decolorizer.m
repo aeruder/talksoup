@@ -2,8 +2,8 @@
                               Decolorizer.m
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************
@@ -39,7 +39,7 @@ static NSAttributedString *decolor(id a)
 	 [NSNull null], IRCBold, IRCBoldValue,
 	 _l(@"Description: "), _l(@"Removes color from incoming messages."),
 	 @"\n\n",
-	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
+	 _l(@"Copyright (C) 2005 by Andrew Ruder"),
 	 nil);
 }
 - CTCPReplyReceived: (NSAttributedString *)aCTCP

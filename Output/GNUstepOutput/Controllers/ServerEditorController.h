@@ -2,8 +2,8 @@
                                 ServerEditorController.h
                           -------------------
     begin                : Tue May  6 22:58:36 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

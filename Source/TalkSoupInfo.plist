@@ -2,10 +2,10 @@
     NSIcon = "TalkSoup.tiff";
 	ApplicationDescription = "An IRC Client for GNUstep";
     ApplicationName = TalkSoup;
-    ApplicationRelease = "0.82pre8";
+    ApplicationRelease = "1.0beta";
     ApplicationURL = "http://linuks.mine.nu/andy/";
-    Authors = ("Andrew Ruder <aeruder@yahoo.com>");
-    Copyright = "Copyright \u00a9 2003 Andrew Ruder <aeruder@yahoo.com>";
+    Authors = ("Andrew Ruder <aeruder@ksu.edu");
+    Copyright = "Copyright \u00a9 2005 Andrew Ruder <aeruder@yahoo.com>";
     CopyrightDescription = "Released under the GNU GPL. See COPYING for details.";
     FullVersionID = "0.01";
 }

@@ -155,7 +155,7 @@ NSAttributedString *emoticonify(NSAttributedString *message)
 	}
 
 	[aString appendAttributedString:	 
-	  S2AS(_l(@"\nCopyright (C) 2003 by Ludovic Marcotte with changes "
+	  S2AS(_l(@"\nCopyright (C) 2005 by Ludovic Marcotte with changes "
 	     @"by Andrew Ruder"))]; 
 	
 	return aString;

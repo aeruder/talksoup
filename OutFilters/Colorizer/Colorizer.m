@@ -2,8 +2,8 @@
                               Colorizer.m
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************
@@ -288,7 +288,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 	 @"off of that attribute.  Use %O to clear all colors and "
 	 @"attributes."),
 	 @"\n\n",
-	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
+	 _l(@"Copyright (C) 2005 by Andrew Ruder"),
 	 nil);
 }
 - quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection

@@ -2,8 +2,8 @@
                                 KeyTextView.m
                           -------------------
     begin                : Fri Apr 11 14:14:45 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************

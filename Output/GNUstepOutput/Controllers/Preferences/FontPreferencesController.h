@@ -2,7 +2,7 @@
                         FontPreferencesController.h
                           -------------------
     begin                : Sat Aug 14 19:19:30 CDT 2004
-    copyright            : (C) 2004 by Andrew Ruder
+    copyright            : (C) 2005 by Andrew Ruder
     email                : aeruder@ksu.edu
  ***************************************************************************/
 

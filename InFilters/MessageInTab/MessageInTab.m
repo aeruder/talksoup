@@ -2,8 +2,8 @@
                                 MessageInTab.m
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************
@@ -31,7 +31,7 @@
 	 _l(@"Description: "), _l(@"This bundle will open a new tab for "
 	 @"any incoming private messages."),
 	 @"\n\n",
-	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
+	 _l(@"Copyright (C) 2005 by Andrew Ruder"),
 	 nil);
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to

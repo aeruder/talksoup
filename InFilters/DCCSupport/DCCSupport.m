@@ -2,8 +2,8 @@
                               DCCSupport.m
                           -------------------
     begin                : Wed Jul 2 18:58:30 CDT 2003
-    copyright            : (C) 2003 by Andy Ruder
-    email                : aeruder@yahoo.com
+    copyright            : (C) 2005 by Andrew Ruder
+    email                : aeruder@ksu.edu
  ***************************************************************************/
 
 /***************************************************************************
@@ -860,7 +860,7 @@ static NSString *unique_path(NSString *path)
 	 _l(@"Description: "), _l(@"Provides a interface to DCC file transfer "
 	 @"through the /dcc command.  Type /dcc when this bundle is loaded "
 	 @"for more information."), @"\n\n",
-	 _l(@"Copyright (C) 2003 by Andrew Ruder"), nil);
+	 _l(@"Copyright (C) 2005 by Andrew Ruder"), nil);
 }
 - DCCSendRequestReceived: (NSDictionary *)aInfo onConnection: aConnection
 {
