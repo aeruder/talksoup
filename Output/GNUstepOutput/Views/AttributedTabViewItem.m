@@ -64,7 +64,8 @@
 	  aString];
 
 	[attributedLabel addAttribute: NSFontAttributeName value:
-	  [NSFont userFontOfSize: -1.0] range: NSMakeRange(0, [attributedLabel length])];
+	  [NSFont fontWithName: @"Helvetica" size: 12.0] 
+	  range: NSMakeRange(0, [attributedLabel length])];
 	  
 	[self setLabel: [attributedLabel string]];
 

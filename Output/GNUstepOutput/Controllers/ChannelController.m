@@ -67,9 +67,7 @@
 
 	[tableView setCornerView: nil];
 	[tableView setHeaderView: nil];
-	font = [NSFont userFontOfSize: -1.0];
-	[tableView setFont: font]; 
-	[tableView setRowHeight: [font pointSize] + 5.0];
+
 	[tableView addTableColumn: userColumn];
 	[tableView setDrawsGrid: NO];
 	
@@ -80,6 +78,11 @@
 	
 	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
 	[x setFormatter: AUTORELEASE([ChannelFormatter new])];
+	
+	font = [NSFont userFontOfSize: -1.0];
+	[x setFont: font];
+	[tableView setRowHeight: [font pointSize] + 5.0];
+	
 	[userColumn setDataCell: x];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
