@@ -303,6 +303,12 @@
 	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
 	id panel;
 	
+	if (!font)
+	{
+		font = [NSFont userFontOfSize: (float)[[_GS_ defaultsObjectForKey:
+		  GNUstepOutputFontSize] intValue]];
+	}
+
 	panel = [NSFontPanel sharedFontPanel];
 	
 	[[NSFontManager sharedFontManager] setSelectedFont: font
@@ -347,6 +353,12 @@
 
 	font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
 	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	
+	if (!font)
+	{
+		font = [NSFont userFontOfSize: (float)[[_GS_ defaultsObjectForKey:
+		  GNUstepOutputFontSize] intValue]];
+	}
 	  
 	font = [sender convertFont: font];
 	

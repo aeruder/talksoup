@@ -96,6 +96,8 @@ static void clear_scrollback(NSMutableAttributedString *back)
 }	
 - (void)awakeFromNib
 {
+	id font;
+
 	while ([tabView numberOfTabViewItems] > 0)
 	{
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
@@ -105,8 +107,14 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	[tabView setFont: [NSFont systemFontOfSize: 12.0]];
 	[tabView setDelegate: self];
 	
-	[self setChatFont: [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
-	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]]];
+	font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	
+	if (!font) 
+		font = [NSFont userFontOfSize: (float)[[_GS_ 
+		  defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+		
+	[self setChatFont: font];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
 	  _l(@"Unconnected")])];
