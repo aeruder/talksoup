@@ -19,7 +19,8 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/TabTextView.m
 
-Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m
+Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m\
+       Misc/NSAttributedStringAdditions.m
 
 Models = Models/Channel.m
 

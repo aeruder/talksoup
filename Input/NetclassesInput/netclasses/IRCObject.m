@@ -171,7 +171,6 @@ static inline NSString *get_next_IRC_word(NSString *line, NSString **prefix)
 		*prefix = nil;
 		return @"";
 	}
-	NSLog(@"'%@'", line);
 	NEXT_NON_SPACE(0, beg, line);
 	
 	if (beg == len)
