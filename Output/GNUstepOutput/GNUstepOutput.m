@@ -19,6 +19,8 @@
 
 #include "Controllers/ConnectionController.h"
 #include "Controllers/PreferencesController.h"
+#include "Controllers/ServerListController.h"
+#include "Controllers/NamePromptController.h"
 #include "Misc/NSColorAdditions.h"
 
 #include <AppKit/NSAttributedString.h>
@@ -338,10 +340,28 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	  action: @selector(orderFrontStandardInfoPanel:)
 	  keyEquivalent: @""];
 	
-	[tempMenu addItemWithTitle: @"Preferences"
+	[tempMenu addItemWithTitle: @"Preferences..."
 	  action: @selector(loadPreferencesPanel:)
-	  keyEquivalent: @"p"];
+	  keyEquivalent: @"P"];
 
+// Connection
+	item = [menu addItemWithTitle: @"Connection" action: 0
+	  keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
+	
+	[tempMenu addItemWithTitle: @"Connect To..." 
+	  action: @selector(openServerList:)
+	  keyEquivalent: @"n"];
+	
+	[tempMenu addItemWithTitle: @"Connect To Server..." 
+	  action: @selector(openNamePrompt:)
+	  keyEquivalent: @"N"];
+	
+	[tempMenu addItemWithTitle: @"Unconnected Window" 
+	  action: @selector(openEmptyWindow:)
+	  keyEquivalent: @"u"];
+	
 // Edit	
 	item = [menu addItemWithTitle: @"Edit" action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
@@ -367,9 +387,6 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	item = [menu addItemWithTitle: @"Windows" action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
-	[tempMenu addItemWithTitle: @"New Window" action: 
-	  @selector(connectToServer:) keyEquivalent: @"n"];
-
 	[NSApp setWindowsMenu: tempMenu];
 
 // Services
@@ -392,10 +409,19 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 }
-- (void)connectToServer: (NSNotification *)aNotification
+- (void)openEmptyWindow: (NSNotification *)aNotification
 {
-	id x = [ConnectionController new];
-	[x connectToServer: @"localhost" onPort: 6667];
+	[ConnectionController new];
+}
+- (void)openServerList: (NSNotification *)aNotification
+{
+	[NSBundle loadNibNamed: @"ServerList" owner: 
+	  [ServerListController new]];
+}
+- (void)openNamePrompt: (NSNotification *)aNotification
+{
+	[NSBundle loadNibNamed: @"NamePrompt" owner:
+	  [NamePromptController new]];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {
