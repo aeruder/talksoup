@@ -21,6 +21,9 @@
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
 
+NSArray *PossibleUserColors(void);
+NSString *IRCColorFromUserColor(NSString *string);
+
 @interface NSString (Separation)
 - separateIntoNumberOfArguments: (int)num;
 @end
