@@ -405,7 +405,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	
 	item = [tempMenu addItemWithTitle: _l(@"Topic Inspector")
 	  action: @selector(openTopicInspector:)
-	  keyEquivalent: @"T"];
+	  keyEquivalent: @"t"];
 	
 // Edit	
 	item = [menu addItemWithTitle: _l(@"Edit") action: 0 keyEquivalent: @""];
