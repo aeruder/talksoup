@@ -143,6 +143,7 @@
 	if (currentlySelected >= [extraNames count]) return;
 	
 	[extraNames removeObjectAtIndex: currentlySelected];
+	[self tableView: extraTable shouldSelectRow: currentlySelected];
 	[extraTable reloadData];
 }
 - (void)highlightInChannelHit: (id)sender

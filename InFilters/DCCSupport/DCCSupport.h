@@ -24,6 +24,7 @@ extern NSString *DCCCompletedDirectory;
 extern NSString *DCCPortRange;
 extern NSString *DCCGetTimeout;
 extern NSString *DCCSendTimeout;
+extern NSString *DCCBlockSize;
 extern NSString *DCCDefault;
 
 #ifdef _l

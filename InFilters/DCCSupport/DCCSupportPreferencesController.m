@@ -32,8 +32,7 @@
 
 #define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
 #define set_default(_x, _y) \
-{	[DCCSupport setDefaultsObject: _y forKey: _x];\
-	[controller reloadData];}
+{	[DCCSupport setDefaultsObject: _y forKey: _x]; }
 
 #define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
 #define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
@@ -55,9 +54,9 @@
 	  get_default(DCCCompletedDirectory)];
 	[changeDownloadField setStringValue:
 	  get_default(DCCDownloadDirectory)];
-	[blockSizeField setIntegerValue:
-	  GET_DEFAULT_INT(DCCBlockSize)];
-	[portRangeField setIntegerValue:
+	[blockSizeField setStringValue: [NSString stringWithFormat: @"%d",
+	  GET_DEFAULT_INT(DCCBlockSize)]];
+	[portRangeField setStringValue:
 	  get_default(DCCPortRange)];
 }
 - (void)shouldDisplay
@@ -107,7 +106,7 @@
 }
 - (void)blockSizeHit: (NSTextField *)sender
 {
-	SET_DEFAULT_INT(DCCBlockSize, [sender integerValue]);
+	SET_DEFAULT_INT(DCCBlockSize, [[sender stringValue] intValue]);
 	[self reloadData];
 }
 - (void)portRangeHit: (NSTextField *)sender

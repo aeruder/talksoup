@@ -45,6 +45,7 @@ NSString *DCCCompletedDirectory = @"DCCSupportCompletedDirectory";
 NSString *DCCPortRange = @"DCCSupportPortRange";
 NSString *DCCGetTimeout = @"DCCSupportGetTimeout";
 NSString *DCCSendTimeout = @"DCCSupportSendTimeout";
+NSString *DCCBlockSize = @"DCCSupportBlockSize";
 NSString *DCCDefault = @"DCCSupport";
 
 static NSInvocation *invoc = nil;
