@@ -150,7 +150,8 @@
 	    userFontButton,
 	    chatFontButton,
 	    chatFontField,
-	    userFontField
+	    userFontField,
+	    fontSetView
 	);
 	Super = NSObject;
     };

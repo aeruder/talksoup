@@ -38,6 +38,7 @@ extern NSString *GNUstepOutputUserListFont;
 		NSButton *chatFontButton;
 		NSTextField *chatFontField;
 		NSTextField *userFontField;
+		id fontSetView;
 		id lastView;
 	}
 - (NSFont *)getFontFromPreferences: (NSString *)aPrefName;

@@ -34,10 +34,18 @@
 NSString *GNUstepOutputChatFont = @"GNUstepOutputChatFont";
 NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 
+@interface FontPreferencesFontView : NSView
+	{
+		id delegate;
+	}
+- (void)setDelegate: aDelegate;
+@end
+
 @interface FontPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;
 - (void)refreshFromPreferences;
-- (void)changeFont: (id)sender;
+- (void)fontView: (FontPreferencesFontView *)aFontView
+   changeFont: (id)sender;
 @end
 
 @implementation FontPreferencesController
@@ -83,14 +91,14 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
 	  name: DefaultsChangedNotification 
-	  object: [NSString stringWithFormat: @"%@Size",
-	   GNUstepOutputChatFont]];
+	  object: [GNUstepOutputChatFont 
+	   stringByAppendingString: @"Size"]];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
 	  name: DefaultsChangedNotification 
-	  object: [NSString stringWithFormat: @"%@Size",
-	   GNUstepOutputUserListFont]];
+	  object: [GNUstepOutputUserListFont 
+	   stringByAppendingString: @"Size"]];
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: PreferencesModuleAdditionNotification 
@@ -105,11 +113,13 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+
+	[fontSetView setDelegate: self];
 }
 - (void)dealloc
 {
+	[fontSetView setDelegate: nil];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	[[NSFontManager sharedFontManager] setDelegate: nil];
 	RELEASE(preferencesView);
 	RELEASE(preferencesIcon);
 	[super dealloc];
@@ -168,7 +178,6 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 
 	return font;
 }
-
 - (void)hitFontButton: (NSButton *)aButton
 {
 	id panel;
@@ -185,16 +194,14 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	{
 		return;
 	}
+
+	[[NSFontManager sharedFontManager] setSelectedFont:
+	  [lastView font] isMultiple: NO];
 	
-	[[_PREFS_ window] makeFirstResponder: lastView];
+	[[_PREFS_ window] makeFirstResponder: fontSetView];
 	
 	panel = [NSFontPanel sharedFontPanel];
 
-	[[NSFontManager sharedFontManager] setSelectedFont: 
-	  [lastView font] isMultiple: NO];
-
-	[[NSFontManager sharedFontManager] setDelegate: self];
-	
 	[panel orderFront: self];
 
 	return;
@@ -226,6 +233,14 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 @implementation FontPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification
 {
+	id userInfo;
+	if (!activated) return;
+
+	userInfo = [aNotification userInfo];
+
+	if ([userInfo objectForKey: @"Owner"] == self) return;
+
+	[self refreshFromPreferences];
 }
 - (void)refreshFromPreferences
 {
@@ -246,9 +261,71 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	   [cFont displayName], [cFont pointSize]]];
 	[chatFontField setFont: cFont];
 }
+- (void)fontView: (FontPreferencesFontView *)aFontView
+   changeFont: (id)sender
+{
+	NSString *preference;
+	NSFont *aFont;
+	NSString *name;
+	NSString *size;
+	NSString *oldName;
+
+	if (lastView == userFontField)
+	{
+		preference = GNUstepOutputUserListFont;
+	}
+	else if (lastView == chatFontField)
+	{
+		preference = GNUstepOutputChatFont;
+	}
+	else
+	{
+		return;
+	}
+	
+	oldName = [[lastView font] fontName];
+
+	aFont = [[NSFontManager sharedFontManager] convertFont:
+	  [lastView font]];
+
+	if ([lastView font] == aFont) return;
+
+	[lastView setFont: aFont];
+
+	name = [aFont fontName];
+	size = [NSString stringWithFormat: @"%.1f", [aFont pointSize]];
+
+	[lastView setStringValue:
+	  [NSString stringWithFormat: @"%@ %@", [aFont displayName], size]];
+
+	[_PREFS_ setPreference: name 
+	  forKey: preference];
+	[_PREFS_ setPreference: size 
+	  forKey: [preference stringByAppendingString: @"Size"]];
+	
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: DefaultsChangedNotification
+	 object: preference 
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  _GS_, @"Bundle",
+	  name, @"New",
+	  self, @"Owner",
+	  oldName, @"Old",
+	  nil]];
+}
+@end
+
+@implementation FontPreferencesFontView
+- (BOOL)acceptsFirstResponder
+{
+	return YES;
+}
+- (void)setDelegate: aDelegate
+{
+	delegate = aDelegate;
+}
 - (void)changeFont: (id)sender
 {
-	NSLog(@"Font changed!");
-	NSLog(@"%@ %@ %@ %.1f", sender, lastView, [[lastView font] fontName], [[lastView font] pointSize]);
+	[delegate fontView: self changeFont: sender];
 }
 @end
