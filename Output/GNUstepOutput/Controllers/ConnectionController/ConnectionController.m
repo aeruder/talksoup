@@ -39,6 +39,8 @@
 #import <AppKit/NSFont.h>
 #import <Foundation/NSEnumerator.h>
 
+NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerUpdatedTopicNotification";
+
 @implementation ConnectionController
 - init
 {
@@ -104,6 +106,8 @@
 	nameToChannelData = [NSMutableDictionary new];
 	inputToName = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	
+	[self setLowercasingFunction: IRCLowercase];
+
 	[_GS_ addConnectionController: self];
 
 	[content bringNameToFront: ContentConsoleName];
@@ -229,6 +233,15 @@
 - (NSString *)password
 {
 	return password;
+}
+- (NSString * (*)(NSString *))lowercasingFunction
+{
+	return lowercase;
+}
+- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
+{
+	lowercase = aFunction;
+	[content setLowercasingFunction: lowercase];
 }
 - (id)connection
 {

@@ -29,6 +29,7 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSDate.h>
 #import <Foundation/NSCalendarDate.h>
+#import <Foundation/NSNotification.h>
 #import <AppKit/NSTableView.h>
 
 @implementation ConnectionController (NumericCommands)
@@ -37,8 +38,9 @@
 {
 	id channel = [arguments objectAtIndex: 0];
 	id topic = [arguments objectAtIndex: 1];
-	id data = [nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase([channel string])];
+	id lowername = lowercase([channel string]);
+	id data = [nameToChannelData objectForKey: lowername];
+	id view = [content viewControllerForName: lowername];
 	
 	[content putMessage: 
 	  BuildAttributedFormat(_l(@"Topic for %@ is \"%@\""), channel, topic) 
@@ -48,6 +50,14 @@
 	[data setTopicAuthor: @""];
 	[data setTopicDate: @""];
 	
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ConnectionControllerUpdatedTopicNotification
+	 object: view 
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  content, @"Content",
+	  data, @"Channel",
+	  nil]];
+
 	return self;
 }
 // RPL_TOPIC (extension???)
@@ -57,8 +67,12 @@
 	id who = [arguments objectAtIndex: 1];
 	NSDictionary *attrib;
 	id date = [arguments objectAtIndex: 2];
-	id data = [nameToChannelData objectForKey:
-	  GNUstepOutputLowercase([channel string])];
+	id lowername = lowercase([channel string]);
+	id data;
+	id view;
+
+	data = [nameToChannelData objectForKey: lowername];
+	view = [content viewControllerForName: lowername];
 	
 	attrib = [date attributesAtIndex: 0 effectiveRange: 0];
 	date = [[NSDate dateWithTimeIntervalSince1970: [[date string] doubleValue]] 
@@ -73,6 +87,14 @@
 		
 	[data setTopicAuthor: [who string]];
 	[data setTopicDate: [date string]];
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ConnectionControllerUpdatedTopicNotification
+	 object: view 
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  content, @"Content",
+	  data, @"Channel",
+	  nil]];
 	
 	return self;
 }

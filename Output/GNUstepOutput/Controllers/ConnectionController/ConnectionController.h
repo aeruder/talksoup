@@ -38,6 +38,7 @@
 		NSString *password;
 		NSString *realName;
 		
+		NSString * (*lowercase)(NSString *);
 		id connection;
 		id <ContentController> content;
 		NSArray *tabCompletion;
@@ -70,6 +71,9 @@
 - setPassword: (NSString *)aString;
 - (NSString *)password;
 
+- (NSString * (*)(NSString *))lowercasingFunction;
+- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
+
 - (id)connection;
 
 - (id <ContentController>)contentController;
@@ -78,5 +82,14 @@
 
 - leaveChannel: (NSString *)channel;
 @end
+
+/* 
+	object:         The view controller
+	
+	userinfo:
+	@"Channel"      Channel data
+	@"Content":     The content controller
+*/
+extern NSString *ConnectionControllerUpdatedTopicNotification;
 
 #endif

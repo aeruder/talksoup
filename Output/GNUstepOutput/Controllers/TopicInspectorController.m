@@ -19,6 +19,7 @@
 #import "Controllers/ConnectionController.h"
 #import "GNUstepOutput.h"
 #import "Views/KeyTextView.h"
+#import "Models/Channel.h"
 
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
@@ -27,6 +28,14 @@
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSScrollView.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSNotification.h>
+
+@interface TopicInspectorController (PrivateMethods)
+- (void)focusedControllerChanged: (NSNotification *)aNotification;
+- (void)topicChanged: (NSNotification *)aNotification;
+- (void)suckFieldsFromChannel: (NSString *)aChannel withSource: (Channel *)aSource;
+- (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender;
+@end
 
 @implementation TopicInspectorController
 - (void)awakeFromNib
@@ -52,9 +61,18 @@
 	[topicText setEditable: YES];
 	[topicText setSelectable: YES];
 	[topicText setRichText: NO];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(focusedControllerChanged:)
+	  name: ContentControllerSelectedNameNotification
+	  object: nil];
+
+	[topicText setKeyTarget: self];
+	[topicText setKeyAction: @selector(topicKeyHit:sender:)];
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(nothingView);
 	RELEASE(contentView);
 	RELEASE(window);
@@ -62,26 +80,6 @@
 
 	[super dealloc];
 }	
-- setTopic: (NSString *)aTopic inChannel: (NSString *)aChannel
-   setBy: (NSString *)author onDate: (NSString *)date
-   forConnectionController: (ConnectionController *)aConnection
-{
-	DESTROY(connection);
-	if ([aChannel length] == 0)
-	{
-		[window setContentView: nothingView];
-	}
-	else
-	{
-		[channelField setStringValue: aChannel];
-		[dateField setStringValue: date];
-		[authorField setStringValue: author];
-		[topicText setString: aTopic];
-		[window setContentView: contentView];
-		connection = RETAIN(aConnection);
-	}
-	return self;
-}
 - (NSView *)contentView
 {
 	return contentView;
@@ -110,9 +108,103 @@
 {
 	return topicText;
 }
-- (ConnectionController *)connectionController
-{
-	return connection;
-}
 @end
 
+@implementation TopicInspectorController (PrivateMethods)
+- (void)focusedControllerChanged: (NSNotification *)aNotification
+{
+	id userInfo = nil;
+	id name = nil;
+	id data = nil;
+	id tempView;
+		
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+	  name: ConnectionControllerUpdatedTopicNotification
+	  object: nil];
+
+	view = nil;
+	connection = nil;
+	content = nil;
+
+	userInfo = [aNotification userInfo];
+	tempView = [userInfo objectForKey: @"View"];
+	if ([tempView conformsToProtocol: 
+	  @protocol(ContentControllerChannelController)]) 
+	{
+		content = [aNotification object];
+		userInfo = [aNotification userInfo];
+		view = tempView;
+		connection = [content connectionController];
+		name = [content presentationalNameForName: 
+		  [content nameForViewController: view]];
+		data = [view channelSource];
+	
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(topicChanged:)
+		  name: ConnectionControllerUpdatedTopicNotification
+		  object: view];
+	}
+	
+	[self suckFieldsFromChannel: name withSource: data];
+}
+- (void)topicChanged: (NSNotification *)aNotification
+{
+	id name, data;
+
+	if ([aNotification object] == view)
+	{
+		name = [content presentationalNameForName:
+		  [content nameForViewController: view]];
+		data = [view channelSource];
+		[self suckFieldsFromChannel: name withSource: data];
+	}
+}
+- (void)suckFieldsFromChannel: (NSString *)aChannel withSource: (Channel *)aSource
+{
+	if (!aChannel || !aSource)
+	{
+		[window setContentView: nothingView];
+	}
+	else
+	{
+		[window setContentView: contentView];
+		[channelField setStringValue: aChannel];
+		[dateField setStringValue: [aSource topicDate]];
+		[authorField setStringValue: [aSource topicAuthor]];
+		[topicText setString: [aSource topic]];
+	}
+}
+- (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
+{
+	id channel;
+	NSString *characters = [aEvent characters];
+	unichar character = 0;
+	
+	if ([characters length] == 0)
+	{
+		return YES;
+	}
+
+   character = [characters characterAtIndex: 0];
+	
+	if (   (character != NSCarriageReturnCharacter)
+	    && (character != NSEnterCharacter)
+	    && (character != NSFormFeedCharacter)) return YES;
+	channel = [channelField stringValue];
+	
+	if (connection)
+	{
+		id realConnect = [connection connection];
+		[_TS_ setTopicForChannel: S2AS(channel) to: 
+		 S2AS([sender string]) onConnection: realConnect
+		 withNickname: S2AS([realConnect nick])
+		 sender: _GS_];
+		[_TS_ setTopicForChannel: S2AS(channel) to:
+		 nil onConnection: realConnect 
+		 withNickname: S2AS([realConnect nick])
+		 sender: _GS_];
+	}
+	
+	return NO;
+}
+@end

@@ -421,8 +421,6 @@ PreferencesController *_PREFS_ = nil;
 {
 	topic = [TopicInspectorController new];
 	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
-	[[topic topicText] setKeyTarget: self];
-	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)];
 
 	_PREFS_ = [PreferencesController new];
 	AUTORELEASE([GeneralPreferencesController new]);
@@ -507,39 +505,5 @@ PreferencesController *_PREFS_ = nil;
 		AUTORELEASE(topic);
 		topic = nil;
 	}
-}
-- (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
-{
-	id connection;
-	id channel;
-	NSString *characters = [aEvent characters];
-	unichar character = 0;
-	
-	if ([characters length] == 0)
-	{
-		return YES;
-	}
-
-   character = [characters characterAtIndex: 0];
-	
-	if (character != NSCarriageReturnCharacter) return YES;
-	
-	connection = [topic connectionController];
-	channel = [[topic channelField] stringValue];
-	
-	if (connection)
-	{
-		connection = [connection connection];
-		[_TS_ setTopicForChannel: S2AS(channel) to: 
-		 S2AS([sender string]) onConnection: connection
-		 withNickname: S2AS([connection nick])
-		 sender: self];
-		[_TS_ setTopicForChannel: S2AS(channel) to:
-		 nil onConnection: connection
-		 withNickname: S2AS([connection nick])
-		 sender: self];
-	}
-	
-	return NO;
 }
 @end

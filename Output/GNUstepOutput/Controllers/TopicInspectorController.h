@@ -21,9 +21,10 @@
 #define TOPIC_INSPECTOR_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
+#import "Controllers/ContentControllers/ContentController.h"
 
 @class NSView, NSWindow, NSTextField, KeyTextView;
-@class NSString, ConnectionController;
+@class NSString, ConnectionController, Channel;
 
 @interface TopicInspectorController : NSObject
 	{
@@ -35,12 +36,9 @@
 		NSTextField *channelField;
 		KeyTextView *topicText;
 		ConnectionController *connection;
+		id <ContentController> content;
+		id <ContentControllerChannelController> view;
 	}
-
-- setTopic: (NSString *)aTopic inChannel: (NSString *)aChannel
-   setBy: (NSString *)author onDate: (NSString *)date
-	forConnectionController: (ConnectionController *)controller;
-
 - (NSView *)contentView;
 - (NSView *)nothingView;
 
@@ -51,8 +49,6 @@
 - (NSTextField *)channelField;
 
 - (KeyTextView *)topicText;
-
-- (ConnectionController *)connectionController;
 @end
 
 

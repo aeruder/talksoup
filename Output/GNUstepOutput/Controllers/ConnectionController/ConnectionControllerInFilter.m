@@ -485,12 +485,13 @@
 
 		[content addViewControllerOfType: ContentControllerChannelType withName: name
 		  withLabel: channel inMasterController: [content primaryMasterController]];
-		[content bringNameToFront: name];
 		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
 		  initWithIdentifier: lowName]) forKey: lowName];
 				
 		[(id <ContentControllerChannelController>)
 		 [content viewControllerForName: lowName] attachChannelSource: x];
+
+		[content bringNameToFront: name];
 	}
 	else
 	{
