@@ -54,14 +54,11 @@
 	  initWithIdentifier: @"User List"]);
 	
 	[userColumn setEditable: NO];
-
-	NSLog(@"%@", tableView);
 	
 	frame = [tableView frame];
 	[splitView removeSubview: tableView];
 	RELEASE(tableView);
 	
-	NSLog(@"%f %f %f %f", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 	userScroll = AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]); 
 	tableView = [[NSTableView alloc] initWithFrame: 
 	  NSMakeRect(0, 0, frame.size.width, frame.size.height)];
