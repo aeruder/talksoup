@@ -259,7 +259,7 @@ static NSArray *get_first_word(NSString *arg)
 				
 			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
 			[aDict2 setObject: newVal forKey: name];
-			[self setAttributes: aDict2 range: effect];
+			[self setAttributes: aDict2 range: effect];			
 		}
 			
 		effect.location = effect.location + effect.length;

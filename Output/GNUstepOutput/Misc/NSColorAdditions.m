@@ -113,10 +113,12 @@ static inline NSColor *map_color(NSString *aName)
 }
 - (id)encodeToData
 {
+	id color = [self colorUsingColorSpaceName: [NSColor commonColorSpaceName]];
+	
 	return [NSString stringWithFormat: @"IRCColorCustom %d %d %d",
-	  (int)([self redComponent] * COL_CON),
-	  (int)([self greenComponent] * COL_CON), 
-	  (int)([self blueComponent] * COL_CON)];
+	  (int)([color redComponent] * COL_CON),
+	  (int)([color greenComponent] * COL_CON), 
+	  (int)([color blueComponent] * COL_CON)];
 }
 @end
 

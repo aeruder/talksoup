@@ -62,11 +62,6 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 	  GNUstepOutputLowercase(aString2)];
 }
 
-NSColor *GNUstepOutputColor(NSColor *aColor)
-{
-	return [aColor colorUsingColorSpaceName: [NSColor commonColorSpaceName]];
-}
-
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
@@ -95,14 +90,14 @@ GNUstepOutput *_GS_ = nil;
 	  @"", IRCDefaultsRealName,
 	  @"", IRCDefaultsUserName,
 	  @"", IRCDefaultsPassword,
-	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
-	    blue: 0.8627 alpha: 1.0]) encodeToData], GNUstepOutputBackgroundColor,
-	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 0.0 alpha: 1.0]) encodeToData], GNUstepOutputTextColor,
-	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 1.0 green: 0.0
-	    blue: 0.0 alpha: 1.0]) encodeToData], GNUstepOutputPersonalBracketColor,
-	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
+	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
+	    blue: 0.8627 alpha: 1.0] encodeToData], GNUstepOutputBackgroundColor,
+	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputTextColor,
+	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.0
+	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputPersonalBracketColor,
+	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  @"Helvetica", GNUstepOutputFontName,
 	  @"12", GNUstepOutputFontSize,

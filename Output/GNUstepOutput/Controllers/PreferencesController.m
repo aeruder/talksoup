@@ -190,7 +190,7 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = GNUstepOutputColor([sender color]);
+	id color = [sender color];
 
 	color = [color encodeToData];		
 	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
@@ -213,7 +213,7 @@
 	id object;
 	NSEnumerator *iter2;
 	id object2;
-	id color = GNUstepOutputColor([sender color]);
+	id color = [sender color];
 	
 	color = [color encodeToData];		
 	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
@@ -241,7 +241,7 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = GNUstepOutputColor([sender color]);
+	id color = [sender color];
 
 	color = [color encodeToData];	
 	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
@@ -262,7 +262,7 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = GNUstepOutputColor([sender color]);
+	id color = [sender color];
 	
 	color = [color encodeToData];
 	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
@@ -275,8 +275,6 @@
 	while ((object = [iter nextObject]))
 	{
 		[[object contentController] setTextColor: color];
-/*		[[[object contentController] typeView] setTextColor: color];
-		[[object fieldEditor] setTextColor: color];*/
 	}
 
 	return self;
