@@ -123,10 +123,14 @@ static NSArray *get_first_word(NSString *arg)
 {
 	NSMutableArray *array = AUTORELEASE([NSMutableArray new]);
 	id object;
-        int temp;
-        id string = self;
+	int temp;
+	id string = self;
 	
-	if (num <= 1)
+	if (num == 0)
+	{
+		return [NSArray arrayWithObject: string];
+	}
+	if (num == 1)
 	{
 		return [NSArray arrayWithObject: [string 
 		  stringByTrimmingCharactersInSet: 
@@ -151,7 +155,7 @@ static NSArray *get_first_word(NSString *arg)
 			case 2:
 				string = [object objectAtIndex: 1];
 				[array addObject: [object objectAtIndex: 0]];
-				num--;
+				if (num > 0) num--;
 		}
 	}
 	[array addObject: string];

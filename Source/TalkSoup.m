@@ -1190,6 +1190,39 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	return nil;
 }
+- (NSAttributedString *)commandMode: (NSString *)command connection: connection
+{
+	id array;
+	id mode;
+	id arg = AUTORELEASE([NSMutableArray new]);
+	id obj;
+	int ind, max;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: -1];
+
+	max = [array count];
+	
+	if (max <= 1)
+	{
+		return S2AS(_(@"Usage: /mode <object> <mode(s)> [arguments]"));
+	}
+
+	mode = [array objectAtIndex: 1];
+	obj = [array objectAtIndex: 0];
+	
+	for (ind = 2; ind < max; ind++)
+	{
+		[arg addObject: S2AS([array objectAtIndex: ind])];
+	}
+	
+	[_TS_ setMode: S2AS(mode) on: S2AS(obj) withParams: arg
+	  onConnection: connection withNickname: S2AS([connection nick])
+	  sender: output];
+	
+	return nil;
+}
 - (void)setupCommandList
 {
 #define ADD_COMMAND(_sel, _name) { id invoc; \
@@ -1220,6 +1253,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	ADD_COMMAND(@selector(commandTopic:connection:), @"topic");
 	ADD_COMMAND(@selector(commandKick:connection:), @"kick");
 	ADD_COMMAND(@selector(commandRaw:connection:), @"raw");
+	ADD_COMMAND(@selector(commandMode:connection:), @"mode");
 	
 #undef ADD_COMMAND
 }
