@@ -75,7 +75,7 @@
 	{
 		NSRect a = NSRectFromString(tmp);
 		
-		[[[self contentController] window] setFrame: a display: YES];
+		// FIXME [[[self contentController] window] setFrame: a display: YES];
 	}
 	
 	if ((tmp = [aInfo objectForKey: ServerListInfoServer]))
@@ -142,6 +142,7 @@
 }
 - (void)windowWillClose: (NSNotification *)aNotification
 {	
+	/* FIXME
 	id window = [content window];
 	
 	[newInfo setObject: NSStringFromRect([window frame]) 
@@ -161,6 +162,7 @@
 	}
 
 	[super windowWillClose: aNotification];	  
+	*/
 }
 @end
 

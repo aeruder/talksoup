@@ -699,13 +699,17 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [nameToPresentation objectForKey: lowercase(aName)];
 }
+- (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName
+{
+	[nameToPresentation setObject: aPresentationName forKey: lowercase(aName)];
+}
 - (NSString *)nickname
 {
 	return nickname;
 }
 - (void)setNickname: (NSString *)aNickname
 {
-	if (aNickname == nickname) return self;
+	if (aNickname == nickname) return;
 	
 	RELEASE(nickname);
 	nickname = RETAIN(aNickname);

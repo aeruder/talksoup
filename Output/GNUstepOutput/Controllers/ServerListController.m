@@ -608,12 +608,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 	  initWithServerListDictionary: [tmp objectAtIndex: row]
 	  inGroup: first atRow: row withContentController: aContent]);
 
-	win = [[win contentController] window];
+	// FIXME win = [[win contentController] window];
 	
 	[[editor window] close];
 	[window close];
 
-	[win makeKeyAndOrderFront: nil];	
+	// [win makeKeyAndOrderFront: nil];	
 }
 - (void)forceHit: (NSButton *)sender
 {

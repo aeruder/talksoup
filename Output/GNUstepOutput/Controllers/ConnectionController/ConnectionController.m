@@ -215,10 +215,6 @@
 {
 	return password;
 }
-- (InputController *)inputController
-{
-	return inputController;
-}
 - (id)connection
 {
 	return connection;
@@ -226,6 +222,10 @@
 - (id <ContentController>)contentController
 {
 	return content;
+}
+- (InputController *)inputController
+{
+	return inputController;
 }
 - (NSArray *)channelsWithUser: (NSString *)user
 {

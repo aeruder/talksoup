@@ -73,6 +73,8 @@
 
 - (id <ContentController>)contentController;
 
+- (InputController *)inputController;
+
 - (NSArray *)channelsWithUser: (NSString *)user;
 
 - leaveChannel: (NSString *)channel;

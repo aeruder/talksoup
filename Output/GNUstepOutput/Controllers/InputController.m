@@ -19,7 +19,8 @@
 #import "Controllers/InputController.h"
 #import "Controllers/ConnectionController.h"
 #import "Controllers/ContentControllers/ContentController.h"
-#import "Controllers/QueryController.h"
+#import "Controllers/ContentControllers/StandardQueryController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Views/ScrollingTextView.h"
 #import "GNUstepOutput.h"
 
@@ -116,8 +117,9 @@ static void send_message(id command, id name, id connection)
 		[fieldEditor setString: string];
 	}
 	
-	[[[controller contentController] window] makeFirstResponder:
-	  [[controller contentController] typeView]];
+	// FIXME
+	//[[[controller contentController] window] makeFirstResponder:
+	//  [[controller contentController] typeView]];
 }
 - (void)nextHistoryItem: (NSText *)fieldEditor
 {
@@ -136,8 +138,10 @@ static void send_message(id command, id name, id connection)
 	
 	[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
 
+	/* FIXME
 	[[[controller contentController] window] makeFirstResponder:
 	  [[controller contentController] typeView]];
+	*/
 }
 - (void)lineTyped: (NSString *)command
 {
@@ -167,7 +171,9 @@ static void send_message(id command, id name, id connection)
 	
 	if ([string length] == 0)
 	{
+		/*
 		[[[controller contentController] window] makeFirstResponder: sender];
+		FIXME */
 		return;
 	}
 	
@@ -177,7 +183,9 @@ static void send_message(id command, id name, id connection)
 	[self lineTyped: string];
 	
 	[sender setStringValue: @""];
+	/* FIXME
 	[[[controller contentController] window] makeFirstResponder: sender];
+	*/
 }
 @end
 
@@ -262,11 +270,13 @@ static void send_message(id command, id name, id connection)
 
 	if (!connection) return;
 	
+	/* FIXME
 	name = [[controller contentController] currentViewName];
 	if (name == ContentConsoleName)
 	{
 		return;
 	}
+	*/
 
 	send_message(command, name, connection); 	
 }
@@ -333,10 +343,12 @@ static void send_message(id command, id name, id connection)
 		topic = S2AS([x objectAtIndex: 0]);
 	}
 	
+	/*
 	if (![content isChannelName: name = [content currentViewName]])
 	{
 		name = nil;
 	}
+	FIXME */
 	
 	if (!name)
 	{
@@ -451,7 +463,7 @@ static void send_message(id command, id name, id connection)
 	if (!connection)
 	{
 		[controller setNick: [x objectAtIndex: 0]];
-		[[controller contentController] setNickViewString:
+		[[controller contentController] setNickname:
 		  [controller nick]];
 		return self;
 	}
@@ -461,7 +473,7 @@ static void send_message(id command, id name, id connection)
 	
 	if (![connection connected])
 	{
-		[[controller contentController] setNickViewString:
+		[[controller contentController] setNickname:
 		  [connection nick]];
 	}
 	
@@ -479,10 +491,12 @@ static void send_message(id command, id name, id connection)
 		return self;
 	}
 	
+	/*
 	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
 	  currentViewName]) onConnection: connection
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
+	  FIXME */
 	return self;
 }
 - commandQuery: (NSString *)aString
@@ -500,7 +514,9 @@ static void send_message(id command, id name, id connection)
 	
 	o = [x objectAtIndex: 0];
 	
+	/* FIXME
 	[[controller contentController] addQueryWithName: o withLabel: S2AS(o)];
+	*/
 	
 	return self;
 }
@@ -512,6 +528,7 @@ static void send_message(id command, id name, id connection)
 	
 	if ([x count] < 1)
 	{
+		/*
 		if ([(o = [[controller contentController] currentViewName])
 		     isEqualToString: ContentConsoleName])
 		{			
@@ -520,6 +537,7 @@ static void send_message(id command, id name, id connection)
 			  onConnection: nil];
 			return self;
 		}
+		FIXME */ 
 	}
 	else
 	{
@@ -535,7 +553,9 @@ static void send_message(id command, id name, id connection)
 		  sender: _GS_];
 	}
 	
+	/* 
 	[[controller contentController] closeViewWithName: o];
+	FIXME */
 
 	return self;
 }
@@ -547,11 +567,13 @@ static void send_message(id command, id name, id connection)
 	id connection = [controller connection];
 	
 	msg = nil;
+	/* 
 	if (![content isChannelName: name = [content currentViewName]])
 	{
 		name = nil;
 	}
-	
+	FIXME */
+
 	if ([x count] >= 1)
 	{
 		name = [x objectAtIndex: 0];
@@ -578,9 +600,11 @@ static void send_message(id command, id name, id connection)
 }
 - commandClear: (NSString *)command
 {
+	/* FIXME
 	id x = [[controller contentController] controllerForViewWithName: 
 	  [[controller contentController] currentViewName]];
 	[[x chatView] setString: @""]; 
+	*/
 	
 	return self;
 }	
@@ -594,7 +618,7 @@ static void send_message(id command, id name, id connection)
 		[controller showMessage:
 		  BuildAttributedString(_l(@"Usage: /scrollback <characters>"),
 		    @"\n", _l(@"Current value is: "), 
-			 [_GS_ defaultsObjectForKey: GNUstepOutputScrollBack], nil) 
+			 [_PREFS_ preferenceForKey: GNUstepOutputScrollBack], nil) 
 		  onConnection: nil];
 		return self;
 	}
@@ -603,7 +627,7 @@ static void send_message(id command, id name, id connection)
 	
 	if (length < 512) length = 512;
 	
-	[_GS_ setDefaultsObject: [NSString stringWithFormat: @"%d", length]
+	[_PREFS_ setPreference: [NSString stringWithFormat: @"%d", length]
 	  forKey: GNUstepOutputScrollBack];
 	
 	return self;

@@ -92,6 +92,7 @@ Controllers/Preferences/PreferencesController.m
 Controllers = \
 Controllers/NamePromptController.m \
 Controllers/ServerListController.m \
+Controllers/InputController.m \
 Controllers/GroupEditorController.m \
 Controllers/ServerEditorController.m \
 Controllers/ServerListConnectionController.m \

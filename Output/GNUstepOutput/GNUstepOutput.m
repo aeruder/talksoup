@@ -88,6 +88,7 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 }
 
 GNUstepOutput *_GS_ = nil;
+PreferencesController *_PREFS_ = nil;
 
 @implementation GNUstepOutput
 - init
@@ -448,7 +449,7 @@ GNUstepOutput *_GS_ = nil;
 	
 	while ((object = [iter nextObject]))
 	{
-		[[[object contentController] window] close];
+		// FIXME [[[object contentController] window] close];
 	}
 }
 - (void)doApplicationTerminate: (id)sender

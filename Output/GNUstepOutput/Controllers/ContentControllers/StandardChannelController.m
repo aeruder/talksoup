@@ -149,6 +149,9 @@
 {
 	DESTROY(channelSource);
 }
+- (void)refreshFromChannelSource
+{
+}
 - (NSTextView *)chatView
 {
 	return chatView;
