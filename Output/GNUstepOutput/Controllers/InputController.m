@@ -273,6 +273,59 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController (CommonCommands)
+- commandJoin: (NSString *)aString
+{
+	NSMutableArray *x;
+	x = [NSMutableArray arrayWithArray:
+	  [aString separateIntoNumberOfArguments: 3]];
+	NSInvocation *invoc;
+	id connection;
+	
+	if ([x count] >= 1)
+	{
+		NSMutableArray *y;
+		id tmp = [x objectAtIndex: 0];
+		int x;
+		int count;
+		
+		y = [NSMutableArray arrayWithArray: 
+		  [tmp componentsSeparatedByString: @","]];
+		
+		count = [y count];
+		for (x = 0; x < count; x++)
+		{
+			tmp = [y objectAtIndex: x];
+			if ([tmp length] > 0)
+			{
+				if ([[NSCharacterSet alphanumericCharacterSet]
+				  characterIsMember: [tmp characterAtIndex: 0]])
+				{
+					tmp = [NSString stringWithFormat: @"#%@", tmp];
+					[y replaceObjectAtIndex: x withObject: tmp];
+				}
+			}
+		}
+
+		[x replaceObjectAtIndex: 0 withObject: 
+		  [y componentsJoinedByString: @","]];
+	}
+	aString = [x componentsJoinedByString: @" "];
+	
+	if ((invoc = [_TS_ invocationForCommand: @"Join"]))
+	{
+		connection = [controller connection];
+		
+		[invoc setArgument: &aString atIndex: 2];
+		[invoc setArgument: &connection atIndex: 3]; 
+		[invoc invoke];
+		[invoc getReturnValue: &aString];
+		connection = nil;
+		[invoc setArgument: &connection atIndex: 2];
+		[invoc setArgument: &connection atIndex: 3];
+		[controller showMessage: aString onConnection: nil];
+	}
+	return self;
+}
 - commandServer: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 3];
