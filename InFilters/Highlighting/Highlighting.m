@@ -308,7 +308,7 @@ static NSInvocation *invoc = nil;
 	else
 	{
 		return BuildAttributedString([NSNull null], IRCBold, [NSNull null], 
-		  @"Highlighting.bundle Configurator:", @"\n",
+		  @"Highlighting Configurator:", @"\n",
 		  @"Usage: /highlighting usercolor", @"\n",
 		  @"or: /highlighting tabreferencecolor", @"\n",
 		  @"or: /highlighting tabanythingcolor", @"\n",

@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 BUNDLE_NAME = Highlighting
 
-BUNDLE_EXTENSION = .bundle
+BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 

@@ -23,24 +23,24 @@ Comments are welcome.
 ===============================================================================
 TalkSoup.app is a fully-featured IRC client which uses GNUstep base.  While
 TalkSoup.app itself is just a very basic core which can simply pass messages
-between plugins.
+between bundles (plugins).
 
 This distribution comes with:
 
 Input Plugins:
 
-  *NetclassesInput.bundle: an input plugin based on netclasses
+  *NetclassesInput: an input plugin based on netclasses
 
 Output Plugins:
 
-  *GNUstepOutput.bundle: an output plugin based on gnustep-gui
+  *GNUstepOutput: an output plugin based on gnustep-gui
 
 Input Filters:
   
-  *Highlighting.bundle: highlights keywords and nicknames and 
+  *Highlighting: highlights keywords and nicknames and 
     handles highlighting tabs as well
   
-  MessageInTab.bundle: opens a new tab when someone private
+  MessageInTab: opens a new tab when someone private
     messages you
 	
 * == Used by default
@@ -94,7 +94,7 @@ Commands:
   ask you to use.
   
 ===============================================================================
-Commands specific to the GNUstep output plugin (GNUstepOutput.bundle)
+Commands specific to the GNUstep output plugin (GNUstepOutput)
 
 /me <action>
   Sends an action to the channel, for example:
@@ -120,7 +120,7 @@ Commands specific to the GNUstep output plugin (GNUstepOutput.bundle)
   Clears the text in the current tab.
   
 ===============================================================================
-Notes about GNUstepOutput.bundle (default):
+Notes about GNUstepOutput (default):
   
 	* Double clicking a person in the user list in a channel will
 	  open a query tab for them.

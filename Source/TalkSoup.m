@@ -178,10 +178,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		object = [NSString stringWithFormat: @"%@/%@", dir, object];
 		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
 		{
-			if ([object hasSuffix: @".bundle"])
-			{
-				[y addObject: object];
-			}
+			[y addObject: object];
 		}
 	}
 

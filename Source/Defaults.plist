@@ -404,12 +404,12 @@
 	Password = "";
 	Plugins = {
 	    InFilters = (
-		Highlighting.bundle
+		Highlighting
 	    );
-	    Input = NetclassesInput.bundle;
+	    Input = NetclassesInput;
 	    OutFilters = (
 	    );
-	    Output = GNUstepOutput.bundle;
+	    Output = GNUstepOutput;
 	};
 	RealName = "";
 	UserName = "";

@@ -169,30 +169,30 @@ Questions covered in this FAQ:
 3.4 Is order important on the input/output filters?
     
     YES!  To illustrate how it can make a difference, here's an
-    example using the Highlighting.bundle and the MessageInTab.bundle.
+    example using the Highlighting and the MessageInTab input filters.
 
-    Now, Highlighting.bundle highlights a tab when someone talks in it
-    (and you don't have that tab focused).  MessageInTab.bundle simply
+    Now, Highlighting highlights a tab when someone talks in it
+    (and you don't have that tab focused).  MessageInTab simply
     opens a separate tab for a person when they private message you.
 
     Now, let's say currently when you type /loaded it says:
 
-    Input Filters: Highlighting.bundle, MessageInTab.bundle
+    Input Filters: Highlighting, MessageInTab
 
     Well, you may be wondering why the tab doesn't turn red when someone
     private messages you and the new tab is opened.  Well, that's because
     TalkSoup goes through the filters in order!  First the 
-    Highlighting.bundle    will run, but at that point, there is no open tab 
+    Highlighting    will run, but at that point, there is no open tab 
     for that person, so no highlighting will be done.  Now, if you type:
 
-    /load in Highlighting.bundle
+    /load in Highlighting
 
     And then type /loaded again, you should have something like:
 
-    Input Filters: MessageInTab.bundle, Highlighting.bundle
+    Input Filters: MessageInTab, Highlighting
 
     Now it should work correctly, because when the private message
-    gets to the Highlighting.bundle, it will see that there is a tab
+    gets to the Highlighting, it will see that there is a tab
     open and will highlight it.
 
     In short, order is important!
