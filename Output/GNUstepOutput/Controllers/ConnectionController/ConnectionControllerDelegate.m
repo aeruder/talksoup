@@ -31,29 +31,6 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextField.h>
 
-@implementation ConnectionController (TableViewTarget)
-// FIXME this needs to be replaced by a  notification
-//- (void)doubleClickedUser: (NSTableView *)sender
-//{
-//	id name = [content currentViewName];
-//	id channel;
-//	id user;
-//	
-//	if ([[content controllerForViewWithName: name] tableView]
-//	    == sender)
-//	{
-//		if ((channel = [nameToChannelData objectForKey: 
-//		  GNUstepOutputLowercase(name)]))
-//		{
-//			user = [[[channel userList] objectAtIndex: [sender clickedRow]]
-//			  userName];
-//			[content addQueryWithName: user 
-//			  withLabel: S2AS(user)];
-//		}
-//	}
-//}
-@end
-
 @implementation ConnectionController (ApplicationDelegate)
 // FIXME I don't understand why this is here.
 //- (void)selectNextTab: (id)sender
@@ -86,55 +63,4 @@
 //}
 @end
 
-@implementation ConnectionController (WindowDelegate)
-	// FIXME -- need to be replaced by the notification system.
-/*
-- (void)windowWillClose: (NSNotification *)aNotification
-{	
-	id controller;
-	
-	if (connection)
-	{
-		[[_TS_ pluginForInput] closeConnection: connection];
-	}
-	
-	[[content window] setDelegate: nil];
-	[[content typeView] setTarget: nil];
-	[fieldEditor setKeyTarget: nil];
-	
-	AUTORELEASE(RETAIN(self));
-
-	[_GS_ removeConnectionController: self];
-	
-	controller = [_GS_ topicInspectorController];
-	
-	if (self == [controller connectionController])
-	{
-		[controller setTopic: nil inChannel: nil
-		  setBy: nil onDate: nil
-		  forConnectionController: nil];
-	}	
-}
-- (void)windowDidBecomeKey: (NSNotification *)aNotification
-{
-	id win = [aNotification object];
-	
-	[self updateTopicInspector];
-	[win makeFirstResponder: [content typeView]];
-}
-- (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
-{
-	if (anObject == [content typeView])
-	{
-		return fieldEditor;
-	}
-	return nil;
-}
-- (void)tabView: (NSTabView *)aTabView
-  didSelectTabViewItem: (NSTabViewItem *)tabViewItem
-{
-	[self updateTopicInspector];
-}
-*/
-@end
 

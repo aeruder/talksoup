@@ -20,13 +20,7 @@
 
 #import "Controllers/ConnectionController/ConnectionController.h"
 
-@interface ConnectionController (TableViewTarget)
-@end
-
 @interface ConnectionController (ApplicationDelegate)
-@end
-
-@interface ConnectionController (WindowDelegate)
 @end
 
 #endif

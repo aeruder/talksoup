@@ -127,7 +127,6 @@
 	[tabView selectTabViewItemAtIndex: aIndex];
 	[tabView selectTabViewItemAtIndex: selected];
 	[tabView setNeedsDisplay: YES];
-	
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerAddedToMasterControllerNotification

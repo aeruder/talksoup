@@ -47,6 +47,12 @@
 - (void)wrapIndentChanged: (NSNotification *)aNotification;
 @end
 
+@interface StandardChannelController (DelegateMethods)
+- (void)splitView: (NSSplitView *)sender
+    resizeSubviewsWithOldSize: (NSSize)oldSize;
+- (void)doubleClickedTableView: (NSTableView *)sender;
+@end
+
 @implementation StandardChannelController
 + (NSString *)standardNib
 {
@@ -104,6 +110,8 @@
 
 	[tableView setCornerView: nil];
 	[tableView setHeaderView: nil];
+	[tableView setTarget: self];
+	[tableView setDoubleAction: @selector(doubleClickedTableView:)];
 
 	[tableView addTableColumn: userColumn];
 	[tableView setDrawsGrid: NO];
@@ -186,6 +194,9 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[tableView setTarget: nil];
+	[splitView setDelegate: nil];
+	[tableView setDoubleAction: NULL];
 	DESTROY(channelSource);
 	RELEASE(window);
 	[super dealloc];
@@ -268,12 +279,7 @@
 }
 @end
 
-@interface StandardChannelController (NSSplitViewDelegate)
-- (void)splitView: (NSSplitView *)sender
-    resizeSubviewsWithOldSize: (NSSize)oldSize;
-@end
-
-@implementation StandardChannelController (NSSplitViewDelegate)
+@implementation StandardChannelController (DelegateMethods)
 - (void)splitView: (NSSplitView *)sender
     resizeSubviewsWithOldSize: (NSSize)oldSize
 {
@@ -309,6 +315,23 @@
 	}
 	[tableScroll setFrame: frame2];
 	[chatScroll setFrame: frame1];
+}
+- (void)doubleClickedTableView: (NSTableView *)sender
+{
+	NSArray *userList;
+	ChannelUser *chanUser;
+	
+	userList = [channelSource userList];
+	if ([sender clickedRow] >= [userList count]) return;
+	chanUser = [userList objectAtIndex: [sender clickedRow]];
+	
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ChannelControllerUserOpenedNotification
+	 object: self userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
+	  channelSource, @"Channel",
+	  chanUser, @"User",
+	  self, @"View",
+	  nil]];
 }
 @end
 

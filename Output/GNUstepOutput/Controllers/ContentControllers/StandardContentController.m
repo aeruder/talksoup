@@ -41,6 +41,7 @@
 @interface StandardContentController (PrivateMethods)
 - (NSColor *)colorForKey: (NSString *)aKey;
 - (void)viewSelected: (NSNotification *)aNotification;
+- (void)userOpened: (NSNotification *)aNotification;
 @end
 
 @implementation StandardContentController
@@ -90,6 +91,11 @@
 	  name: ContentControllerSelectedNameNotification
 	  object: self];
 	
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(userOpened:)
+	  name: ChannelControllerUserOpenedNotification
+	  object: nil];
+
 	return self;
 }
 /* Initializes the content controller in a new master
@@ -722,5 +728,30 @@
 	label = AUTORELEASE([[NSMutableAttributedString alloc] 
 	  initWithString: [[nameToLabel objectForKey: name] string]]);
 	[self setLabel: label forName: name];
+}
+- (void)userOpened: (NSNotification *)aNotification
+{
+	id chan;
+	id view;
+	id chanUser;
+	id userInfo;
+	id name;
+	id master;
+
+	userInfo = [aNotification userInfo];
+	chanUser = [userInfo objectForKey: @"User"];
+	view = [aNotification object];
+	chan = [userInfo objectForKey: @"Channel"];
+
+	if (!chan || !view || !chanUser || !(name = NSMapGet(bothToName, view))) 
+		return;
+
+	chanUser = [chanUser userName];
+	master = [nameToMasterController objectForKey: name];
+
+	[self addViewControllerOfType: ContentControllerQueryType
+	  withName: chanUser withLabel: S2AS(chanUser)
+	  inMasterController: master]; 
+
 }
 @end

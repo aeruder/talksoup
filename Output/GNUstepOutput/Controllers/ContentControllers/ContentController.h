@@ -164,6 +164,16 @@ extern NSString *ContentConsoleName;
 @end
 
 /*
+	object:          The view controller.
+	
+	userinfo:
+	@"Channel"       The Channel object.
+	@"User"          The ChannelUser object.
+	@"View"          The view controller.
+*/
+extern NSString *ChannelControllerUserOpenedNotification;
+
+/*
 	object:          The content controller.
 	
 	userinfo:

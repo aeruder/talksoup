@@ -23,6 +23,7 @@ NSString *ContentControllerQueryType = @"ContentControllerQueryType";
 
 NSString *ContentConsoleName = @"ContentConsoleName";
 
+NSString *ChannelControllerUserOpenedNotification = @"ChannelControllerUserOpenedNotification";
 NSString *ContentControllerMovedInMasterControllerNotification = @"ContentControllerMovedInMasterControllerNotification";
 NSString *ContentControllerAddedToMasterControllerNotification = @"ContentControllerAddedToMasterControllerNotification";
 NSString *ContentControllerRemovedFromMasterControllerNotification = @"ContentControllerRemovedFromMasterControllerNotification";
