@@ -356,13 +356,13 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	  action: @selector(openServerList:)
 	  keyEquivalent: @"o"];
 	
-	[tempMenu addItemWithTitle: _l(@"Connect To Server...") 
+	[tempMenu addItemWithTitle: _l(@"Connected Window...") 
 	  action: @selector(openNamePrompt:)
 	  keyEquivalent: @"N"];
 	
 	[tempMenu addItemWithTitle: _l(@"Unconnected Window") 
 	  action: @selector(openEmptyWindow:)
-	  keyEquivalent: @"u"];
+	  keyEquivalent: @"n"];
 
 // Tabs
 	item = [menu addItemWithTitle: _l(@"Tab") action: 0
@@ -371,12 +371,12 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	[menu setSubmenu: tempMenu forItem: item];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Next Tab")
-	  action: @selector(selectPreviousTab:)
-	  keyEquivalent: @"n"];
+	  action: @selector(selectNextTab:)
+	  keyEquivalent: @"k"];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Previous Tab")
-	  action: @selector(selectNextTab:)
-	  keyEquivalent: @"p"];
+	  action: @selector(selectPreviousTab:)
+	  keyEquivalent: @"j"];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Close Tab")
 	  action: @selector(closeCurrentTab:)
