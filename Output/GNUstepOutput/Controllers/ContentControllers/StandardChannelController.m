@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Views/ScrollingTextView.h"
@@ -41,6 +42,8 @@
 
 @interface StandardChannelController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;
+- (void)userListFontChanged: (NSNotification *)aNotification;
+- (void)chatFontChanged: (NSNotification *)aNotification;
 @end
 
 @implementation StandardChannelController
@@ -112,7 +115,8 @@
 	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
 	[x setFormatter: AUTORELEASE([ChannelFormatter new])];
 	
-	font = [NSFont systemFontOfSize: 0.0];
+	font = [FontPreferencesController getFontFromPreferences:
+	  GNUstepOutputUserListFont];
 	[x setFont: font];
 	[tableView setRowHeight: [font pointSize] * 1.5];
 	
@@ -157,6 +161,21 @@
 	  selector: @selector(colorChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputPersonalBracketColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(userListFontChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputUserListFont];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(chatFontChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputChatFont];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(chatFontChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputBoldChatFont];
 }
 - (void)dealloc
 {
@@ -208,6 +227,32 @@
 
 	[[chatView textStorage]
 	  updateAttributedStringForGNUstepOutputPreferences: object];
+}
+- (void)userListFontChanged: (NSNotification *)aNotification
+{
+	NSTableColumn *column;
+	NSFont *aFont;
+	NSCell *aCell;
+	
+	aFont = 
+	  [FontPreferencesController getFontFromPreferences: 
+	  GNUstepOutputUserListFont];
+	column = [[tableView tableColumns] objectAtIndex: 0];
+	aCell = [column dataCell];
+	if (aFont)
+	{
+		[aCell setFont: aFont];
+	}
+
+	[tableView setRowHeight: [aFont pointSize] * 1.5];
+	[tableView setNeedsDisplay: YES];
+	[tableView reloadData];
+}
+- (void)chatFontChanged: (NSNotification *)aNotification
+{
+	[[chatView textStorage]
+	  updateAttributedStringForGNUstepOutputPreferences: 
+	  [aNotification object]];
 }
 @end
 

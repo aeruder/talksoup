@@ -32,6 +32,7 @@
 #include <math.h>
 
 NSString *GNUstepOutputChatFont = @"GNUstepOutputChatFont";
+NSString *GNUstepOutputBoldChatFont = @"GNUstepOutputBoldChatFont";
 NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 
 @interface FontPreferencesFontView : NSView
@@ -54,8 +55,6 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	NSString *fontName;
 	id tmpSize;
 	float fontSize;
-	BOOL changed = NO;
-	NSFont *userFont = [NSFont userFontOfSize: 0.0];
 	NSFont *font;
 	NSString *aPrefSize;
 
@@ -69,36 +68,14 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	 || (fontSize <= 0.001) ||
 	 !(font = [NSFont fontWithName: fontName size: fontSize]))
 	{
-		font = userFont;
-	}
-
-	if (![[font fontName] isEqualToString: fontName])
-	{
-		[_PREFS_ setPreference: [font fontName]
-		 forKey: aPrefName];
-		changed = YES;
-	}
-
-	if (fabs([font pointSize] - fontSize) >= .1)
-	{
-		id pref = [NSString stringWithFormat: @"%0.1f", 
-		  [font pointSize]];
-		[_PREFS_ setPreference: pref
-		  forKey: aPrefSize];
-		changed = YES;
-	}
-
-	if (changed)
-	{
-		[[NSNotificationCenter defaultCenter]
-		 postNotificationName: DefaultsChangedNotification
-		 object: aPrefName 
-		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
-		  _GS_, @"Bundle",
-		  [font fontName], @"New",
-		  self, @"Owner",
-		  fontName, @"Old",
-		  nil]];
+		if ([aPrefName isEqualToString: GNUstepOutputBoldChatFont])
+		{
+			font = [NSFont boldSystemFontOfSize: 0.0];
+		}
+		else
+		{
+			font = [NSFont userFontOfSize: 0.0];
+		}
 	}
 
 	return font;
@@ -190,6 +167,10 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	{
 		lastView = chatFontField;
 	}
+	else if (aButton == boldFontButton)
+	{
+		lastView = boldFontField;
+	}
 	else
 	{
 		return;
@@ -245,13 +226,14 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 }
 - (void)refreshFromPreferences
 {
-	id uFont;
-	id cFont;
+	id uFont, bFont, cFont;
 
 	uFont = [FontPreferencesController getFontFromPreferences: 
 	  GNUstepOutputUserListFont];
 	cFont = [FontPreferencesController getFontFromPreferences:
 	  GNUstepOutputChatFont];
+	bFont = [FontPreferencesController getFontFromPreferences:
+	  GNUstepOutputBoldChatFont];
 
 	[userFontField setStringValue:
 	  [NSString stringWithFormat: @"%@ %.1f",
@@ -261,6 +243,10 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	  [NSString stringWithFormat: @"%@ %.1f",
 	   [cFont displayName], [cFont pointSize]]];
 	[chatFontField setFont: cFont];
+	[boldFontField setStringValue:
+	  [NSString stringWithFormat: @"%@ %.1f",
+	   [bFont displayName], [bFont pointSize]]];
+	[boldFontField setFont: bFont];
 }
 - (void)fontView: (FontPreferencesFontView *)aFontView
    changeFont: (id)sender
@@ -278,6 +264,10 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	else if (lastView == chatFontField)
 	{
 		preference = GNUstepOutputChatFont;
+	}
+	else if (lastView == boldFontField)
+	{
+		preference = GNUstepOutputBoldChatFont;
 	}
 	else
 	{

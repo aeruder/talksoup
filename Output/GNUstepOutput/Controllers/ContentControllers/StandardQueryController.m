@@ -17,6 +17,7 @@
 
 #import "Controllers/ContentControllers/StandardQueryController.h"
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "GNUstepOutput.h"
 #import "Misc/NSAttributedStringAdditions.h"
@@ -34,6 +35,7 @@
 
 @interface StandardQueryController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;
+- (void)chatFontChanged: (NSNotification *)aNotification;
 @end
 
 @implementation StandardQueryController
@@ -102,6 +104,16 @@
 	  selector: @selector(colorChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputPersonalBracketColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(chatFontChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputChatFont];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(chatFontChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputBoldChatFont];
 }
 - (void)dealloc
 {
@@ -134,4 +146,10 @@
 	[[chatView textStorage]
 	  updateAttributedStringForGNUstepOutputPreferences: object];
 }
+- (void)chatFontChanged: (NSNotification *)aNotification
+{
+	[[chatView textStorage]
+	  updateAttributedStringForGNUstepOutputPreferences: 
+	  [aNotification object]];
+}	
 @end

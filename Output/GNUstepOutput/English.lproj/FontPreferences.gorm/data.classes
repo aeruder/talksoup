@@ -151,7 +151,9 @@
 	    chatFontButton,
 	    chatFontField,
 	    userFontField,
-	    fontSetView
+	    fontSetView,
+	    boldFontButton,
+	    boldFontField
 	);
 	Super = NSObject;
     };

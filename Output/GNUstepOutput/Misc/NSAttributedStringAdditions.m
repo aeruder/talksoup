@@ -213,29 +213,48 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 }
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey
 {
-	id color;
-	
-	color = COLOR_FOR_KEY(aKey);
+	id font, color;
 
-	if (!color) return;
-	
-	[self
-	 setAttribute: NSForegroundColorAttributeName
-	  toValue: color
-	 inRangesWithAttribute: TypeOfColor
-	  matchingValue: aKey
-	 withRange: NSMakeRange(0, [self length])];
-	if ([aKey isEqualToString: GNUstepOutputBackgroundColor])
+	if ([aKey isEqualToString: GNUstepOutputChatFont])
 	{
-		[self setAttribute: NSForegroundColorAttributeName
-		  toValue: color inRangesWithAttribute: InverseTypeForeground
-		  matchingValue: @"" withRange: NSMakeRange(0, [self length])];
+		font = [FontPreferencesController getFontFromPreferences: aKey];
+
+		[self setAttribute: NSFontAttributeName
+		   toValue: font
+		  inRangesWithAttribute: IRCBold
+		   matchingValue: nil 
+		   withRange: NSMakeRange(0, [self length])];
 	}
-	else if ([aKey isEqualToString: GNUstepOutputTextColor])
+	else if ([aKey isEqualToString: GNUstepOutputBoldChatFont])
 	{
-		[self setAttribute: NSBackgroundColorAttributeName
-		  toValue: color inRangesWithAttribute: InverseTypeBackground
-		  matchingValue: @"" withRange: NSMakeRange(0, [self length])];
+		font = [FontPreferencesController getFontFromPreferences: aKey];
+
+		[self setAttribute: NSFontAttributeName
+		   toValue: font
+		  inRangesWithAttribute: IRCBold
+		   matchingValue: IRCBoldValue 
+		   withRange: NSMakeRange(0, [self length])];
+	}
+	else if ((color = COLOR_FOR_KEY(aKey)))
+	{
+		[self
+		 setAttribute: NSForegroundColorAttributeName
+		  toValue: color
+		 inRangesWithAttribute: TypeOfColor
+		  matchingValue: aKey
+		 withRange: NSMakeRange(0, [self length])];
+		if ([aKey isEqualToString: GNUstepOutputBackgroundColor])
+		{
+			[self setAttribute: NSForegroundColorAttributeName
+			  toValue: color inRangesWithAttribute: InverseTypeForeground
+			  matchingValue: @"" withRange: NSMakeRange(0, [self length])];
+		}
+		else if ([aKey isEqualToString: GNUstepOutputTextColor])
+		{
+			[self setAttribute: NSBackgroundColorAttributeName
+			  toValue: color inRangesWithAttribute: InverseTypeBackground
+			  matchingValue: @"" withRange: NSMakeRange(0, [self length])];
+		}
 	}
 }
 #undef COLOR_FOR_KEY

@@ -18,6 +18,7 @@
 @class FontPreferencesController, NSString;
 
 extern NSString *GNUstepOutputChatFont;
+extern NSString *GNUstepOutputBoldChatFont;
 extern NSString *GNUstepOutputUserListFont;
 
 #ifndef FONT_PREFERENCES_CONTROLLER_H
@@ -36,7 +37,9 @@ extern NSString *GNUstepOutputUserListFont;
 		BOOL activated;
 		NSButton *userFontButton;
 		NSButton *chatFontButton;
+		NSButton *boldFontButton;
 		NSTextField *chatFontField;
+		NSTextField *boldFontField;
 		NSTextField *userFontField;
 		id fontSetView;
 		id lastView;
