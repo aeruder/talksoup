@@ -212,6 +212,7 @@
 	id tab;
 	id userInfo;
 	id content;
+	int oldIndex;
 
 	if (!(NSMapMember(viewControllerToTab, aController, 0, 0)))
 	{
@@ -221,6 +222,12 @@
 	tab = NSMapGet(viewControllerToTab, aController);
 	
 	[tab setView: nil];
+	oldIndex = [tabView indexOfTabViewItem: tab] + 1;
+	if (oldIndex >= [tabView numberOfTabViewItems]) 
+	{
+		oldIndex = [tabView numberOfTabViewItems] - 2;
+	}
+	[tabView selectTabViewItemAtIndex: oldIndex];
 	[tabView removeTabViewItem: tab];
 	
 	[tabView setNeedsDisplay: YES];

@@ -479,7 +479,6 @@
 	 AUTORELEASE([[InputController alloc] 
 	  initWithViewController: controller
 	  contentController: self]) forKey: name];
-	NSLog(@"AGH!: name: %@, %@", name, [nameToTyping objectForKey: name]);
 	
 	return controller;
 }

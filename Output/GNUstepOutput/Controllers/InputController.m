@@ -102,7 +102,6 @@ static void send_message(id command, id name, id connection)
 	view = RETAIN(aController);
 	controller = [content connectionController];
 	
-	NSLog(@"Initializing with %@ %@", content, self);
 	history = [NSMutableArray new];
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
