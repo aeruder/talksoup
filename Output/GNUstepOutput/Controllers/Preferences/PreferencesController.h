@@ -20,7 +20,6 @@
 @class PreferencesController, NSString;
 
 extern NSString *GNUstepOutputServerList;
-extern NSString *GNUstepOutputFontName;
 extern NSString *GNUstepOutputFontSize;
 extern NSString *GNUstepOutputScrollBack;
 

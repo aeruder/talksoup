@@ -43,10 +43,6 @@ NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNot
 NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
 
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
-NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
-NSString *GNUstepOutputUserListFontName = @"GNUstepOutputUserListFontName";
-NSString *GNUstepOutputUserListFontSize = @"GNUstepOutputUserListFontSize";
 NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
 NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
 NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";

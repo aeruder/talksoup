@@ -15,22 +15,34 @@
  *                                                                         *
  ***************************************************************************/
 
-@class FontPreferencesController;
+@class FontPreferencesController, NSString;
+
+extern NSString *GNUstepOutputChatFont;
+extern NSString *GNUstepOutputUserListFont;
 
 #ifndef FONT_PREFERENCES_CONTROLLER_H
 #define FONT_PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 
-@class NSString, NSImage;
-@class NSView, NSImage;
+@class NSString, NSImage, NSFont;
+@class NSView, NSImage, NSTextField, NSButton;
 @class PreferencesController;
 
 @interface FontPreferencesController : NSObject 
 	{
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
+		BOOL activated;
+		NSButton *userFontButton;
+		NSButton *chatFontButton;
+		NSTextField *chatFontField;
+		NSTextField *userFontField;
+		id lastView;
 	}
+- (NSFont *)getFontFromPreferences: (NSString *)aPrefName;
+- (void)hitFontButton: (NSButton *)aButton;
+
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;

@@ -136,15 +136,21 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "hitFontButton:"
 	);
 	Super = NSObject;
     };
     FontPreferencesController = {
 	Actions = (
+	    "hitFontButton:"
 	);
 	Outlets = (
-	    preferencesView
+	    preferencesView,
+	    userFontButton,
+	    chatFontButton,
+	    chatFontField,
+	    userFontField
 	);
 	Super = NSObject;
     };
