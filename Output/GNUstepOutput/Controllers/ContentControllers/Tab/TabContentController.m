@@ -145,6 +145,9 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	id object;
 	id color;
 	
+	if ([[self colorForKey: aKey] isEqual: 
+	  [NSColor colorFromEncodedData: old]]) return self;
+  
 	iter = [[nameToBoth allValues] objectEnumerator];
 
 	color = [self colorForKey: aKey];
