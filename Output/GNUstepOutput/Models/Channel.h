@@ -25,16 +25,19 @@
 
 @class NSString, NSArray, NSMutableArray;
 
-@interface ChannelUser : NSObject
+@interface ChannelUser : NSObject <NSCopying>
 	{
 		NSString *userName;
 		BOOL hasOps;
 		BOOL hasVoice;
 	}
 - initWithModifiedName: (NSString *)aName;
+- copyWithZone: (NSZone *)aZone;
 
 - (NSString *)userName;
 - setUserName: (NSString *)aName;
+
+- (NSString *)formattedName;
 
 - (BOOL)isOperator;
 - setOperator: (BOOL)aOp;

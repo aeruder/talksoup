@@ -36,6 +36,11 @@
 	
 	return self;
 }
+- copyWithZone: (NSZone *)aZone
+{
+	return [[ChannelUser allocWithZone: aZone]
+	  initWithModifiedName: [self formattedName]];
+}
 - (void)dealloc
 {
 	DESTROY(userName);

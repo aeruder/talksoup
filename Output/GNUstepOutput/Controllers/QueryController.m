@@ -24,6 +24,7 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSScrollView.h>
 
 @implementation QueryController
 - (void)awakeFromNib
@@ -37,15 +38,16 @@
 	[[chatView textContainer] setContainerSize:
 	  NSMakeSize([chatView frame].size.width, 1e7)];
 	[[chatView textContainer] setWidthTracksTextView: YES];
-	[chatView setTextContainerInset: NSMakeSize(2, 0)];
+	[chatView setTextContainerInset: NSMakeSize(2, 2)];
 	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[chatView setFrameSize: [[chatView enclosingScrollView] contentSize]];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
 	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
 	  [_GS_ defaultsObjectForKey: GNUstepOutputTextColor]]];
 		  
-	x = RETAIN([window contentView]);
+	x = RETAIN([(NSWindow *)window contentView]);
 	[window close];
 	AUTORELEASE(window);
 	window = x;

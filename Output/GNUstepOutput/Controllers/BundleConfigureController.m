@@ -261,7 +261,7 @@ static NSString *big_description = nil;
 	[descriptionText setMinSize: NSMakeSize(0, 0)];
 	[descriptionText setMaxSize: NSMakeSize(1e7, 1e7)];
 	[[descriptionText textContainer] setWidthTracksTextView: YES];
-	[descriptionText setTextContainerInset: NSMakeSize(2, 0)];
+	[descriptionText setTextContainerInset: NSMakeSize(2, 2)];
 	[descriptionText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
 	[showingPopUp selectItemAtIndex: 0];

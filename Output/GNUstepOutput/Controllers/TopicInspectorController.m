@@ -25,15 +25,16 @@
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSScrollView.h>
 #import <Foundation/NSString.h>
 
 @implementation TopicInspectorController
 - (void)awakeFromNib
 {
 	id temp = nothingView;
-	nothingView = RETAIN([temp contentView]);
+	nothingView = RETAIN([(NSWindow *)temp contentView]);
 	AUTORELEASE(temp);
-	contentView = RETAIN([window contentView]);
+	contentView = RETAIN([(NSWindow *)window contentView]);
 
 	[window setContentView: nothingView];
 	
@@ -44,8 +45,9 @@
 	[[topicText textContainer] setContainerSize:
 	  NSMakeSize([topicText frame].size.width, 1e7)];
 	[[topicText textContainer] setWidthTracksTextView: YES];
-	[topicText setTextContainerInset: NSMakeSize(2, 0)];
+	[topicText setTextContainerInset: NSMakeSize(2, 2)];
 	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[topicText setFrameSize: [[topicText enclosingScrollView] contentSize]];
 }
 - (void)dealloc
 {

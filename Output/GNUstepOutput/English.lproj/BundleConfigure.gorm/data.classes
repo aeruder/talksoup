@@ -4,8 +4,6 @@
 	    "upHit:",
 	    "refreshHit:",
 	    "downHit:",
-	    "leftHit:",
-	    "rightHit:",
 	    "showingSelected:",
 	    "middleHit:"
 	);

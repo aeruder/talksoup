@@ -51,8 +51,9 @@
 	[[chatView textContainer] setContainerSize:
 	  NSMakeSize([chatView frame].size.width, 1e7)];
 	[[chatView textContainer] setWidthTracksTextView: YES];
-	[chatView setTextContainerInset: NSMakeSize(2, 0)];
+	[chatView setTextContainerInset: NSMakeSize(2, 2)];
 	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[chatView setFrameSize: [[chatView enclosingScrollView] contentSize]];
 
 	userColumn = AUTORELEASE([[NSTableColumn alloc] 
 	  initWithIdentifier: @"User List"]);

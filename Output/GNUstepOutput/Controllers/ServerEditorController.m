@@ -44,7 +44,7 @@
 	[[commandsText textContainer] setContainerSize:
 	  NSMakeSize([commandsText frame].size.width, 1e7)];
 	[[commandsText textContainer] setWidthTracksTextView: YES];
-	[commandsText setTextContainerInset: NSMakeSize(2, 0)];
+	[commandsText setTextContainerInset: NSMakeSize(2, 2)];
 	[commandsText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	
 }
