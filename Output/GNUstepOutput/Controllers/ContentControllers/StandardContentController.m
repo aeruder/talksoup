@@ -105,7 +105,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	name = NSMapGet(bothToName, aView);
 	if (!name) return nil;
 
-	return [nameToTyping objectForName: name];
+	return [nameToTyping objectForKey: name];
 }
 /* Sets the connectioncontroller for this content controller.
  * Does not retain.
