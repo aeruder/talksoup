@@ -711,6 +711,14 @@ static NSString *TypeOfColor = @"TypeOfColor";
 
 	return self;
 }
+- (NSString *)title
+{
+	return title;
+}
+- (void)setTitle: (NSString *)aTitle
+{
+	ASSIGN(title, aTitle);
+}
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
 {
 	lowercase = aFunction;

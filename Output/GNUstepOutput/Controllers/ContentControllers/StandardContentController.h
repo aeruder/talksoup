@@ -40,6 +40,7 @@
 		NSMapTable *bothToName;
 		NSString *nickname;
 		NSString * (*lowercase)(NSString *);
+		NSString *title;
 		Class channelClass;
 		Class queryClass;
 		NSFont *chatFont;
@@ -94,6 +95,9 @@
 
 - (NSString *)nickname;
 - setNickname: (NSString *)aNickname;
+
+- (NSString *)title;
+- (void)setTitle: (NSString *)aTitle;
 
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 @end

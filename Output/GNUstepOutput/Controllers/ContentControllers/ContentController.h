@@ -110,6 +110,9 @@ extern NSString *ContentConsoleName;
 - (NSString *)nickname;
 - setNickname: (NSString *)aNickname;
 
+- (NSString *)title;
+- (void)setTitle: (NSString *)aTitle;
+
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 @end
 
