@@ -433,7 +433,7 @@ GNUstepOutput *_GS_ = nil;
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 
-	[tempMenu addItemWithTitle: _l(@"Info Panel...")
+	[tempMenu addItemWithTitle: _l(@"About TalkSoup")
 	  action: @selector(orderFrontStandardInfoPanel:)
 	  keyEquivalent: @""];
 	
