@@ -30,6 +30,7 @@
 #include <AppKit/NSMenu.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSColor.h>
+#include <AppKit/NSEvent.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSRunLoop.h>
 #include <Foundation/NSAttributedString.h>
@@ -330,6 +331,12 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	NSMenu *menu;
 	NSMenuItem *item;
 	NSMenu *tempMenu;
+	unichar leftKey = NSLeftArrowFunctionKey;
+	NSString *left = 
+	  [NSString stringWithCharacters: &leftKey length: 1];
+	unichar rightKey = NSRightArrowFunctionKey;
+	NSString *right = 
+	  [NSString stringWithCharacters: &rightKey length: 1];
 
 	menu = AUTORELEASE([NSMenu new]);
 
@@ -372,11 +379,11 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	
 	item = [tempMenu addItemWithTitle: _l(@"Next Tab")
 	  action: @selector(selectNextTab:)
-	  keyEquivalent: @"k"];
+	  keyEquivalent: right];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Previous Tab")
 	  action: @selector(selectPreviousTab:)
-	  keyEquivalent: @"j"];
+	  keyEquivalent: left];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Close Tab")
 	  action: @selector(closeCurrentTab:)

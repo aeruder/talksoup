@@ -42,6 +42,8 @@
 	[realName setNextKeyView: password];
 	[password setNextKeyView: userName];
 	[userName setNextKeyView: nick];
+	[window makeKeyAndOrderFront: nil];
+	[window makeFirstResponder: nick];
 }
 - (void)dealloc
 {

@@ -564,7 +564,7 @@ static inline NSMutableArray *mutablized_prefs()
 	}
 	if (column == 1)
 	{
-		return _l(@"Entries");
+		return _l(@"Servers");
 	}
 	
 	return @"";
