@@ -343,7 +343,6 @@
 	if (controller == nil)
 	{
 		controller = lastSelected;
-		NSLog(@"lastSelected: %@", lastSelected);
 	}
 
 	controller = [[controller chatView] textStorage];	

@@ -26,6 +26,7 @@
 #import <AppKit/NSColor.h>
 #import <AppKit/NSAttributedString.h>
 #import <AppKit/NSFont.h>
+#import <AppKit/NSParagraphStyle.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSValue.h>
 #import <Foundation/NSString.h>
@@ -125,6 +126,8 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	NSMutableAttributedString *aResult;
 	id chatFont;
 	NSRange aRange;
+	NSMutableParagraphStyle *paraStyle;
+	float wIndentF;
 
 	chatFont = AUTORELEASE(RETAIN([FontPreferencesController
 	  getFontFromPreferences: GNUstepOutputChatFont]));
@@ -209,6 +212,13 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		     nil]]));
 	}
 
+	wIndentF = [[_PREFS_ preferenceForKey: GNUstepOutputWrapIndent]
+	  floatValue];
+	paraStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	[paraStyle setHeadIndent: wIndentF];
+	[aResult addAttribute: NSParagraphStyleAttributeName 
+	  value: paraStyle range: aRange];
+
 	return aResult;
 }
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey
@@ -234,6 +244,21 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		  inRangesWithAttribute: IRCBold
 		   matchingValue: IRCBoldValue 
 		   withRange: NSMakeRange(0, [self length])];
+	}
+	else if ([aKey isEqualToString: GNUstepOutputWrapIndent])
+	{
+		NSRange aRange;
+		float wIndentF;
+		NSMutableParagraphStyle *paraStyle;
+
+		aRange = NSMakeRange(0, [self length]);
+		
+		wIndentF = [[_PREFS_ preferenceForKey: GNUstepOutputWrapIndent]
+		  floatValue];
+		paraStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+		[paraStyle setHeadIndent: wIndentF];
+		[self addAttribute: NSParagraphStyleAttributeName 
+		  value: paraStyle range: aRange];
 	}
 	else if ((color = COLOR_FOR_KEY(aKey)))
 	{

@@ -44,6 +44,7 @@
 - (void)colorChanged: (NSNotification *)aNotification;
 - (void)userListFontChanged: (NSNotification *)aNotification;
 - (void)chatFontChanged: (NSNotification *)aNotification;
+- (void)wrapIndentChanged: (NSNotification *)aNotification;
 @end
 
 @implementation StandardChannelController
@@ -176,6 +177,11 @@
 	  selector: @selector(chatFontChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputBoldChatFont];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(wrapIndentChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputWrapIndent];
 }
 - (void)dealloc
 {
@@ -249,6 +255,12 @@
 	[tableView reloadData];
 }
 - (void)chatFontChanged: (NSNotification *)aNotification
+{
+	[[chatView textStorage]
+	  updateAttributedStringForGNUstepOutputPreferences: 
+	  [aNotification object]];
+}
+- (void)wrapIndentChanged: (NSNotification *)aNotification
 {
 	[[chatView textStorage]
 	  updateAttributedStringForGNUstepOutputPreferences: 

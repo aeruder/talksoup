@@ -137,13 +137,15 @@
 	    "useStandardLigatures:",
 	    "yank:",
 	    "zoom:",
-	    "hitFontButton:"
+	    "hitFontButton:",
+	    "setWrapIndent:"
 	);
 	Super = NSObject;
     };
     FontPreferencesController = {
 	Actions = (
-	    "hitFontButton:"
+	    "hitFontButton:",
+	    "setWrapIndent:"
 	);
 	Outlets = (
 	    preferencesView,
@@ -153,7 +155,9 @@
 	    userFontField,
 	    fontSetView,
 	    boldFontButton,
-	    boldFontField
+	    boldFontField,
+	    wrapIndentStepper,
+	    wrapIndentField
 	);
 	Super = NSObject;
     };

@@ -36,6 +36,7 @@
 @interface StandardQueryController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;
 - (void)chatFontChanged: (NSNotification *)aNotification;
+- (void)wrapIndentChanged: (NSNotification *)aNotification;
 @end
 
 @implementation StandardQueryController
@@ -114,6 +115,11 @@
 	  selector: @selector(chatFontChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputBoldChatFont];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(wrapIndentChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputWrapIndent];
 }
 - (void)dealloc
 {
@@ -152,4 +158,10 @@
 	  updateAttributedStringForGNUstepOutputPreferences: 
 	  [aNotification object]];
 }	
+- (void)wrapIndentChanged: (NSNotification *)aNotification
+{
+	[[chatView textStorage]
+	  updateAttributedStringForGNUstepOutputPreferences: 
+	  [aNotification object]];
+}
 @end

@@ -20,6 +20,7 @@
 extern NSString *GNUstepOutputChatFont;
 extern NSString *GNUstepOutputBoldChatFont;
 extern NSString *GNUstepOutputUserListFont;
+extern NSString *GNUstepOutputWrapIndent;
 
 #ifndef FONT_PREFERENCES_CONTROLLER_H
 #define FONT_PREFERENCES_CONTROLLER_H
@@ -28,7 +29,7 @@ extern NSString *GNUstepOutputUserListFont;
 
 @class NSString, NSImage, NSFont;
 @class NSView, NSImage, NSTextField, NSButton;
-@class PreferencesController;
+@class PreferencesController, NSStepper;
 
 @interface FontPreferencesController : NSObject 
 	{
@@ -41,12 +42,14 @@ extern NSString *GNUstepOutputUserListFont;
 		NSTextField *chatFontField;
 		NSTextField *boldFontField;
 		NSTextField *userFontField;
+		NSTextField *wrapIndentField;
 		id fontSetView;
 		id lastView;
 	}
 + (NSFont *)getFontFromPreferences: (NSString *)aPrefName;
 
 - (void)hitFontButton: (NSButton *)aButton;
+- (void)setWrapIndent: (NSTextField *)aField;
 
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;

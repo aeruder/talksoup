@@ -26,6 +26,7 @@
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSFont.h>
 #import <AppKit/NSFontPanel.h>
+#import <AppKit/NSStepper.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
 
@@ -34,6 +35,7 @@
 NSString *GNUstepOutputChatFont = @"GNUstepOutputChatFont";
 NSString *GNUstepOutputBoldChatFont = @"GNUstepOutputBoldChatFont";
 NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
+NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 
 @interface FontPreferencesFontView : NSView
 	{
@@ -149,6 +151,7 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 }
 - (void)dealloc
 {
+	[wrapIndentField setDelegate: nil];
 	[fontSetView setDelegate: nil];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(preferencesView);
@@ -187,6 +190,37 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 
 	return;
 }
+- (void)setWrapIndent: (NSTextField *)aField
+{
+	double amount = [aField doubleValue];
+	id string;
+	id old;
+
+	[aField setStringValue: 
+	 [NSString stringWithFormat: @"%.2f", (float)amount]];
+
+	old  = [_PREFS_ preferenceForKey: 
+	  GNUstepOutputWrapIndent];
+	
+	if (amount != 0.0)
+	{
+		amount = amount * 28.35;
+	}
+	
+	string = [NSString stringWithFormat: @"%.5f", (float)amount];
+	[_PREFS_ setPreference: string
+	  forKey: GNUstepOutputWrapIndent];
+	
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: DefaultsChangedNotification
+	 object: GNUstepOutputWrapIndent
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  _GS_, @"Bundle",
+	  string, @"New",
+	  self, @"Owner",
+	  old, @"Old",
+	  nil]];
+}
 - (NSString *)preferencesName
 {
 	return @"Fonts";
@@ -197,7 +231,6 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 }
 - (NSView *)preferencesView
 {
-	NSLog(@"preferencesView: %@", preferencesView);
 	return preferencesView;
 }
 - (void)activate: (PreferencesController *)aPrefs
@@ -226,7 +259,8 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 }
 - (void)refreshFromPreferences
 {
-	id uFont, bFont, cFont;
+	id uFont, bFont, cFont, wIndent;
+	float wIndentF;
 
 	uFont = [FontPreferencesController getFontFromPreferences: 
 	  GNUstepOutputUserListFont];
@@ -247,6 +281,11 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	  [NSString stringWithFormat: @"%@ %.1f",
 	   [bFont displayName], [bFont pointSize]]];
 	[boldFontField setFont: bFont];
+
+	wIndent = [_PREFS_ preferenceForKey: GNUstepOutputWrapIndent];
+	wIndentF = [wIndent floatValue];
+	wIndent = [NSString stringWithFormat: @"%.2f", wIndentF / 28.35];
+	[wrapIndentField setStringValue: wIndent];
 }
 - (void)fontView: (FontPreferencesFontView *)aFontView
    changeFont: (id)sender

@@ -4,6 +4,7 @@
 	PersonalBracketColor = "IRCColorCustom 1000 0 0";
 	TextColor = "IRCColorCustom 0 0 0";
 	ScrollBack = 75000;
+	WrapIndent = "0.0";
 	ServerList = (
 	{
 		Name = "MagicStar";
