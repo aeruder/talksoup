@@ -333,7 +333,7 @@ static NSInvocation *invoc = nil;
 	 @"Description: ", @"This bundle will highlight the names of people "
 	 @"who say your name in the channel.  It will also handle the "
 	 @"highlighting of the tabs.  The highlighting colors as well as "
-	 @"other words to highlight can be setup through the /highlight "
+	 @"other words to highlight can be setup through the /highlighting "
 	 @"command when this bundle is loaded"
 	 @"\n\n",
 	 @"Copyright (C) 2003 by Andrew Ruder",
