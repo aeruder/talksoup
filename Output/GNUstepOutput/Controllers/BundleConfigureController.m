@@ -102,11 +102,11 @@
 
 	if (!aList)
 	{
-		[_TS_ setActivatedInFilters: x];
+		[_TS_ setActivatedInFilters: defaults[0]];
 	}
 	else
 	{
-		[_TS_ setActivatedOutFilters: x];
+		[_TS_ setActivatedOutFilters: defaults[1]];
 	}
 	
 	[availableTable reloadData];
