@@ -99,7 +99,7 @@ static void initialize_stuff(void)
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"\026"]);
 	control =
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: 
-	   @"\003\002\037\017"]);
+	   @"\003\002\037\017\026"]);
 	
 	colors[0] = RETAIN(IRCColorWhite);
 	colors[1] = RETAIN(IRCColorBlack);

@@ -92,6 +92,8 @@ static NSAttributedString *pipeit(NSAttributedString *a)
 		  range: NSMakeRange(0, [str length])];
 	}
 	
+	if ([[a string] isEqualToString: str]) return a;
+	
 	return AUTORELEASE([[NSAttributedString alloc] initWithString: str]);
 }
 
