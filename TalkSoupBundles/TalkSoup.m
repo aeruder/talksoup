@@ -64,18 +64,6 @@ NSString *IRCReverseValue = @"IRCReverseValue";
 id _TS_;
 id _TSDummy_;
 
-@interface NSException (blah)
-@end
-
-#if 0
-@implementation NSException (blah)
-- (void)raise
-{
-	abort();
-}
-@end
-#endif
-
 static inline id activate_bundle(NSDictionary *a, NSString *name)
 {
 	id dir;
@@ -431,13 +419,14 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		id connection;
 
+		[aInvocation getArgument: &connection atIndex: args - 1];
+		
 #ifdef GNUSTEP
 		NSDebugLLog(@"TalkSoup", @"Out %@ by %@", selString, sender);
 #endif
 
 		if (index == (int)([out count] - 1))
 		{
-			[aInvocation getArgument: &connection atIndex: args - 1];
 			next = connection;
 		}
 		else

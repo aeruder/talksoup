@@ -28,8 +28,21 @@
 #import <Foundation/NSRunLoop.h>
 #import <Foundation/NSHost.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSException.h>
 
 #include <stdlib.h>
+
+@interface NSException (blah)
+@end
+
+@implementation NSException (blah)
+#if 0
+- (void)raise
+{
+	abort();
+}
+#endif
+@end
 
 id GetSetting(NSString *key)
 {
