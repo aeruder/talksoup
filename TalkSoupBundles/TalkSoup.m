@@ -142,7 +142,12 @@ static inline NSArray *get_directories_with_talksoup()
 	while ((object = [iter nextObject]))
 	{
 		object = [object stringByAppendingString: 
-		  @"/ApplicationSupport/TalkSoup"];
+#ifdef __APPLE__
+		  @"/Application Support/TalkSoup"
+#else
+		  @"/ApplicationSupport/TalkSoup"
+#endif
+		  ];
 		
 		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
 		{

@@ -3,7 +3,11 @@ BUNDLE_NAME = Logging
 
 BUNDLE_EXTENSION =
 
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/InFilters
+else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
+endif
 
 Logging_LANGUAGES = English
 Logging_LOCALIZED_RESOURCE_FILES = Localizable.strings

@@ -3,7 +3,11 @@ BUNDLE_NAME = Piper
 
 BUNDLE_EXTENSION =
 
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/OutFilters
+else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/OutFilters
+endif
 
 Piper_LANGUAGES = English
 Piper_LOCALIZED_RESOURCE_FILES = Localizable.strings

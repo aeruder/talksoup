@@ -3,7 +3,11 @@ BUNDLE_NAME = Skeleton
 
 BUNDLE_EXTENSION =
 
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/OutFilters
+else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/OutFilters
+endif
 
 Skeleton_LANGUAGES = English
 Skeleton_LOCALIZED_RESOURCE_FILES = Localizable.strings

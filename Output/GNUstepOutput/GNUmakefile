@@ -2,7 +2,11 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = GNUstepOutput
 
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/Output
+else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/Output
+endif
 
 BUNDLE_EXTENSION =
 
