@@ -116,24 +116,15 @@ GNUstepOutput *_GS_ = nil;
 	if (!fontName) fontName = @"Helvetica";
 	if ([fontSize intValue] < 0 || !fontSize) fontSize = @"12";	
 	
-	defaultDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
-	  @"TalkSoup", IRCDefaultsNick,
-	  @"", IRCDefaultsRealName,
-	  @"", IRCDefaultsUserName,
-	  @"", IRCDefaultsPassword,
-	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
-	    blue: 0.8627 alpha: 1.0] encodeToData], GNUstepOutputBackgroundColor,
-	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputTextColor,
-	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.0
-	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputPersonalBracketColor,
-	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
-	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
-	  fontName, GNUstepOutputFontName,
-	  fontSize, GNUstepOutputFontSize,
-	  @"75000", GNUstepOutputScrollBack,
-	  nil];
+	defaultDefaults = [[NSMutableDictionary alloc] initWithContentsOfFile: 
+	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
+	  pathForResource: @"Defaults"
+	  ofType: @"plist"]];
+
+	[defaultDefaults setObject: fontName
+	  forKey: [GNUstepOutputFontName substringFromIndex: 13]];
+	[defaultDefaults setObject: fontSize
+	  forKey: [GNUstepOutputFontSize substringFromIndex: 13]];
 	
 	RELEASE(_GS_);
 	_GS_ = RETAIN(self);
@@ -210,7 +201,7 @@ GNUstepOutput *_GS_ = nil;
 			return z;
 		}
 		
-		z = [defaultDefaults objectForKey: aKey];
+		z = [defaultDefaults objectForKey: newKey];
 		
 		[self setDefaultsObject: z forKey: aKey];
 		
@@ -231,6 +222,10 @@ GNUstepOutput *_GS_ = nil;
 }
 - (id)defaultDefaultsForKey: aKey
 {
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		aKey = [aKey substringFromIndex: 13];
+	}
 	return [defaultDefaults objectForKey: aKey];
 }	  
 - (id)connectionToConnectionController: (id)aObject

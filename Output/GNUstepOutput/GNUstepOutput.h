@@ -65,7 +65,7 @@ extern GNUstepOutput *_GS_;
 		NSMapTable *connectionToConnectionController;
 		NSMutableArray *connectionControllers;
 		NSMutableArray *serverLists;		
-		NSDictionary *defaultDefaults;
+		NSMutableDictionary *defaultDefaults;
 		NSMutableDictionary *bundlePreferences;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
