@@ -49,7 +49,7 @@ static id get_pref(NSString *x)
 static BOOL has_name(NSString *str, NSString *name)
 {
 	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
-	 @".:,- "];
+	 @".:,- '\""];
 	NSRange cur = {0};
 	NSRange a = {0};
 	unichar x;
