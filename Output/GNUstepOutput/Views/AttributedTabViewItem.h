@@ -22,7 +22,7 @@
 
 #include <AppKit/NSTabViewItem.h>
 
-@class NSAttributedString, NSColor;
+@class NSAttributedString, NSColor, NSMutableAttributedString;
 
 @interface AttributedTabViewItem : NSTabViewItem
 	{

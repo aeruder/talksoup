@@ -25,6 +25,7 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSNull.h>
 #include <Foundation/NSBundle.h>
+#include <Foundation/NSEnumerator.h>
 
 #include <stdarg.h>
 
@@ -334,7 +335,7 @@ static NSArray *get_first_word(NSString *arg)
 		{
 			temp = [aDict objectForKey: object1];
 			if (![temp isEqual: object2] && (temp || 
-			  ![object2 isKindOf: [NSNull class]]))
+			  ![object2 isKindOfClass: [NSNull class]]))
 			{
 				doIt = NO;
 				break;
@@ -405,13 +406,13 @@ NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 		}
 		else
 		{
-			if ([aObject isKindOf: [NSNull class]])
+			if ([aObject isKindOfClass: [NSNull class]])
 			{
 				state = 1;
 			}
 			else
 			{
-				if ([aObject isKindOf: [NSAttributedString class]])
+				if ([aObject isKindOfClass: [NSAttributedString class]])
 				{
 					newstr = [[NSMutableAttributedString alloc] 
 					  initWithAttributedString: aObject];
@@ -461,12 +462,12 @@ NSMutableAttributedString *BuildAttributedFormat(id aObject, ...)
 
 	if (aObject == nil) return str;
 
-	if ([aObject isKindOf: [NSString class]])
+	if ([aObject isKindOfClass: [NSString class]])
 	{
 		aObject = AUTORELEASE([[NSAttributedString alloc] 
 		  initWithString: aObject]);
 	}
-	else if (![aObject isKindOf: [NSAttributedString class]])
+	else if (![aObject isKindOfClass: [NSAttributedString class]])
 	{
 		return str;
 	}	
@@ -498,12 +499,12 @@ NSMutableAttributedString *BuildAttributedFormat(id aObject, ...)
 			
 			[str appendAttributedString: [aObject attributedSubstringFromRange: tmpr]];
 			tmp = va_arg(ap, id);
-			if ([tmp isKindOf: [NSString class]])
+			if ([tmp isKindOfClass: [NSString class]])
 			{
 				tmp = AUTORELEASE([[NSAttributedString alloc] initWithString:
 				  tmp]);
 			}
-			else if (![tmp isKindOf: [NSAttributedString class]])
+			else if (![tmp isKindOfClass: [NSAttributedString class]])
 			{
 				tmp = AUTORELEASE([[NSAttributedString alloc] initWithString:
 				  [tmp description]]);

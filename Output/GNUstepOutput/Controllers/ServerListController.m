@@ -23,12 +23,14 @@
 #include "GNUstepOutput.h"
 
 #include <Foundation/NSNotification.h>
+#include <Foundation/NSEnumerator.h>
 #include <AppKit/NSButton.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTableColumn.h>
 #include <AppKit/NSScrollView.h>
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSTextField.h>
+#include <AppKit/NSFont.h>
 #include <AppKit/NSBrowser.h>
 #include <AppKit/NSBrowserCell.h>
 #include <AppKit/NSTextView.h>

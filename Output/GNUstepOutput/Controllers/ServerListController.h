@@ -34,6 +34,7 @@ extern NSString *ServerListInfoAutoConnect;
 #include <Foundation/NSObject.h>
 
 @class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView, NSArray;
+@class NSDictionary;
 
 @interface ServerListController : NSObject
 	{

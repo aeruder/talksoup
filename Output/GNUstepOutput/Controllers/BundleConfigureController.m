@@ -29,6 +29,7 @@
 #include <AppKit/NSButton.h>
 #include <AppKit/NSImage.h>
 #include <AppKit/NSTextStorage.h>
+#include <AppKit/NSFont.h>
 
 @interface BundleDataSource : NSObject
 	{

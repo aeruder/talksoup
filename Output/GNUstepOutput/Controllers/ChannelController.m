@@ -31,6 +31,7 @@
 #include <AppKit/NSScrollView.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSFont.h>
+#include <AppKit/NSView.h>
 
 @implementation ChannelController
 - (void)awakeFromNib

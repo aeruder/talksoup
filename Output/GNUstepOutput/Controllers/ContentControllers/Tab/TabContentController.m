@@ -33,12 +33,14 @@
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSTabViewItem.h>
 #include <AppKit/NSTextStorage.h>
+#include <AppKit/NSFont.h>
 #include <AppKit/NSTextView.h>
 #include <AppKit/NSTableView.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSNull.h>
+#include <Foundation/NSEnumerator.h>
 
 #include "GNUstepOutput.h"
 
@@ -333,21 +335,21 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	if (!aString) return self;
 	
-	if ([aChannel isKindOf: [ChannelController class]]
-	    || [aChannel isKindOf: [QueryController class]])
+	if ([aChannel isKindOfClass: [ChannelController class]]
+	    || [aChannel isKindOfClass: [QueryController class]])
 	{
 		controller = aChannel;
 	}
-	else if ([aChannel isKindOf: [NSString class]])
+	else if ([aChannel isKindOfClass: [NSString class]])
 	{
 		controller = [nameToBoth objectForKey: GNUstepOutputLowercase(aChannel)];
 	}
-	else if ([aChannel isKindOf: [NSAttributedString class]])
+	else if ([aChannel isKindOfClass: [NSAttributedString class]])
 	{
 		controller = [nameToBoth objectForKey: 
 		    GNUstepOutputLowercase([aChannel string])];
 	}
-	else if ([aChannel isKindOf: [NSArray class]])
+	else if ([aChannel isKindOfClass: [NSArray class]])
 	{
 		NSEnumerator *iter;
 		id object;
@@ -367,7 +369,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 
 	controller = [[controller chatView] textStorage];	
 	
-	if ([aString isKindOf: [NSAttributedString class]])
+	if ([aString isKindOfClass: [NSAttributedString class]])
 	{
 		aRange = NSMakeRange(0, [aString length]);
 		string = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
@@ -634,7 +636,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 		[nameToPresentation removeObjectForKey: lowName];
 		
 		object = [nameToBoth objectForKey: lowName];
-		which = ([object isKindOf: [QueryController class]]) ? 
+		which = ([object isKindOfClass: [QueryController class]]) ? 
 		  nameToQuery : nameToChannel;
 		
 		[nameToBoth setObject: object forKey: lowNewName];

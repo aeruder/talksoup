@@ -18,7 +18,6 @@
 #include "TalkSoupBundles/TalkSoup.h"
 
 #include <Foundation/NSString.h>
-#include <Foundation/NSInvocation.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSException.h>
 #include <Foundation/NSFileManager.h>

@@ -28,6 +28,7 @@
 #include <Foundation/NSCharacterSet.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSEnumerator.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTextStorage.h>

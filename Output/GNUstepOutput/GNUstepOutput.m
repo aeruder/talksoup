@@ -31,6 +31,7 @@
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
+#include <AppKit/NSFont.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSEvent.h>
@@ -44,6 +45,7 @@
 #include <Foundation/NSHost.h>
 #include <Foundation/NSUserDefaults.h>
 #include <Foundation/NSNotification.h>
+#include <Foundation/NSEnumerator.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString)
 {
