@@ -1,0 +1,71 @@
+TalkSoup is a fully-featured IRC client written with the GNUstep framework
+
+===============================================================================
+Copyright (C) 2003 Andy Ruder
+
+  TalkSoup is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Comments are welcome.
+===============================================================================
+
+
+****
+
+First off, let me say that since I do not own and never have owned a Mac 
+I have absolutely no way to actually maintain proper building methods on 
+OSX.  Therefore, building on OSX will be limited to gnustep-make style
+compilations.
+
+Secondly, if you cannot understand the instructions herein, please download
+the binaries rather than wasting my time with issues related to lack of skill
+with unix-like systems and the command line environment.  The binaries are
+the recommended way of dealing with netclasses on OS X.  You have been warned.
+
+****
+
+Step 1: 
+	Download gnustep-make from http://www.gnustep.org.  You do not need
+	gnustep-base or gnustep-gui; all you need is gnustep-make.  Read the
+	included documentation and proceed with its installation.
+
+Step 2:
+	Set GNUSTEP_INSTALLATION_DIR to the root directory that you wish to install
+	to.  All directories will be based off this root directory.  If you wish
+	to install into the standard location for frameworks, you probably want
+	GNUSTEP_INSTALLATION_DIR=/.  If you do not have administrator rights, you
+	will need to use GNUSTEP_INSTALLATION_DIR=$HOME
+
+Step 3:
+	Install netclasses from http://aeruder.gnustep.us.  
+
+Step 4:
+	Type make followed by make install.  TalkSoup should be installed.  
+	You will not be able to build the documentation without gnustep-base
+	installed.  It is recommended to download the documentation off the
+	website (http://aeruder.gnustep.us).
+
+Example:
+	The following commands will work in most cases:
+		GNUSTEP_INSTALLATION_DIR=/ make install
+	or
+		GNUSTEP_INSTALLATION_DIR=$HOME make install
+	
+Conclusion:
+	Have fun!  Hope you enjoy TalkSoup! :)
+
+===============================================================================
+Copyright (C) 2003 by Andy Ruder
+aeruder@ksu.edu
+http://aeruder.gnustep.us

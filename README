@@ -1,6 +1,5 @@
-TalkSoup
-===============================================================================
 TalkSoup is a fully-featured IRC client written with the GNUstep framework
+
 ===============================================================================
 Copyright (C) 2003 Andy Ruder
 
@@ -19,11 +18,35 @@ Copyright (C) 2003 Andy Ruder
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Comments are welcome.
-
 ===============================================================================
+
+****************************************************************
+* netclasses MUST be installed before installation of TalkSoup *
+****************************************************************
+
+**** Please see README.osx for instructions dealing with OS X compilation ****
+
+============================
+Compilation/Installation/Use
+============================
+
+1. Compile and install TalkSoup
+ andy ~/TalkSoup $ make
+ andy ~/TalkSoup $ su -c 'make install'
+
+2. Run TalkSoup
+ andy ~ $ gopen TalkSoup.app 
+  
+Enjoy!  Read below for more information about what you've just installed
+and are running :)
+
+===========
+Description
+===========
 TalkSoup.app is a fully-featured IRC client which uses GNUstep base.  While
 TalkSoup.app itself is just a very basic core which can simply pass messages
-between bundles (plugins).
+between bundles (plugins), there are many bundles which make up the
+functionality.
 
 This distribution comes with:
 
@@ -51,8 +74,8 @@ Input Filters:
 
   Logging: allows a log of a connection to be made.  See the
     /logging command for more information (once the bundle
-	is loaded).  Also see FAQ question 3.5 on using the logging
-	support.
+    is loaded).  Also see FAQ question 3.5 on using the logging
+    support.
   
   MessageInTab: opens a new tab when someone private
     messages you
@@ -76,9 +99,9 @@ Output Filters:
 
 * == Used by default
 
-===============================================================================
-Commands: 
-
+========
+Commands
+========
 /load <in/out> <bundle>: 
   Loads a input/output filter bundle named <bundle>.  If that bundle
   is already loaded, it will move it to the end of the list.
@@ -171,8 +194,9 @@ Commands:
   specifying <encoding> the command will list the available
   encodings.
 
-===============================================================================
+==============================================================
 Commands specific to the GNUstep output plugin (GNUstepOutput)
+==============================================================
 
 /me <action>
   Sends an action to the channel, for example:
@@ -201,43 +225,59 @@ Commands specific to the GNUstep output plugin (GNUstepOutput)
   This sets how many characters your scroll-back buffer holds.
   This change will automatically be saved to the defaults.
   
-===============================================================================
-Notes about GNUstepOutput (default):
+===================================
+Notes about GNUstepOutput (default)
+===================================
   
-	* Double clicking a person in the user list in a channel will
-	  open a query tab for them.
+  * Double clicking a person in the user list in a channel will
+    open a query tab for them.
+  
+  * See the 'Bundle Setup' to configure loaded bundles.  Some of the 
+    bundles even provide nice GUIs for configuration.
 	
 ===============================================================================
 Please read the INSTALL file for the details on installing TalkSoup.
 The FAQ (Frequently Asked Questions) also covers many common questions
 that TalkSoup users have.
-
 ===============================================================================
-Special Thanks To:
-  
+
+=======
+Authors
+=======
+  Main author: Andrew Ruder <aeruder at ksu dot edu>
+
+==============
+Special Thanks
+==============
   Luis Garcia Alanis <luis.garcia at mac.com>
     For his initial drive to make a GNUstep IRC client using netclasses
     and his first version of Charla.app
   Alex Perez <aperez at student.santarosa.edu>
     For his immense testing efforts and all his suggestions and
-	he also drew the icon that is currently being used by the
-	GNUstep output plugin right now.  Alex is also one of the 
-	primary people behind making an OS X port possible.
+    he also drew the icon that is currently being used by the
+    GNUstep output plugin right now.  Alex is also one of the 
+    primary people behind making an OS X port possible.
+  Jeff Reinecke
+    Jeff provided the machine that the port was done on.  Using solely
+    VNC and SSH into his machine, TalkSoup OS X was made possible.  Thanks
+    a ton Jeff!!!!
   Lyndon Tremblay <humasect at shaw.ca>
     For his time and effort in both testing and making TalkSoup
-	an icon.
+    an icon.
   Gregory Casemento <greg_casamento at yahoo.com>
     For his tremendous work on Gorm, which made TalkSoup possible.
   Alexander Malmberg <alexander at malmberg.org>
     For his constant help, bug-fixes, and overall contributions
-	to the GNUstep project. 
+    to the GNUstep project. 
   
   Also, a big thanks goes out to: Nicolas Roard, Thom
     Cherryhomes, Tim Harrison, Ian Jones, Matt Rice, 
-	and all the other people I probably forgot about
-	who offered bug fixes, suggestions, and just took
-	the time to compile and use TalkSoup.
+    and all the other people I probably forgot about
+    who offered bug fixes, suggestions, and just took
+    the time to compile and use TalkSoup.
     
 ===============================================================================
-Copyright (C) 2003 by Andy Ruder <aeruder@yahoo.com>
+Copyright (C) 2003 by Andy Ruder
+aeruder@ksu.edu
+http://aeruder.gnustep.us
 	
