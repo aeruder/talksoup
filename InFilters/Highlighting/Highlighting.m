@@ -34,7 +34,10 @@ static NSDictionary *highlighting_defaults = nil;
 static id main_controller = nil;
 
 #define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
-#define set_pref(__x,__y) [Highlighting setDefaultsObject: (__y) forKey: (__x)]
+#define set_pref(__x,__y) \
+{	[Highlighting setDefaultsObject: (__y) forKey: (__x)];\
+	[main_controller reloadData]; }
+	
 
 NSString *HighlightingShouldDoNick = @"HighlightingShouldDoNick";
 NSString *HighlightingUserColor = @"HighlightingUserColor";
@@ -264,7 +267,6 @@ static NSInvocation *invoc = nil;
 			msg = _l(@"Turning on nick highlighting...\n");
 		}
 		set_pref(HighlightingShouldDoNick, val);
-		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
 	{
@@ -284,7 +286,6 @@ static NSInvocation *invoc = nil;
 		}
 		
 		set_pref(HighlightingUserColor, val);
-		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"tabreferencecolor"] == NSOrderedSame)
 	{
@@ -305,7 +306,6 @@ static NSInvocation *invoc = nil;
 		}
 		
 		set_pref(HighlightingTabReferenceColor, val);
-		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"tabanythingcolor"] == NSOrderedSame)
 	{
@@ -325,7 +325,6 @@ static NSInvocation *invoc = nil;
 		}
 		
 		set_pref(HighlightingTabAnythingColor, val);
-		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"extrawords"] == NSOrderedSame)
 	{
@@ -354,7 +353,6 @@ static NSInvocation *invoc = nil;
 		}
 		
 		set_pref(HighlightingExtraWords, val);
-		[main_controller reloadData];
 	}
 	else
 	{

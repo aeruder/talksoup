@@ -48,14 +48,6 @@
 {
 	return;
 }
-- (void)shouldDisplay
-{
-	return;
-}
-- (void)shouldHide
-{
-	return;
-}
 #else
 - (void)awakeFromNib
 {

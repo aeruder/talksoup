@@ -47,11 +47,8 @@ extern NSString *HighlightingExtraWords;
 	}
 
 + (NSDictionary *)defaultSettings;
-
 + (void)setDefaultsObject: aObject forKey: aKey;
-
 + (id)defaultsObjectForKey: aKey;
-
 + (id)defaultDefaultsForKey: aKey;
 
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
