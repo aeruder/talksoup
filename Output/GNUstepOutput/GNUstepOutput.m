@@ -76,6 +76,9 @@ NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 
 GNUstepOutput *_GS_ = nil;
 
+@protocol GNUstepOutputDefineSelectors
+@end
+
 @interface GNUstepOutputBundle : NSBundle
 @end
 
@@ -89,6 +92,17 @@ GNUstepOutput *_GS_ = nil;
 	if (!(self = [super init])) return nil;
 	
 	[NSApplication sharedApplication]; // Make sure NSApp is allocated..
+	
+	if (![NSBundle loadNibNamed: @"GNUstepOutput" owner: self])
+	{
+		NSLog(@"Could not load GNUstepOutput, exiting...");
+		[self dealloc];
+		return nil;
+	}
+
+	x = [menu itemWithTitle: @"Quit"];
+
+	[NSApp setMainMenu: menu];
 
 	connectionToConnectionController = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
@@ -136,6 +150,7 @@ GNUstepOutput *_GS_ = nil;
 - (void)dealloc
 {
 	[[topic topicText] setKeyTarget: nil];
+	RELEASE(menu);
 	RELEASE(topic);
 	RELEASE(defaultDefaults);
 	RELEASE(connectionControllers);
@@ -358,11 +373,26 @@ GNUstepOutput *_GS_ = nil;
 - (BOOL)respondsToSelector: (SEL)aSel
 {
 	NSString *selS;
+	NSString *tmp;
+	SEL tmpSel;
 	
 	if (!aSel) return NO;
 	
 	selS = NSStringFromSelector(aSel);
 	
+	if ([selS hasPrefix: @"doApplication"])
+	{
+		tmp = [selS substringFromIndex: 13];
+		tmp = [NSString stringWithFormat: @"%@%@", 
+		  [[tmp substringToIndex: 1] lowercaseString],
+		  [tmp substringFromIndex: 1]];
+		tmpSel = NSSelectorFromString(tmp);
+		if (tmpSel != 0 && [NSApp respondsToSelector: tmpSel])
+		{
+			return YES;
+		}
+	}
+		
 	if ([selS hasSuffix: @"nConnection:withNickname:sender:"] && 
 	    [ConnectionController instancesRespondToSelector: aSel]) return YES;
 	
@@ -373,7 +403,25 @@ GNUstepOutput *_GS_ = nil;
 - (NSMethodSignature *)methodSignatureForSelector: (SEL)aSel
 {
 	id x;
+	NSString *selS;
+
+	selS = NSStringFromSelector(aSel);
 	
+	if ([selS hasPrefix: @"doApplication"])
+	{
+		SEL tmpSel;
+
+		x = [selS substringFromIndex: 13];
+		x = [NSString stringWithFormat: @"%@%@", 
+		  [[x substringToIndex: 1] lowercaseString],
+		  [x substringFromIndex: 1]];
+		tmpSel = NSSelectorFromString(x);
+		if (tmpSel != 0 && (x = [NSApp methodSignatureForSelector: tmpSel]))
+		{
+			return x;
+		}
+	}
+
 	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
 	{
 		return x;
@@ -393,6 +441,25 @@ GNUstepOutput *_GS_ = nil;
 	
 	[aInvoc retainArguments];
 	
+	if ([selS hasPrefix: @"doApplication"])
+	{
+		SEL tmpSel;
+		NSString *x;
+		
+		x = [selS substringFromIndex: 13];
+		x = [NSString stringWithFormat: @"%@%@", 
+		  [[x substringToIndex: 1] lowercaseString],
+		  [x substringFromIndex: 1]];
+		tmpSel = NSSelectorFromString(x);
+		
+		if (tmpSel != 0 && [NSApp respondsToSelector: tmpSel])
+		{
+			[aInvoc setSelector: tmpSel];
+			[aInvoc invokeWithTarget: NSApp];
+			return;
+		}
+	}
+
 	if ([selS hasSuffix: @"nConnection:withNickname:sender:"])
 	{
 		int num;
@@ -421,7 +488,6 @@ GNUstepOutput *_GS_ = nil;
 - (void)run
 {
 	[GNUstepOutputBundle poseAsClass: [NSBundle class]];
-	[NSApplication sharedApplication];
 	[NSApp setDelegate: self];
 	[NSApp run];
 }
@@ -431,125 +497,6 @@ GNUstepOutput *_GS_ = nil;
 @end
 
 @implementation GNUstepOutput (NSApplicationDelegate)
-- (void)applicationWillFinishLaunching: (NSNotification *)aNotification
-{
-	NSMenu *menu;
-	id item;
-	NSMenu *tempMenu;
-	unichar leftKey = NSLeftArrowFunctionKey;
-	unichar rightKey = NSRightArrowFunctionKey;
-
-	menu = AUTORELEASE([NSMenu new]);
-
-// Info	
-	item = [menu addItemWithTitle: _l(@"Info") action: 0 keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-
-	[tempMenu addItemWithTitle: _l(@"About TalkSoup")
-	  action: @selector(orderFrontStandardInfoPanel:)
-	  keyEquivalent: @""];
-	
-	[tempMenu addItemWithTitle: _l(@"Preferences...")
-	  action: @selector(loadPreferencesPanel:)
-	  keyEquivalent: @"P"];
-	
-	[tempMenu addItemWithTitle: _l(@"Bundle Setup...")
-	  action: @selector(loadBundleConfigurator:)
-	  keyEquivalent: @"B"];
-
-// Connection
-	item = [menu addItemWithTitle: _l(@"Connection") action: 0
-	  keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-	
-	[tempMenu addItemWithTitle: _l(@"Open Server List...") 
-	  action: @selector(openServerList:)
-	  keyEquivalent: @"o"];
-	
-	[tempMenu addItemWithTitle: _l(@"Connected Window...") 
-	  action: @selector(openNamePrompt:)
-	  keyEquivalent: @"N"];
-	
-	[tempMenu addItemWithTitle: _l(@"Unconnected Window") 
-	  action: @selector(openEmptyWindow:)
-	  keyEquivalent: @"n"];
-
-// Tabs
-	item = [menu addItemWithTitle: _l(@"Tab") action: 0
-	  keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-
-	item = [tempMenu addItemWithTitle: _l(@"Next Tab")
-	  action: @selector(selectNextTab:)
-	  keyEquivalent: [NSString stringWithCharacters: &rightKey
-	    length: 1]];
-	
-	item = [tempMenu addItemWithTitle: _l(@"Previous Tab")
-	  action: @selector(selectPreviousTab:)
-	  keyEquivalent: [NSString stringWithCharacters: &leftKey
-	    length: 1]];
-	
-	item = [tempMenu addItemWithTitle: _l(@"Close Tab")
-	  action: @selector(closeCurrentTab:)
-	  keyEquivalent: @"X"];
-
-// Tools
-	item = [menu addItemWithTitle: _l(@"Tools")
-	  action: 0 keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-	
-	item = [tempMenu addItemWithTitle: _l(@"Topic Inspector")
-	  action: @selector(openTopicInspector:)
-	  keyEquivalent: @"t"];
-	
-// Edit	
-	item = [menu addItemWithTitle: _l(@"Edit") action: 0 keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-
-	[tempMenu addItemWithTitle: _l(@"Cut")
-	  action: @selector(cut:)
-	  keyEquivalent: @"x"];
-	[tempMenu addItemWithTitle: _l(@"Copy")
-	  action: @selector(copy:)
-	  keyEquivalent: @"c"];
-	[tempMenu addItemWithTitle: _l(@"Paste")
-	  action: @selector(paste:)
-	  keyEquivalent: @"v"];
-	[tempMenu addItemWithTitle: _l(@"Delete")
-	  action: @selector(delete:)
-	  keyEquivalent: @""];
-	[tempMenu addItemWithTitle: _l(@"Select All")
-	  action: @selector(selectAll:)
-	  keyEquivalent: @"a"];
-
-// Windows
-	item = [menu addItemWithTitle: _l(@"Windows") action: 0 keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-	[NSApp setWindowsMenu: tempMenu];
-
-// Services
-	item = [menu addItemWithTitle: _l(@"Services") action: 0 keyEquivalent: @""];
-	tempMenu = AUTORELEASE([NSMenu new]);
-	[menu setSubmenu: tempMenu forItem: item];
-	[NSApp setServicesMenu: tempMenu];
-
-// Hide
-	[menu addItemWithTitle: _l(@"Hide")
-	  action: @selector(hide:)
-	  keyEquivalent: @"h"];
-
-// Quit
-	[menu addItemWithTitle: _l(@"Quit") action: @selector(terminate:)
-	  keyEquivalent: @"q"];
-	
-	[NSApp setMainMenu: menu];
-}
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 	topic = [TopicInspectorController new];
@@ -581,6 +528,18 @@ GNUstepOutput *_GS_ = nil;
 	}
 	
 	[[prefs window] close]; 
+}
+- (void)doApplicationTerminate: (id)sender
+{
+	[NSApp terminate: sender];
+}
+- (void)doApplicationHide: (id)sender
+{
+	[NSApp hide: sender];
+}
+- (void)doApplicationOrderFrontStandardAboutPanel: (id)sender
+{
+	[NSApp orderFrontStandardAboutPanel: sender];
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {

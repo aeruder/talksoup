@@ -52,9 +52,9 @@ extern GNUstepOutput *_GS_;
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
 @class NSDictionary, ConnectionController, PreferencesController;
 @class TopicInspectorController, ServerListController;
-@class BundleConfigureController;
+@class BundleConfigureController, NSMenu;
 
-@interface GNUstepOutput : NSObject
+@interface GNUstepOutput : NSObject 
 	{
 		NSMutableDictionary *pendingIdentToConnectionController;
 		NSMapTable *connectionToConnectionController;
@@ -65,6 +65,7 @@ extern GNUstepOutput *_GS_;
 		TopicInspectorController *topic;
 		BundleConfigureController *bundle;
 		BOOL terminating;
+		NSMenu *menu;
 	}
 - setDefaultsObject: aObject forKey: aKey;
 

@@ -11,13 +11,13 @@ GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.nib \
                                          ServerEditor.nib ServerList.nib \
                                          NamePrompt.nib GroupEditor.nib \
                                          ServerEditor.nib TopicInspector.nib \
-                                         BundleConfigure.nib
+                                         BundleConfigure.nib GNUstepOutput.nib
 else
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \
                                          NamePrompt.gorm GroupEditor.gorm \
                                          ServerEditor.gorm TopicInspector.gorm \
-                                         BundleConfigure.gorm
+                                         BundleConfigure.gorm GNUstepOutput.gorm
 endif
 
 GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff \
