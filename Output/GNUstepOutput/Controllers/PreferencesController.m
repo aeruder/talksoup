@@ -33,8 +33,16 @@
 #include <AppKit/NSButton.h>
 #include <AppKit/NSTextView.h>
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSView.h>
 
 @implementation PreferencesController
+- (void)awakeFromNib
+{
+	[nick setNextKeyView: realName];
+	[realName setNextKeyView: password];
+	[password setNextKeyView: userName];
+	[userName setNextKeyView: nick];
+}
 - (void)dealloc
 {
 	[nick setTarget: nil];

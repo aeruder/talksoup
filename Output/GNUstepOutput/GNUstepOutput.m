@@ -21,6 +21,7 @@
 #include "Controllers/PreferencesController.h"
 #include "Controllers/ServerListController.h"
 #include "Controllers/NamePromptController.h"
+#include "Controllers/ContentController.h"
 #include "Misc/NSColorAdditions.h"
 
 #include <AppKit/NSAttributedString.h>
@@ -410,6 +411,22 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 	[ServerListController startAutoconnectServers];
+}
+- (void)applicationWillTerminate: (NSNotification *)aNotification
+{
+	NSArray *x;
+	NSEnumerator *iter;
+	id object;
+	
+	[[prefs window] close];
+	x = [NSArray arrayWithArray: connectionControllers];
+	
+	iter = [x objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[[[object contentController] window] close];
+	}
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {

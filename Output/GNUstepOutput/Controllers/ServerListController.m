@@ -176,6 +176,7 @@ static inline NSMutableArray *mutablized_prefs()
 	[browser setAllowsEmptySelection: NO];
 	[browser setAllowsBranchSelection: NO];
 	
+	[browser setDoubleAction: @selector(connectHit:)];
 	[browser setDelegate: self];
 	[window setDelegate: self];
 	RETAIN(self);
@@ -186,6 +187,7 @@ static inline NSMutableArray *mutablized_prefs()
 - (void)dealloc
 {
 	[browser setDelegate: nil];
+	[browser setDoubleAction: 0];
 	RELEASE(browser);
 	RELEASE(scrollView);
 	RELEASE(addGroupButton);

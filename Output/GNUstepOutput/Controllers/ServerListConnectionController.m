@@ -136,6 +136,10 @@
 		[ServerListController setServer: tmp inGroup: serverGroup
 		  row: serverRow];
 	}
+	else
+	{
+		NSLog(@"Not equal?");
+	}
 }
 @end
 
