@@ -266,7 +266,11 @@ static NSInvocation *invoc = nil;
 	
 	if (![dfm fileExistsAtPath: aPath isDirectory: &isDir])
 	{
-		[dfm createFileAtPath: aPath contents: AUTORELEASE([NSData new]) attributes: nil];
+		if (![dfm createFileAtPath: aPath contents: AUTORELEASE([NSData new]) attributes: nil])
+		{
+			RELEASE(self);
+			return nil;
+		}
 	}
 	else if (isDir)
 	{
@@ -915,17 +919,22 @@ static NSInvocation *invoc = nil;
 		}
 	}
 	
+	dfm = [NSFileManager defaultManager];
 	if ([path length] == 0)
 	{
 		path = [dict objectForKey: DCCInfoFileName];
 		path = fix_file_name(path);
-		path = [NSString stringWithFormat: @"%@/%@", get_default(dcc_dir), path];
+		x = get_default(dcc_dir);
+		if (![dfm fileExistsAtPath: path isDirectory: &isDir] || !isDir)
+		{
+			return S2AS(_l(@"Invalid download directory, see /dcc setdir."));
+		}
+		path = [NSString stringWithFormat: @"%@/%@", x, path];
 	}
 	
 	path = [path stringByExpandingTildeInPath];
 	path = [path stringByStandardizingPath];
 
-	dfm = [NSFileManager defaultManager];
 	if ([dfm fileExistsAtPath: path isDirectory: &isDir])
 	{
 		if (isDir || !tryContinue)
