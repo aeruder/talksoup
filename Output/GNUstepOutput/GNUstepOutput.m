@@ -18,7 +18,7 @@
 #import "GNUstepOutput.h"
 
 #import "Controllers/ConnectionController.h"
-#import "Controllers/PreferencesController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"

@@ -17,7 +17,7 @@ else
 GNUstepOutput_BUNDLE_LIBS = -lTalkSoupBundles $(GUI_LIBS)
 endif
 
-Controllers = Controllers/PreferencesController.m \
+Controllers = Controllers/Preferences/PreferencesController.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers)
 						   

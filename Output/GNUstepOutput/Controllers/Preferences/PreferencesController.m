@@ -17,7 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#import "Controllers/PreferencesController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ConnectionController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/QueryController.h"
