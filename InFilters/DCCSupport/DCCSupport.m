@@ -32,6 +32,8 @@
 
 static NSString *dcc_default = @"DCCSupport";
 static NSString *dcc_dir = @"DCCSupportDirectory";
+static NSString *dcc_gettimeout = @"DCCSupportGetTimeout";
+static NSString *dcc_sendtimeout = @"DCCSupportSendTimeout";
 
 static id get_default_default(NSString *key)
 {
@@ -113,6 +115,8 @@ static id get_default(NSString *key)
 	return [[NSUserDefaults standardUserDefaults] objectForKey: key];
 }
 
+#define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
+#define SET_DEFAULT_INT(_x, _y) set_default(_x, [NSString stringWithFormat: @"%d", _y])
 
 static NSString *fix_file_name(NSString *name)
 {
@@ -154,7 +158,9 @@ static NSString *unique_path(NSString *path)
 static NSInvocation *invoc = nil;
 
 @interface DCCSupport (PrivateSupport)
+- (void)startedReceive: dcc onConnection: aConnection;
 - (void)finishedReceive: dcc onConnection: aConnection;
+- (void)startedSend: dcc onConnection: aConnection;
 - (void)finishedSend: dcc onConnection: aConnection;
 - (NSMutableArray *)getConnectionTable: aConnection;
 @end
@@ -300,6 +306,7 @@ static NSInvocation *invoc = nil;
 		oldTransferredBytes = 0;
 		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
 		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
+		[delegate startedReceive: self onConnection: connection];
 	}
 		
 	RELEASE(status);
@@ -404,7 +411,7 @@ static NSInvocation *invoc = nil;
 	
 	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
 	  withSize: fileSize
-	  withDelegate: self withTimeout: 30 withBlockSize: 2000 withUserInfo: nil];
+	  withDelegate: self withTimeout: 300 withBlockSize: 2000 withUserInfo: nil];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
 	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
@@ -449,6 +456,7 @@ static NSInvocation *invoc = nil;
 		oldTransferredBytes = 0;
 		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
 		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
+		[delegate startedSend: self onConnection: connection];
 	}		
 		
 	RELEASE(status);
@@ -526,6 +534,15 @@ static NSInvocation *invoc = nil;
 
 
 @implementation DCCSupport (PrivateSupport)
+- (void)startedSend: (id)dcc onConnection: aConnection
+{
+	id path = [dcc path];
+	id nick = [dcc receiver];
+	
+	[[_TS_ pluginForOutput] showMessage:
+	  BuildAttributedString(@"Transfer of %@ to %@ initiated.", path, nick)
+	  onConnection: aConnection];
+}	
 - (void)finishedSend: (id)dcc onConnection: aConnection
 {
 	id status = [dcc status];
@@ -560,6 +577,16 @@ static NSInvocation *invoc = nil;
 	}
 
 	[connections removeObjectIdenticalTo: dcc];
+}
+- (void)startedReceive: (id)dcc onConnection: aConnection
+{
+	id info = [dcc info];
+	id nick = [info objectForKey: DCCInfoNick];
+	id filename = [info objectForKey: DCCInfoFileName];
+	
+	[[_TS_ pluginForOutput] showMessage: 
+	  BuildAttributedFormat(@"Transfer of %@ from %@ initiated.",
+	  filename, nick) onConnection: aConnection];
 }
 - (void)finishedReceive: (id)dcc onConnection: aConnection
 {
@@ -620,6 +647,48 @@ static NSInvocation *invoc = nil;
 	  [self instanceMethodSignatureForSelector: @selector(commandDCC:connection:)]]);
 	[invoc retainArguments];
 	[invoc setSelector: @selector(commandDCC:connection:)];
+}
+- (NSAttributedString *)commandDCCGETTIMEOUT: (NSString *)command connection: (id)connection
+{
+	id x;
+	int val;
+	
+	x = [command separateIntoNumberOfArguments: 2];
+	
+	if ([x count] == 0)
+	{
+		return BuildAttributedString(@"Usage: /dcc gettimeout <seconds>", @"\n",
+		  @"Sets the timeout in seconds on receiving files.", nil);
+	}
+	
+	val = [[x objectAtIndex: 0] intValue];
+	
+	if (val < 0) val = 0 - val;
+	
+	SET_DEFAULT_INT(dcc_gettimeout, val);
+	
+	return S2AS(@"Ok.");
+}
+- (NSAttributedString *)commandDCCSENDTIMEOUT: (NSString *)command connection: (id)connection
+{
+	id x;
+	int val;
+	
+	x = [command separateIntoNumberOfArguments: 2];
+	
+	if ([x count] == 0)
+	{
+		return BuildAttributedString(@"Usage: /dcc sendtimeout <seconds>", @"\n",
+		  @"Sets the timeout in seconds on sending files.", nil);
+	}
+	
+	val = [[x objectAtIndex: 0] intValue];
+	
+	if (val < 0) val = 0 - val;
+	
+	SET_DEFAULT_INT(dcc_sendtimeout, val);
+	
+	return S2AS(@"Ok.");
 }
 - (NSAttributedString *)commandDCCSEND: (NSString *)command connection: (id)connection
 {
@@ -937,7 +1006,9 @@ static NSInvocation *invoc = nil;
 	  @"/dcc list (lists current connections and requests)", @"\n",
 	  @"/dcc get (receives a file)", @"\n",
 	  @"/dcc setdir (sets default download directory)", @"\n",
-	  @"/dcc send (sends a file)",
+	  @"/dcc send (sends a file)", @"\n",
+	  @"/dcc gettimeout (sets timeout on receiving files)", @"\n",
+	  @"/dcc sendtimeout (sets timeout on sending files)",
 	  nil);
 }	
 - init
