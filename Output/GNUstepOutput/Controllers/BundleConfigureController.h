@@ -34,6 +34,8 @@
 		NSWindow *window;
 		NSTableColumn *availCol;
 		NSTableColumn *loadCol;
+		id loadData[2];
+		id availData[2];
 	}
 
 - (NSWindow *)window;

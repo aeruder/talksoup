@@ -29,6 +29,8 @@
 - controlObject: (id)aObject onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick
    sender: aPlugin;
+
+- (NSAttributedString *)pluginDescription;
 @end
 
 @protocol TalkSoupInputPluginProtocol < TalkSoupPluginProtocol > 

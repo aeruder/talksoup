@@ -316,6 +316,6 @@
      objectValueForTableColumn: (NSTableColumn *)aTableColumn
 	 row: (int)rowIndex
 {
-	return RETAIN([userList objectAtIndex: rowIndex]);
+	return [userList objectAtIndex: rowIndex];
 }
 @end

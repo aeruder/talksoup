@@ -3,7 +3,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 FRAMEWORK_NAME = TalkSoupBundles
 
 TalkSoupBundles_HEADER_FILES = TalkSoup.h TalkSoupProtocols.h TalkSoupMisc.h
-TalkSoupBundles_CURRENT_VERSION_NAME=0.80
+TalkSoupBundles_CURRENT_VERSION_NAME=0.82
 TalkSoupBundles_DEPLOY_WITH_CURRENT_VERSION=yes
 
 -include GNUmakefile.preamble
