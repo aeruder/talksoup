@@ -1,4 +1,16 @@
 {
+    ColorPreferencesController = {
+	Actions = (
+	);
+	Outlets = (
+	    otherColor,
+	    personalColor,
+	    textColor,
+	    backgroundColor,
+	    preferencesView
+	);
+	Super = NSObject;
+    };
     FirstResponder = {
 	Actions = (
 	    "activateContextHelpMode:",
@@ -137,16 +149,6 @@
 	    "useStandardLigatures:",
 	    "yank:",
 	    "zoom:"
-	);
-	Super = NSObject;
-    };
-    PreferencesController = {
-	Actions = (
-	);
-	Outlets = (
-	    scrollView,
-	    window,
-	    preferencesView
 	);
 	Super = NSObject;
     };

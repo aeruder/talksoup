@@ -2,7 +2,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 APP_NAME = GNUstepOutput
 
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Preferences.gorm GNUstepOutput.gorm
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = ColorPreferences.gorm Preferences.gorm GNUstepOutput.gorm
 
 GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff \
  AllLanguages/Defaults.plist
@@ -17,7 +17,8 @@ else
 GNUstepOutput_BUNDLE_LIBS = -lTalkSoupBundles $(GUI_LIBS)
 endif
 
-Controllers = Controllers/Preferences/PreferencesController.m
+Controllers = Controllers/Preferences/PreferencesController.m \
+  Controllers/Preferences/ColorPreferencesController.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers)
 						   

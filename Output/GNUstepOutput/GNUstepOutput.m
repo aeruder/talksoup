@@ -582,6 +582,7 @@ GNUstepOutput *_GS_ = nil;
 	}
 	else
 	{
+		NSLog(@"It works!\n");
 		[[prefs window] makeKeyAndOrderFront: nil];
 	}
 }

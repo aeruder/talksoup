@@ -1,5 +1,5 @@
 /***************************************************************************
-                                PreferencesController.m
+                         PreferencesController.m
                           -------------------
     begin                : Thu Apr  3 08:09:15 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -44,6 +44,8 @@
 #import <AppKit/NSMatrix.h>
 #import <AppKit/NSNibLoading.h>
 
+#import "Controllers/Preferences/ColorPreferencesController.h"
+
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
@@ -62,10 +64,12 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 @implementation PreferencesController
 - init
 {
+	NSLog(@"It works?!");
 	if (!(self = [super init])) return self;
 
 	prefsModules = [NSMutableArray new];
 
+	NSLog(@"Loading bundle...\n");
 	if (![NSBundle loadNibNamed: @"Preferences" owner: self])
 	{
 		[self dealloc];
@@ -80,6 +84,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	 * from preferences.app.  Why redo what works
 	 * so nicely? 
 	 */
+	NSLog(@"awakeFromNib!!!\n");
 
 	prefsList = AUTORELEASE([[NSMatrix alloc] initWithFrame: 
 	  NSMakeRect(0, 0, 64*30, 64)]);
@@ -93,9 +98,12 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[scrollView setHasVerticalScroller: NO];
 	[scrollView setBorderType: NSBezelBorder];
 
-	[moduleScrollView setHasHorizontalScroller: YES];
-	[moduleScrollView setHasVerticalScroller: YES];
-	[moduleScrollView setBorderType: NSBezelBorder];
+	id tmp = [ColorPreferencesController new];
+	NSLog(@"ColorPreferencesController: %@\n", tmp);
+	tmp = [tmp preferencesView];
+	[tmp setFrame: [preferencesView frame]];
+	[tmp setFrameOrigin: NSMakePoint(0,0)];
+	[preferencesView addSubview: tmp];
 }
 - (void)dealloc
 {
@@ -106,9 +114,10 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 }
 - (NSWindow *)window 
 {
+	NSLog(@"Wiondow!!!\n");
 	return window;
 }
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule>) aPrefsModule
+- (BOOL)setCurrentModule: aPrefsModule
 {
 	// FIXME
 }

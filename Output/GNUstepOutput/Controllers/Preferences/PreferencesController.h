@@ -33,9 +33,13 @@ extern NSString *GNUstepOutputScrollBack;
 
 #import <Foundation/NSObject.h>
 
+@class NSView;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
 
 @protocol GNUstepOutputPrefsModule
+- (NSView *)preferencesView;
+- (void)activate;
+- (void)deactivate;
 @end
 
 @interface PreferencesController : NSObject
@@ -43,13 +47,13 @@ extern NSString *GNUstepOutputScrollBack;
 		NSScrollView *scrollView;
 		NSWindow *window;
 		NSMatrix *prefsList;
-		NSScrollView *moduleScrollView;
+		NSView *preferencesView;
 		int currentPrefs;
 		NSMutableArray *prefsModules;
 	}
 - (NSWindow *)window;
 
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule>) aPrefsModule;
+- (BOOL)setCurrentModule: aPrefsModule;
 - (void)refreshCurrentPanel;
 
 - (void)refreshAvailablePreferences;
