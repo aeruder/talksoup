@@ -12,10 +12,7 @@ ifeq ($(USE_APPKIT),)
 USE_APPKIT = yes
 endif
 
-ifeq ($(USE_APPKIT),yes)
-USE_APPKIT = yes
-ADDITIONAL_OBJCFLAGS += -DUSE_APPKIT
-else
+ifneq ($(USE_APPKIT),yes)
 USE_APPKIT = no
 endif
 

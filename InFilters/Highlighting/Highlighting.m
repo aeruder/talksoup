@@ -18,9 +18,7 @@
 #import "Highlighting.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
-#ifdef USE_APPKIT
 #import "HighlightingPreferencesController.h"
-#endif
 
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSCharacterSet.h>
@@ -32,61 +30,17 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSBundle.h>
 
-static id get_pref(NSString *x)
-{
-	id object = [NSUserDefaults standardUserDefaults];
-	
-	if ([x hasPrefix: @"Highlighting"] && ![x isEqualToString: @"Highlighting"])
-	{
-		x = [x substringFromIndex: 12];
-		object = [object objectForKey: @"Highlighting"];
-		if (!(object))
-		{
-			[[NSUserDefaults standardUserDefaults] setObject:
-			  object = [NSDictionary dictionaryWithObjectsAndKeys: 
-			  IRCColorBlue, @"UserColor",
-			  @"IRCColorCustom 130 140 410", @"TabReferenceColor",
-			  @"IRCColorCustom 410 130 140", @"TabAnythingColor",
-			  nil] forKey: @"Highlighting"];
-		}
-	}
-	
-	return [object objectForKey: x];
-}
-		
-static void set_pref(NSString *x, id val)
-{
-	id object = [NSUserDefaults standardUserDefaults];
-	
-	if ([x hasPrefix: @"Highlighting"] && ![x isEqualToString: @"Highlighting"])
-	{
-		NSMutableDictionary *y;
-		id tmp;
-		
-		x = [x substringFromIndex: 12];
-		tmp = [object objectForKey: @"Highlighting"];
-		
-		if (!tmp)
-		{
-			y = AUTORELEASE([NSMutableDictionary new]);
-		}
-		else
-		{
-			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
-		}
-		
-		if (val)
-		{
-			[y setObject: val forKey: x];
-		}
-		else
-		{
-			[y removeObjectForKey: x];
-		}
-		
-		[object setObject: y forKey: @"Highlighting"];
-	}
-}
+static NSDictionary *highlighting_defaults = nil;
+static id main_controller = nil;
+
+#define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
+#define set_pref(__x,__y) [Highlighting setDefaultsObject: (__y) forKey: (__x)]
+
+NSString *HighlightingShouldDoNick = @"HighlightingShouldDoNick";
+NSString *HighlightingUserColor = @"HighlightingUserColor";
+NSString *HighlightingTabReferenceColor = @"HighlightingTabReferenceColor";
+NSString *HighlightingTabAnythingColor = @"HighlightingTabAnythingColor";
+NSString *HighlightingExtraWords = @"HighlightingExtraWords";
 
 static BOOL has_name(NSString *str, NSString *name)
 {
@@ -147,9 +101,9 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
   NSAttributedString *from, NSArray *words, NSString *where, id connection,
   NSAttributedString *aNick)
 {
-	NSString *userColor = get_pref(@"HighlightingUserColor");
-	NSString *refColor = get_pref(@"HighlightingTabReferenceColor");
-	NSString *anyColor = get_pref(@"HighlightingTabAnythingColor");
+	NSString *userColor = get_pref(HighlightingUserColor);
+	NSString *refColor = get_pref(HighlightingTabReferenceColor);
+	NSString *anyColor = get_pref(HighlightingTabAnythingColor);
 	NSEnumerator *iter;
 	id object;
 	BOOL does = NO;
@@ -215,7 +169,74 @@ static NSInvocation *invoc = nil;
 	[invoc retainArguments];
 	[invoc setTarget: self];
 	[invoc setSelector: @selector(commandHighlighting:connection:)];
+	highlighting_defaults = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys: 
+	  IRCColorBlue, @"UserColor",
+	  @"IRCColorCustom 130 140 410", @"TabReferenceColor",
+	  @"IRCColorCustom 410 130 140", @"TabAnythingColor",
+	  [NSArray arrayWithObjects: nil], @"ExtraWords",
+	  @"YES", @"ShouldDoNick",
+	  nil]));
 }	
++ (NSDictionary *)defaultSettings
+{
+	return highlighting_defaults;
+}
++ (void)setDefaultsObject: aObject forKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: @"Highlighting"] && ![aKey isEqualToString: @"Highlighting"])
+	{
+		NSMutableDictionary *y;
+		id tmp;
+		
+		aKey = [aKey substringFromIndex: 12];
+		tmp = [object objectForKey: @"Highlighting"];
+		
+		if (!tmp)
+		{
+			y = AUTORELEASE([NSMutableDictionary new]);
+		}
+		else
+		{
+			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
+		}
+		
+		if (aObject)
+		{
+			[y setObject: aObject forKey: aKey];
+		}
+		else
+		{
+			[y removeObjectForKey: aKey];
+		}
+		
+		[object setObject: y forKey: @"Highlighting"];
+	}
+}
++ (id)defaultsObjectForKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: @"Highlighting"] && ![aKey isEqualToString: @"Highlighting"])
+	{
+		aKey = [aKey substringFromIndex: 12];
+		object = [object objectForKey: @"Highlighting"];
+		if (!(object))
+		{
+			[[NSUserDefaults standardUserDefaults] setObject:
+			  object = highlighting_defaults forKey: @"Highlighting"];
+		}
+		return (object = [object objectForKey: aKey]) ? object : 
+		  [highlighting_defaults objectForKey: aKey];
+	}
+	
+	return [object objectForKey: aKey];
+}
++ (id)defaultDefaultsForKey: aKey
+{
+	return [highlighting_defaults objectForKey: aKey];
+}
 + (NSAttributedString *)commandHighlighting: (NSString *)args 
    connection: connection
 {
@@ -249,7 +270,8 @@ static NSInvocation *invoc = nil;
 			return S2AS(COLOR_MSG);
 		}
 		
-		set_pref(@"HighlightingUserColor", val);
+		set_pref(HighlightingUserColor, val);
+		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"tabreferencecolor"] == NSOrderedSame)
 	{
@@ -269,7 +291,8 @@ static NSInvocation *invoc = nil;
 			return S2AS(COLOR_MSG);
 		}
 		
-		set_pref(@"HighlightingTabReferenceColor", val);
+		set_pref(HighlightingTabReferenceColor, val);
+		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"tabanythingcolor"] == NSOrderedSame)
 	{
@@ -288,11 +311,12 @@ static NSInvocation *invoc = nil;
 			return S2AS(COLOR_MSG);
 		}
 		
-		set_pref(@"HighlightingTabAnythingColor", val);
+		set_pref(HighlightingTabAnythingColor, val);
+		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"extrawords"] == NSOrderedSame)
 	{
-		val = [get_pref(@"HighlightingExtraWords") componentsJoinedByString: 
+		val = [get_pref(HighlightingExtraWords) componentsJoinedByString: 
 		  @"^"];
 		if (!val) val = @"";
 		
@@ -316,7 +340,8 @@ static NSInvocation *invoc = nil;
 			val = nil;
 		}
 		
-		set_pref(@"HighlightingExtraWords", val);
+		set_pref(HighlightingExtraWords, val);
+		[main_controller reloadData];
 	}
 	else
 	{
@@ -348,28 +373,25 @@ static NSInvocation *invoc = nil;
 }
 - pluginActivated
 {
-#ifdef USE_APPKIT
-	id controller;
-
-	controller = AUTORELEASE([HighlightingPreferencesController new]);
+	main_controller = controller = [HighlightingPreferencesController new];
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"Process", @"AddBundlePreferencesController",
-	  @"Name", _l(@"Highlighting"),
-	  @"Controller", controller,
+	  @"AddBundlePreferencesController", @"Process",
+	  @"Highlighting", @"Name",
+	  controller, @"Controller",
 	  nil] onConnection: nil withNickname: nil sender: self];
-#endif
 
 	[_TS_ addCommand: @"highlighting" withInvocation: invoc];
 	return self;
 }
 - pluginDeactivated
 {
-#ifdef USE_APPKIT
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"Process", @"RemoveBundlePreferencesController",
-	  @"Name", _l(@"Highlighting"), nil]
+	  @"RemoveBundlePreferencesController", @"Process",
+	  @"Highlighting", @"Name", nil]
 	  onConnection: nil withNickname: nil sender: self];
-#endif
+	DESTROY(controller);
+	main_controller = nil;
+
 	[_TS_ removeCommand: @"highlighting"];
 	return self;
 }
@@ -380,9 +402,15 @@ static NSInvocation *invoc = nil;
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
 	id where = get_destination([to string], [from string], [connection nick]);
-	id words = get_pref(@"HighlightingExtraWords");
-	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
-
+	id words = get_pref(HighlightingExtraWords);
+	id shouldAdd = get_pref(HighlightingShouldDoNick);
+	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	
+	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
+	{
+		[x addObject: [connection nick]];
+	}
+	
 	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];
@@ -402,9 +430,15 @@ static NSInvocation *invoc = nil;
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
 	id where = get_destination([to string], [from string], [connection nick]);
-	id words = get_pref(@"HighlightingExtraWords");
-	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
-
+	id words = get_pref(HighlightingExtraWords);
+	id shouldAdd = get_pref(HighlightingShouldDoNick);
+	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	
+	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
+	{
+		[x addObject: [connection nick]];
+	}
+	
 	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];
@@ -423,9 +457,15 @@ static NSInvocation *invoc = nil;
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
 	id where = get_destination([to string], [from string], [connection nick]);
-	id words = get_pref(@"HighlightingExtraWords");
-	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
-
+	id words = get_pref(HighlightingExtraWords);
+	id shouldAdd = get_pref(HighlightingShouldDoNick);
+	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	
+	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
+	{
+		[x addObject: [connection nick]];
+	}
+	
 	if ([words isKindOfClass: [NSArray class]])
 	{
 		[x addObjectsFromArray: words];

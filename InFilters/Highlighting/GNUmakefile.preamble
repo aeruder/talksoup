@@ -3,6 +3,10 @@ ADDITIONAL_INCLUDE_DIRS += -I. -I../..
 
 ADDITIONAL_OBJCFLAGS += -Wall -Wno-protocol
 
+ifeq ($(USE_APPKIT), yes)
+ADDITIONAL_OBJCFLAGS += -DUSE_APPKIT
+endif
+
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 ADDITIONAL_OBJCFLAGS += -include GNUstep.h $(ADDITIONAL_FRAMEWORK_DIRS)
 else

@@ -54,6 +54,11 @@ extern GNUstepOutput *_GS_;
 @class TopicInspectorController, ServerListController;
 @class BundleConfigureController, NSMenu;
 
+@protocol GNUstepOutputBundlePreferences
+- (void)shouldDisplay;
+- (void)shouldHide;
+@end
+
 @interface GNUstepOutput : NSObject 
 	{
 		NSMutableDictionary *pendingIdentToConnectionController;
@@ -61,6 +66,7 @@ extern GNUstepOutput *_GS_;
 		NSMutableArray *connectionControllers;
 		NSMutableArray *serverLists;		
 		NSDictionary *defaultDefaults;
+		NSMutableDictionary *bundlePreferences;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
 		BundleConfigureController *bundle;
@@ -87,6 +93,8 @@ extern GNUstepOutput *_GS_;
 - removeServerList: (ServerListController *)aServer;
 
 - setPreferencesController: (PreferencesController *)aPrefs;
+
+- controllerForBundlePreferences: (NSString *)aName;
 
 - (TopicInspectorController *)topicInspectorController;
 - (void)run;

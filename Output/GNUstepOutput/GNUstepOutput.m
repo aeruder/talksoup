@@ -103,6 +103,7 @@ GNUstepOutput *_GS_ = nil;
 	serverLists = [NSMutableArray new];
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
+	bundlePreferences = [NSMutableDictionary new];
 	
 	x = [NSFont userFontOfSize: 0.0];
 	
@@ -290,6 +291,10 @@ GNUstepOutput *_GS_ = nil;
 	
 	return self;
 }		
+- controllerForBundlePreferences: (NSString *)aString
+{
+	return [bundlePreferences objectForKey: aString];
+}
 - (NSArray *)connectionControllers
 {
 	return [NSArray arrayWithArray: connectionControllers];
@@ -379,6 +384,42 @@ GNUstepOutput *_GS_ = nil;
 	}
 	return self;
 }
+- controlObject: (NSDictionary *)aControl onConnection: aConnection
+  withNickname: aNick sender: aSender
+{
+	id process;
+	process = [aControl objectForKey: @"Process"];
+	
+	if ([process isEqualToString: @"AddBundlePreferencesController"])
+	{
+		id name, controller;
+		name = [aControl objectForKey: @"Name"];
+		controller = [aControl objectForKey: @"Controller"];
+
+		if (!controller || !name) return self;
+
+		[bundlePreferences setObject: controller forKey: name];
+	}
+	else if ([process isEqualToString: @"RemoveBundlePreferencesController"])
+	{
+		id name;
+		name = [aControl objectForKey: @"Name"];
+
+		if (!name) return self;
+
+		[bundlePreferences removeObjectForKey: name];
+	}
+	else if (!aConnection)
+	{
+		id object;
+
+		object = NSMapGet(connectionToConnectionController, aConnection);
+		[object controlObject: aControl onConnection: aConnection
+		  withNickname: aNick sender: aSender];
+	}
+
+	return self;
+}	
 - (BOOL)respondsToSelector: (SEL)aSel
 {
 	NSString *selS;

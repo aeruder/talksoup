@@ -33,8 +33,27 @@
                table: @"Localizable"]
 
 @class NSAttributedString;
+@class NSString, NSDictionary;
+
+extern NSString *HighlightingShouldDoNick;
+extern NSString *HighlightingUserColor;
+extern NSString *HighlightingTabReferenceColor;
+extern NSString *HighlightingTabAnythingColor;
+extern NSString *HighlightingExtraWords;
 
 @interface Highlighting : NSObject
+	{
+		id controller;
+	}
+
++ (NSDictionary *)defaultSettings;
+
++ (void)setDefaultsObject: aObject forKey: aKey;
+
++ (id)defaultsObjectForKey: aKey;
+
++ (id)defaultDefaultsForKey: aKey;
+
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
    from: (NSAttributedString *)sender onConnection: (id)connection 
    withNickname: (NSAttributedString *)aNick

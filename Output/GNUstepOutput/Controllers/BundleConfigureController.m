@@ -96,6 +96,10 @@ static NSString *big_description = nil;
 	[self refreshList];
 	[preferencesButton setEnabled: NO];
 	[preferencesButton setBordered: NO];
+
+	currentlySelected = -1;
+	currentTable = nil;
+	otherTable = nil;
 	
 	[availableTable deselectAll: nil];
 	[loadedTable deselectAll: nil];
@@ -110,6 +114,19 @@ static NSString *big_description = nil;
 {
 	if (currentTable == loadedTable)
 	{
+		id cont;
+
+		if (currentlySelected >= 0 && currentlySelected < [loadData count])
+		{
+			cont = [_GS_ controllerForBundlePreferences: 
+			  [loadData objectAtIndex: currentlySelected]];
+			if (cont)
+			{
+				[preferencesButton setBordered: YES];
+				[preferencesButton setEnabled: YES];
+				return;
+			}
+		}	
 		[preferencesButton setEnabled: NO];
 		[preferencesButton setBordered: YES];
 	}
@@ -240,6 +257,15 @@ static NSString *big_description = nil;
 }
 - (void)preferencesHit: (id)sender
 {
+	if (currentlySelected >= 0 && currentlySelected < [loadData count])
+	{
+		id cont;
+
+		cont = [_GS_ controllerForBundlePreferences: 
+		  [loadData objectAtIndex: currentlySelected]];
+
+		[cont shouldDisplay];
+	}
 }
 - (void)showingSelected: (id)sender
 {
@@ -266,7 +292,6 @@ static NSString *big_description = nil;
 
 	currentTable = aTableView;
 
-	[self updateButton];
 	[otherTable deselectAll: nil];
 	[otherTable setNeedsDisplay: YES];
 	[currentTable setNeedsDisplay: YES];
@@ -274,6 +299,9 @@ static NSString *big_description = nil;
 	[[descriptionText textStorage] setAttributedString: 
 	  [self descriptionForSelected: aRow]];
 	[descriptionText scrollPoint: NSMakePoint(0, 0)];
+
+	currentlySelected = aRow;
+	[self updateButton];
 
 	return YES;
 }

@@ -1,7 +1,7 @@
 /***************************************************************************
-                        BundleConfigureController.h
+                                HighlightingPreferencesController.h
                           -------------------
-    begin                : Mon Sep  8 00:16:46 CDT 2003
+    begin                : Mon Dec 29 12:11:34 CST 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,39 +15,33 @@
  *                                                                         *
  ***************************************************************************/
 
-@class BundleConfigureController;
-
-#ifndef BUNDLE_CONFIGURE_CONTROLLER_H
-#define BUNDLE_CONFIGURE_CONTROLLER_H
-
 #import <Foundation/NSObject.h>
 
-@class NSPopUpButton, NSTableView, NSTextView, NSWindow;
-@class NSTableColumn, NSButton, NSMutableArray;
+@class NSButton, NSTableView, NSWindow, NSColorWell;
+@class NSMutableArray;
 
-@interface BundleConfigureController : NSObject
+@interface HighlightingPreferencesController : NSObject
 	{
-		NSButton *preferencesButton;
-		NSPopUpButton *showingPopUp;
-		NSTableView *loadedTable;
-		NSTableView *availableTable;
-		NSTextView *descriptionText;
+		NSButton *highlightButton;
+		NSButton *removeButton;
+		NSTableView *extraTable;
 		NSWindow *window;
-		NSMutableArray *availData;
-		NSMutableArray *loadData;
-		id defaults[2];
-		int currentShowing;
+		NSColorWell *highlightInChannelColor;
+		NSColorWell *highlightInTabColor;
+		NSColorWell *messageInTabColor;
+		NSMutableArray *extraNames;
 		int currentlySelected;
-		id currentTable;
-		id otherTable;
 	}
+- (void)reloadData;
+#ifdef USE_APPKIT
+- (void)shouldDisplay;
+- (void)shouldHide;
 
-- (NSWindow *)window;
-
-- (void)refreshHit: (id)sender;
-- (void)showingSelected: (id)sender;
-- (void)preferencesHit: (id)sender;
-
+- (void)highlightingHit: (id)sender;
+- (void)removeHit: (id)sender;
+- (void)highlightInChannelHit: (id)sender;
+- (void)highlightInTabHit: (id)sender;
+- (void)messageInTabHit: (id)sender;
+#endif
 @end
 
-#endif
