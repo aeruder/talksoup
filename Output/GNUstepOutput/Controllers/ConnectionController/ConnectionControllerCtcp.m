@@ -66,4 +66,12 @@
 	
 	return nil;
 }
+- CTCPRequestRFM: (NSAttributedString *)query from: (NSAttributedString *)aPerson
+{
+	[_TS_ sendCTCPReply: S2AS(@"RFM") withArgument: S2AS(@"Problems? Blame RFM")
+	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
+	  onConnection: connection sender: _GS_];
+	
+	return nil;
+}
 @end
