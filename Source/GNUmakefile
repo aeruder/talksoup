@@ -1,5 +1,4 @@
 include $(GNUSTEP_MAKEFILES)/common.make
-APP_NAME = TalkSoup
 
 SUBPROJECTS = TalkSoupBundles
 
