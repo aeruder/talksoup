@@ -56,9 +56,9 @@ Input Filters:
 Output Filters:
 
   *Colorizer: Lets you use %B for bold, %U for underline,
-    %O for clear all attributes, and %C(0-15),(0-15) to set
-    colors. (First number is the foreground color, second number 
-    is the background color).
+    %R for reverse, %O for clear all attributes, and 
+    %C(0-15),(0-15) to set colors. (First number is the 
+    foreground color, second number is the background color).
 
   Piper: Lets you pipe outgoing messages through arbitrary
     commands. See the /piper command when the bundle is loaded
