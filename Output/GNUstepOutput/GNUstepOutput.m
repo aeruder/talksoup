@@ -424,16 +424,16 @@ PreferencesController *_PREFS_ = nil;
 	[[topic topicText] setKeyTarget: self];
 	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)];
 
-	if (![ServerListController startAutoconnectServers])
-	{
-		AUTORELEASE([ConnectionController new]);
-	}
-
 	_PREFS_ = [PreferencesController new];
 	AUTORELEASE([GeneralPreferencesController new]);
 	AUTORELEASE([ColorPreferencesController new]);
 	AUTORELEASE([FontPreferencesController new]);
 	AUTORELEASE([BundlePreferencesController new]);
+
+	if (![ServerListController startAutoconnectServers])
+	{
+		AUTORELEASE([ConnectionController new]);
+	}
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {

@@ -28,6 +28,7 @@
 #import <AppKit/NSNibLoading.h>
 
 @interface TabMasterController (DelegateMethods)
+- (void)typeViewEnterPressed: (NSTextField *)aField;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
 - (void)tabView: (NSTabView *)tabView 
@@ -60,6 +61,8 @@
 	while ([tabView numberOfTabViewItems] && 
 	       (object = [tabView tabViewItemAtIndex: 0])) 
 		[tabView removeTabViewItem: object];
+	[typeView setAction: @selector(typeViewEnterPressed:)];
+	[typeView setTarget: self];
 }
 - (void)dealloc
 {
@@ -239,7 +242,7 @@
 
 	content = NSMapGet(viewToContent, aView);
 
-	[NSNotificationCenter 
+	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerMovedInMasterControllerNotification
 	 object: content userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
 	  [NSNumber numberWithInt: origIndex], @"OldIndex",
@@ -357,6 +360,15 @@
 @end
 
 @implementation TabMasterController (DelegateMethods)
+- (void)typeViewEnterPressed: (NSTextField *)aField
+{
+	id content;
+
+	content = NSMapGet(viewToContent, selected);
+
+	[[content typingControllerForView: selected] 
+	   commandTyped: [aField stringValue]];
+}
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
 	/* Basically we just need to force the 
@@ -374,7 +386,7 @@
 	NSLog(@"Requested field editor. content: %@", content);
 
 	return [[content typingControllerForView: selected]
-	  fieldEditorForField: typeView];
+	  fieldEditorForField: typeView forMasterController: self];
 }
 - (void)tabView: (NSTabView *)tabView 
   didSelectTabViewItem: (NSTabViewItem *)tabViewItem

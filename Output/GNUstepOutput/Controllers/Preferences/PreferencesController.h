@@ -32,7 +32,6 @@ extern NSString *GNUstepOutputScrollBack;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
 @class NSDictionary, NSMutableDictionary;
 
-
 /* object: the preferences module */
 extern NSString *PreferencesModuleAdditionNotification;
 

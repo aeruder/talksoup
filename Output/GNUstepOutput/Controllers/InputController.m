@@ -143,6 +143,8 @@ static void send_message(id command, id name, id connection)
 	NSEnumerator *iter, *iter2;
 	id object, object2;
 
+	NSLog(@"Command Typed: '%@'!!!", command);
+
 	lines = [command componentsSeparatedByString: @"\r\n"];
 		
 	iter = [lines objectEnumerator];
@@ -191,6 +193,7 @@ static void send_message(id command, id name, id connection)
 	id connection;
 	id name;
 	
+	NSLog(@"Boo!");
 	[history addObject: command];	
 	historyIndex = [history count];
 	
@@ -235,12 +238,14 @@ static void send_message(id command, id name, id connection)
 		
 		if (commandSelector && [self respondsToSelector: commandSelector])
 		{
+				NSLog(@"Performing selector!");
 				[self performSelector: commandSelector withObject: arguments];
 				return;
 		}
 		
 		if ((invoc = [_TS_ invocationForCommand: substring]))
 		{
+			NSLog(@"Performing invoc!");
 			[invoc setArgument: &arguments atIndex: 2];
 			[invoc setArgument: &connection atIndex: 3]; 
 			[invoc invoke];

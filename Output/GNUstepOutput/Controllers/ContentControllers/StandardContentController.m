@@ -739,7 +739,8 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	RELEASE(nickname);
 	nickname = RETAIN(aNickname);
 
-	[NSNotificationCenter postNotificationName: ContentControllerChangedNicknameNotification
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ContentControllerChangedNicknameNotification
 	 object: self userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
 	  nickname, @"OldNickname",
 	  aNickname, @"Nickname",

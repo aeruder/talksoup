@@ -24,10 +24,16 @@
 #import <TalkSoupBundles/TalkSoup.h>
 
 #import <AppKit/NSNibLoading.h>
-#import <AppKit/NSWindow.h>
-#import <AppKit/NSTextView.h>
-#import <AppKit/NSTextContainer.h>
 #import <AppKit/NSScrollView.h>
+#import <AppKit/NSTextContainer.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSWindow.h>
+#import <Foundation/NSNotification.h>
+
+@interface StandardQueryController (PreferencesCenter)
+- (void)backgroundChanged: (NSNotification *)aNotification;
+- (void)foregroundChanged: (NSNotification *)aNotification;
+@end
 
 @implementation StandardQueryController
 + (NSString *)standardNib
@@ -75,9 +81,20 @@
 	AUTORELEASE(window);
 	window = x;
 	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(backgroundChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputBackgroundColor];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(foregroundChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputTextColor];
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(window);
 	[super dealloc];
 }
@@ -88,5 +105,29 @@
 - (NSView *)contentView
 {
 	return window;
+}
+@end
+
+@implementation StandardQueryController (PreferencesCenter)
+- (void)backgroundChanged: (NSNotification *)aNotification
+{
+	id color;
+
+	color = [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor];
+	color = [NSColor colorFromEncodedData: color];
+
+	[chatView setBackgroundColor: color];
+}
+- (void)foregroundChanged: (NSNotification *)aNotification
+{
+	id color;
+
+	color = [_PREFS_ preferenceForKey: GNUstepOutputTextColor];
+	color = [NSColor colorFromEncodedData: color];
+	/* FIXME
+	 * This probably needs to be done the way it used to be done.
+	 * It will be a lot more complicated than just this one call
+	 */
+	[chatView setTextColor: color];
 }
 @end
