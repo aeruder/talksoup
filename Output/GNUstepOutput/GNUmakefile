@@ -4,6 +4,8 @@ BUNDLE_NAME = GNUstepOutput
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Output
 
+BUNDLE_EXTENSION = .bundle
+
 GNUstepOutput_RESOURCE_FILES = Images/irc.tiff
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
@@ -12,6 +14,8 @@ GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
+
+GNUstepOutput_FRAMEWORKS = -lTalkSoupBundles
 
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ContentController.m Controllers/InputController.m\

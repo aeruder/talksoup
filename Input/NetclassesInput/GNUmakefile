@@ -7,7 +7,7 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Input
 
 NetclassesInput_PRINCIPAL_CLASS = NetclassesInput
 
-NetclassesInput_FRAMEWORKS = -lTalkSoupApp
+NetclassesInput_FRAMEWORKS = -lTalkSoupBundles
 
 netclasses = netclasses/NetBase.m netclasses/NetTCP.m netclasses/LineObject.m \
              netclasses/IRCObject.m
