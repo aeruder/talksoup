@@ -60,7 +60,7 @@ static BOOL has_name(NSString *str, NSString *name)
 	str = [str lowercaseString];
 	name = [name lowercaseString];
 	
-	while (a.length >= 0)
+	while (a.location < len)
 	{
 		cur = [str rangeOfString: name options: 0 range: a];
 		
