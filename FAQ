@@ -24,178 +24,179 @@ Comments are welcome.
 Questions covered in this FAQ:
 
 1. Overview
-	1.1 What is GNUstep? Where do I get it?
-	1.2 What is so special about TalkSoup?
-	
+    1.1 What is GNUstep? Where do I get it?
+    1.2 What is so special about TalkSoup?
+    
 2. Installation
-	2.1 How do I install TalkSoup as a regular user?
-	2.2 I get messages about it not being able to find bundles.  What's wrong?
+    2.1 How do I install TalkSoup as a regular user?
+    2.2 I get messages about it not being able to find bundles.  What's 
+        wrong?
 
 3. Usage
-	3.1 I'm new to IRC? Where do I start?
-	3.2 Wow, this is really cool! Are there any IRC channels where I can find
-	    out more about GNUstep?
-	3.3 How do I load and unload bundles while talksoup is running?
-	3.4 Is order important on the input/output filters?
-	
+    3.1 I'm new to IRC? Where do I start?
+    3.2 Wow, this is really cool! Are there any IRC channels where I can 
+        find out more about GNUstep?
+    3.3 How do I load and unload bundles while talksoup is running?
+    3.4 Is order important on the input/output filters?
+    
 ===============================================================================
 1. Overview
 1.1 What is GNUstep? Where do I get it?
-	
-	"GNUstep provides an Object-Oriented application development framework and
-	 tool set for use on a wide variety of computer platforms.  GNUstep is
-	 based on the original OpenStep specification provided by NeXT, Inc. (now
-	 Apple)." [www.gnustep.org]
-	
-	What does that mean in English?  Well, GNUstep tries to follow the OpenStep 
-	API.  The OpenStep API is really easy to develop applications with in 
-	Objective-C, and it is the same base API used in Cocoa on the Mac OSX 
-	operating system.
+    
+    "GNUstep provides an Object-Oriented application development framework and
+     tool set for use on a wide variety of computer platforms.  GNUstep is
+     based on the original OpenStep specification provided by NeXT, Inc. (now
+     Apple)." [www.gnustep.org]
+    
+    What does that mean in English?  Well, GNUstep tries to follow the OpenStep
+    API.  The OpenStep API is really easy to develop applications with in 
+    Objective-C, and it is the same base API used in Cocoa on the Mac OSX 
+    operating system.
 
-	The best place to obtain GNUstep is from its website at 
-	http://www.gnustep.org.  It may take a while to compile, but other than
-	that the installation process is fairly straight forward if you read
-	the instructions.	
+    The best place to obtain GNUstep is from its website at 
+    http://www.gnustep.org.  It may take a while to compile, but other than
+    that the installation process is fairly straight forward if you read
+    the instructions.    
 
 1.2 What is so special about TalkSoup?
 
-	Well, besides being the only IRC client that I know of developed
-	specifically to be used with GNUstep, it is also one of the most
-	flexible IRC clients in existence!  TalkSoup at its core does almost
-	nothing except load bundles and allow them to interface between each
-	other.  You can have multiple output plugins or multiple input
-	plugins.  For example, you could have a ncurses based output, or a 
-	GNUstep based output, or even a GTK or QT based output.  Also, there
-	also can be multiple input/output filters.  For example, I could write
-	a filter that sends a fortune to the channel everytime you type
-	fortune, and it would be completely independent of the output plugin.
-	So if you wrote this 'fortune' output filter, it would work with the
-	ncurses output plugin as well as the QT or GNUstep output plugin.
-	
+    Well, besides being the only IRC client that I know of developed
+    specifically to be used with GNUstep, it is also one of the most
+    flexible IRC clients in existence!  TalkSoup at its core does almost
+    nothing except load bundles and allow them to interface between each
+    other.  You can have multiple output plugins or multiple input
+    plugins.  For example, you could have a ncurses based output, or a 
+    GNUstep based output, or even a GTK or QT based output.  Also, there
+    also can be multiple input/output filters.  For example, I could write
+    a filter that sends a fortune to the channel everytime you type
+    fortune, and it would be completely independent of the output plugin.
+    So if you wrote this 'fortune' output filter, it would work with the
+    ncurses output plugin as well as the QT or GNUstep output plugin.
+    
 2. Installation
 2.1 How do I install TalkSoup as a regular user?
-	    
-	To install any correctly written GNUstep program as a regular user, it 
-	should just require: 
-		
-	   export GNUSTEP_INSTALLATION_DIR="$GNUSTEP_USER_ROOT"
-	   make
-	   make install
-		
-	which will install GNUstep into your $HOME/GNUstep directory.
+        
+    To install any correctly written GNUstep program as a regular user, it 
+    should just require: 
+        
+       export GNUSTEP_INSTALLATION_DIR="$GNUSTEP_USER_ROOT"
+       make
+       make install
+        
+    which will install GNUstep into your $HOME/GNUstep directory.
 
 2.2 I get messages about it not being able to find bundles.  What's wrong?
 
-	TalkSoup's core does almost nothing.  You need bundles (GNUstep's version
-	of plugins) to make it do anything.  There's a good chance that you may
-	have just installed the core TalkSoup.  When you run compile TalkSoup, 
-	you must do so from the head directory.  For example,
+    TalkSoup's core does almost nothing.  You need bundles (GNUstep's version
+    of plugins) to make it do anything.  There's a good chance that you may
+    have just installed the core TalkSoup.  When you run compile TalkSoup, 
+    you must do so from the head directory.  For example,
 
-	andy ~/TalkSoup $ make ; make install
+    andy ~/TalkSoup $ make ; make install
 
-	Do not do something like:
+    Do not do something like:
 
-	andy ~/TalkSoup/Source $ make ; make install
+    andy ~/TalkSoup/Source $ make ; make install
 
-	or it will not install any of the output or input plugins.
-	
+    or it will not install any of the output or input plugins.
+    
 3. Usage
 3.1 I'm new to IRC? Where do I start?
 
-	You don't need to know a lot of commands to get around on IRC.  First of
-	all, you connect to a server.  This can either be done manually by typing:
+    You don't need to know a lot of commands to get around on IRC.  First of
+    all, you connect to a server.  This can either be done manually by typing:
 
-	/server irc.freenode.net
+    /server irc.freenode.net
 
-	to connect to irc.freenode.net (or you can use another IRC server if you want)
-	or you can use the server list to connect to a freenode server.
+    to connect to irc.freenode.net (or you can use another IRC server if you want)
+    or you can use the server list to connect to a freenode server.
 
-	To change your nickname on the IRC server, you can use: 
-	
-	/nick newname 
+    To change your nickname on the IRC server, you can use: 
+    
+    /nick newname 
 
-	to change it.  There can only be one person on a IRC server at a time with a 
-	particular nickname, so you have to pick something unique!  Now, you are
-	connected, hopefully.  Now you just need to join a channel that suits your
-	particular interest.  There are lots of channels on IRC, and a lot of times
-	you can just guess what the channel name will be.  For example, to talk about
-	GNUstep, you can try:
-	
-	/join #gnustep
+    to change it.  There can only be one person on a IRC server at a time with a 
+    particular nickname, so you have to pick something unique!  Now, you are
+    connected, hopefully.  Now you just need to join a channel that suits your
+    particular interest.  There are lots of channels on IRC, and a lot of times
+    you can just guess what the channel name will be.  For example, to talk about
+    GNUstep, you can try:
+    
+    /join #gnustep
 
-	Or you can try a wide variety of other channels like #chat, #linux, #russia,
-	#debian, #irchelp or whatever your interests may be.  If you are using the 
-	GNUstep	output plugin, you will see a list along the right side of all the 
-	users in a channel along the right side of the window.  You can begin
-	typing to the people in the channel, just press enter when you want to send
-	your message.
+    Or you can try a wide variety of other channels like #chat, #linux, #russia,
+    #debian, #irchelp or whatever your interests may be.  If you are using the 
+    GNUstep    output plugin, you will see a list along the right side of all the 
+    users in a channel along the right side of the window.  You can begin
+    typing to the people in the channel, just press enter when you want to send
+    your message.
 
-	When you are done talking, you can use a command like:
+    When you are done talking, you can use a command like:
 
-	/part #gnustep
+    /part #gnustep
 
-	to just leave a particular channel.  Or, if you want to disconnect and leave
-	all the channels, you can use:
+    to just leave a particular channel.  Or, if you want to disconnect and leave
+    all the channels, you can use:
 
-	/quit
+    /quit
 
-	As with most IRC clients, the GNUstep output plugin supports tab-completion, so
-	if you just type /<tab><tab> you should see a list of all the valid commands. 
-	The best thing to do is just to experiment and have fun!
-	
+    As with most IRC clients, the GNUstep output plugin supports tab-completion, so
+    if you just type /<tab><tab> you should see a list of all the valid commands. 
+    The best thing to do is just to experiment and have fun!
+    
 3.2 Wow, this is really cool! Are there any IRC channels where I can find
     out more about GNUstep?
-	
-	If you connect to irc.freenode.net where many open-source projects 
-	have discussion channels, you can join the #gnustep channel.  Sometimes
-	it takes a few minutes for someone to be around, so you might need
-	to wait a few minutes to get a reply to a question.  My nickname
-	is Beregorn, hope to talk to you there!
+    
+    If you connect to irc.freenode.net where many open-source projects 
+    have discussion channels, you can join the #gnustep channel.  Sometimes
+    it takes a few minutes for someone to be around, so you might need
+    to wait a few minutes to get a reply to a question.  My nickname
+    is Beregorn, hope to talk to you there!
 
 3.3 How do I load and unload bundles while TalkSoup is running?
 
-	To see what bundles you currently have loaded, type /loaded.  If you
-	want to load another input or output filter, you can use the /load
-	command.  To load a input filter, type /load in <filtername> and to
-	load a output filter, type /load out <filtername>.  If you leave off
-	the filtername, TalkSoup will tell you which bundles are available to
-	load.  The /unload command works very similar to the /load command.
+    To see what bundles you currently have loaded, type /loaded.  If you
+    want to load another input or output filter, you can use the /load
+    command.  To load a input filter, type /load in <filtername> and to
+    load a output filter, type /load out <filtername>.  If you leave off
+    the filtername, TalkSoup will tell you which bundles are available to
+    load.  The /unload command works very similar to the /load command.
 
-	If you get everything the way you want it, you can save your bundle
-	preferences by typing /saveloaded.  Also, keep in mind that order is
-	important.
+    If you get everything the way you want it, you can save your bundle
+    preferences by typing /saveloaded.  Also, keep in mind that order is
+    important.
 
 3.4 Is order important on the input/output filters?
-	
-	YES!  To illustrate how it can make a difference, here's an
-	example using the Highlighting.bundle and the MessageInTab.bundle.
+    
+    YES!  To illustrate how it can make a difference, here's an
+    example using the Highlighting.bundle and the MessageInTab.bundle.
 
-	Now, Highlighting.bundle highlights a tab when someone talks in it
-	(and you don't have that tab focused).  MessageInTab.bundle simply
-	opens a separate tab for a person when they private message you.
+    Now, Highlighting.bundle highlights a tab when someone talks in it
+    (and you don't have that tab focused).  MessageInTab.bundle simply
+    opens a separate tab for a person when they private message you.
 
-	Now, let's say currently when you type /loaded it says:
+    Now, let's say currently when you type /loaded it says:
 
-	Input Filters: Highlighting.bundle, MessageInTab.bundle
+    Input Filters: Highlighting.bundle, MessageInTab.bundle
 
-	Well, you may be wondering why the tab doesn't turn red when someone
-	private messages you and the new tab is opened.  Well, that's because
-	TalkSoup goes through the filters in order!  First the Highlighting.bundle
-	will run, but at that point, there is no open tab for that person, so no
-	highlighting will be done.  Now, if you type:
+    Well, you may be wondering why the tab doesn't turn red when someone
+    private messages you and the new tab is opened.  Well, that's because
+    TalkSoup goes through the filters in order!  First the 
+    Highlighting.bundle    will run, but at that point, there is no open tab 
+    for that person, so no highlighting will be done.  Now, if you type:
 
-	/load in Highlighting.bundle
+    /load in Highlighting.bundle
 
-	And then type /loaded again, you should have something like:
+    And then type /loaded again, you should have something like:
 
-	Input Filters: MessageInTab.bundle, Highlighting.bundle
+    Input Filters: MessageInTab.bundle, Highlighting.bundle
 
-	Now it should work correctly, because when the private message
-	gets to the Highlighting.bundle, it will see that there is a tab
-	open and will highlight it.
+    Now it should work correctly, because when the private message
+    gets to the Highlighting.bundle, it will see that there is a tab
+    open and will highlight it.
 
-	In short, order is important!
-	
+    In short, order is important!
+    
 ===============================================================================
 Copyright (C) 2003 by Andy Ruder <aeruder@yahoo.com>
-	
+    

@@ -115,6 +115,9 @@ Commands specific to the GNUstep output plugin (GNUstepOutput.bundle)
 /close [name]
   This closes the tab named [name].  If you don't specify the name, it will
   close the current tab.
+
+/clear
+  Clears the text in the current tab.
   
 ===============================================================================
 Notes about GNUstepOutput.bundle (default):
