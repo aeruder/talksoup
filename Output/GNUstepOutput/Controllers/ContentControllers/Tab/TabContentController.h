@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ContentController.h
+                        TabContentController.h
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,12 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-@class ContentController, NSString;
+@class TabContentController, NSString;
 
-extern NSString *ContentConsoleName;
-
-#ifndef CONTENT_CONTROLLER_H
-#define CONTENT_CONTROLLER_H
+#ifndef TAB_CONTENT_CONTROLLER_H
+#define TAB_CONTENT_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>
