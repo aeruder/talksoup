@@ -349,7 +349,11 @@ GNUstepOutput *_GS_ = nil;
 }
 - (BOOL)respondsToSelector: (SEL)aSel
 {
-	NSString *selS = NSStringFromSelector(aSel);
+	NSString *selS;
+	
+	if (!aSel) return NO;
+	
+	selS = NSStringFromSelector(aSel);
 	
 	if ([selS hasSuffix: @"nConnection:withNickname:sender:"]) return YES;
 	
@@ -392,12 +396,12 @@ GNUstepOutput *_GS_ = nil;
 		
 		object = NSMapGet(connectionToConnectionController, connection);
 		
-		if ([object respondsToSelector: sel])
+		if (sel && [object respondsToSelector: sel])
 		{
 			[aInvoc invokeWithTarget: object];
 		}
 	}
-	else if ([prefs respondsToSelector: sel])
+	else if (sel && [prefs respondsToSelector: sel])
 	{
 		[aInvoc invokeWithTarget: prefs];
 	}

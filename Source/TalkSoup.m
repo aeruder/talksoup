@@ -338,6 +338,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 }
 - (BOOL)respondsToSelector: (SEL)aSel
 {
+	if (!aSel) return NO;
+	
 	if ([_TSDummy_ respondsToSelector: aSel]) return YES;
 
 	return [super respondsToSelector: aSel];
@@ -394,7 +396,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 			next = [in objectAtIndex: index + 1];
 		}
 		
-		if ([next respondsToSelector: sel])
+		if (sel && [next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
 			return;
@@ -422,7 +424,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 			next = [out objectAtIndex: index + 1];
 		}
 
-		if ([next respondsToSelector: sel])
+		if (sel && [next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
 			return;

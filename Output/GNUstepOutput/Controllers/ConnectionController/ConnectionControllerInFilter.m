@@ -408,7 +408,7 @@
 	
 	where = ContentConsoleName;
 	
-	if ([self respondsToSelector: sel])
+	if (sel && [self respondsToSelector: sel])
 	{
 		where = [self performSelector: sel withObject: paramList];
 	}
