@@ -1,0 +1,664 @@
+/***************************************************************************
+                              DCCSupport.m
+                          -------------------
+    begin                : Wed Jul 2 18:58:30 CDT 2003
+    copyright            : (C) 2003 by Andy Ruder
+    email                : aeruder@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#include "DCCSupport.h"
+#include "TalkSoupBundles/TalkSoup.h"
+#include "netclasses/NetTCP.h"
+#include "netclasses/DCCObject.h"
+
+#include <Foundation/NSAttributedString.h>
+#include <Foundation/NSInvocation.h>
+#include <Foundation/NSValue.h>
+#include <Foundation/NSNull.h>
+#include <Foundation/NSUserDefaults.h>
+#include <Foundation/NSFileManager.h>
+#include <Foundation/NSFileHandle.h>
+#include <Foundation/NSTimer.h>
+#include <Foundation/NSHost.h>
+
+static NSString *support_dir = @"DCCSupportDirectory";
+
+static void set_defaults_dir(NSString *aDir)
+{
+	aDir = [aDir stringByExpandingTildeInPath];
+	[[NSUserDefaults standardUserDefaults] setObject: aDir forKey: support_dir];
+}
+
+static NSString *defaults_dir(void)
+{
+	id object = [[NSUserDefaults standardUserDefaults] objectForKey: support_dir];
+	
+	if (!object)
+	{
+		set_defaults_dir(object = @"~/");
+	}
+	
+	return [object stringByExpandingTildeInPath];
+}	
+
+static NSString *fix_file_name(NSString *name)
+{
+	NSMutableString *newName;
+	NSRange aRange;
+	
+	newName = [NSMutableString stringWithString: name];
+	aRange = NSMakeRange(0, [newName length]);
+	
+	[newName replaceOccurrencesOfString: @"/" withString: @"_" options: 0
+	  range: aRange];
+	[newName replaceOccurrencesOfString: @":" withString: @"_" options: 0
+	  range: aRange];
+	
+	return newName;
+}
+
+static NSString *unique_path(NSString *path)
+{
+	int x;
+	id temp;
+	id dfm;
+	
+	dfm = [NSFileManager defaultManager];
+	
+	for (x = 0; x < 10000000; x++)
+	{
+		temp = 
+		  [path stringByAppendingString: [NSString stringWithFormat: @".%d", x]];
+		if (![dfm fileExistsAtPath: temp])
+		{
+			return temp;
+		}
+	}
+	
+	return nil;
+}
+
+static NSInvocation *invoc = nil;
+
+@interface DCCSupport (PrivateSupport)
+- (void)finishedReceive: dcc onConnection: aConnection;
+- (NSMutableArray *)getConnectionTable: aConnection;
+@end
+
+@interface DCCGetter : NSObject
+	{
+		NSFileHandle *file;
+		NSString *path;
+		DCCObject *getter;
+		NSString *status;
+		id connection;
+		id delegate;
+		NSTimer *cpsTimer;
+		int cps;
+		uint32_t oldTransferredBytes;
+	}
+- initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath 
+    withConnection: aConnection withDelegate: aDel;
+
+- (NSString *)status;
+
+- (NSDictionary *)info;
+
+- (NSHost *)localHost;
+- (NSHost *)remoteHost;
+
+- (NSString *)percentDone;
+
+- (int)cps;
+- cpsTimer: (NSTimer *)aTimer;
+
+- (NSString *)path;
+@end
+
+@implementation DCCGetter
+- initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath
+   withConnection: aConnection withDelegate: aDel
+{
+	id dfm;
+	BOOL isDir;
+	
+	if (!(self = [super init])) return nil;
+	
+	dfm = [NSFileManager defaultManager];
+	
+	if (![dfm fileExistsAtPath: aPath isDirectory: &isDir])
+	{
+		[dfm createFileAtPath: aPath contents: AUTORELEASE([NSData new]) attributes: nil];
+	}
+	else if (isDir)
+	{
+		RELEASE(self);
+		return nil;
+	}
+	
+	file = RETAIN([NSFileHandle fileHandleForWritingAtPath: aPath]);
+	
+	path = RETAIN(aPath);
+	getter = [[DCCReceiveObject alloc] initWithReceiveOfFile: aDict 
+	  withDelegate: self withTimeout: 30 withUserInfo: nil];
+	
+	connection = RETAIN(aConnection);
+	delegate = aDel;
+	
+	return self;
+}
+- (void)dealloc
+{
+	[cpsTimer invalidate];
+	DESTROY(cpsTimer);
+	RELEASE(getter);
+	RELEASE(path);
+	RELEASE(file);
+	RELEASE(connection);
+}
+- cpsTimer: (NSTimer *)aTimer
+{
+	cps = ([getter transferredBytes] - oldTransferredBytes) / 5;
+	oldTransferredBytes = [getter transferredBytes];
+	return self;
+}
+- DCCInitiated: aConnection
+{
+	DESTROY(cpsTimer);
+	cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
+	  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
+	oldTransferredBytes = 0;
+	return self;
+}
+- DCCStatusChanged: (NSString *)aStatus forObject: aConnection
+{
+	if (status == aStatus) return self;
+	
+	RELEASE(status);
+	status = RETAIN(aStatus);
+	
+	NSLog(@"Status: %@", status);
+	
+	return self;
+}
+- DCCReceivedData: (NSData *)data forObject: aConnection
+{
+	[file writeData: data];
+	
+	return self;
+}
+- DCCDone: aConnection
+{
+	[cpsTimer invalidate];
+	DESTROY(cpsTimer);
+	
+	[delegate finishedReceive: self onConnection: connection];
+	
+	return self;
+}
+- (NSString *)status
+{
+	return status;
+}
+- (NSDictionary *)info
+{
+	return [getter info];
+}
+- (NSHost *)localHost
+{
+	return [connection localHost];
+}
+- (NSHost *)remoteHost
+{
+	return [connection remoteHost];
+}
+- (NSString *)percentDone
+{
+	id dict = [getter info];
+	int length;
+	
+	length = [[dict objectForKey: DCCInfoFileSize] intValue];
+	
+	if (length < 0)
+	{
+		return @"??%";
+	}
+	
+	return [NSString stringWithFormat: @"%d%%", 
+	  ([getter transferredBytes] * 100) / length];
+}
+- (int)cps
+{
+	return cps;
+}
+- (NSString *)path
+{
+	return path;
+}
+@end
+
+@implementation DCCSupport (PrivateSupport)
+- (void)finishedReceive: (id)dcc onConnection: aConnection
+{
+	id status = [dcc status];
+	id info = [dcc info];
+	id cps = [NSString stringWithFormat: @"%d", [dcc cps]];
+	id path = [dcc path];
+	id filename = [info objectForKey: DCCInfoFileName];
+	id nick = [info objectForKey: DCCInfoNick];
+	id connections = [self getConnectionTable: aConnection];
+	
+	if ([status isEqualToString: DCCStatusDone])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)",
+		  filename, path, nick, cps) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusTimeout])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ from %@ timed out.",
+		  filename, nick) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusAborted])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ from %@ aborted.",
+		  filename, nick) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusError])
+	{
+		[[_TS_ pluginForOutput] showMessage: 
+		  BuildAttributedFormat(@"There was an error receiving %@ from %@.", 
+		  filename, nick) onConnection: aConnection];
+	}
+
+	[connections removeObjectIdenticalTo: dcc];
+}
+- (NSMutableArray *)getConnectionTable: aConnection
+{
+	id table = NSMapGet(connectionMap, aConnection);
+	
+	if (table) return table;
+	
+	NSMapInsert(connectionMap, aConnection, table = AUTORELEASE([NSMutableArray new]));
+	
+	return table;
+}
+@end
+
+@implementation DCCSupport
++ (void)initialize
+{
+	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
+	  [self instanceMethodSignatureForSelector: @selector(commandDCC:connection:)]]);
+	[invoc retainArguments];
+	[invoc setSelector: @selector(commandDCC:connection:)];
+}
+- (NSAttributedString *)commandDCCLIST: (NSString *)command connection: (id)connection
+{
+	int max, index;
+	id object;
+	NSMutableAttributedString *attr;
+	NSMutableArray *connections;
+	
+	connections = [self getConnectionTable: connection];
+	
+	attr = AUTORELEASE([NSMutableAttributedString new]);
+	
+	max = [connections count];
+	for (index = 0; index < max; index++)
+	{
+		object = [connections objectAtIndex: index];
+		if ([object isKindOf: [NSDictionary class]])
+		{
+			[attr appendAttributedString: 
+			  BuildAttributedFormat(@"%@. %@ %@ has requested to send %@ (%@ bytes)",
+			  [NSString stringWithFormat: @"%d", index + 1],
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"REQUEST", nil), 
+			  [object objectForKey: DCCInfoNick],
+			  [object objectForKey: DCCInfoFileName],  
+			  [NSString stringWithFormat: @"%d", [[object objectForKey: DCCInfoFileSize] intValue]])];
+		}
+		if ([object isKindOf: [DCCGetter class]])
+		{
+			[attr appendAttributedString: 
+			  BuildAttributedFormat(@"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)",
+			  [NSString stringWithFormat: @"%d", index + 1],
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"RECEIVING", nil),
+			  [[object info] objectForKey: DCCInfoNick],  
+			  [[object info] objectForKey: DCCInfoFileName], 
+			  [object percentDone],
+			  [NSString stringWithFormat: @"%d", 
+			    [[[object info] objectForKey: DCCInfoFileSize] intValue]],
+			  [NSString stringWithFormat: @"%d", [object cps]])];
+		}
+		[attr appendAttributedString: S2AS(@"\n")];
+	}
+	
+	[attr appendAttributedString: 
+	  S2AS(@"Use /dcc list # for detailed information on a request or connection.")];
+
+	return attr;
+}
+- (NSAttributedString *)commandDCCGET: (NSString *)command connection: (id)connection
+{
+	id x;
+	id path;
+	id dict;
+	int number;
+	BOOL tryContinue = NO, isDir;
+	id dfm;
+	id getter;
+	NSMutableArray *connections;
+	
+	connections = [self getConnectionTable: connection];
+	
+	x = [command separateIntoNumberOfArguments: 2];
+	
+	if ([x count] == 0)
+	{
+		return BuildAttributedString(@"Usage: /dcc get <#> [-c] [filename]", @"\n",
+		  @"If [filename] isn't specified, it will be put into the default",
+		  @" directory (see /dcc setdir) with the filename specified by the sender.",
+		  nil);
+	}
+
+	number = [[x objectAtIndex: 0] intValue] - 1;
+	
+	if (number >= [connections count] || 
+	    !([(dict = [connections objectAtIndex: number]) isKindOf: [NSDictionary class]]))
+	{
+		return BuildAttributedString(@"The specified index is invalid. Please see /dcc list.", nil);
+	}
+	
+	path = @"";
+	
+	if ([x count] == 2)
+	{
+		path = [x objectAtIndex: 1];
+		if ([path hasPrefix: @"-c"])
+		{
+			x = [path separateIntoNumberOfArguments: 2];
+			tryContinue = YES;
+			
+			if ([x count] <= 1)
+			{
+				path = @"";
+			}
+			else
+			{
+				path = [x objectAtIndex: 1];
+			}
+		}
+	}
+	
+	if ([path length] == 0)
+	{
+		path = [dict objectForKey: DCCInfoFileName];
+		path = fix_file_name(path);
+		path = [NSString stringWithFormat: @"%@/%@", defaults_dir(), path];
+	}
+	
+	path = [path stringByExpandingTildeInPath];
+	path = [path stringByStandardizingPath];
+
+	dfm = [NSFileManager defaultManager];
+	if ([dfm fileExistsAtPath: path isDirectory: &isDir])
+	{
+		if (isDir || !tryContinue)
+		{
+			if ((path = unique_path(path)) == nil)
+			{
+				return S2AS(@"Could not find a unique file name.");
+			}
+		}
+	}
+	
+	getter = AUTORELEASE([[DCCGetter alloc] initWithInfo: dict withFileName: path
+	  withConnection: connection withDelegate: self]);
+	
+	[connections replaceObjectAtIndex: number withObject: getter]; 
+	
+	return nil;
+}
+- (NSAttributedString *)commandDCCSETDIR: (NSString *)command connection: (id)connection
+{
+	id x;
+	id dir;
+	BOOL force = NO;
+	NSEnumerator *iter;
+	id object;
+	BOOL isDir;
+	id current;
+	id dfm;
+	BOOL couldCreate = YES;
+	
+	x = [command separateIntoNumberOfArguments: 1];
+	
+	dir = [x count] ? [x objectAtIndex: 0] : @"";
+	
+	if ([dir hasPrefix: @"-f"])
+	{
+		x = [dir separateIntoNumberOfArguments: 2];
+		if ([x count] != 2)
+		{
+			dir = @"";
+		}
+		else
+		{
+			dir = [x objectAtIndex: 1];
+			force = YES;
+		}
+	}
+	
+	if ([dir length] == 0)
+	{
+		return BuildAttributedString(@"Usage: /dcc setdir [-f] <directory>", @"\n",
+		  @"Sets the default download directory to <directory>, if -f is specified ",
+		  @"the directory will be created if it doesn't already exist.", @"\n",
+		  @"Currently: ", defaults_dir(), nil);
+	}
+	
+	dfm = [NSFileManager defaultManager];
+	dir = [dir stringByExpandingTildeInPath];
+	dir = [dir stringByStandardizingPath];
+	
+	if (![dir hasPrefix: @"/"])
+	{
+		dir = [[@"~/" stringByExpandingTildeInPath] stringByAppendingString: dir];
+	}
+	
+	if ([dfm fileExistsAtPath: dir isDirectory: &isDir])
+	{
+		if (!isDir)
+		{
+			return S2AS(@"File exists at path.");
+		}
+	}
+	else if (force)
+	{
+		x = [dir pathComponents];
+		
+		iter = [x objectEnumerator];
+		current = @"";
+		while ((object = [iter nextObject]))
+		{
+			current = [current stringByAppendingString: object];
+			if ([dfm fileExistsAtPath: current isDirectory: &isDir])
+			{
+				if (!isDir)
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (![dfm createDirectoryAtPath: current attributes: nil])
+				{
+					break;
+				}
+			}
+			current = [current stringByAppendingString: @"/"];
+		}
+		
+		if (object)
+		{
+			return S2AS(@"Could not create directory.");
+		}
+	}
+	else
+	{
+		couldCreate = NO;
+	}
+	
+	if (couldCreate)
+	{
+		set_defaults_dir(dir);
+		return S2AS(@"Ok.");
+	}
+
+	return S2AS(@"Directory does not exist. Try the -f flag.");
+}
+- (NSAttributedString *)commandDCC: (NSString *)command connection: (id)connection
+{
+	id x = [command separateIntoNumberOfArguments: 2];
+	id arg;
+	int count;
+	SEL sel;
+	
+	if ((count = [x count]) > 0)
+	{
+		command = [x objectAtIndex: 0];
+		arg = (count > 1) ? [x objectAtIndex: 1] : @"";
+		command = [command uppercaseString];
+		sel = NSSelectorFromString([NSString stringWithFormat: @"commandDCC%@:connection:", command]);
+		if (sel && [self respondsToSelector: sel])
+		{
+			return [self performSelector: sel withObject: arg withObject: connection];
+		}
+	}
+	
+	return BuildAttributedString(@"Usage:", @"\n", 
+	  @"/dcc list (lists current connections and requests)", @"\n",
+	  @"/dcc get (receives a file)", @"\n",
+	  @"/dcc setdir (sets default download directory)", nil);
+}	
+- init
+{
+	if (!(self = [super init])) return nil;
+	
+	connectionMap = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 5);
+
+	return self;
+}
+- (void)dealloc
+{
+	NSFreeMapTable(connectionMap);
+	[super dealloc];
+}	
+- pluginActivated
+{
+	[invoc setTarget: self];
+	[_TS_ addCommand: @"dcc" withInvocation: invoc];
+	return self;
+}
+- pluginDeactivated
+{
+	[invoc setTarget: nil];
+	[_TS_ removeCommand: @"dcc"];
+	return self;
+}
+- DCCSendRequestReceived: (NSDictionary *)aInfo onConnection: aConnection
+{
+	id connections;
+	
+	connections = [self getConnectionTable: aConnection];
+	
+	[connections addObject: aInfo];
+	
+	[[_TS_ pluginForOutput] showMessage: BuildAttributedFormat(
+	  @"%@ (%@:%@) has requested to send %@ (%@ bytes)",
+	  [aInfo objectForKey: DCCInfoNick],
+	  [[aInfo objectForKey: DCCInfoHost] address],
+	  [NSString stringWithFormat: @"%hu", 
+	    [[aInfo objectForKey: DCCInfoPort] unsignedShortValue]],
+	  [aInfo objectForKey: DCCInfoFileName],
+	  [NSString stringWithFormat: @"%lu", 
+	    [[aInfo objectForKey: DCCInfoFileSize] unsignedLongValue]])
+	  onConnection: aConnection];
+	
+	return self;
+}
+- CTCPRequestReceived: (NSAttributedString *)aCTCP 
+   withArgument: (NSAttributedString *)argument 
+   to: (NSAttributedString *)receiver
+   from: (NSAttributedString *)aPerson onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
+{	
+	NSArray *list;
+	
+	if (![[[aCTCP string] uppercaseString] isEqualToString: @"DCC"])
+	{
+		[_TS_ CTCPRequestReceived: aCTCP withArgument: argument to: receiver
+		  from: aPerson onConnection: connection withNickname: aNick
+		  sender: self];
+		return self;
+	}
+	
+	list = [[argument string] componentsSeparatedByString: @" "];
+	if ([list count] < 4)
+	{
+		return self;
+	}
+	
+	if ([[[list objectAtIndex: 0] uppercaseString] isEqualToString: @"SEND"])
+	{
+		id fileName;
+		id fileSize;
+		id port;
+		id address;
+		
+		NSLog(@"%@", list);
+		if ([list count] >= 5)
+		{
+			fileSize = [NSNumber numberWithUnsignedLong: 
+			 strtoul([[list objectAtIndex: 4] cString], 0, 10)];
+		}
+		else
+		{
+			fileSize = [NSNumber numberWithInt: -1];
+		}
+
+		port = [NSNumber numberWithUnsignedShort: 
+		 strtoul([[list objectAtIndex: 3] cString], 0, 10)];
+
+		address = [(TCPSystem *)[TCPSystem sharedInstance] hostFromHostOrderInteger:
+		 strtoul([[list objectAtIndex: 2] cString], 0, 10)];
+		
+		fileName = [list objectAtIndex: 1];
+		
+		[self DCCSendRequestReceived: 
+		 [NSDictionary dictionaryWithObjectsAndKeys:
+		  fileName, DCCInfoFileName,
+		  fileSize, DCCInfoFileSize,
+		  port, DCCInfoPort,
+		  address, DCCInfoHost,
+		  [[IRCUserComponents(aPerson) objectAtIndex: 0] string], DCCInfoNick,
+		  nil] onConnection: connection];
+	}
+	
+	return self;
+}
+@end
+

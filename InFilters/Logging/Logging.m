@@ -75,7 +75,7 @@ static NSInvocation *invoc = nil;
 	
 	dfm = [NSFileManager defaultManager];
 	x = nil;
-	path = [[arr objectAtIndex: 0] stringByExpandingTildeInPath];
+	path = [[arr objectAtIndex: 0] stringByStandardizingPath];
 	isDir = NO;
 	
 	if (![dfm fileExistsAtPath: path isDirectory: &isDir])
