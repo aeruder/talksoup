@@ -273,6 +273,41 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController (CommonCommands)
+- commandTopic: (NSString *)aString
+{
+	NSArray *x;
+	id content = [controller contentController];
+	id name;
+	id connection;
+	id topic;
+
+	x = [aString separateIntoNumberOfArguments: 1];
+	if ([x count] == 0)
+	{
+		topic = nil;
+	}
+	else
+	{
+		topic = S2AS([x objectAtIndex: 0]);
+	}
+	
+	if (![content isChannelName: name = [content currentViewName]])
+	{
+		name = nil;
+	}
+	
+	if (!name)
+	{
+		return self;
+	}
+
+	connection = [controller connection];
+	
+	[_TS_ setTopicForChannel: S2AS(name) to: topic
+	  onConnection: connection 
+	  withNickname: S2AS([connection nick]) sender: _GS_];
+	return self;
+}
 - commandJoin: (NSString *)aString
 {
 	NSMutableArray *x;
@@ -285,23 +320,23 @@ static void send_message(id command, id name, id connection)
 	{
 		NSMutableArray *y;
 		id tmp = [x objectAtIndex: 0];
-		int x;
+		int z;
 		int count;
 		
 		y = [NSMutableArray arrayWithArray: 
 		  [tmp componentsSeparatedByString: @","]];
 		
 		count = [y count];
-		for (x = 0; x < count; x++)
+		for (z = 0; z < count; z++)
 		{
-			tmp = [y objectAtIndex: x];
+			tmp = [y objectAtIndex: z];
 			if ([tmp length] > 0)
 			{
 				if ([[NSCharacterSet alphanumericCharacterSet]
 				  characterIsMember: [tmp characterAtIndex: 0]])
 				{
 					tmp = [NSString stringWithFormat: @"#%@", tmp];
-					[y replaceObjectAtIndex: x withObject: tmp];
+					[y replaceObjectAtIndex: z withObject: tmp];
 				}
 			}
 		}
@@ -318,11 +353,11 @@ static void send_message(id command, id name, id connection)
 		[invoc setArgument: &aString atIndex: 2];
 		[invoc setArgument: &connection atIndex: 3]; 
 		[invoc invoke];
-		[invoc getReturnValue: &aString];
 		connection = nil;
 		[invoc setArgument: &connection atIndex: 2];
 		[invoc setArgument: &connection atIndex: 3];
-		[controller showMessage: aString onConnection: nil];
+		[invoc getReturnValue: &connection];
+		[controller showMessage: connection onConnection: nil];
 	}
 	return self;
 }
