@@ -255,7 +255,7 @@ id _output_ = nil;
 	{
 		[controller setNick: [x objectAtIndex: 0]];
 		[[controller contentController] setNickViewString:
-		  [[controller connection] nick]];
+		  [controller nick]];
 		return self;
 	}
 	
