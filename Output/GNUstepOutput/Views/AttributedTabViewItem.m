@@ -36,7 +36,8 @@
 	[super drawLabel: shouldTruncateLabel inRect: tabRect];
 	[self setLabel: string]; 	
 	
-	[attributedLabel drawAtPoint: NSMakePoint(tabRect.origin.x, NSMaxY(tabRect) + 4)];	
+	tabRect.size.height += 3;
+	[attributedLabel drawInRect: tabRect];	
 }
 - setLabelColor: (NSColor *)aColor
 {
