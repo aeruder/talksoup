@@ -43,6 +43,11 @@ Input Filters:
 
   *KeepAlive: sends a ping to the server every three minutes
     on every connection to keep you connected
+
+  Logging: allows a log of a connection to be made.  See the
+    /logging command for more information (once the bundle
+	is loaded).  Also see FAQ question 3.5 on using the logging
+	support.
   
   MessageInTab: opens a new tab when someone private
     messages you

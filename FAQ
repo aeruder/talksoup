@@ -39,6 +39,7 @@ Questions covered in this FAQ:
         find out more about GNUstep?
     3.3 How do I load and unload bundles while talksoup is running?
     3.4 Is order important on the input/output filters?
+	3.5 How do I do logging?
     
 ===============================================================================
 1. Overview
@@ -214,6 +215,27 @@ Questions covered in this FAQ:
     open and will highlight it.
 
     In short, order is important!
+
+3.5 How do I do logging?
+    
+    Ok, first of all, load the logging bundle:  
+
+      /load in Logging
+    
+    Then, the logging bundle is used very simply by
+    
+      /logging <file>
+
+    It will log everything into the file you specify.  To turn
+    off logging, just type: 
+    
+      /logging
+
+    Now, this logging support will only last for that connection.
+    If you disconnect and reconnect, the logging will be turned
+    off.  To make it persistent, create a entry in the server
+    list and add /logging <file> to the connection commands.
+    Then the command will be ran everytime you connect.
     
 ===============================================================================
 Copyright (C) 2003 by Andy Ruder <aeruder@yahoo.com>
