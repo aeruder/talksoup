@@ -26,6 +26,7 @@
 #import "Models/Channel.h"
 #import "TalkSoup.h"
 #import "netclasses/NetTCP.h"
+#import "Views/TabTextField.h"
 
 #import <Foundation/NSHost.h>
 #import <Foundation/NSNotification.h>
@@ -37,6 +38,7 @@
 #import <Foundation/NSValue.h>
 #import <Foundation/NSDate.h>
 #import <Foundation/NSAttributedString.h>
+#import <Foundation/NSArray.h>
 
 #import <AppKit/NSTextStorage.h>
 #import <AppKit/NSTabViewItem.h>
@@ -50,6 +52,8 @@
 static NSString *version_number = nil;
 static NSString *console_name = nil;
 static NSColor *highlight_color = nil;
+
+static NSArray *command_names = nil;
 
 static NSArray *get_first_word(NSString *arg)
 {
@@ -143,8 +147,31 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	version_number =  RETAIN([[[NSBundle mainBundle] infoDictionary] 
 	  objectForKey: @"ApplicationRelease"]);
 	console_name = [[NSString alloc] initWithString: @"console tab"];
-	highlight_color = RETAIN([NSColor redColor]);
+	highlight_color = RETAIN([NSColor colorWithCalibratedRed: 0.41
+	  green: 0.13 blue: 0.14 alpha: 1.0]);
 }
++ (void)loadCommandNames
+{
+	NSMutableArray *array = AUTORELEASE([NSMutableArray new]);
+	NSEnumerator *iter = [[self methodsDefinedForClass] objectEnumerator];
+	id object;
+	NSRange aRange;
+
+	while ((object = [iter nextObject]))
+	{
+		if ([object hasPrefix: @"command"] && [object hasSuffix: @":"] &&
+		    ![object isEqualToString: @"command:"])
+		{
+			aRange.location = 7;
+			aRange.length = [object length] - 8;
+			[array addObject: [NSString stringWithFormat: @"/%@", 
+			  [[object substringWithRange: aRange] uppercaseIRCString]]];
+		}
+	}
+
+	RELEASE(command_names);
+	command_names = RETAIN([NSArray arrayWithArray: array]);
+}		
 - init
 {
 	if (!(self = [super initWithNickname: @"TalkSoup" withUserName: nil
@@ -177,6 +204,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	[[window tabView] setDelegate: self];
 	[[window typeView] setAction: @selector(linesTyped:)];
 	[[window typeView] setTarget: self];
+	[[window typeView] setDelegate: self];
 	[window setReleasedWhenClosed: NO];
 	
 	[window updateNick: nick];
@@ -184,6 +212,11 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	if (!current)
 	{
 		current = RETAIN(console);
+	}
+
+	if (!command_names)
+	{
+		[[self class] loadCommandNames];
 	}
 
 	return self;
@@ -476,6 +509,140 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 }
 @end
 
+@implementation ConnectionController (TextField)
+- (void)textFieldReceivedTab: (TabTextField *)field
+{
+	NSString *aString = [field stringValue];
+	NSRange aRange;
+	int pos;
+	NSString *word;
+	id object;
+	NSEnumerator *iter;
+	NSMutableArray *out = AUTORELEASE([NSMutableArray new]);
+	NSString *completion = nil;
+	
+	aRange = [aString rangeOfCharacterFromSet: 
+	 [NSCharacterSet whitespaceAndNewlineCharacterSet]
+	 options: NSBackwardsSearch];
+	
+	if (aRange.location == NSNotFound) aRange.location = 0;
+
+	pos = aRange.location + aRange.length;
+
+	if (pos == [aString length]) return;
+	
+	word = [aString substringFromIndex: pos];
+	
+	if ([word hasPrefix: @"/"] && pos == 0)
+	{
+		word = [word uppercaseIRCString];
+		
+		iter = [command_names objectEnumerator];
+	
+		while ((object = [iter nextObject]))
+		{
+			if ([object hasPrefix: word])
+			{
+				[out addObject: object];
+				if (completion)
+				{
+					completion = [completion commonPrefixWithString: object
+					  options: 0];
+				}
+				else
+				{	
+					completion = object;
+				}
+			}
+		}
+		
+	}
+	else if ([word hasPrefix: @"#"])
+	{
+		id temp = nil;
+		
+		word = [word lowercaseIRCString];
+
+		iter = [[nameToChannel allKeys] objectEnumerator];
+
+		while ((object = [iter nextObject]))
+		{
+			if ([object hasPrefix: word])
+			{
+				[out addObject: [nameToTypedName objectForKey: object]];
+				if (completion)
+				{
+					completion = [completion commonPrefixWithString: object
+					  options: 0];
+				}
+				else
+				{
+					completion = object;
+				}
+				temp = object;
+			}
+		}
+		if (temp)
+		{
+			completion = [[nameToTypedName objectForKey: temp] substringToIndex:
+			  [completion length]];
+		}
+	}
+	else
+	{
+		if ([current isKindOfClass: [ChannelController class]])
+		{
+			id temp, temp2 = nil;
+			
+			word = [word lowercaseIRCString];
+
+			iter = [[[nameToChannelData objectForKey: [current identifier]]
+			  userList] objectEnumerator];
+
+			while ((object = [iter nextObject]))
+			{
+				object = [object userName];
+				temp = [object lowercaseIRCString];
+				if ([temp hasPrefix: word])
+				{
+					[out addObject: object];
+					if (completion)
+					{
+						completion = [completion commonPrefixWithString: temp
+						  options: 0];
+					}
+					else
+					{
+						completion = temp;
+					}
+					temp2 = object;
+				}
+			}
+			if (temp2)
+			{
+				completion = [temp2 substringToIndex: [completion length]];
+			}
+		}
+	}
+	
+	if ([out count] == 0)
+	{
+		NSBeep();
+	}
+	else if ([out count] == 1)
+	{
+		[field setObjectValue: [NSString stringWithFormat: @"%@%@ ",
+		  [aString substringToIndex: pos], [out objectAtIndex: 0]]];
+	}
+	else
+	{
+		[field setObjectValue: [NSString stringWithFormat: @"%@%@",
+		  [aString substringToIndex: pos], completion]];
+		[self putMessage: [out componentsJoinedByString: @"     "] in: nil];
+	}
+}
+@end
+
 @implementation ConnectionController (WindowDelegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {
@@ -493,6 +660,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	[window setDelegate: nil];
 	[[window tabView] setDelegate: nil];
 	[[window typeView] setTarget: nil];
+	[[window typeView] setDelegate: nil];
 	DESTROY(window);
 	
 	[[TalkSoup sharedInstance] removeConnection: self];
@@ -738,6 +906,11 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	
 	name = [command lowercaseIRCString];
 	
+	if ([nameToTalk objectForKey: name])
+	{
+		return;
+	}
+		
 	view = AUTORELEASE([QueryController new]);
 	
 	tab = [self addTabViewItemWithName: name withView: view];

@@ -58,6 +58,7 @@ extern const int ChannelUserVoice;
 - (BOOL)containsUser: aString;
 - removeUser: (NSString *)aString;
 - userRenamed: (NSString *)oldName to: (NSString *)newName;
+- (NSArray *)userList;
 
 - addServerUserList: (NSString *)aString;
 - endServerUserList;

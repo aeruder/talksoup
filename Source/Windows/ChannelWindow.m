@@ -17,8 +17,10 @@
 
 #import "Windows/ChannelWindow.h"
 #import "Controllers/TalkController.h"
+#import "Views/TabTextField.h"
 
 #import <AppKit/AppKit.h>
+#import <Foundation/NSString.h>
 
 #define SIZE_X 100
 #define SIZE_Y 100
@@ -49,7 +51,7 @@
 /* End Setup NickView */
 
 /* Setup TypeView */
-	typeView = [[NSTextField alloc] init];
+	typeView = [[TabTextField alloc] init];
 	
 	[typeView setEditable: YES];
 	[typeView setDrawsBackground: YES];
@@ -102,6 +104,14 @@
 - (NSTextField *)typeView
 {
 	return typeView;
+}
+- (void)keyDown: (NSEvent *)theEvent
+{
+	if ([typeView currentEditor] == nil)
+	{
+		[self makeFirstResponder: typeView];
+		[[self firstResponder] keyDown: theEvent];
+	}
 }
 - updateNick: (NSString *)aNick
 {

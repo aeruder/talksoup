@@ -10,7 +10,8 @@ netclasses = netclasses/NetBase.m netclasses/NetTCP.m netclasses/LineObject.m \
 
 main = TalkSoup.m
 
-views = Views/ScrollingTextView.m Views/ColoredTabViewItem.m
+views = Views/ScrollingTextView.m Views/ColoredTabViewItem.m \
+        Views/TabTextField.m
 
 windows = Windows/ChannelWindow.m
 

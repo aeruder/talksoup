@@ -229,6 +229,10 @@ const int ChannelUserVoice = 2;
 	
 	return self;
 }
+- (NSArray *)userList
+{
+	return [NSArray arrayWithArray: userList];
+}
 @end
 
 @implementation Channel (TableViewDataSource)

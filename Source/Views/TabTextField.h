@@ -1,7 +1,7 @@
 /***************************************************************************
-                                Functions.h
+                                TabTextField.h
                           -------------------
-    begin                : Sun Oct 13 20:13:10 CDT 2002
+    begin                : Thu Dec  5 15:58:14 CST 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,18 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <Foundation/NSString.h>
+#import <AppKit/NSTextField.h>
 
-@class NSAttributedString;
-
-@interface NSObject (Introspection)
-+ (NSArray *)methodsDefinedForClass;
-@end
-
-@interface NSString (ColorCodes)
-- (NSAttributedString *)attributedStringFromColorCodedString;
-@end
-
-@interface NSString (ContainsSpace)
-- (BOOL)containsSpace;
+@interface TabTextField : NSTextField
 @end

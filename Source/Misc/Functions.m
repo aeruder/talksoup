@@ -22,9 +22,39 @@
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSAutoreleasePool.h>
 #import <Foundation/NSValue.h>
+#import <Foundation/NSArray.h>
 
 #import <AppKit/NSColor.h>
 #import <AppKit/NSAttributedString.h>
+
+#import <objc/objc.h>
+
+@implementation NSObject (Introspection)
++ (NSArray *)methodsDefinedForClass
+{
+	MethodList *list;
+	Class class;
+	int z;
+	int y;
+	SEL sel;
+	NSMutableArray *array = AUTORELEASE([NSMutableArray new]);
+	
+	class = [self class];
+	
+	for (list = class->methods; list != NULL; list=list->method_next)
+	{
+		y = list->method_count;
+		for (z = 0; z < y; z++)
+		{
+			sel = list->method_list[z].method_name;
+			[array addObject: NSStringFromSelector(sel)];
+		}
+	}
+
+	return [NSArray arrayWithArray: array];
+}
+@end
+
 @interface NSScanner (ShortInt)
 - (BOOL)scanTwoCharacterInt: (int *)aInt;
 @end

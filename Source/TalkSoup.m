@@ -17,6 +17,7 @@
 
 #import "TalkSoup.h"
 #import "Controllers/ConnectionController.h"
+#import "Misc/Functions.h"
 
 #ifdef DEBUG
 #import "Misc/Debug.h"
@@ -31,7 +32,6 @@
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSMenu.h>
 
-
 int main(void)
 {
 	CREATE_AUTORELEASE_POOL(arp);
@@ -41,7 +41,6 @@ int main(void)
 	[NSObject enableDoubleReleaseCheck: YES];
 	[ConnectionController debugClass];
 #endif
-	
 	[NSApplication sharedApplication];
 
 	[NSApp setDelegate: AUTORELEASE([[TalkSoup alloc] init])];
