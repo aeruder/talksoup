@@ -404,7 +404,8 @@
 	Password = "";
 	Plugins = {
 	    InFilters = (
-		Highlighting
+		Highlighting,
+		KeepAlive
 	    );
 	    Input = NetclassesInput;
 	    OutFilters = (
