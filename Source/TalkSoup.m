@@ -249,7 +249,6 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 {
 	const NSStringEncoding *curr;
 	
-	NSLog(@"Building encodings list...");
 	encodings = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 20);
 	
 	for (curr = [NSString availableStringEncodings]; *curr != 0; curr++)
