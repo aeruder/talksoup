@@ -21,6 +21,7 @@
 #include "Controllers/ContentController.h"
 #include "Controllers/ChannelController.h"
 #include "Controllers/InputController.h"
+#include "Controllers/TopicInspectorController.h"
 #include "Models/Channel.h"
 #include "Views/KeyTextView.h"
 
@@ -86,6 +87,8 @@
 @implementation ConnectionController (WindowDelegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {	
+	id controller;
+	
 	if (connection)
 	{
 		[[_TS_ pluginForInput] closeConnection: connection];
@@ -96,6 +99,15 @@
 	[fieldEditor setKeyTarget: nil];
 
 	[_GS_ removeConnectionController: self];
+	
+	controller = [_GS_ topicInspectorController];
+	
+	if (self == [controller connectionController])
+	{
+		[controller setTopic: nil inChannel: nil
+		  setBy: nil onDate: nil
+		  forConnectionController: nil];
+	}	
 }
 - (void)windowDidBecomeKey: (NSNotification *)aNotification
 {

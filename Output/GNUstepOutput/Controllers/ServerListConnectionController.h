@@ -20,19 +20,18 @@
 
 #include "Controllers/ConnectionController.h"
 
-@class NSDictionary, NSNotification;
+@class NSDictionary, NSNotification, NSMutableDictionary;
 
 @interface ServerListConnectionController : ConnectionController
 	{
 		int serverRow;
 		int serverGroup;
-		NSDictionary *serverInfo;
+		NSDictionary *oldInfo;
+		NSMutableDictionary *newInfo;
 	}
 
 - initWithServerListDictionary: (NSDictionary *)info
  inGroup: (int)group atRow: (int)row;
-
-- (void)saveWindowStats: (NSNotification *)aNotification;
 @end
 
 #endif

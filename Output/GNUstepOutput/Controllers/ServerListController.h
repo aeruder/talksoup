@@ -20,6 +20,7 @@
 @class NSString;
 
 extern NSString *ServerListInfoWindowFrame;
+extern NSString *ServerListInfoEncoding;
 extern NSString *ServerListInfoServer;
 extern NSString *ServerListInfoPort;
 extern NSString *ServerListInfoName;

@@ -248,15 +248,14 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 - (void)buildEncodingsList
 {
 	const NSStringEncoding *curr;
-	
+
 	encodings = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 20);
 	
 	for (curr = [NSString availableStringEncodings]; *curr != 0; curr++)
 	{
-		NSMapInsert(encodings, (const void *)[NSString localizedNameOfStringEncoding: *curr], 
+		NSMapInsert(encodings, StringFromEncoding(*curr), 
 		  (const void *)*curr);
 	}
-	
 }
 - (void)refreshPluginList
 {
@@ -1249,11 +1248,12 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if (!connection) return NO_CONNECT;
 	
-	array = [command separateIntoNumberOfArguments: 1];
+	array = [command separateIntoNumberOfArguments: 2];
 	
 	if ([array count] > 0)
 	{
 		arg = [array objectAtIndex: 0];
+		arg = [arg lowercaseString];
 	}
 	
 	if (arg) enc = (NSStringEncoding)NSMapGet(encodings, arg);
@@ -1262,7 +1262,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		temp = NSAllMapTableKeys(encodings);
 		return BuildAttributedString(_(@"Usage: /encoding <encoding>"), @"\n", 
-		  _(@"Available encodings: "), [temp componentsJoinedByString: @", "], nil);
+		  _(@"Available encodings: "), [temp componentsJoinedByString: @", "], @"\n",
+		  _(@"Current encoding: "), StringFromEncoding([connection encoding]), nil);
 	}
 	
 	[connection setEncoding: enc];

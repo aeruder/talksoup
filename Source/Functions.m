@@ -84,6 +84,20 @@ NSString *IRCColorFromUserColor(NSString *string)
 	return x;
 }
 
+NSString *StringFromEncoding(const NSStringEncoding a)
+{
+	NSString *obj;
+	
+	obj = [NSString localizedNameOfStringEncoding: a];
+	obj = [obj lowercaseString];
+	if ([obj hasPrefix: @"ns"] && [obj length] > 2) obj = [obj substringFromIndex: 2];
+	if ([obj hasPrefix: @"gs"] && [obj length] > 2) obj = [obj substringFromIndex: 2];
+	if ([obj hasSuffix: @"stringencoding"] && [obj length] > 14) 
+	  obj = [obj substringToIndex: [obj length] - 14];
+  
+	return obj;
+}
+
 NSArray *PossibleUserColors(void)
 {
 	if (!mappings) build_mappings();

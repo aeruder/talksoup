@@ -28,6 +28,7 @@
 #include <Foundation/NSNotification.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSGeometry.h>
+#include <Foundation/NSInvocation.h>
 
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSView.h>
@@ -63,14 +64,11 @@
 	
 	if (!(self = [super initWithIRCInfoDictionary: tmp])) return nil;
 	
-	serverInfo = RETAIN(aInfo);
+	oldInfo = RETAIN(aInfo);
+	newInfo = [[NSMutableDictionary alloc] initWithDictionary: aInfo];
+	
 	serverRow = row;
 	serverGroup = group;
-	
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(saveWindowStats:) 
-	  name: NSWindowWillCloseNotification object: 
-	  [[self contentController] window]];
 
 	if ((tmp = [aInfo objectForKey: ServerListInfoWindowFrame]))
 	{
@@ -88,11 +86,42 @@
 	
 	return self;
 }	
-- (void)dealloc
+- newConnection: (id)aConnection withNickname: (NSAttributedString *)aNick
+   sender: aPlugin
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	id tmp, invoc;
 	
-	RELEASE(serverInfo);
+	if ((tmp = [newInfo objectForKey: ServerListInfoEncoding]))
+	{
+		invoc = [_TS_ invocationForCommand: @"encoding"];
+		[invoc setArgument: &tmp atIndex: 2];
+		[invoc setArgument: &aConnection atIndex: 3]; 
+		[invoc invoke];
+		tmp = nil;
+		[invoc setArgument: &tmp atIndex: 2];
+		[invoc setArgument: &tmp atIndex: 3];
+	}		
+	
+	[super newConnection: aConnection withNickname: aNick sender: aPlugin];
+	
+	return self;
+}
+- lostConnection: (id)aConnection withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
+{
+	id tmp = StringFromEncoding([aConnection encoding]);
+	
+	[newInfo setObject: tmp forKey: ServerListInfoEncoding];
+	
+	[super lostConnection: aConnection withNickname: aNick
+	  sender: aPlugin];
+	
+	return self;
+}
+- (void)dealloc
+{	
+	RELEASE(newInfo);
+	RELEASE(oldInfo);
 
 	[super dealloc];
 }
@@ -102,7 +131,7 @@
 {
 	id tmp;
 	
-	if ([tmp = [serverInfo objectForKey: ServerListInfoCommands] length] > 0)
+	if ([tmp = [newInfo objectForKey: ServerListInfoCommands] length] > 0)
 	{
 		[[self inputController] lineTyped: tmp];
 	}
@@ -110,22 +139,27 @@
 	return [super registeredWithServerOnConnection: aConnection 
 	  withNickname: aNick sender: aPlugin];
 }
-- (void)saveWindowStats: (NSNotification *)aNotification
-{
-	id window = [aNotification object];
-	id tmp;
+- (void)windowWillClose: (NSNotification *)aNotification
+{	
+	id window = [content window];
 	
-	if ([[ServerListController serverInGroup: serverGroup row: serverRow]
-	  isEqual: serverInfo])
-	{	
-		tmp = [NSMutableDictionary dictionaryWithDictionary: serverInfo];
+	[newInfo setObject: NSStringFromRect([window frame]) 
+	  forKey: ServerListInfoWindowFrame];
 	
-		[tmp setObject: NSStringFromRect([window frame]) 
-		  forKey: ServerListInfoWindowFrame];
+	if (connection)
+	{
+		[newInfo setObject: StringFromEncoding([connection encoding]) 
+		  forKey: ServerListInfoEncoding];
+	}
 	
-		[ServerListController setServer: tmp inGroup: serverGroup
+	if ([[ServerListController serverInGroup: serverGroup row: serverRow] 
+	  isEqual: oldInfo])
+	{
+		[ServerListController setServer: newInfo inGroup: serverGroup
 		  row: serverRow];
 	}
+
+	[super windowWillClose: aNotification];	  
 }
 @end
 

@@ -33,6 +33,7 @@
 #include <AppKit/NSBrowserCell.h>
 #include <AppKit/NSTextView.h>
 
+NSString *ServerListInfoEncoding = @"Encoding";
 NSString *ServerListInfoWindowFrame = @"WindowFrame";
 NSString *ServerListInfoCommands = @"Commands";
 NSString *ServerListInfoServer = @"Server";
