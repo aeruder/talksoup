@@ -106,7 +106,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	}
 	
 	[nickView setFont: [NSFont userFontOfSize: 12.0]];
-	[tabView setFont: [NSFont fontWithName: @"Helvetica" size: 12.0]];
+	[tabView setFont: [NSFont systemFontOfSize: 12.0]];
 	[tabView setDelegate: self];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
