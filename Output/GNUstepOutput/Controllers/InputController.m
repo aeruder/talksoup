@@ -129,8 +129,10 @@ static void send_message(id command, id name, id connection)
 	RELEASE(view);
 	[super dealloc];
 }
-- (NSText *)fieldEditorForField: (NSTextField *)aField
+- (NSText *)fieldEditorForField: (NSTextField *)aField 
+            forMasterController: (id <MasterController>)aMaster
 {
+	lastMaster = aMaster;
 	activeTextField = aField;
 	NSLog(@"Returning that dern field editor");
 	return fieldEditor;
@@ -163,9 +165,10 @@ static void send_message(id command, id name, id connection)
 	
 	if ([string length] == 0)
 	{
-		/*
-		[[[controller contentController] window] makeFirstResponder: sender];
-		FIXME */
+		if ([lastMaster selectedView] == view) 
+		{
+			[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+		}
 		return;
 	}
 	
@@ -175,9 +178,10 @@ static void send_message(id command, id name, id connection)
 	[self commandTyped: string];
 	
 	[sender setStringValue: @""];
-	/* FIXME
-	[[[controller contentController] window] makeFirstResponder: sender];
-	*/
+	if ([lastMaster selectedView] == view)
+	{
+		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+	}
 }
 @end
 
@@ -262,13 +266,11 @@ static void send_message(id command, id name, id connection)
 
 	if (!connection) return;
 	
-	/* FIXME
-	name = [[controller contentController] currentViewName];
-	if (name == ContentConsoleName)
+	name = [content nameForView: view];
+	if ([name isEqualToString: ContentConsoleName]) 
 	{
 		return;
 	}
-	*/
 
 	send_message(command, name, connection); 	
 }
@@ -302,9 +304,10 @@ static void send_message(id command, id name, id connection)
 		[fieldEditor setString: string];
 	}
 	
-	// FIXME
-	//[[[controller contentController] window] makeFirstResponder:
-	//  [[controller contentController] typeView]];
+	if ([lastMaster selectedView] == view)
+	{
+		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+	}
 }
 - (void)nextHistoryItem: (NSText *)aFieldEditor
 {
@@ -323,10 +326,7 @@ static void send_message(id command, id name, id connection)
 	
 	[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
 
-	/* FIXME
-	[[[controller contentController] window] makeFirstResponder:
-	  [[controller contentController] typeView]];
-	*/
+	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 }
 @end
 
@@ -562,7 +562,7 @@ static void send_message(id command, id name, id connection)
 	NSEnumerator *iter;
 	id object;
 	
-	iter = [[[controller contentController] allNames] objectEnumerator];
+	iter = [[content allNames] objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
 		[x addObject: object];
@@ -641,10 +641,9 @@ static void send_message(id command, id name, id connection)
 - commandTopic: (NSString *)aString
 {
 	NSArray *x;
-	id content = [controller contentController];
-	id name;
 	id connection;
 	id topic;
+	id name;
 
 	x = [aString separateIntoNumberOfArguments: 1];
 	if ([x count] == 0)
@@ -655,15 +654,14 @@ static void send_message(id command, id name, id connection)
 	{
 		topic = S2AS([x objectAtIndex: 0]);
 	}
-	
-	/*
-	if (![content isChannelName: name = [content currentViewName]])
+
+	name = [content nameForView: view];
+	if (![[content typeForName: name] isEqualToString: 
+	       ContentControllerChannelType])
 	{
 		name = nil;
-	}
-	FIXME */
-	
-	if (!name)
+	} 
+	else 
 	{
 		return self;
 	}
@@ -676,6 +674,10 @@ static void send_message(id command, id name, id connection)
 
 	if (topic)
 	{
+		/* After setting the topic, force a query of the topic so
+		 * that anything monitoring the topic will be informed of
+		 * the update.
+		 */
 		[_TS_ setTopicForChannel: S2AS(name) to: nil
 		  onConnection: connection withNickname: S2AS([connection nick])
 		  sender: _GS_];
@@ -776,8 +778,7 @@ static void send_message(id command, id name, id connection)
 	if (!connection)
 	{
 		[controller setNick: [x objectAtIndex: 0]];
-		[[controller contentController] setNickname:
-		  [controller nick]];
+		[content setNickname: [controller nick]];
 		return self;
 	}
 	
@@ -786,8 +787,7 @@ static void send_message(id command, id name, id connection)
 	
 	if (![connection connected])
 	{
-		[[controller contentController] setNickname:
-		  [connection nick]];
+		[content setNickname: [connection nick]];
 	}
 	
 	return self;
@@ -804,18 +804,17 @@ static void send_message(id command, id name, id connection)
 		return self;
 	}
 	
-	/*
-	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
-	  currentViewName]) onConnection: connection
+	[_TS_ sendAction: S2AS(aString) to: S2AS([content nameForView: view])
+	  onConnection: connection
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
-	  FIXME */
+
 	return self;
 }
 - commandQuery: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
-	id o;
+	id name;
 	
 	if ([x count] < 1)
 	{
@@ -825,50 +824,46 @@ static void send_message(id command, id name, id connection)
 		return self;
 	}
 	
-	o = [x objectAtIndex: 0];
+	name = [x objectAtIndex: 0];
 	
-	/* FIXME
-	[[controller contentController] addQueryWithName: o withLabel: S2AS(o)];
-	*/
+	[content addControllerOfType: ContentControllerQueryType
+	  withName: name withLabel: S2AS(name) 
+	  inMasterController: lastMaster]; 
 	
 	return self;
 }
 - commandClose: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
-	id o;
+	id name;
 	id connection = [controller connection];
 	
+	name = [content nameForView: view];
 	if ([x count] < 1)
 	{
-		/*
-		if ([(o = [[controller contentController] currentViewName])
-		     isEqualToString: ContentConsoleName])
+		if ([name isEqualToString: ContentConsoleName])
 		{			
 			[controller showMessage:
 			  S2AS(_l(@"Usage: /close <tab label>")) 
 			  onConnection: nil];
 			return self;
 		}
-		FIXME */ 
 	}
 	else
 	{
-		o = [x objectAtIndex: 0];
+		name = [x objectAtIndex: 0];
 	}
 
-	if ([controller dataForChannelWithName: o])
+	if ([controller dataForChannelWithName: name])
 	{
-		[controller leaveChannel: o];
-		[_TS_ partChannel: S2AS(o) withMessage: S2AS(@"")
+		[controller leaveChannel: name];
+		[_TS_ partChannel: S2AS(name) withMessage: S2AS(@"")
 		  onConnection: connection 
 		  withNickname: S2AS([connection nick])
 		  sender: _GS_];
 	}
 	
-	/* 
-	[[controller contentController] closeViewWithName: o];
-	FIXME */
+	[content removeControllerWithName: name];
 
 	return self;
 }
@@ -876,16 +871,16 @@ static void send_message(id command, id name, id connection)
 {
 	id x = [args separateIntoNumberOfArguments: 2];
 	id name, msg;
-	id content = [controller contentController];
 	id connection = [controller connection];
 	
 	msg = nil;
-	/* 
-	if (![content isChannelName: name = [content currentViewName]])
+
+	name = [content nameForView: view];
+	if (![[content typeForName: name] isEqualToString: 
+	       ContentControllerChannelType])
 	{
 		name = nil;
 	}
-	FIXME */
 
 	if ([x count] >= 1)
 	{
@@ -913,11 +908,7 @@ static void send_message(id command, id name, id connection)
 }
 - commandClear: (NSString *)command
 {
-	/* FIXME
-	id x = [[controller contentController] controllerForViewWithName: 
-	  [[controller contentController] currentViewName]];
-	[[x chatView] setString: @""]; 
-	*/
+	[[view chatView] setString: @""]; 
 	
 	return self;
 }	

@@ -87,7 +87,8 @@ extern NSString *ContentConsoleName;
 @end
 
 @protocol TypingController <NSObject>
-- (NSText *)fieldEditorForField: (NSTextField *)aField;
+- (NSText *)fieldEditorForField: (NSTextField *)aField
+            forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
 @end
 
@@ -103,6 +104,7 @@ extern NSString *ContentConsoleName;
 - (id <MasterController>)primaryMasterController;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;
 
+- (NSString *)nameForView: (id <ContentControllerQueryView>)aController;
 - (NSView *)viewForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;
 - (id)controllerForName: (NSString *)aName;

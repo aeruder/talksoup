@@ -29,6 +29,7 @@
 	{
 		id <ContentController> content;
 		id <ContentControllerQueryView> view;
+		id <MasterController> lastMaster;
 		ConnectionController *controller;
 		unsigned historyIndex;
 		NSMutableArray *history;
@@ -42,7 +43,8 @@
     contentController: (id <ContentController>)aContentController;
 
 - (void)commandTyped: (NSString *)aCommand;
-- (NSText *)fieldEditorForField: (NSTextField *)aField;
+- (NSText *)fieldEditorForField: (NSTextField *)aField
+            forMasterController: (id <MasterController>)aMaster;
 @end
 
 #endif

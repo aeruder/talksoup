@@ -137,8 +137,8 @@
 		}
 	}
 	
-	return self;
 	*/
+	return self;
 }
 - registeredWithServerOnConnection: (id)aConnection 
    withNickname: (NSAttributedString *)aNick 
@@ -477,11 +477,10 @@
 	if (GNUstepOutputCompare([[array objectAtIndex: 0] string], [aConnection nick]))
 	{
 		id x;
-		id object;
 
 		[content addControllerOfType: ContentControllerChannelType withName: name
 		  withLabel: channel inMasterController: [content primaryMasterController]];
-		// FIXME [content focusViewWithName: name];
+		[content bringNameToFront: name];
 		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
 		  initWithIdentifier: lowName]) forKey: lowName];
 				

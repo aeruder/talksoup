@@ -144,6 +144,12 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	[masterControllers removeObject: aController];
 	[masterControllers insertObject: aController atIndex: 0];
 }	
+/* Returns the name of the view specified by <var>aController</var>
+ */
+- (NSString *)nameForView: (id <ContentControllerQueryView>)aController
+{
+	return NSMapGet(bothToName, aController);
+}
 /* Returns the master controller used by the view with the name 
  * <var>aName</var>
  */

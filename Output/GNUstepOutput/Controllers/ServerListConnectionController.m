@@ -75,6 +75,8 @@
 	{
 		NSRect a = NSRectFromString(tmp);
 		
+		[[[[self contentController] primaryMasterController] window] 
+		  setFrame: a display: YES];
 		// FIXME [[[self contentController] window] setFrame: a display: YES];
 	}
 	
