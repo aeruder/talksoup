@@ -76,6 +76,8 @@ GNUstepOutput *_GS_ = nil;
 @implementation GNUstepOutput
 - init
 {
+	id x;
+	
 	if (!(self = [super init])) return nil;
 
 	connectionToConnectionController = NSCreateMapTable(NSObjectMapKeyCallBacks,
@@ -85,6 +87,8 @@ GNUstepOutput *_GS_ = nil;
 	serverLists = [NSMutableArray new];
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
+	
+	x = [NSFont userFontOfSize: 0.0];
 	
 	defaultDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
 	  @"TalkSoup", IRCDefaultsNick,
@@ -100,8 +104,8 @@ GNUstepOutput *_GS_ = nil;
 	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
 	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
-	  @"Helvetica", GNUstepOutputFontName,
-	  @"12", GNUstepOutputFontSize,
+	  [x fontName], GNUstepOutputFontName,
+	  [NSString stringWithFormat: @"%d", (int)[x pointSize]], GNUstepOutputFontSize,
 	  @"75000", GNUstepOutputScrollBack,
 	  nil];
 	

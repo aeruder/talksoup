@@ -321,10 +321,6 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		
 		so = b;
 	}
-	id xy;
-	xy = [NSMutableString stringWithString: aString];
-	[xy replaceOccurrencesOfString: @"\003" withString: @"COLOR"
-	  options: 0 range: NSMakeRange(0, [xy length])];
 	
 	return AUTORELEASE(aString);
 }
