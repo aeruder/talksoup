@@ -186,7 +186,8 @@ NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 	int x;
 	int y;
 	
-	if (aObject == nil) return AUTORELEASE([[NSAttributedString alloc] initWithString: @""]);
+	if (aObject == nil) return 
+	  AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
 	
 	objects = [NSMutableArray new];
 	keys = [NSMutableArray new];

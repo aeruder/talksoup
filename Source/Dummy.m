@@ -21,6 +21,12 @@
 #include <Foundation/NSArray.h>
 
 @implementation TalkSoupDummyProtocolClass
+- pluginActivated
+	{ return nil; }
+
+- pluginDeactivated
+	{ return nil; }
+
 - controlObject: (id)aObject onConnection: aConnection sender: aPlugin
 	{ return nil; }
 	

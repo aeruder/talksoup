@@ -24,6 +24,7 @@
 #include <Foundation/NSValue.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
+#include <Foundation/NSScanner.h>
 
 static inline NSColor *map_color(NSString *aName)
 {
@@ -91,7 +92,28 @@ static inline NSColor *map_color(NSString *aName)
 		{
 			if (![dict objectForKey: NSForegroundColorAttributeName])
 			{
-				[dict setObject: map_color(obj) forKey: NSForegroundColorAttributeName];
+				id temp;
+				temp = map_color(obj);
+				if (temp)
+				{
+					[dict setObject: temp forKey: NSForegroundColorAttributeName];
+				}
+				else
+				{
+					if ([obj hasPrefix: IRCColorCustom])
+					{
+						id scan;
+						float r=0.0,g=0.0,b=0.0;
+						scan = [NSScanner scannerWithString: obj];
+						[scan scanUpToCharactersFromSet: 
+						  [NSCharacterSet whitespaceCharacterSet] intoString: 0];
+						[scan scanFloat: &r];
+						[scan scanFloat: &g];
+						[scan scanFloat: &b];
+						[dict setObject: [NSColor colorWithCalibratedRed: r green: g
+						  blue: b alpha: 1.0] forKey: NSForegroundColorAttributeName];
+					}
+				}
 			}
 		}
 		if ((obj = [dict objectForKey: IRCBackgroundColor]))

@@ -49,9 +49,9 @@ NSString *IRCColorLightBlue = @"IRCColorLightBlue";
 NSString *IRCColorLightMagenta = @"IRCColorLightMagenta";
 NSString *IRCColorGrey = @"IRCColorGrey";
 NSString *IRCColorLightGrey = @"IRCColorLightGrey";
+NSString *IRCColorCustom = @"IRCColorCustom";
 NSString *IRCBold = @"IRCBold";
 NSString *IRCUnderline = @"IRCUnderline";
-
 
 id _TS_;
 id _TSDummy_;
@@ -245,11 +245,11 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		carefully_add_bundles(inputNames, arr);
 		
 		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/InFilter"]);
+		  [object stringByAppendingString: @"/InFilters"]);
 		carefully_add_bundles(inNames, arr);
 
 		arr = get_bundles_in_directory(
-		  [object stringByAppendingString: @"/OutFilter"]);
+		  [object stringByAppendingString: @"/OutFilters"]);
 		carefully_add_bundles(outNames, arr);
 		
 		arr = get_bundles_in_directory(
@@ -408,6 +408,11 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		activatedInput = RETAIN(aInput);
 	}
 	
+	if ([input respondsToSelector: @selector(pluginActivated)])
+	{
+		[input pluginActivated];
+	}
+	
 	return self;
 }			
 - setOutput: (NSString *)aOutput
@@ -419,6 +424,11 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	if (output)
 	{
 		activatedOutput = RETAIN(aOutput);
+	}
+
+	if ([output respondsToSelector: @selector(pluginActivated)])
+	{
+		[output pluginActivated];
 	}
 	
 	return self;
@@ -449,8 +459,16 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		if ([activatedInFilters containsObject: obj])
 		{
 			[activatedInFilters removeObject: obj];
+			if ([obj respondsToSelector: @selector(pluginDeactivated)])
+			{
+				[obj pluginDeactivated];
+			}
 		}
 		[activatedInFilters addObject: obj];
+		if ([obj respondsToSelector: @selector(pluginActivated)])
+		{
+			[obj pluginActivated];
+		}
 		return self;
 	}
 	
@@ -461,6 +479,11 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	[inObjects setObject: obj forKey: aFilt];
 	[activatedInFilters addObject: obj];
+	
+	if ([obj respondsToSelector: @selector(pluginActivated)])
+	{
+		[obj pluginActivated];
+	}
 	
 	return self;
 }
@@ -474,8 +497,17 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		if ([activatedOutFilters containsObject: obj])
 		{
 			[activatedOutFilters removeObject: obj];
+			if ([obj respondsToSelector: @selector(pluginDeactivated)])
+			{
+				[obj pluginDeactivated];
+			}
+			
 		}
 		[activatedOutFilters addObject: obj];
+		if ([obj respondsToSelector: @selector(pluginActivated)])
+		{
+			[obj pluginActivated];
+		}
 		return self;
 	}
 	
@@ -486,6 +518,10 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	}
 	[outObjects setObject: obj forKey: aFilt];
 	[activatedOutFilters addObject: obj];
+	if ([obj respondsToSelector: @selector(pluginActivated)])
+	{
+		[obj pluginActivated];
+	}
 	
 	return self;
 }	
@@ -496,7 +532,14 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	if ((obj = [inObjects objectForKey: aFilt]))
 	{
-		[activatedInFilters removeObject: obj];
+		if ([activatedInFilters containsObject: obj])
+		{
+			[activatedInFilters removeObject: obj];
+			if ([obj respondsToSelector: @selector(pluginDeactivated)])
+			{
+				[obj pluginDeactivated];
+			}
+		}
 	}
 	
 	return self;
@@ -508,7 +551,14 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	if ((obj = [outObjects objectForKey: aFilt]))
 	{
-		[activatedOutFilters removeObject: obj];
+		if ([activatedOutFilters containsObject: obj])
+		{
+			[activatedOutFilters removeObject: obj];
+			if ([obj respondsToSelector: @selector(pluginDeactivated)])
+			{
+				[obj pluginDeactivated];
+			}
+		}
 	}
 	
 	return self;
@@ -518,7 +568,15 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	NSEnumerator *iter;
 	id object;
 	
-	[activatedInFilters removeAllObjects];
+	while ([activatedInFilters count] > 0)
+	{
+		object = [activatedInFilters objectAtIndex: 0];
+		[activatedInFilters removeObjectAtIndex: 0];
+		if ([object respondsToSelector: @selector(pluginDeactivated)])
+		{
+			[object pluginDeactivated];
+		}
+	}
 	
 	iter = [filters objectEnumerator];
 	
@@ -533,7 +591,15 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	NSEnumerator *iter;
 	id object;
 	
-	[activatedOutFilters removeAllObjects];
+	while ([activatedOutFilters count] > 0)
+	{
+		object = [activatedOutFilters objectAtIndex: 0];
+		[activatedOutFilters removeObjectAtIndex: 0];
+		if ([object respondsToSelector: @selector(pluginDeactivated)])
+		{
+			[object pluginDeactivated];
+		}
+	}
 	
 	iter = [filters objectEnumerator];
 	
