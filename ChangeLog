@@ -1,6 +1,9 @@
 2004-01-12 Andy Ruder <aeruder at ksu dot edu>
  * Manually applying various attributes to NSTextView subclasses
    since OS X doesn't support custom subclasses on them.
+ * Added the emoticon bundle (thanks ludovic)
+ * Fixed a memory leak in bundle setup
+ * Fixed a weirdness on selection in bundle setup
 
 2004-01-11 Andy Ruder <aeruder at ksu dot edu>
  * Added /ping, /topic to GNUstepOutput
