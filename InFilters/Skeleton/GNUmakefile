@@ -9,7 +9,7 @@ Skeleton_PRINCIPAL_CLASS = Skeleton
 
 Skeleton_FRAMEWORKS = -lTalkSoupBundles
 
-Skeleton_OBJC_FILES =
+Skeleton_OBJC_FILES = Skeleton.m
 
 GUI_LIBS = 
 
