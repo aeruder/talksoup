@@ -225,13 +225,6 @@ GNUstepOutput *_GS_ = nil;
 - removeConnectionController: (ConnectionController *)aCont
 {
 	[connectionControllers removeObject: aCont];
-	if ([connectionControllers count] == 0 && [serverLists count] == 0)
-	{
-		if (!terminating)
-		{
-			[NSApp terminate: nil];
-		}
-	}
 	return self;
 }
 - addServerList: (ServerListController *)aCont
@@ -242,13 +235,6 @@ GNUstepOutput *_GS_ = nil;
 - removeServerList: (ServerListController *)aCont
 {
 	[serverLists removeObject: aCont];
-	if ([connectionControllers count] == 0 && [serverLists count] == 0)
-	{
-		if (!terminating)
-		{
-			[NSApp terminate: nil];
-		}
-	}
 	return self;
 }
 - setPreferencesController: (PreferencesController *)aPrefs
