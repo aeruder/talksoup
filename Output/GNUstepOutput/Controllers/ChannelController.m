@@ -59,7 +59,7 @@
 	
 	frame = [tableView frame];
 	[splitView removeSubview: tableView];
-	RELEASE(tableView);
+	AUTORELEASE(tableView);
 	
 	userScroll = AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]); 
 	tableView = [[NSTableView alloc] initWithFrame: 
@@ -101,7 +101,7 @@
 
 	x = RETAIN([(NSWindow *)window contentView]);
 	[window close];
-	RELEASE(window);
+	AUTORELEASE(window);
 	window = RETAIN(x);
 	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }

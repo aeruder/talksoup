@@ -10,7 +10,14 @@ GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \
                                          NamePrompt.gorm GroupEditor.gorm \
-										 ServerEditor.gorm TopicInspector.gorm
+                                         ServerEditor.gorm TopicInspector.gorm \
+                                         BundleConfigure.gorm
+
+GNUstepOutput_RESOURCE_FILES = Images/UpArrow.tiff \
+ Images/RightArrow.tiff Images/LeftArrow.tiff \
+ Images/DownArrow.tiff Images/TalkSoup.tiff \
+ Images/common_ret.tiff Images/common_retH.tiff
+
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
@@ -34,7 +41,8 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ServerEditorController.m \
               Controllers/ServerListConnectionController.m \
               Controllers/TopicInspectorController.m \
-			  $(ConnectionController)
+              Controllers/BundleConfigureController.m \
+              $(ConnectionController)
 
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \

@@ -23,6 +23,7 @@
 #include "Controllers/NamePromptController.h"
 #include "Controllers/ContentController.h"
 #include "Controllers/TopicInspectorController.h"
+#include "Controllers/BundleConfigureController.h"
 #include "Misc/NSColorAdditions.h"
 #include "Views/KeyTextView.h"
 
@@ -72,6 +73,9 @@ NSString *GNUstepOutputFontName = @"GNUstepOutputFontName";
 NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 
 GNUstepOutput *_GS_ = nil;
+
+@interface GNUstepOutputBundle : NSBundle
+@end
 
 @implementation GNUstepOutput
 - init
@@ -414,6 +418,7 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)run
 {
+	[GNUstepOutputBundle poseAsClass: [NSBundle class]];
 	[NSApplication sharedApplication];
 	[NSApp setDelegate: self];
 	[NSApp run];
@@ -446,6 +451,10 @@ GNUstepOutput *_GS_ = nil;
 	[tempMenu addItemWithTitle: _l(@"Preferences...")
 	  action: @selector(loadPreferencesPanel:)
 	  keyEquivalent: @"P"];
+	
+	[tempMenu addItemWithTitle: _l(@"Configure Bundles...")
+	  action: @selector(loadBundleConfigurator:)
+	  keyEquivalent: @"B"];
 
 // Connection
 	item = [menu addItemWithTitle: _l(@"Connection") action: 0
@@ -596,11 +605,23 @@ GNUstepOutput *_GS_ = nil;
 		prefs = [PreferencesController new];
 		[NSBundle loadNibNamed: @"Preferences" owner: prefs];
 		[prefs loadCurrentDefaults];
-		[[prefs window] setDelegate: self];
 	}
 	else
 	{
 		[[prefs window] makeKeyAndOrderFront: nil];
+	}
+}
+- (void)loadBundleConfigurator: (NSNotification *)aNotification
+{
+	if (!bundle)
+	{
+		bundle = [BundleConfigureController new];
+		[NSBundle loadNibNamed: @"BundleConfigure" owner: bundle];
+		[[bundle window] setDelegate: self];
+	}
+	else
+	{
+		[[bundle window] makeKeyAndOrderFront: nil];
 	}
 }
 @end
@@ -615,6 +636,10 @@ GNUstepOutput *_GS_ = nil;
 	{
 		[[topic topicText] setKeyTarget: nil];
 		DESTROY(topic);
+	}
+	if ([aNotification object] == [bundle window])
+	{
+		DESTROY(bundle);
 	}
 }
 - (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
@@ -653,3 +678,45 @@ GNUstepOutput *_GS_ = nil;
 }
 @end
 
+@implementation GNUstepOutputBundle
+- (NSString *)pathForImageResource: (NSString *)name
+{
+	id obj;
+	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
+	
+	if (!(obj = [super pathForImageResource: name]) && bundle != self)
+	{
+		return [bundle pathForImageResource: name];
+	}
+
+	return obj;
+}
+- (NSString *)pathForResource: (NSString *)name 
+   ofType: (NSString *)extension
+{
+	id obj;
+	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
+
+	if (!(obj = [super pathForResource: name ofType: extension]) && bundle != self)
+	{
+		return [bundle pathForResource: name ofType: extension];
+	}
+
+	return obj;
+}
+- (NSString *)pathForResource: (NSString *)name ofType: (NSString *)ext
+  inDirectory: (NSString *)bundlePath
+{
+	id obj;
+	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
+
+	if (!(obj = [super pathForResource: name ofType: ext
+	  inDirectory: bundlePath]) && bundle != self)
+	{
+		return [bundle pathForResource: name ofType: ext 
+		  inDirectory: bundlePath];
+	}
+
+	return obj;
+}
+@end

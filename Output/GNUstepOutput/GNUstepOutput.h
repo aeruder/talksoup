@@ -52,6 +52,7 @@ extern GNUstepOutput *_GS_;
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
 @class NSDictionary, ConnectionController, PreferencesController;
 @class TopicInspectorController, ServerListController;
+@class BundleConfigureController;
 
 @interface GNUstepOutput : NSObject
 	{
@@ -62,6 +63,7 @@ extern GNUstepOutput *_GS_;
 		NSDictionary *defaultDefaults;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
+		BundleConfigureController *bundle;
 		BOOL terminating;
 	}
 - setDefaultsObject: aObject forKey: aKey;
