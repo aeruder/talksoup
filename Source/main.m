@@ -17,6 +17,8 @@
 
 #import <TalkSoupBundles/TalkSoup.h>
 
+#import "commands.h"
+
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSAutoreleasePool.h>
@@ -80,6 +82,7 @@ int main(void)
 	[_TS_ setOutput: [defaultPlugins objectForKey: @"Output"]];
 	[_TS_ setActivatedInFilters: [defaultPlugins objectForKey: @"InFilters"]];
 	[_TS_ setActivatedOutFilters: [defaultPlugins objectForKey: @"OutFilters"]];
+	[_TS_ setupCommandList];
 	[[_TS_ pluginForOutput] run];
 	
 	DESTROY(apr);

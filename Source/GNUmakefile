@@ -2,7 +2,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 APP_NAME = TalkSoup
 
-TalkSoup_OBJC_FILES = main.m
+TalkSoup_OBJC_FILES = main.m commands.m
 
 TalkSoup_RESOURCE_FILES = Defaults.plist Images/TalkSoup.tiff
 
