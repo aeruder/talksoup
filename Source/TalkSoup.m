@@ -1103,13 +1103,85 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	}
 
 	who = [array objectAtIndex: 0];
-	if ([array count] >= 2)
-	{
-		arg = [array objectAtIndex: 1];
-	}
+	arg = [array objectAtIndex: 1];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"PING") withArgument: S2AS(arg)
 	  to: S2AS(who) onConnection: connection withNickname: S2AS([connection nick])
+	  sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandTopic: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	id arg = nil;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 2];
+
+	if ([array count] <= 1)
+	{
+		return S2AS(_(@"Usage: /topic <channel> <topic>"));
+	}
+
+	who = [array objectAtIndex: 0];
+	arg = [array objectAtIndex: 1];
+	
+	[_TS_ setTopicForChannel: S2AS(who) to: S2AS(arg)
+	  onConnection: connection withNickname: S2AS([connection nick])
+	  sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandKick: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	id arg = nil;
+	id chan;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 3];
+
+	if ([array count] <= 1)
+	{
+		return S2AS(_(@"Usage: /kick <channel> <user> [comment]"));
+	}
+
+	who = [array objectAtIndex: 1];
+	chan = [array objectAtIndex: 0];
+	if ([array count] > 2)
+	{
+		arg = [array objectAtIndex: 2];
+	}
+	
+	[_TS_ kick: S2AS(who) offOf: S2AS(chan) for: S2AS(arg)
+	  onConnection: connection withNickname: S2AS([connection nick])
+	  sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandRaw: (NSString *)command connection: connection
+{
+	id array;
+	id arg = nil;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 1];
+
+	if ([array count] == 0)
+	{
+		return S2AS(_(@"Usage: /raw <message>"));
+	}
+
+	arg = [array objectAtIndex: 0];
+	
+	[_TS_ writeRawString: S2AS(arg)
+	  onConnection: connection withNickname: S2AS([connection nick])
 	  sender: output];
 	
 	return nil;
@@ -1141,7 +1213,10 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	ADD_COMMAND(@selector(commandClientinfo:connection:), @"clientinfo");
 	ADD_COMMAND(@selector(commandUserinfo:connection:), @"userinfo");
 	ADD_COMMAND(@selector(commandPing:connection:), @"ping");
-
+	ADD_COMMAND(@selector(commandTopic:connection:), @"topic");
+	ADD_COMMAND(@selector(commandKick:connection:), @"kick");
+	ADD_COMMAND(@selector(commandRaw:connection:), @"raw");
+	
 #undef ADD_COMMAND
 }
 @end
