@@ -936,7 +936,9 @@ static NSInvocation *invoc = nil;
 	return BuildAttributedString(@"Usage:", @"\n", 
 	  @"/dcc list (lists current connections and requests)", @"\n",
 	  @"/dcc get (receives a file)", @"\n",
-	  @"/dcc setdir (sets default download directory)", nil);
+	  @"/dcc setdir (sets default download directory)", @"\n",
+	  @"/dcc send (sends a file)",
+	  nil);
 }	
 - init
 {

@@ -43,6 +43,11 @@ Input Filters:
 
   *KeepAlive: sends a ping to the server every three minutes
     on every connection to keep you connected
+  
+  *DCCSupport: allows files to be sent and received from client
+    to client.  There is no DCC chat support and probably never
+    will be.  See /dcc command once the bundle is loaded for
+    more information.
 
   Logging: allows a log of a connection to be made.  See the
     /logging command for more information (once the bundle
