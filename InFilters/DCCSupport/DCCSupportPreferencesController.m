@@ -112,11 +112,11 @@
 	[openPanel setAllowsMultipleSelection: NO];
 	
 	result = [openPanel runModalForDirectory: nil file: nil types: nil];
-	if (result == NSOkButton)
+	if (result == NSOKButton)
 	{
 		id tmp;
 	
-		tmp = [openPanel fileNames];
+		tmp = [openPanel filenames];
 		if ([tmp count] == 0) return;
 
 		tmp = [tmp objectAtIndex: 0];
@@ -136,11 +136,11 @@
 	[openPanel setAllowsMultipleSelection: NO];
 	
 	result = [openPanel runModalForDirectory: nil file: nil types: nil];
-	if (result == NSOkButton)
+	if (result == NSOKButton)
 	{
 		id tmp;
 	
-		tmp = [openPanel fileNames];
+		tmp = [openPanel filenames];
 		if ([tmp count] == 0) return;
 
 		tmp = [tmp objectAtIndex: 0];
