@@ -2,7 +2,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = GNUstepOutput
 
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)/Library/TalkSoup/Output
+GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Output
 
 GNUstepOutput_RESOURCE_FILES = Images/irc.tiff
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm \
