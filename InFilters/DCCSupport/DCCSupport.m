@@ -200,6 +200,8 @@ static NSInvocation *invoc = nil;
 - cpsTimer: (NSTimer *)aTimer;
 
 - (NSString *)path;
+
+- (void)abortConnection;
 @end
 
 
@@ -236,6 +238,8 @@ static NSInvocation *invoc = nil;
 
 - (NSString *)path;
 - (NSString *)receiver;
+
+- (void)abortConnection;
 @end
 
 
@@ -315,8 +319,6 @@ static NSInvocation *invoc = nil;
 	RELEASE(status);
 	status = RETAIN(aStatus);
 	
-	NSLog(@"Status: %@", status);
-	
 	return self;
 }
 - DCCReceivedData: (NSData *)data forObject: aConnection
@@ -372,6 +374,10 @@ static NSInvocation *invoc = nil;
 - (NSString *)path
 {
 	return path;
+}
+- (void)abortConnection
+{
+	[getter abortConnection];
 }
 @end
 
@@ -466,8 +472,6 @@ static NSInvocation *invoc = nil;
 	RELEASE(status);
 	status = RETAIN(aStatus);
 	
-	NSLog(@"Status: %@", status);
-	
 	return self;
 }
 - DCCNeedsMoreData: aConnection
@@ -531,6 +535,10 @@ static NSInvocation *invoc = nil;
 - (NSString *)receiver
 {
 	return receiver;
+}
+- (void)abortConnection
+{
+	[sender abortConnection];
 }
 @end
 
@@ -652,6 +660,45 @@ static NSInvocation *invoc = nil;
 	[invoc retainArguments];
 	[invoc setSelector: @selector(commandDCC:connection:)];
 }
+- (NSAttributedString *)commandDCCABORT: (NSString *)command connection: (id)connection
+{
+	id x, connections;
+	int val = -1;
+	
+	connections = [self getConnectionTable: connection];
+	
+	x = [command separateIntoNumberOfArguments: 2];
+	
+	if ([x count])
+	{
+		val = [[x objectAtIndex: 0] intValue];
+		if (val < 0) val = 0 - val;
+	}
+	
+	val--;
+	
+	if (val < 0 || val >= [connections count])
+	{
+		return BuildAttributedString(@"Usage: /dcc abort <#>", @"\n",
+		  @"Aborts the connection in slot <#>.  See /dcc list.", nil);
+	}
+	
+	x = [connections objectAtIndex: val];
+	
+	if ([x isKindOf: [DCCSender class]] || [x isKindOf: [DCCGetter class]])
+	{
+		[x abortConnection];
+	}
+	else if ([x isKindOf: [NSDictionary class]])
+	{
+		x = [NSDictionary dictionaryWithDictionary: x];
+		[connections removeObjectAtIndex: val];
+		return BuildAttributedFormat(@"Offer of the file %@ from %@ removed.",
+		  [x objectForKey: DCCInfoFileName], [x objectForKey: DCCInfoNick]);
+	}
+	
+	return nil;
+}		  
 - (NSAttributedString *)commandDCCGETTIMEOUT: (NSString *)command connection: (id)connection
 {
 	id x;
@@ -1014,7 +1061,8 @@ static NSInvocation *invoc = nil;
 	  @"/dcc setdir (sets default download directory)", @"\n",
 	  @"/dcc send (sends a file)", @"\n",
 	  @"/dcc gettimeout (sets timeout on receiving files)", @"\n",
-	  @"/dcc sendtimeout (sets timeout on sending files)",
+	  @"/dcc sendtimeout (sets timeout on sending files)", @"\n",
+	  @"/dcc abort (aborts a connection)",
 	  nil);
 }	
 - init
