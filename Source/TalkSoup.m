@@ -930,7 +930,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	return nil;
 }
-- commandQuit: (NSString *)aString connection: connection
+- (NSAttributedString *)commandQuit: (NSString *)aString connection: connection
 {
 	if (!connection) return NO_CONNECT;
 	
@@ -959,6 +959,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	ADD_COMMAND(@selector(commandPart:connection:), @"part");
 	ADD_COMMAND(@selector(commandNotice:connection:), @"notice");
 	ADD_COMMAND(@selector(commandAway:connection:), @"away");
+	ADD_COMMAND(@selector(commandQuit:connection:), @"quit");
 
 #undef ADD_COMMAND
 }
