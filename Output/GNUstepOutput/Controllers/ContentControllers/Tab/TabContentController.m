@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "ContentController.h"
+#include "Controllers/ContentController.h"
 
 #include "Controllers/QueryController.h"
 #include "Controllers/ChannelController.h"
@@ -27,7 +27,11 @@
 #include <AppKit/NSAttributedString.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSTabViewItem.h>
+#include <AppKit/NSTextStorage.h>
+#include <AppKit/NSTextView.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSArray.h>
 
 #include "GNUstepOutput.h"
 
@@ -54,7 +58,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	  NSObjectMapValueCallBacks, 10);
 	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
-
+	
 	return self;
 }	
 - (void)awakeFromNib
@@ -64,15 +68,12 @@ NSString *ContentConsoleName = @"Content Console Name";
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
 	}
 	
-	inputController = [[InputController alloc] initWithContentController: self];
-	
-	[typeView setTarget: inputController];
-	[typeView setAction: @selector(enterPressed:)];
-	
 	[tabView setDelegate: self];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
 	  _l(@"Unconnected")])];
+	
+	[tabView selectTabViewItemAtIndex: 0];
 	
 	[window makeKeyAndOrderFront: nil];
 }
@@ -83,7 +84,6 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabView setDelegate: nil];
 	[typeView setTarget: nil];
-	RELEASE(inputController);
 	RELEASE(typeView);
 	RELEASE(nickView);
 	RELEASE(tabView);
@@ -94,9 +94,12 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(nameToPresentation);
 	RELEASE(nameToLabel);
 	RELEASE(nameToTabItem);
-	RELEASE(inputController);
 	
 	[super dealloc];
+}
+- (NSArray *)allViews
+{
+	return [nameToBoth allValues];
 }
 - (NSTextField *)typeView
 {
@@ -150,7 +153,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	return nil;
 }
-- putMessage: (id)aString in: (id)aChannel
+- putMessage: (id)aString in: (id)aChannel withEndLine: (BOOL)aBool
 {
 	id controller = nil;
 	
@@ -176,18 +179,25 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	if ([aString isKindOf: [NSString class]])
 	{
-		
-		[[[controller chatView] textStorage] appendAttributedString:
-		  AUTORELEASE([[NSAttributedString alloc] initWithString: aString])];
+		[[[controller chatView] textStorage] appendAttributedString: S2AS(aString)];
 	}
 	else if ([aString isKindOf: [NSAttributedString class]])
 	{
 		[[[controller chatView] textStorage] appendAttributedString: aString];
 	}
+	
+	if (aBool)
+	{
+		[[[controller chatView] textStorage] appendAttributedString: S2AS(@"\n")];
+	}
 
 	return self;
 }
-- putMessageInAll: (id)aString
+- putMessage: (id)aString in: (id)aChannel
+{
+	return [self putMessage: aString in: aChannel withEndLine: YES];
+}
+- putMessageInAll: (id)aString withEndLine: (BOOL)aBool
 {
 	NSEnumerator *iter;
 	id object;
@@ -196,10 +206,14 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	while ((object = [iter nextObject]))
 	{
-		[self putMessage: aString in: object];
+		[self putMessage: aString in: object withEndLine: aBool];
 	}
 
 	return self;
+}
+- putMessageInAll: (id)aString
+{
+	return [self putMessageInAll: aString withEndLine: YES];
 }
 - addQueryWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
 {
@@ -293,6 +307,29 @@ NSString *ContentConsoleName = @"Content Console Name";
 - (NSString *)currentViewName
 {
 	return [nameToPresentation objectForKey: current];
+}
+- setNickViewString: (NSString *)aString
+{
+	NSRect nick;
+	NSRect type;
+
+	[nickView setStringValue: aString];
+	[nickView sizeToFit];
+	
+	nick = [nickView frame];
+	nick.origin.y = 8;
+
+	type = [typeView frame];
+	type.origin.y = 4;
+	type.origin.x = NSMaxX(nick) + 4;
+	type.size.width = [[window contentView] frame].size.width - 4 - type.origin.x;
+	
+	[nickView setFrame: nick];
+	[typeView setFrame: type];
+	
+	[[window contentView] setNeedsDisplay: YES];
+
+	return self;
 }
 @end
 

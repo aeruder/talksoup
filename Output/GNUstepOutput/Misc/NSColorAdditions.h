@@ -1,7 +1,7 @@
 /***************************************************************************
-                                QueryController.h
+                                NSColorAdditions.h
                           -------------------
-    begin                : Sat Jan 18 01:38:06 CST 2003
+    begin                : Mon Apr  7 20:52:48 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,26 +14,16 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-@class QueryController;
-
-#ifndef QUERY_CONTROLLER_H
-#define QUERY_CONTROLLER_H
-
-#include <Foundation/NSObject.h>
-
-@class NSView, NSTextView;
  
-@interface QueryController : NSObject
-	{
-		id window;
-		id chatView;
-	}
+#ifndef NS_COLOR_ADDITIONS_H
+#define NS_COLOR_ADDITIONS_H
 
-- (NSView *)contentView;
+#include <AppKit/NSColor.h>
 
-- (NSTextView *)chatView;
-
+@interface NSColor (EncodingAdditions)
++ colorFromEncodedData: (id)aData;
+- (id)encodeToData;
 @end
 
 #endif
+

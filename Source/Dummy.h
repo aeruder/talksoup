@@ -1,7 +1,7 @@
 /***************************************************************************
-                                QueryController.h
+                                Dummy.h
                           -------------------
-    begin                : Sat Jan 18 01:38:06 CST 2003
+    begin                : Sat Apr  5 22:07:20 CST 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,25 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-@class QueryController;
+@class TalkSoupDummyProtocolClass;
 
-#ifndef QUERY_CONTROLLER_H
-#define QUERY_CONTROLLER_H
+#ifndef DUMMY_H
+#define DUMMY_H
 
 #include <Foundation/NSObject.h>
 
-@class NSView, NSTextView;
- 
-@interface QueryController : NSObject
-	{
-		id window;
-		id chatView;
-	}
-
-- (NSView *)contentView;
-
-- (NSTextView *)chatView;
-
+@interface TalkSoupDummyProtocolClass : NSObject
 @end
 
 #endif

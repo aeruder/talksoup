@@ -15,16 +15,28 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "ChannelController.h"
+#include "Controllers/ChannelController.h"
+#include "Misc/NSColorAdditions.h"
+#include "GNUstepOutput.h"
+#include "TalkSoupBundles/TalkSoup.h"
 
+#include <AppKit/NSWindow.h>
 #include <AppKit/NSSplitView.h>
+#include <AppKit/NSTextView.h>
+#include <AppKit/NSTableView.h>
+#include <AppKit/NSTextContainer.h>
 
 @implementation ChannelController
 - (void)awakeFromNib
 {
 	id x;
 	[splitView setVertical: YES];
-	
+
+	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
+	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	[chatView setTextColor: [NSColor colorFromEncodedData:
+	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputTextColor]]];
+
 	x = RETAIN([window contentView]);
 	[window close];
 	RELEASE(window);
@@ -38,19 +50,19 @@
 	RELEASE(tableView);
 	[super dealloc];
 }
-- (id)chatView
+- (NSTextView *)chatView
 {
 	return chatView;
 }
-- (id)contentView
+- (NSView *)contentView
 {
 	return window;
 }
-- (id)splitView
+- (NSSplitView *)splitView
 {
 	return splitView;
 }
-- (id)tableView
+- (NSTableView *)tableView
 {
 	return tableView;
 }

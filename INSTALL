@@ -21,11 +21,18 @@ Copyright (C) 2003 Andy Ruder
 Comments are welcome.
 ===============================================================================
 
-Very simple:
-
 1. make
+	Compiles TalkSoup
+	
 2. make install
+	Installs TalkSoup *must be done as root*
+	
+	You can also install TalkSoup as a regular user by doing a 
+	GNUSTEP_INSTALLATION_DIR="$GNUSTEP_USER_ROOT" make install
+	which will install it into $HOME/GNUstep
+	
 3. gopen TalkSoup.app
+	Run TalkSoup
 
 Enjoy!
 

@@ -17,15 +17,22 @@
 
 #include "GNUstepOutput.h"
 
-#include "Controllers/ContentController.h"
+#include "Controllers/ConnectionController.h"
+#include "Controllers/PreferencesController.h"
+#include "Misc/NSColorAdditions.h"
+
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
+#include <AppKit/NSWindow.h>
+#include <Foundation/NSInvocation.h>
 #include <Foundation/NSRunLoop.h>
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSHost.h>
+#include <Foundation/NSUserDefaults.h>
+#include <Foundation/NSNotification.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString)
 {
@@ -39,170 +46,244 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	return string;
 }
 
+NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
+NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
+NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
+NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
+
 @implementation GNUstepOutput
 - init
 {
 	if (!(self = [super init])) return nil;
-	
-	connectionToInformation = NSCreateMapTable(NSObjectMapKeyCallBacks,
-	  NSObjectMapValueCallBacks, 10);
 
-	connectionToContent = NSCreateMapTable(NSObjectMapKeyCallBacks,
+	connectionToConnectionController = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
-	  
-	pendingIdentToContent = [NSMutableDictionary new];
 	
+	connectionControllers = [NSMutableArray new];
+
+	pendingIdentToConnectionController = [NSMutableDictionary new];
+	
+	defaultDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
+	  @"TalkSoup", IRCDefaultsNick,
+	  @"", IRCDefaultsRealName,
+	  @"", IRCDefaultsUserName,
+	  @"", IRCDefaultsPassword,
+	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
+	    blue: 0.8627 alpha: 1.0] encodeToData], GNUstepOutputBackgroundColor,
+	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputTextColor,
+	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.0
+	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputPersonalBracketColor,
+	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
+	  nil];
+
 	return self;
 }
-- (id)connectionToContent: (id)aObject
+- (void)dealloc
 {
-	return NSMapGet(connectionToContent, aObject);
-}
-- (id)connectionToInformation: (id)aObject
-{
-	return NSMapGet(connectionToInformation, aObject);
-}
-- (id)openNewContentWindow
-{
-	id content = AUTORELEASE([ContentController new]);
+	RELEASE(defaultDefaults);
+	RELEASE(connectionControllers);
+	RELEASE(pendingIdentToConnectionController);
+	NSFreeMapTable(connectionToConnectionController);
 	
-	if (![NSBundle loadNibNamed: @"Content" owner: content])
+	[super dealloc];
+}
+- setDefaultsObject: aObject forKey: (NSString *)aKey
+{
+	if (!aObject) return nil;
+	
+	if ([aKey hasPrefix: @"GNUstepOutput"])
 	{
-		return nil;
+		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
+		id newKey = [aKey substringFromIndex: 13];
+		id y;
+		
+		if ((y = [[NSUserDefaults standardUserDefaults] 
+			  objectForKey: @"GNUstepOutput"]))
+		{
+			[aDict addEntriesFromDictionary: y];
+		}
+		
+		[aDict setObject: aObject forKey: newKey];
+		
+		[[NSUserDefaults standardUserDefaults]
+		   setObject: aDict forKey: @"GNUstepOutput"];
+	}
+	else
+	{
+		[[NSUserDefaults standardUserDefaults]
+		  setObject: aObject forKey: aKey];
 	}
 	
-	return content;
-}
-- makeConnectionForContentController: (id)controller
+	return self;
+}		
+- (id)defaultsObjectForKey: (NSString *)aKey
 {
-	[pendingIdentToContent setObject: controller forKey: 
-	  GNUstepOutputIdentificationForController(controller)];
+	id z;
 	
-	[[_TS_ input] initiateConnectionToHost: [NSHost hostWithAddress:
-	  @"127.0.0.1"] onPort: 6667 withTimeout: 30 withNickname: @"Andy"
-	  withUserName: @"Bill" withRealName: @"Blah Blah" withPassword: @"" 
-	  withIdentification: GNUstepOutputIdentificationForController(controller)];
-	  
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		id y;
+		id newKey = [aKey substringFromIndex: 13];
+		
+		y = [[NSUserDefaults standardUserDefaults] 
+		   objectForKey: @"GNUstepOutput"];
+		
+		if ((z = [y objectForKey: newKey]))
+		{
+			return z;
+		}
+		
+		z = [defaultDefaults objectForKey: aKey];
+		
+		[self setDefaultsObject: z forKey: aKey];
+		
+		return z;
+	}
+	
+	if ((z = [[NSUserDefaults standardUserDefaults]
+	     objectForKey: aKey]))
+	{
+		return z;
+	}
+	
+	z = [defaultDefaults objectForKey: aKey];
+	
+	[self setDefaultsObject: z forKey: aKey];
+	
+	return z;
+}
+- (id)defaultDefaultsForKey: aKey
+{
+	return [defaultDefaults objectForKey: aKey];
+}	  
+- (id)connectionToConnectionController: (id)aObject
+{
+	return NSMapGet(connectionToConnectionController, aObject);
+}
+- waitingForConnection: (NSString *)aIdent onConnectionController: (id)controller
+{
+	[pendingIdentToConnectionController setObject: controller forKey: aIdent];
 	return self;
 }
-- registeredWithServerOnConnection: (id)connection sender: aPlugin
+- addConnectionController: (ConnectionController *)aCont
 {
-	NSLog(@"It worked!!!!");
+	[connectionControllers addObject: aCont];
 	return self;
+}
+- removeConnectionController: (ConnectionController *)aCont
+{
+	[connectionControllers removeObject: aCont];
+	return self;
+}
+- (NSArray *)connectionControllers
+{
+	return [NSArray arrayWithArray: connectionControllers];
 }
 - newConnection: (id)connection sender: aPlugin
 {
+	id controller;
 	id ident = [connection identification];
-	id content;
 	
-	content = AUTORELEASE(RETAIN([pendingIdentToContent objectForKey: ident]));
-
-	if (!(content))
+	controller = AUTORELEASE(RETAIN([pendingIdentToConnectionController 
+	  objectForKey: ident]));
+	
+	if (!(controller))
 	{
 		NSLog(@"Connection came through but there is no related"
-		      @"content view... closing connection...");
+		      @"connection controller waiting for that connection..."
+		      @"closing connection...");
 		[[_TS_ input] closeConnection: connection];
+		return self;
 	}
 	
-	[pendingIdentToContent removeObjectForKey: ident];
+	[pendingIdentToConnectionController removeObjectForKey: ident];
 	
-	NSLog(@"%@ %@", content, connection);
-	
-	NSMapInsert(connectionToContent, connection, content);
-	NSMapInsert(connectionToContent, content, connection);
-	
-	NSLog(@"%@ %@", NSMapGet(connectionToContent, connection), NSMapGet(connectionToContent, content));
-	
-	
-	[content putMessage: @"Connecting..." in: ContentConsoleName];
-	[content setLabel: AUTORELEASE([[NSAttributedString alloc] initWithString:
-	  @"Connecting..."]) forViewWithName: ContentConsoleName];
+	NSMapInsert(connectionToConnectionController, connection, controller);
+	NSMapInsert(connectionToConnectionController, controller, connection);
+
+	[controller newConnection: connection sender: aPlugin];
 	
 	return self;
 }
-#if 0
-- couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection 
-   sender: aPlugin;
-
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin;
-
-- CTCPReplyReceived: (NSAttributedString *)aCTCP
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-
-- errorReceived: (NSAttributedString *)anError onConnection: (id)connection 
-   sender: aPlugin;
-
-- wallopsReceived: (NSAttributedString *)message 
-   from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin;
-
-- userKicked: (NSAttributedString *)aPerson 
-   outOf: (NSAttributedString *)aChannel 
-   for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)connection sender: aPlugin;
-		 
-- invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)connection sender: aPlugin;
-
-- modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-   
-- numericCommandReceived: (NSAttributedString *)command 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin;
-
-- nickChangedTo: (NSAttributedString *)newName 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-
-- channelJoined: (NSAttributedString *)channel 
-   from: (NSAttributedString *)joiner 
-   onConnection: (id)connection sender: aPlugin;
-
-- channelParted: (NSAttributedString *)channel 
-   withMessage: (NSAttributedString *)aMessage
-   from: (NSAttributedString *)parter onConnection: (id)connection 
-   sender: aPlugin;
-
-- quitIRCWithMessage: (NSAttributedString *)aMessage 
-   from: (NSAttributedString *)quitter onConnection: (id)connection 
-   sender: aPlugin;
-
-- topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin;
-
-- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- pingReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- pongReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- newNickNeededWhileRegisteringOnConnection: (id)connection sender: aPlugin;
-#endif
-
+- consoleMessage: (NSAttributedString *)arg onConnection: (id)aConnection
+{
+	id controller = NSMapGet(connectionToConnectionController, aConnection);
+	
+	if ([controller respondsToSelector: _cmd])
+	{
+		[controller performSelector: _cmd withObject: arg withObject: aConnection];
+	}
+	return self;
+}
+- systemMessage: (NSAttributedString *)arg onConnection: (id)aConnection
+{
+	id controller = NSMapGet(connectionToConnectionController, aConnection);
+	
+	if ([controller respondsToSelector: _cmd])
+	{
+		[controller performSelector: _cmd withObject: arg withObject: aConnection];
+	}
+	return self;
+}
+- showMessage: (NSAttributedString *)arg onConnection: (id)aConnection
+{
+	id controller = NSMapGet(connectionToConnectionController, aConnection);
+	
+	if ([controller respondsToSelector: _cmd])
+	{
+		[controller performSelector: _cmd withObject: arg withObject: aConnection];
+	}
+	return self;
+}
+- (BOOL)respondsToSelector: (SEL)aSel
+{
+	NSString *selS = NSStringFromSelector(aSel);
+	
+	if ([selS hasSuffix: @"nConnection:sender:"]) return YES;
+	
+	return [super respondsToSelector: aSel];
+}
+- (NSMethodSignature *)methodSignatureForSelector: (SEL)aSel
+{
+	id x;
+	
+	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
+	{
+		return x;
+	}
+	
+	return [super methodSignatureForSelector: aSel];
+}
+- (void)forwardInvocation: (NSInvocation *)aInvoc
+{
+	SEL sel = [aInvoc selector];
+	NSString *selS = NSStringFromSelector(sel);
+	
+	[aInvoc retainArguments];
+	
+	if ([selS hasSuffix: @"nConnection:sender:"])
+	{
+		int num;
+		id connection;
+		id object;
+		
+		num = [[selS componentsSeparatedByString: @":"] count] - 1;
+		
+		[aInvoc getArgument: &connection atIndex: num + 2 - 1 - 1];
+		
+		object = NSMapGet(connectionToConnectionController, connection);
+		
+		if ([object respondsToSelector: sel])
+		{
+			[aInvoc invokeWithTarget: object];
+		}
+	}
+}
 - (void)run
 {
+	[NSObject enableDoubleReleaseCheck: YES];
 	[NSApplication sharedApplication];
 	[NSApp setDelegate: self];
 	[NSApp run];
@@ -229,6 +310,10 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	[tempMenu addItemWithTitle: @"Info Panel..."
 	  action: @selector(orderFrontStandardInfoPanel:)
 	  keyEquivalent: @""];
+	
+	[tempMenu addItemWithTitle: @"Preferences"
+	  action: @selector(loadPreferencesPanel:)
+	  keyEquivalent: @"p"];
 
 // Edit	
 	item = [menu addItemWithTitle: @"Edit" action: 0 keyEquivalent: @""];
@@ -282,8 +367,35 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 }
 - (void)connectToServer: (NSNotification *)aNotification
 {
-	id content = [self openNewContentWindow];
-	[self makeConnectionForContentController: content];
-}	
+	id x = [ConnectionController new];
+	[x connectToServer: @"localhost" onPort: 6667];
+}
+- (void)loadPreferencesPanel: (NSNotification *)aNotification
+{
+	if (!prefs)
+	{
+		prefs = [PreferencesController new];
+		[NSBundle loadNibNamed: @"Preferences" owner: prefs];
+		[prefs loadCurrentDefaults];
+		[[prefs window] setDelegate: self];
+	}
+	else
+	{
+		[[prefs window] makeKeyAndOrderFront: nil];
+	}
+}
+@end
+
+@interface GNUstepOutput (WindowDelegate)
+@end
+
+@implementation GNUstepOutput (WindowDelegate)
+- (void)windowWillClose: (NSNotification *)aNotification
+{
+	if ([aNotification object] == [prefs window])
+	{
+		DESTROY(prefs);
+	}
+}
 @end
 

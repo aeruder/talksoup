@@ -17,15 +17,16 @@
 
 @class GNUstepOutput, NSString;
 
+#include <Foundation/NSObject.h>
+
 NSString *GNUstepOutputLowercase(NSString *aString);
+NSString *GNUstepOutputIdentificationForController(id controller);
 
-#ifdef S2AS
-	#undef S2AS
-#endif
+extern NSString *GNUstepOutputPersonalBracketColor;
+extern NSString *GNUstepOutputOtherBracketColor;
+extern NSString *GNUstepOutputTextColor;
+extern NSString *GNUstepOutputBackgroundColor;
 
-#define S2AS(_x) AUTORELEASE([[NSAttributedString alloc] initWithString: \
-                   (_x)])
-						 
 #ifdef _l
 	#undef _l
 #endif
@@ -37,110 +38,39 @@ NSString *GNUstepOutputLowercase(NSString *aString);
 #ifndef GNUSTEP_OUTPUT_H
 #define GNUSTEP_OUTPUT_H
 
-#include <Foundation/NSObject.h>
 #include <Foundation/NSMapTable.h>
 #include "TalkSoupBundles/TalkSoup.h"
 
-@class NSAttributedString, NSArray, NSAttributedString;
+@class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
+@class NSDictionary, ConnectionController, PreferencesController;
 
-@interface GNUstepOutput : NSObject < TalkSoupOutputPluginProtocol >
+@interface GNUstepOutput : NSObject
 	{
-		NSMutableDictionary *pendingIdentToContent;
-		NSMapTable *connectionToContent;
-		NSMapTable *connectionToInformation;
+		NSMutableDictionary *pendingIdentToConnectionController;
+		NSMapTable *connectionToConnectionController;
+		NSMutableArray *connectionControllers;
+		NSDictionary *defaultDefaults;
+		PreferencesController *prefs;
 	}
-- (id)connectionToContent: (id)aObject;
+- setDefaultsObject: aObject forKey: aKey;
 
-- (id)connectionToInformation: (id)aObject;
-	
+- (id)defaultsObjectForKey: aKey;
+
+- (id)defaultDefaultsForKey: aKey;
+
+- (id)connectionToConnectionController: (id)aObject;
+
+- waitingForConnection: (NSString *)aIdent onConnectionController: (id)controller;
+
+- addConnectionController: (ConnectionController *)aCont;
+- removeConnectionController: (ConnectionController *)aCont;
+- (NSArray *)connectionControllers;
+
 - newConnection: (id)connection sender: aPlugin;
 
-- registeredWithServerOnConnection: (id)connection sender: aPlugin;
-
-- couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection 
-   sender: aPlugin;
-
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin;
-
-- CTCPReplyReceived: (NSAttributedString *)aCTCP
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-
-- errorReceived: (NSAttributedString *)anError onConnection: (id)connection 
-   sender: aPlugin;
-
-- wallopsReceived: (NSAttributedString *)message 
-   from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin;
-
-- userKicked: (NSAttributedString *)aPerson 
-   outOf: (NSAttributedString *)aChannel 
-   for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)connection sender: aPlugin;
-		 
-- invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)connection sender: aPlugin;
-
-- modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-   
-- numericCommandReceived: (NSAttributedString *)command 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin;
-
-- nickChangedTo: (NSAttributedString *)newName 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin;
-
-- channelJoined: (NSAttributedString *)channel 
-   from: (NSAttributedString *)joiner 
-   onConnection: (id)connection sender: aPlugin;
-
-- channelParted: (NSAttributedString *)channel 
-   withMessage: (NSAttributedString *)aMessage
-   from: (NSAttributedString *)parter onConnection: (id)connection 
-   sender: aPlugin;
-
-- quitIRCWithMessage: (NSAttributedString *)aMessage 
-   from: (NSAttributedString *)quitter onConnection: (id)connection 
-   sender: aPlugin;
-
-- topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin;
-
-- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- pingReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- pongReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin;
-
-- newNickNeededWhileRegisteringOnConnection: (id)connection sender: aPlugin;
-
-- consoleMessage: (NSAttributedString *)arg;
-
-- systemMessage: (NSAttributedString *)arg;
-
-- showMessage: (NSAttributedString *)arg;
+- consoleMessage: (NSAttributedString *)arg onConnection: (id)connection;
+- systemMessage: (NSAttributedString *)arg onConnection: (id)connection;
+- showMessage: (NSAttributedString *)arg onConnection: (id)connection;
 
 - (void)run;
 @end

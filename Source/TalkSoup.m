@@ -22,18 +22,13 @@
 #include <Foundation/NSArray.h>
 #include <Foundation/NSException.h>
 
+NSString *IRCDefaultsNick =  @"Nick";
+NSString *IRCDefaultsRealName = @"RealName";
+NSString *IRCDefaultsUserName = @"UserName";
+NSString *IRCDefaultsPassword = @"Password";
+
 id _TS_;
 id _TSDummy_;
-
-@interface NSException (Blah)
-@end
-
-@implementation NSException (Blah)
-- (void)raise
-{
-	//abort();
-}
-@end
 
 @implementation TalkSoup
 + (TalkSoup *)sharedInstance
@@ -64,9 +59,9 @@ id _TSDummy_;
 	
 	return self;
 }
-- (NSDictionary *)commandList
+- (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
-	return [NSDictionary dictionaryWithDictionary: commandList];
+	return [commandList objectForKey: [aCommand uppercaseString]];
 }
 - addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc
 {
@@ -126,7 +121,7 @@ id _TSDummy_;
 
 	if ((index = [in indexOfObjectIdenticalTo: sender]) != NSNotFound)
 	{
-		NSLog(@"In!");
+		NSLog(@"In %@ by %@", selString, sender);
 		if (index == ([in count] - 1))
 		{
 			next = output;
@@ -135,7 +130,7 @@ id _TSDummy_;
 		{
 			next = [in objectAtIndex: index + 1];
 		}
-
+		
 		if ([next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
@@ -153,6 +148,7 @@ id _TSDummy_;
 	else if ((index = [out indexOfObjectIdenticalTo: sender]) != NSNotFound)
 	{
 		id connection;
+		NSLog(@"Out %@ by %@", selString, sender);
 		if (![selString hasSuffix: @"Connection:sender:"])
 		{
 			[super forwardInvocation: aInvocation];
@@ -160,12 +156,12 @@ id _TSDummy_;
 		}
 		if (index == ([out count] - 1))
 		{
-			[aInvocation getArgument: &connection atIndex: args - 2];
+			[aInvocation getArgument: &connection atIndex: args];
 			next = connection;
 		}
 		else
 		{
-			next = [in objectAtIndex: index + 1];
+			next = [out objectAtIndex: index + 1];
 		}
 
 		if ([next respondsToSelector: sel])
@@ -213,223 +209,4 @@ id _TSDummy_;
 	
 	return self;
 }
-@end
-
-@implementation TalkSoupDummyProtocolClass
-- changeNick: (NSString *)aNick onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- quitWithMessage: (NSString *)aMessage onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- partChannel: (NSString *)channel withMessage: (NSString *)aMessage 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- joinChannel: (NSString *)channel withPassword: (NSString *)aPassword 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- sendCTCPReply: (NSString *)aCTCP withArgument: (NSString *)args
-   to: (NSString *)aPerson onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- sendCTCPRequest: (NSString *)aCTCP withArgument: (NSString *)args
-   to: (NSString *)aPerson onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- sendMessage: (NSString *)message to: (NSString *)receiver 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- sendNotice: (NSString *)message to: (NSString *)receiver 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- sendAction: (NSString *)anAction to: (NSString *)receiver 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- becomeOperatorWithName: (NSString *)aName withPassword: (NSString *)pass 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- requestNamesOnChannel: (NSString *)aChannel fromServer: (NSString *)aServer 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- requestMOTDOnServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestSizeInformationFromServer: (NSString *)aServer
-   andForwardTo: (NSString *)anotherServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestVersionOfServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestServerStats: (NSString *)aServer for: (NSString *)query 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- requestServerLink: (NSString *)aLink from: (NSString *)aServer 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- requestTimeOnServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestServerToConnect: (NSString *)aServer to: (NSString *)connectServer
-   onPort: (NSString *)aPort onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- requestTraceOnServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestAdministratorOnServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- requestInfoOnServer: (NSString *)aServer onConnection: aConnection
-   sender: aPlugin { return nil; }
-
-- requestServiceListWithMask: (NSString *)aMask ofType: (NSString *)type 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- requestServerRehashOnConnection: aConnection sender: aPlugin { return nil; }
-
-- requestServerShutdownOnConnection: aConnection sender: aPlugin { return nil; }
-
-- requestServerRestartOnConnection: aConnection sender: aPlugin { return nil; }
-
-- requestUserInfoOnServer: (NSString *)aServer onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- areUsersOn: (NSString *)userList onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- sendWallops: (NSString *)message onConnection: aConnection sender: aPlugin 
-   { return nil; }
-
-- queryService: (NSString *)aService withMessage: (NSString *)aMessage 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- listWho: (NSString *)aMask onlyOperators: (BOOL)operators 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- whois: (NSString *)aPerson onServer: (NSString *)aServer 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- whowas: (NSString *)aPerson onServer: (NSString *)aServer
-   withNumberEntries: (NSString *)aNumber onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- kill: (NSString *)aPerson withComment: (NSString *)aComment 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- setTopicForChannel: (NSString *)aChannel to: (NSString *)aTopic 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- setMode: (NSString *)aMode on: (NSString *)anObject 
-   withParams: (NSArray *)list onConnection: aConnection sender: aPlugin 
-   { return nil; }
-					 
-- listChannel: (NSString *)aChannel onServer: (NSString *)aServer 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- invite: (NSString *)aPerson to: (NSString *)aChannel 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- kick: (NSString *)aPerson offOf: (NSString *)aChannel for: (NSString *)reason 
-   onConnection: aConnection sender: aPlugin { return nil; }
-
-- setAwayWithMessage: (NSString *)message onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- sendPingWithArgument: (NSString *)aString onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- sendPongWithArgument: (NSString *)aString onConnection: aConnection 
-   sender: aPlugin { return nil; }
-
-- writeRawString: (NSString *)aString onConnection: aConnection
-   sender: aPlugin { return nil; }
-
-- (NSString *)identification { return nil; }
-
-- newConnection: (id)connection sender: aPlugin { return nil; }
-
-- registeredWithServerOnConnection: (id)connection sender: aPlugin 
-   { return nil; }
-
-- couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- CTCPRequestReceived: (NSAttributedString *)aCTCP 
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- CTCPReplyReceived: (NSAttributedString *)aCTCP
-   withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- errorReceived: (NSAttributedString *)anError onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- wallopsReceived: (NSAttributedString *)message 
-   from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- userKicked: (NSAttributedString *)aPerson 
-   outOf: (NSAttributedString *)aChannel 
-   for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-		 
-- invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-   
-- numericCommandReceived: (NSAttributedString *)command 
-   withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- nickChangedTo: (NSAttributedString *)newName 
-   from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- channelJoined: (NSAttributedString *)channel 
-   from: (NSAttributedString *)joiner 
-   onConnection: (id)connection sender: aPlugin { return nil; }
-
-- channelParted: (NSAttributedString *)channel 
-   withMessage: (NSAttributedString *)aMessage
-   from: (NSAttributedString *)parter onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- quitIRCWithMessage: (NSAttributedString *)aMessage 
-   from: (NSAttributedString *)quitter onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
-   from: (NSAttributedString *)aPerson onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- pingReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- pongReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   sender: aPlugin { return nil; }
-
-- newNickNeededWhileRegisteringOnConnection: (id)connection sender: aPlugin 
-   { return nil; }
-
 @end

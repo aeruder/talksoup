@@ -17,100 +17,48 @@
 
 #include "TalkSoupBundles/TalkSoup.h"
 #include "Controllers/InputController.h"
+#include "Controllers/ConnectionController.h"
 #include "Controllers/ContentController.h"
 #include "GNUstepOutput.h"
 
+#include <Foundation/NSBundle.h>
+#include <Foundation/NSInvocation.h>
 #include <Foundation/NSCharacterSet.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSString.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSWindow.h>
 
-static NSArray *get_first_word(NSString *arg)
-{
-	NSRange aRange;
-	NSString *first, *rest;
-	id white = [NSCharacterSet whitespaceCharacterSet];
-
-	arg = [arg stringByTrimmingCharactersInSet: white];
-	  
-	if ([arg length] == 0)
-	{
-		return [NSArray arrayWithObjects: nil];
-	}
-
-	aRange = [arg rangeOfCharacterFromSet: white];
-
-	if (aRange.location == NSNotFound && aRange.length == 0)
-	{
-		return [NSArray arrayWithObjects: arg, nil];
-	}
-	
-	rest = [[arg substringFromIndex: aRange.location]
-	  stringByTrimmingCharactersInSet: white];
-	
-	first = [arg substringToIndex: aRange.location];
-
-	return [NSArray arrayWithObjects: first, rest, nil];
-}
-
-NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
-{
-	NSMutableArray *array = AUTORELEASE([NSMutableArray new]);
-	id object;
-	int temp;
-	
-	if (num <= 1)
-	{
-		return [NSArray arrayWithObject: [string 
-		  stringByTrimmingCharactersInSet: 
-		    [NSCharacterSet whitespaceCharacterSet]]];
-	}
-	if (num == 2)
-	{
-		return get_first_word(string);
-	}
-	
-	while (num != 1)
-	{
-		object = get_first_word(string);
-		temp = [object count];
-		switch(temp)
-		{
-			case 0:
-				return [NSArray arrayWithObjects: nil];
-			case 1:
-				[array addObject: [object objectAtIndex: 0]];
-				return array;
-			case 2:
-				string = [object objectAtIndex: 1];
-				[array addObject: [object objectAtIndex: 0]];
-				num--;
-		}
-	}
-	[array addObject: string];
-	return array;
-}
+id _output_ = nil; 
 
 @interface InputController (PrivateInputController)
 - (void)singleLineTyped: (NSString *)aLine;
 @end
 
 @implementation InputController
-- initWithContentController: (ContentController *)aContent
+- initWithConnectionController: (ConnectionController *)aController
 {
 	if (!(self = [super init])) return nil;
 
-	content = aContent;
-	output = [_TS_ output];
+	controller = RETAIN(aController);
 	
-	if (![output isKindOf: [GNUstepOutput class]])
+	if (!(_output_))
+	{
+		_output_ = RETAIN([_TS_ output]);
+	}
+	
+	if (![_output_ isKindOf: [GNUstepOutput class]])
 	{
 		RELEASE(self);
 		return nil;
 	}
 
 	return self;
+}
+- (void)dealloc
+{
+	RELEASE(controller);
+	[super dealloc];
 }
 - (void)enterPressed: (id)sender
 {
@@ -148,7 +96,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 	}	
 	
 	[sender setStringValue: @""];
-	[[content window] makeFirstResponder: sender];
+	[[[controller contentController] window] makeFirstResponder: sender];
 }
 @end
 
@@ -156,10 +104,10 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 - (void)singleLineTyped: (NSString *)command
 {
 	id connection;
+	id name;
 	
-	connection = AUTORELEASE(RETAIN([output connectionToContent: content]));
-	
-	NSLog(@"Here we are!!!!!!! %@ %@", command, connection);
+	connection = AUTORELEASE(RETAIN(
+	  [_output_ connectionToConnectionController: controller]));
 	
 	if ([command length] == 0)
 	{
@@ -171,12 +119,16 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		id arguments;
 		SEL commandSelector;
 		id array;
+		id invoc;
 
 		command = [command substringFromIndex: 1];
 		
-		array = SeparateIntoNumberOfArguments(command, 2);
-		substring = [array objectAtIndex: 0];
-
+		array = [command separateIntoNumberOfArguments: 2];
+		if ([array count] == 0)
+		{
+			return;
+		}
+		
 		if ([array count] == 1)
 		{
 			arguments = nil;
@@ -189,6 +141,7 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		}
 		
 		substring = GNUstepOutputLowercase(substring);
+		
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
 		  @"command%@:", [substring capitalizedString]]);
 		
@@ -198,6 +151,12 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 			{
 				[self performSelector: commandSelector withObject: arguments];
 			}
+			else if ((invoc = [_TS_ invocationForCommand: substring]))
+			{
+				NSLog(@"Trying the invocation...");
+				[invoc setArgument: &substring atIndex: 2];
+				[invoc invoke];
+			}
 			else
 			{
 				commandSelector = 0;
@@ -205,25 +164,60 @@ NSArray *SeparateIntoNumberOfArguments(NSString *string, int num)
 		}
 		if (commandSelector == 0 && connection)
 		{
+			NSLog(@"Couldn't find nothin', gonna try raw string...");
 			[_TS_ writeRawString: [NSString stringWithFormat: @"%@ %@", 
 			    substring, arguments]
-			  onConnection: [output connectionToContent: content] sender: output]; 
+			  onConnection: connection sender: _output_]; 
 		}
 		return;
 	}
 
 	if (!connection) return;
 	
-	if ([content currentViewName] == ContentConsoleName)
+	name = [[controller contentController] currentViewName];
+	if (name == ContentConsoleName)
 	{
 		return;
 	}
 
-	[_TS_ sendMessage: S2AS(command) to: S2AS([content currentViewName])
-	  onConnection: connection sender: output];
-	[_TS_ messageReceived: S2AS(command) to: S2AS([content currentViewName])
+	NSLog(@"Getting ready to send...");
+	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
+	  onConnection: connection sender: _output_];
+	[_TS_ messageReceived: S2AS(command) to: S2AS(name)
 	  from: S2AS([connection nick]) onConnection: connection 
 	  sender: [_TS_ input]];
 }
 @end
 
+@interface InputController (CommonCommands)
+@end
+
+@implementation InputController (CommonCommands)
+- commandJoin: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 3];
+	id pass;
+	
+	NSLog(@"Welcome to the join command! %@ %@", aString, x);
+	
+	if ([x count] == 0)
+	{
+		NSLog(@"Bombing out...");
+		[controller showMessage: 
+		  S2AS(_l(@"Usage: /join channel1[,channel2...] password1[,password2...]"))
+		  onConnection: nil];
+		return self;
+	}
+	
+	NSLog(@"Checking password...");
+	pass = ([x count] == 2) ? [x objectAtIndex: 1] : nil;
+
+	NSLog(@"%@",[_output_ connectionToConnectionController: controller]);
+	
+	[_TS_ joinChannel: [x objectAtIndex: 0] withPassword: pass 
+	  onConnection: [_output_ connectionToConnectionController: controller]
+	  sender: _output_];
+	  
+	return self;
+}
+@end

@@ -1,7 +1,7 @@
 /***************************************************************************
-                                QueryController.h
+                                TalkSoupMisc.h
                           -------------------
-    begin                : Sat Jan 18 01:38:06 CST 2003
+    begin                : Mon Apr  7 21:45:49 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,26 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-@class QueryController;
-
-#ifndef QUERY_CONTROLLER_H
-#define QUERY_CONTROLLER_H
-
-#include <Foundation/NSObject.h>
-
-@class NSView, NSTextView;
  
-@interface QueryController : NSObject
-	{
-		id window;
-		id chatView;
-	}
+#ifndef TALKSOUP_MISC_H
+#define TALKSOUP_MISC_H
 
-- (NSView *)contentView;
+#include <Foundation/NSString.h>
 
-- (NSTextView *)chatView;
-
+@interface NSString (Separation)
+- separateIntoNumberOfArguments: (int)num;
 @end
 
 #endif

@@ -15,8 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <AppKit/AppKit.h>
-#include "QueryController.h"
+#include "Controllers/QueryController.h"
+#include "Misc/NSColorAdditions.h"
+#include "GNUstepOutput.h"
+#include "TalkSoupBundles/TalkSoup.h"
+
+#include <AppKit/NSWindow.h>
+#include <AppKit/NSTextView.h>
+#include <AppKit/NSTextContainer.h>
 
 @implementation QueryController
 - (void)awakeFromNib
@@ -32,9 +38,11 @@
 	[[chatView textContainer] setWidthTracksTextView: YES];
 	[chatView setTextContainerInset: NSMakeSize(2, 0)];
 	
-	[chatView setBackgroundColor: [NSColor colorWithCalibratedRed: 1.0
-	  green: 0.9725 blue: 0.8627 alpha: 1.0]];
-	
+	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
+	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	[chatView setTextColor: [NSColor colorFromEncodedData:
+	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputTextColor]]];
+		  
 	x = RETAIN([window contentView]);
 	[window close];
 	RELEASE(window);
@@ -46,11 +54,11 @@
 	DESTROY(window);
 	[super dealloc];
 }
-- (id)chatView
+- (NSTextView *)chatView
 {
 	return chatView;
 }
-- (id)contentView
+- (NSView *)contentView
 {
 	return window;
 }

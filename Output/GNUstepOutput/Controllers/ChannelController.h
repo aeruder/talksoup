@@ -20,23 +20,25 @@
 #ifndef CHANNEL_CONTROLLER_H
 #define CHANNEL_CONTROLLER_H
 
-#include <AppKit/AppKit.h>
+@class NSTableView, NSTextView, NSSplitView, NSView;
+
+#include <Foundation/NSObject.h>
 
 @interface ChannelController : NSObject
 	{
-		id tableView;
-		id chatView;
-		id splitView;
+		NSTableView *tableView;
+		NSTextView *chatView;
+		NSSplitView *splitView;
 		id window;
 	}
 
-- (id)chatView; 
+- (NSTextView *)chatView; 
 
-- (id)contentView;
+- (NSView *)contentView;
 
-- (id)splitView;
+- (NSSplitView *)splitView;
 
-- (id)tableView;
+- (NSTableView *)tableView;
 @end
 
 #endif

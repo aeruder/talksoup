@@ -25,9 +25,9 @@ extern NSString *ContentConsoleName;
 #include <Foundation/NSObject.h>
 #include <Foundation/NSMapTable.h>
 
-@class InputController, NSTextField, NSTabView, NSWindow;
+@class NSTextField, NSTabView, NSWindow;
 @class NSMutableDictionary, NSString, NSAttributedString;
-@class NSTabViewItem;
+@class NSTabViewItem, NSArray;
 
 @interface ContentController : NSObject
 {
@@ -44,8 +44,9 @@ extern NSString *ContentConsoleName;
 	NSMapTable *tabItemToName;
 	NSMapTable *bothToName;
 	NSString *current;
-	InputController *inputController;
 }
+- (NSArray *)allViews;
+
 - (NSTextField *)typeView;
 
 - (NSTextField *)nickView;
@@ -66,7 +67,11 @@ extern NSString *ContentConsoleName;
 
 - (NSString *)viewNameForController: controller;
 
+- putMessage: (id)aString in: (id)aChannel withEndLine: (BOOL)end;
+
 - putMessage: (id)aString in: (id)aChannel;
+
+- putMessageInAll: (id)aString withEndLine: (BOOL)end;
 
 - putMessageInAll: (id)aString;
 
@@ -79,6 +84,8 @@ extern NSString *ContentConsoleName;
 - closeViewWithName: (NSString *)aName;
 
 - (NSString *)currentViewName;
+
+- setNickViewString: (NSString *)aNick;
 @end
 
 #endif

@@ -2,21 +2,25 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = GNUstepOutput
 
-BUNDLE_INSTALLATION_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Output
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Output
 
 GNUstepOutput_RESOURCE_FILES = Images/irc.tiff
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm \
-                                         Localizable.strings
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
+                                         Localizable.strings Preferences.gorm
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-              Controllers/ContentController.m Controllers/InputController.m
+              Controllers/ContentController.m Controllers/InputController.m\
+	      Controllers/ConnectionController.m \
+	      Controllers/PreferencesController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m
 
-GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views)
+Misc = Misc/NSColorAdditions.m
+
+GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)
 
 ADDITIONAL_INCLUDE_DIRS = -I.  -I../../../Source
 

@@ -22,15 +22,14 @@
 
 #include <Foundation/NSObject.h>
 
-@class ContentController;
+@class ConnectionController;
 
 @interface InputController : NSObject
 	{
-		ContentController *content;
-		id output;
+		ConnectionController *controller;
 	}
 
-- initWithContentController: (ContentController *)aContent;
+- initWithConnectionController: (ConnectionController *)aController;
 
 - (void)enterPressed: (id)sender;
 @end

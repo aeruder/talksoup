@@ -1,39 +1,4 @@
-2002-12-07 <aeruder@yahoo.com>
-	* Colors changed
-	* Shift-tab to change the tab
-	* Better tab completion on nicknames
+2003-04-08 Andy Ruder <aeruder@ksu.edu>
+ * Added a preferences panel
+ * Got everything organized and mostly working
 
-2002-12-05 <aeruder@yahoo.com>
-	* Tab completion
-
-2002-12-04 <aeruder@yahoo.com>
-	* mIRC color code support
-	* Colored tabs on activity
-
-2002-11-20 <aeruder@yahoo.com>
-	* Fixed most of window handling bug
-
-2002-11-15 <aeruder@yahoo.com>
-	* Ordered user list
-	* Threaded connections
-
-2002-11-14 <aeruder@yahoo.com>
-	* Rewrite complete
-
-2002-11-06 <aeruder@yahoo.com>
-	* TalkSoup user lists work
-
-2002-10-23 <aeruder@yahoo.com>
-	* Charla renamed TalkSoup
-
-2002-10-16 <aeruder@yahoo.com>
-	* Segmentation fault fix and major feature enhancements
-
-2002-10-15 <aeruder@yahoo.com>
-	* Charla 0.01 released
-
-2002-10-15 <aeruder@yahoo.com>
-	* Put in CVS and released to the public
-
-2002-09-22 <aeruder@yahoo.com>
-	* Copyright transferred to Andrew Ruder from Luis Garcia Alanis	
