@@ -716,6 +716,7 @@ static NSString *unique_path(NSString *path)
 - pluginDeactivated
 {
 #ifdef USE_APPKIT
+	[controller shouldHide];
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"RemoveBundlePreferencesController", @"Process",
 	  @"DCCSupport", @"Name", nil]
