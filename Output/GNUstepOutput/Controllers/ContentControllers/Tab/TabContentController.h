@@ -29,6 +29,7 @@ extern NSString *ContentConsoleName;
 @class NSMutableDictionary, NSString, NSAttributedString;
 @class NSTabViewItem, NSArray;
 @class NSColor;
+@class ConnectionController;
 
 NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString *str);
 
@@ -49,7 +50,10 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 	NSMapTable *bothToName;
 	NSString *current;
 	NSColor *textColor;
+	ConnectionController *connection;
 }
+- initWithConnectionController: (ConnectionController *)connect;
+
 - setTextColor: (NSColor *)aColor;
 
 - highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor
@@ -58,6 +62,9 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 - (NSArray *)allViews;
 - (NSArray *)allChannelNames;
 - (NSArray *)allQueryNames;
+
+- (BOOL)isQueryName: (NSString *)aName;
+- (BOOL)isChannelName: (NSString *)aName;
 
 - (NSTextField *)typeView;
 

@@ -20,6 +20,7 @@
 #include "Controllers/QueryController.h"
 #include "Controllers/ChannelController.h"
 #include "Controllers/InputController.h"
+#include "Controllers/ConnectionController.h"
 #include "Views/AttributedTabViewItem.h"
 #include "Misc/NSColorAdditions.h"
 #include "Misc/NSAttributedStringAdditions.h"
@@ -47,7 +48,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 @end
 
 @implementation ContentController
-- init
+- initWithConnectionController: (ConnectionController *)aConnection
 {
 	if (!(self = [super init])) return nil;
 
@@ -67,6 +68,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	textColor = RETAIN([NSColor colorFromEncodedData: 
 	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
+	
+	connection = aConnection;
 	
 	return self;
 }	
@@ -192,6 +195,24 @@ NSString *ContentConsoleName = @"Content Console Name";
 	}
 	
 	return x;
+}
+- (BOOL)isQueryName: (NSString *)aName
+{
+	if ([nameToQuery objectForKey: GNUstepOutputLowercase(aName)])
+	{
+		return YES;
+	}
+
+	return NO;
+}		
+- (BOOL)isChannelName: (NSString *)aName
+{
+	if ([nameToChannel objectForKey: GNUstepOutputLowercase(aName)])
+	{
+		return YES;
+	}
+	
+	return NO;
 }
 - (NSTextField *)typeView
 {
@@ -571,5 +592,11 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(current);	
 	current = RETAIN(name);
 	[window makeFirstResponder: typeView];
+	
+	if ([connection respondsToSelector: _cmd])
+	{
+		[connection performSelector: _cmd withObject: aTabView
+		  withObject: tabViewItem];
+	}	
 }
 @end

@@ -56,9 +56,21 @@ extern const int ChannelUserVoice;
 		NSMutableArray *userList;
 		NSMutableArray *lowercaseList;
 		NSMutableArray *tempList;
-		BOOL resetFlag;		
+		BOOL resetFlag;
+		NSString *topic;
+		NSString *topicDate;
+		NSString *topicAuthor;
 	}
 - initWithIdentifier: (NSString *)aName;
+
+- setTopic: (NSString *)aTopic;
+- (NSString *)topic;
+
+- setTopicAuthor: (NSString *)aTopicAuthor;
+- (NSString *)topicAuthor;
+
+- setTopicDate: (NSString *)aTopicDate;
+- (NSString *)topicDate;
 
 - setIdentifier: (NSString *)aName;
 - (NSString *)identifier;

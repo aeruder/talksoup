@@ -53,6 +53,8 @@
 
 - connectToServer: (NSString *)aName onPort: (int)aPort;
 
+- updateTopicInspector;
+
 - (Channel *)dataForChannelWithName: (NSString *)aName;
 
 - setNick: (NSString *)aString;

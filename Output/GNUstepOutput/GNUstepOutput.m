@@ -22,7 +22,9 @@
 #include "Controllers/ServerListController.h"
 #include "Controllers/NamePromptController.h"
 #include "Controllers/ContentController.h"
+#include "Controllers/TopicInspectorController.h"
 #include "Misc/NSColorAdditions.h"
+#include "Views/KeyTextView.h"
 
 #include <AppKit/NSAttributedString.h>
 #include <AppKit/NSNibLoading.h>
@@ -31,6 +33,7 @@
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSEvent.h>
+#include <AppKit/NSTextField.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSRunLoop.h>
 #include <Foundation/NSAttributedString.h>
@@ -96,11 +99,13 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  nil];
-
+	
 	return self;
 }
 - (void)dealloc
 {
+	[[topic topicText] setKeyTarget: nil];
+	RELEASE(topic);
 	RELEASE(defaultDefaults);
 	RELEASE(connectionControllers);
 	RELEASE(pendingIdentToConnectionController);
@@ -314,6 +319,10 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 		}
 	}
 }
+- (TopicInspectorController *)topicInspectorController
+{
+	return topic;
+}
 - (void)run
 {
 	[NSApplication sharedApplication];
@@ -332,11 +341,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	NSMenuItem *item;
 	NSMenu *tempMenu;
 	unichar leftKey = NSLeftArrowFunctionKey;
-	NSString *left = 
-	  [NSString stringWithCharacters: &leftKey length: 1];
 	unichar rightKey = NSRightArrowFunctionKey;
-	NSString *right = 
-	  [NSString stringWithCharacters: &rightKey length: 1];
 
 	menu = AUTORELEASE([NSMenu new]);
 
@@ -376,19 +381,31 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	  keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
-	
+
 	item = [tempMenu addItemWithTitle: _l(@"Next Tab")
 	  action: @selector(selectNextTab:)
-	  keyEquivalent: right];
+	  keyEquivalent: [NSString stringWithCharacters: &rightKey
+	    length: 1]];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Previous Tab")
 	  action: @selector(selectPreviousTab:)
-	  keyEquivalent: left];
+	  keyEquivalent: [NSString stringWithCharacters: &leftKey
+	    length: 1]];
 	
 	item = [tempMenu addItemWithTitle: _l(@"Close Tab")
 	  action: @selector(closeCurrentTab:)
 	  keyEquivalent: @"X"];
 
+// Tools
+	item = [menu addItemWithTitle: _l(@"Tools")
+	  action: 0 keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
+	
+	item = [tempMenu addItemWithTitle: _l(@"Topic Inspector")
+	  action: @selector(openTopicInspector:)
+	  keyEquivalent: @"T"];
+	
 // Edit	
 	item = [menu addItemWithTitle: _l(@"Edit") action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
@@ -435,6 +452,11 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 }
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
+	topic = [TopicInspectorController new];
+	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
+	[[topic topicText] setKeyTarget: self];
+	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)]; 
+
 	[ServerListController startAutoconnectServers];
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
@@ -452,6 +474,8 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	{
 		[[[object contentController] window] close];
 	}
+	
+	[[prefs window] close]; 
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {
@@ -466,6 +490,10 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 {
 	[NSBundle loadNibNamed: _l(@"NamePrompt") owner:
 	  AUTORELEASE([NamePromptController new])];
+}
+- (void)openTopicInspector: (NSNotification *)aNotification
+{
+		[[topic window] makeKeyAndOrderFront: nil];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {
@@ -483,16 +511,52 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 }
 @end
 
-@interface GNUstepOutput (WindowDelegate)
+@interface GNUstepOutput (Delegate)
 @end
 
-@implementation GNUstepOutput (WindowDelegate)
+@implementation GNUstepOutput (Delegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {
 	if ([aNotification object] == [prefs window])
 	{
 		DESTROY(prefs);
 	}
+	if ([aNotification object] == [topic window])
+	{
+		[[topic topicText] setKeyTarget: nil];
+		DESTROY(topic);
+	}
+}
+- (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
+{
+	id connection;
+	id channel;
+	NSString *characters = [aEvent characters];
+	unichar character = 0;
+	
+	if ([characters length] == 0)
+	{
+		return YES;
+	}
+
+   character = [characters characterAtIndex: 0];
+	
+	if (character != NSCarriageReturnCharacter) return YES;
+	
+	connection = [topic connectionController];
+	channel = [[topic channelField] stringValue];
+	
+	if (connection)
+	{
+		[_TS_ setTopicForChannel: S2AS(channel) to: 
+		 S2AS([sender string]) onConnection: connection
+		 sender: self];
+		[_TS_ setTopicForChannel: S2AS(channel) to:
+		 nil onConnection: connection
+		 sender: self];
+	}
+	
+	return NO;
 }
 @end
 

@@ -11,7 +11,7 @@ GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \
                                          NamePrompt.gorm GroupEditor.gorm \
-										 ServerEditor.gorm
+										 ServerEditor.gorm TopicInspector.gorm
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
@@ -20,13 +20,14 @@ GNUstepOutput_FRAMEWORKS = -lTalkSoupBundles
 
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ContentController.m Controllers/InputController.m\
-	      Controllers/ConnectionController.m \
-	      Controllers/PreferencesController.m \
-	      Controllers/NamePromptController.m \
-	      Controllers/ServerListController.m \
-		  Controllers/GroupEditorController.m \
-		  Controllers/ServerEditorController.m \
-		  Controllers/ServerListConnectionController.m
+              Controllers/ConnectionController.m \
+              Controllers/PreferencesController.m \
+              Controllers/NamePromptController.m \
+              Controllers/ServerListController.m \
+              Controllers/GroupEditorController.m \
+              Controllers/ServerEditorController.m \
+              Controllers/ServerListConnectionController.m \
+              Controllers/TopicInspectorController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/KeyTextView.m

@@ -247,6 +247,7 @@ static inline NSMutableArray *mutablized_prefs()
 		[browser reloadColumn: 0]; 
 		
 		[[editor window] close];
+		[window makeKeyAndOrderFront: nil];
 	}
 	else if ([editor isKindOf: [ServerEditorController class]])
 	{
@@ -329,6 +330,7 @@ static inline NSMutableArray *mutablized_prefs()
 		[browser reloadColumn: 1]; 
 		
 		[[editor window] close];
+		[window makeKeyAndOrderFront: nil];
 	}
 }
 - (void)addEntryHit: (NSButton *)sender

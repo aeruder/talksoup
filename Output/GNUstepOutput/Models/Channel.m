@@ -147,8 +147,47 @@
 	DESTROY(tempList);
 	DESTROY(userList);
 	DESTROY(lowercaseList);
+	DESTROY(topic);
+	DESTROY(topicAuthor);
+	DESTROY(topicDate);
 	
 	[super dealloc];
+}
+- setTopic: (NSString *)aTopic
+{
+	if (topic == aTopic) return self;
+	
+	RELEASE(topic);
+	topic = RETAIN(aTopic);
+	
+	return self;
+}
+- (NSString *)topic
+{
+	return topic;
+}
+- setTopicAuthor: (NSString *)aTopicAuthor
+{
+	if (topicAuthor == aTopicAuthor) return self;
+	RELEASE(topicAuthor);
+	topicAuthor = RETAIN(aTopicAuthor);
+	return self;
+}
+- (NSString *)topicAuthor
+{
+	return topicAuthor;
+}
+- setTopicDate: (NSString *)aTopicDate
+{
+	if (topicDate == aTopicDate) return self;
+	
+	RELEASE(topicDate);
+	topicDate = RETAIN(aTopicDate);
+	return self;
+}		
+- (NSString *)topicDate
+{
+	return topicDate;
 }
 - setIdentifier: (NSString *)aIdentifier
 {

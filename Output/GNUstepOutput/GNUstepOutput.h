@@ -46,6 +46,7 @@ extern NSString *GNUstepOutputServerList;
 
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
 @class NSDictionary, ConnectionController, PreferencesController;
+@class TopicInspectorController;
 
 @interface GNUstepOutput : NSObject
 	{
@@ -54,6 +55,7 @@ extern NSString *GNUstepOutputServerList;
 		NSMutableArray *connectionControllers;
 		NSDictionary *defaultDefaults;
 		PreferencesController *prefs;
+		TopicInspectorController *topic;
 	}
 - setDefaultsObject: aObject forKey: aKey;
 
@@ -75,6 +77,7 @@ extern NSString *GNUstepOutputServerList;
 - systemMessage: (NSAttributedString *)arg onConnection: (id)connection;
 - showMessage: (NSAttributedString *)arg onConnection: (id)connection;
 
+- (TopicInspectorController *)topicInspectorController;
 - (void)run;
 @end
 
