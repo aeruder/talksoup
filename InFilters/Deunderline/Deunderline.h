@@ -25,7 +25,49 @@
 @class NSAttributedString;
 
 @interface Deunderline : NSObject
-// Open up TalkSoupProtocols.h and insert methods you want here...
+- CTCPReplyReceived: (NSAttributedString *)aCTCP
+   withArgument: (NSAttributedString *)argument 
+   from: (NSAttributedString *)aPerson 
+   onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- wallopsReceived: (NSAttributedString *)message 
+   from: (NSAttributedString *)sender 
+   onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- channelParted: (NSAttributedString *)channel 
+   withMessage: (NSAttributedString *)aMessage
+   from: (NSAttributedString *)parter onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- quitIRCWithMessage: (NSAttributedString *)aMessage 
+   from: (NSAttributedString *)quitter onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
+   from: (NSAttributedString *)aPerson onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 @end
 
 #endif
