@@ -220,17 +220,21 @@ id _output_ = nil;
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
 		  @"command%@:", [substring capitalizedString]]);
 		
+		if ((invoc = [_TS_ invocationForCommand: substring]))
+		{
+			[invoc setArgument: &arguments atIndex: 2];
+			[invoc setArgument: &connection atIndex: 3]; 
+			[invoc invoke];
+			[invoc getReturnValue: &substring];
+			[controller showMessage: substring onConnection: nil];
+			return;
+		}
+		
 		if (commandSelector != 0)
 		{
 			if ([self respondsToSelector: commandSelector])
 			{
 				[self performSelector: commandSelector withObject: arguments];
-			}
-			else if ((invoc = [_TS_ invocationForCommand: substring]))
-			{
-				NSLog(@"Trying the invocation...");
-				[invoc setArgument: &substring atIndex: 2];
-				[invoc invoke];
 			}
 			else
 			{

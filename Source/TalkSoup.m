@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TalkSoup.h"
+#include "TalkSoupBundles/TalkSoup.h"
 
 #include <Foundation/NSString.h>
 #include <Foundation/NSInvocation.h>
@@ -25,6 +25,8 @@
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSBundle.h>
 #include <Foundation/NSPathUtilities.h>
+#include <Foundation/NSInvocation.h>
+#include <Foundation/NSUserDefaults.h>
 
 NSString *IRCDefaultsNick =  @"Nick";
 NSString *IRCDefaultsRealName = @"RealName";
@@ -217,8 +219,58 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	outObjects = [NSMutableDictionary new];
 	
 	_TS_ = RETAIN(self);
+
+	[self setupCommandList];
 	
 	return self;
+}
+- (void)setupCommandList
+{
+	id invoc;
+	
+	invoc = [NSInvocation invocationWithMethodSignature:
+	  [self methodSignatureForSelector: 
+	  @selector(commandLoad:connection:)]];
+	
+	[invoc retainArguments];
+	
+	[invoc setSelector: @selector(commandLoad:connection:)];
+	[invoc setTarget: self];
+	
+	[self addCommand: @"load" withInvocation: invoc];
+
+	invoc = [NSInvocation invocationWithMethodSignature:
+	  [self methodSignatureForSelector: 
+	  @selector(commandUnload:connection:)]];
+	
+	[invoc retainArguments];
+	
+	[invoc setSelector: @selector(commandUnload:connection:)];
+	[invoc setTarget: self];
+	
+	[self addCommand: @"unload" withInvocation: invoc];
+	
+	invoc = [NSInvocation invocationWithMethodSignature:
+	  [self methodSignatureForSelector: 
+	  @selector(commandLoaded:connection:)]];
+	
+	[invoc retainArguments];
+	
+	[invoc setSelector: @selector(commandLoaded:connection:)];
+	[invoc setTarget: self];
+	
+	[self addCommand: @"loaded" withInvocation: invoc];
+	
+	invoc = [NSInvocation invocationWithMethodSignature:
+	  [self methodSignatureForSelector: 
+	  @selector(commandSaveLoaded:connection:)]];
+	
+	[invoc retainArguments];
+	
+	[invoc setSelector: @selector(commandSaveLoaded:connection:)];
+	[invoc setTarget: self];
+	
+	[self addCommand: @"saveloaded" withInvocation: invoc];	
 }
 - (void)refreshPluginList
 {
@@ -259,6 +311,126 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		  [object stringByAppendingString: @"/Output"]);
 		carefully_add_bundles(outputNames, arr);
 	}
+}
+- (NSAttributedString *)commandSaveLoaded: (NSString *)args 
+   connection: (id)connection
+{
+	id dict = [NSDictionary dictionaryWithObjectsAndKeys:
+	  activatedInput, @"Input",
+	  activatedOutput, @"Output",
+	  [self activatedOutFilters], @"OutFilters",
+	  [self activatedInFilters], @"InFilters",
+	  nil];
+	
+	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
+	
+	return S2AS(_(@"Saved loaded bundles into preferences"));
+}
+- (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
+{
+	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
+	  _(@"Output: "), activatedOutput, @"\n",
+	  _(@"Input: "), activatedInput, @"\n",
+	  _(@"Output Filters: "), [[self activatedOutFilters]
+	    componentsJoinedByString: @", "], @"\n",
+	  _(@"Input Filters: "), [[self activatedInFilters]
+	    componentsJoinedByString: @", "], nil);
+}
+- (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
+{
+	id x = [args separateIntoNumberOfArguments: 3];
+	id first, second;
+	id array = nil;
+	BOOL isIn = NO;
+	
+	if ([x count] < 1)
+	{
+		return S2AS(_(@"Usage: /load <in/out> <name>"));
+	}
+	
+	first = [x objectAtIndex: 0];
+	
+	if ([first isEqualToString: @"in"])
+	{
+		array = [inNames allKeys];
+		isIn = YES;
+	}
+	else if ([first isEqualToString: @"out"])
+	{
+		array = [outNames allKeys];
+	}
+	else
+	{
+		return S2AS(_(@"Usage: /load <in/out> <name>"));
+	}
+	
+	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
+	
+	if (!second || ![array containsObject: second])
+	{
+		return BuildAttributedString(
+		  _(@"Possible filters: "), 
+		  [array componentsJoinedByString: @", "], nil);
+	}
+	
+	if (isIn)
+	{
+		[self activateInFilter: second];
+	}
+	else
+	{
+		[self activateOutFilter: second];
+	}
+	
+	return BuildAttributedString(second, _(@" loaded"), nil);
+}
+- (NSAttributedString *)commandUnload: (NSString *)args connection: (id)connection
+{
+	id x = [args separateIntoNumberOfArguments: 3];
+	id first, second;
+	id array = nil;
+	BOOL isIn = NO;
+	
+	if ([x count] < 1)
+	{
+		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+	}
+	
+	first = [x objectAtIndex: 0];
+	
+	if ([first isEqualToString: @"in"])
+	{
+		array = [self activatedInFilters];
+		isIn = YES;
+	}
+	else if ([first isEqualToString: @"out"])
+	{
+		array = [self activatedOutFilters];
+	}
+	else
+	{
+		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+	}
+	
+	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
+	
+	if (!second || ![array containsObject: second])
+	{
+		return BuildAttributedString(
+		  _(@"Possible filters: "), 
+		  [array componentsJoinedByString: @", "], nil);
+	}
+	
+	if (isIn)
+	{
+		[self deactivateInFilter: second];
+	}
+	else
+	{
+		[self deactivateOutFilter: second];
+	}
+	
+	return BuildAttributedString(second, _(@" unloaded"), nil);
 }
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
@@ -438,11 +610,33 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 }
 - (NSArray *)activatedInFilters
 {
-	return [NSArray arrayWithArray: activatedInFilters];
+	NSEnumerator *iter;
+	id object;
+	NSMutableArray *x = AUTORELEASE([[NSMutableArray alloc] init]);
+	
+	iter = [activatedInFilters objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[x addObject: [[inObjects allKeysForObject: object] objectAtIndex: 0]];
+	}
+	
+	return x;
 }
 - (NSArray *)activatedOutFilters
 {
-	return [NSArray arrayWithArray: activatedOutFilters];
+	NSEnumerator *iter;
+	id object;
+	NSMutableArray *x = AUTORELEASE([[NSMutableArray alloc] init]);
+	
+	iter = [activatedOutFilters objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		[x addObject: [[outObjects allKeysForObject: object] objectAtIndex: 0]];
+	}
+	
+	return x;
 }
 - (NSDictionary *)allInFilters
 {
