@@ -1526,7 +1526,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 	
-	aString = [NSMutableString stringWithFormat: @"MDOE %@ %@", 
+	aString = [NSMutableString stringWithFormat: @"MODE %@ %@", 
 	            anObject, aMode];
 				
 	iter = [list objectEnumerator];
