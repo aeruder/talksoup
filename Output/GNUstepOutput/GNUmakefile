@@ -77,7 +77,9 @@ Controllers/ConnectionController/ConnectionControllerTabCompletion.m
 ContentController = Controllers/ContentControllers/StandardContentController.m \
 Controllers/ContentControllers/ContentController.m \
 Controllers/ContentControllers/Tab/TabContentController.m \
-Controllers/ContentControllers/Tab/TabMasterController.m
+Controllers/ContentControllers/Tab/TabMasterController.m \
+Controllers/ContentControllers/StandardChannelController.m \
+Controllers/ContentControllers/StandardQueryController.m
 
 Preferences = Controllers/Preferences/GeneralPreferencesController.m \
 Controllers/Preferences/BundlePreferencesController.m \
@@ -85,25 +87,24 @@ Controllers/Preferences/ColorPreferencesController.m \
 Controllers/Preferences/FontPreferencesController.m \
 Controllers/Preferences/PreferencesController.m
 
-Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-              Controllers/InputController.m\
-              Controllers/PreferencesController.m \
-              Controllers/NamePromptController.m \
-              Controllers/ServerListController.m \
-              Controllers/GroupEditorController.m \
-              Controllers/ServerEditorController.m \
-              Controllers/ServerListConnectionController.m \
-              Controllers/TopicInspectorController.m \
-			  $(Preferences) \
-              $(ConnectionController) \
-			  $(ContentController)
+Controllers = \
+Controllers/NamePromptController.m \
+Controllers/ServerListController.m \
+Controllers/GroupEditorController.m \
+Controllers/ServerEditorController.m \
+Controllers/ServerListConnectionController.m \
+Controllers/TopicInspectorController.m \
+$(Preferences) \
+$(ConnectionController) \
+$(ContentController)
 
+Views = Views/AttributedTabViewItem.m \
+Views/ScrollingTextView.m \
+Views/KeyTextView.m
 
-Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
-        Views/KeyTextView.m
-
-Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m\
-       Misc/NSAttributedStringAdditions.m
+Misc = Misc/NSColorAdditions.m \
+Misc/NSObjectAdditions.m \
+Misc/NSAttributedStringAdditions.m
 
 Models = Models/Channel.m
 
