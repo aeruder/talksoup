@@ -103,8 +103,8 @@ static NSData *IRC_new_line = nil;
 	int __len = [(__string) length];\
 	id set = [NSCharacterSet whitespaceCharacterSet];\
 	__z = (__y);\
-	while ([set characterIsMember: [(__string) characterAtIndex: __z]]\
-	     && __z < __len) __z++;\
+	while (__z < __len && \
+	  [set characterIsMember: [(__string) characterAtIndex: __z]]) __z++\
 }
 
 static inline NSString *get_IRC_prefix(NSString *line, NSString **prefix)
@@ -171,6 +171,7 @@ static inline NSString *get_next_IRC_word(NSString *line, NSString **prefix)
 		*prefix = nil;
 		return @"";
 	}
+	NSLog(@"'%@'", line);
 	NEXT_NON_SPACE(0, beg, line);
 	
 	if (beg == len)
