@@ -1,5 +1,5 @@
 {
-    ApplicationIcon = "TalkSoup.tiff"
+    ApplicationIcon = "TalkSoup.tiff";
 	ApplicationDescription = "An IRC Client for GNUstep";
     ApplicationName = TalkSoup;
     ApplicationRelease = "0.81";
