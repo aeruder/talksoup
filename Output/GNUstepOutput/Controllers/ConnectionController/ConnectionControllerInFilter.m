@@ -335,7 +335,7 @@
 	}
 	
 	[content putMessage: 
-	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@ %@"), who, anObject,
+	  BuildAttributedFormat(_l(@"%@ sets mode %@ %@ %@"), who, aMode, anObject,
 	  params) in: [anObject string]];
 	
 	return self;
