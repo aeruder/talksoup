@@ -27,7 +27,7 @@
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"This bundle will open a new tab for "
+	 @"Description: ", @"This bundle will open a new tab for "
 	 @"any incoming private messages."
 	 @"\n\n",
 	 @"Copyright (C) 2003 by Andrew Ruder",

@@ -109,7 +109,7 @@ static NSInvocation *invoc = nil;
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"This command can handle logging to a file. "
+	 @"Description: ", @"This command can handle logging to a file. "
 	 @"To use it, simply type /logging <file> on any connection to "
 	 @"log that connection.  To set up persistent logging, please "
 	 @"see the FAQ distributed with TalkSoup."

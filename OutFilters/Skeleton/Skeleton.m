@@ -27,7 +27,7 @@
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Somebody\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"None",
+	 @"Description: ", @"None",
 	 nil);
 }
 @end

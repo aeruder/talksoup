@@ -35,7 +35,7 @@ static NSAttributedString *debold(id a)
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"Removes bold from incoming messages.",
+	 @"Description: ", @"Removes bold from incoming messages.",
 	 @"\n\n",
 	 @"Copyright (C) 2003 by Andrew Ruder",
 	 nil);

@@ -132,7 +132,7 @@ NSInvocation *invoc = nil;
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"Piper can pipe outgoing messages through "
+	 @"Description: ", @"Piper can pipe outgoing messages through "
 	 @"an arbitrary shell program.  The syntax is simply "
 	 @"/piper <program>.  To pipe through multiple programs, separate "
 	 @"them with a ^ character."

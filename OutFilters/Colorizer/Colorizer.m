@@ -274,7 +274,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"Adds color into outgoing messages. "
+	 @"Description: ", @"Adds color into outgoing messages. "
 	 @"The syntax is %C#[,#] for colors.  The first # specifies "
 	 @"the foreground color and the second # specifies the "
 	 @"optional second color.  The colors are in the range of "

@@ -330,7 +330,7 @@ static NSInvocation *invoc = nil;
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"This bundle will highlight the names of people "
+	 @"Description: ", @"This bundle will highlight the names of people "
 	 @"who say your name in the channel.  It will also handle the "
 	 @"highlighting of the tabs.  The highlighting colors as well as "
 	 @"other words to highlight can be setup through the /highlight "

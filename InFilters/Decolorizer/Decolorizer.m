@@ -36,7 +36,7 @@ static NSAttributedString *decolor(id a)
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"Removes color from incoming messages.",
+	 @"Description: ", @"Removes color from incoming messages.",
 	 @"\n\n",
 	 @"Copyright (C) 2003 by Andrew Ruder",
 	 nil);

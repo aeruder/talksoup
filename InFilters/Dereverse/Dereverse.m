@@ -35,7 +35,7 @@ static NSAttributedString *dereverse(id a)
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 @"Author: ", @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description:", @"Removes reverse colors from incoming messages.",
+	 @"Description: ", @"Removes reverse colors from incoming messages.",
 	 @"\n\n",
 	 @"Copyright (C) 2003 by Andrew Ruder",
 	 nil);
