@@ -77,6 +77,8 @@ GNUstepOutput *_GS_ = nil;
 - init
 {
 	id x;
+	id fontName = nil;
+	id fontSize = nil;
 	
 	if (!(self = [super init])) return nil;
 
@@ -87,6 +89,17 @@ GNUstepOutput *_GS_ = nil;
 	serverLists = [NSMutableArray new];
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
+	
+	x = [NSFont userFontOfSize: 0.0];
+	
+	if (x)
+	{
+		fontName = [x fontName];
+		fontSize = [NSString stringWithFormat: @"%d", (int)[x pointSize]];
+	}
+	
+	if (!fontName) fontName = @"Helvetica";
+	if ([fontSize intValue] < 0 || !fontSize) fontSize = @"12";	
 	
 	defaultDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
 	  @"TalkSoup", IRCDefaultsNick,
@@ -102,8 +115,8 @@ GNUstepOutput *_GS_ = nil;
 	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
 	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
-	  @"Helvetica", GNUstepOutputFontName,
-	  @"12", GNUstepOutputFontSize,
+	  fontName, GNUstepOutputFontName,
+	  fontSize, GNUstepOutputFontSize,
 	  @"75000", GNUstepOutputScrollBack,
 	  nil];
 	
