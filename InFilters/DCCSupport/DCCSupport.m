@@ -343,6 +343,104 @@ static NSString *unique_path(NSString *path)
 	
 	return nil;
 }		  
+- (NSAttributedString *)commandDCCPORTRANGE: (NSString *)command connection: (id)connection
+{
+	id x;
+	int val;
+
+	x = [command separateIntoNumberOfArguments: 1];
+	if ([x count] == 0)
+	{
+		return BuildAttributedString(_l(@"Usage: /dcc portrange <low>-<high>" @"\n"
+		  @"Sets the range of allowable ports for sending files.  If <low> and "
+		  @"<high> are the same sending will only use that port.  Use "
+		  @"/dcc portrange - to allow use of any port.  This option should "
+		  @"only be needed if you are behind a firewall." @"\n"
+		  @"Current portrange: "), get_default(DCCPortRange));
+	}
+	
+	x = [NSMutableArray arrayWithArray: 
+	  [[x objectAtIndex: 0] componentsSeparatedByString: @"-"]];
+	[x removeObject: @""];
+
+	if ([x count] == 0)
+	{
+		set_default(DCCPortRange, @"");
+	}
+	else if ([x count] == 1)
+	{
+		int x1;
+		id tmp;
+		
+		x1 = [[x objectAtIndex: 0] intValue];
+		if (x1 < 0)
+		{
+			set_default(DCCPortRange, @"");
+		}
+		else
+		{
+			if (x1 > 65535) x1 = 65535;
+			
+			tmp = [NSString stringWithFormat: @"%d-%d", x1, x1];
+
+			set_default(DCCPortRange, tmp);
+		}
+	}
+	else if ([x count] >= 2)
+	{
+		int x1, x2;
+		id tmp;
+
+		x1 = [[x objectAtIndex: 0] intValue];
+		x2 = [[x objectAtIndex: 1] intValue];
+
+		if (x1 < 0 || x2 < 0)
+		{
+			set_default(DCCPortRange, @"");
+		}
+		else
+		{
+			if (x1 > 65535) x1 = 65535;
+			if (x2 > 65535) x2 = 65535;
+
+			if (x1 > x2)
+			{
+				int temp;
+				temp = x2;
+				x2 = x1;
+				x1 = temp;
+			}
+
+			tmp = [NSString stringWithFormat: @"%d-%d", x1, x2];
+
+			set_default(DCCPortRange, tmp);
+		}	
+
+	return S2AS(_l(@"Ok."));
+}
+- (NSAttributedString *)commandDCCBLOCKSIZE: (NSString *)command connection: (id)connection
+{
+	id x;
+	int val;
+
+	x = [command separateIntoNumberOfArguments: 2];
+
+	if ([x count] == 0)
+	{
+		return BuildAttributedString(_l(@"Usage: /dcc blocksize <bytes>" @"\n"
+		  @"Sets the block size of files being sent.  The default should be "
+		  @"fine most of the time." @"\n"
+		  @"Current block size: "), get_default(DCCBlockSize), nil);
+	}
+	
+	val = [[x objectAtIndex: 0] intValue];
+
+	if (val < 0) val = 0 - val;
+	
+	SET_DEFAULT_INT(DCCBlockSize, val);
+
+	return S2AS(_l(@"Ok."));
+}
 - (NSAttributedString *)commandDCCGETTIMEOUT: (NSString *)command connection: (id)connection
 {
 	id x;
@@ -425,9 +523,10 @@ static NSString *unique_path(NSString *path)
 	if (sender)
 	{
 		[connections addObject: sender];
+		return BuildAttributedFormat(_l(@"Offering %@ to %@."), path, user);
 	}
-
-	return BuildAttributedFormat(_l(@"Offering %@ to %@."), path, user);
+	
+	return S2AS(_l(@"Had problems initializing the port."));
 }
 - (NSAttributedString *)commandDCCLIST: (NSString *)command connection: (id)connection
 {
@@ -691,6 +790,10 @@ static NSString *unique_path(NSString *path)
 		if (sel && [self respondsToSelector: sel])
 		{
 			return [self performSelector: sel withObject: arg withObject: connection];
+		}
+		else
+		{
+			return [self commandDCCHELP: arg connection: connection];
 		}
 	}
 	

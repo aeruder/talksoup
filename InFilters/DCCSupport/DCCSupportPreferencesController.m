@@ -179,12 +179,23 @@
 	else if ([array count] == 1)
 	{
 		NSString *tmp;
+		int x1;
 
-		tmp = [NSString stringWithFormat: @"%d", 
-		  [[array objectAtIndex: 0] intValue]];
+		x1 = [[array objectAtIndex: 0] intValue];
 
-		set_default(DCCPortRange, ([NSString stringWithFormat: @"%@-%@",
-		  tmp, tmp]));
+		if (x1 < 0)
+		{
+			set_default(DCCPortRange, @"");
+		}
+		else
+		{
+			if (x1 > 65535) x1 = 65535;
+	
+			tmp = [NSString stringWithFormat: @"%d", x1];
+
+			set_default(DCCPortRange, ([NSString stringWithFormat: @"%@-%@",
+			  tmp, tmp]));
+		}
 	}
 	else
 	{
@@ -194,18 +205,28 @@
 		x1 = [[array objectAtIndex: 0] intValue];
 		x2 = [[array objectAtIndex: 1] intValue];
 
-		if (x1 > x2)
+		if (x1 < 0 || x2 < 0)
 		{
-			int tmp2;
-			tmp2 = x2;
-			x2 = x1;
-			x1 = tmp2;
+			set_default(DCCPortRange, @"");
 		}
+		else
+		{
+			if (x1 > 65535) x1 = 65535;
+			if (x2 > 65535) x2 = 65535;
 
-		tmp = [NSString stringWithFormat: @"%d-%d",
-		  x1, x2];
+			if (x1 > x2)
+			{
+				int tmp2;
+				tmp2 = x2;
+				x2 = x1;
+				x1 = tmp2;
+			}
 
-		set_default(DCCPortRange, tmp);
+			tmp = [NSString stringWithFormat: @"%d-%d",
+			  x1, x2];
+
+			set_default(DCCPortRange, tmp);
+		}
 	}
 		
 	[self reloadData];		

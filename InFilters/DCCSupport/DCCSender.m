@@ -94,6 +94,12 @@
 	  withBlockSize: GET_DEFAULT_INT(DCCBlockSize) withUserInfo: nil
 	  withPort: low to: high];
 	
+	if (!sender)
+	{
+		[self dealloc];
+		return nil;
+	}
+	
 	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
 	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
 	  to: S2AS(aReceiver) onConnection: aConnection withNickname: S2AS([aConnection nick])
