@@ -23,9 +23,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>
 
-@class ConnectionController, NSText;
-
-@interface InputController : NSObject
+@interface InputController : NSObject <TypingController>
 	{
 		ConnectionController *controller;
 		int historyIndex;
@@ -37,8 +35,8 @@
 - (void)previousHistoryItem: (NSText *)fieldEditor;
 - (void)nextHistoryItem: (NSText *)fieldEditor;
 
-- (void)lineTyped: (NSString *)command;
-- (void)enterPressed: (id)sender;
+- (void)commandTyped: (NSString *)aCommand;
+- (NSText *)fieldEditor;
 @end
 
 #endif

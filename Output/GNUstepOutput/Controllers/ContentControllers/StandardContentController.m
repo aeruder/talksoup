@@ -95,17 +95,30 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [self initWithMasterController: nil];
 }
+/* Returns the corresponding input manager for a view.
+ */
 - (id <TypingController>)typingControllerForView:
-   (id <ContentControllerQueryView>)aView {
-	return nil;
-}
-- (void)setFieldEditor: (NSText *)aFieldEditor
+   (id <ContentControllerQueryView>)aView
 {
-	ASSIGN(fieldEditor, aFieldEditor);
+	id name;
+
+	name = NSMapGet(bothToName, aView);
+	if (!name) return nil;
+
+	return [nameToTyping objectForName: name];
 }
-- (NSText *)fieldEditor
+/* Sets the connectioncontroller for this content controller.
+ * Does not retain.
+ */
+- (void)setConnectionController: (ConnectionController *)aController
 {
-	return fieldEditor;
+	connectionController = aController;
+}
+/* Returns ConnectionController for this content controller.
+ */
+- (ConnectionController *)connectionController
+{
+	return connectionController;
 }
 // FIXME a dealloc needs to be written
 /* Returns an array of all master controllers that are used by any of the channels or 

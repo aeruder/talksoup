@@ -93,8 +93,10 @@ extern NSString *ContentConsoleName;
 @protocol ContentController <NSObject>
 - (id <TypingController>)typingControllerForView: 
    (id <ContentControllerQueryView>)aView;
-- (void)setFieldEditor: (NSText *)aFieldEditor;
-- (NSText *)fieldEditor;
+
+// Not retained
+- (void)setConnectionController: (ConnectionController *)aController;
+- (ConnectionController *)connectionController;
 
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;

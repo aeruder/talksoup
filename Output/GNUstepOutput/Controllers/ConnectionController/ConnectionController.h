@@ -37,14 +37,13 @@
 		NSString *password;
 		NSString *realName;
 		
-		InputController *inputController;
-
 		id connection;
 		id <ContentController> content;
 		NSArray *tabCompletion;
 		int tabCompletionIndex;
 		
 		NSMutableDictionary *nameToChannelData;
+		NSMapTable *inputToName;
 		
 		BOOL registered;
 	}
@@ -56,6 +55,7 @@
 - connectToServer: (NSString *)aName onPort: (int)aPort;
 
 - (Channel *)dataForChannelWithName: (NSString *)aName;
+- (NSString *)nameForInputController: (InputController *)aInputController;
 
 - setNick: (NSString *)aString;
 - (NSString *)nick;
@@ -72,8 +72,6 @@
 - (id)connection;
 
 - (id <ContentController>)contentController;
-
-- (InputController *)inputController;
 
 - (NSArray *)channelsWithUser: (NSString *)user;
 

@@ -106,6 +106,7 @@
 	[content setFieldEditor: fieldEditor];
 
 	nameToChannelData = [NSMutableDictionary new];
+	inputToName = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	
 	[_GS_ addConnectionController: self];
 
@@ -120,11 +121,11 @@
 	RELEASE(userName);
 	RELEASE(password);
 	RELEASE(realName);
-	RELEASE(inputController);
 	RELEASE(connection);
 	RELEASE(content);
 	RELEASE(tabCompletion);
 	RELEASE(nameToChannelData);
+	NSFreeMapTable(inputToName);
 	
 	[super dealloc];
 }
@@ -170,6 +171,10 @@
 - (Channel *)dataForChannelWithName: (NSString *)aName
 {
 	return [nameToChannelData objectForKey: GNUstepOutputLowercase(aName)];
+}
+- (NSString *)nameForInputController: (InputController *)aInputController
+{
+	return NSMapGet(inputToName, aInputController);
 }
 - setNick: (NSString *)aString
 {
@@ -234,10 +239,6 @@
 - (id <ContentController>)contentController
 {
 	return content;
-}
-- (InputController *)inputController
-{
-	return inputController;
 }
 - (NSArray *)channelsWithUser: (NSString *)user
 {

@@ -26,7 +26,7 @@
 #import <Foundation/NSMapTable.h>
 
 @class NSMutableArray, NSMutableDictionary, NSArray, NSString, NSAttributedString;
-@class NSFont, NSText;
+@class NSFont, NSText, ConnectionController;
 
 @interface StandardContentController : NSObject < ContentController >
 	{
@@ -37,14 +37,15 @@
 		NSMutableDictionary *nameToPresentation;
 		NSMutableDictionary *nameToLabel;
 		NSMutableDictionary *nameToMasterController;
+		NSMutableDictionary *nameToTyping;
 		NSMapTable *bothToName;
 		NSString *nickname;
 		NSString * (*lowercase)(NSString *);
 		NSString *title;
 		Class channelClass;
 		Class queryClass;
+		ConnectionController *connectionController;
 		NSFont *chatFont;
-		NSText *fieldEditor;
 	}
 + (Class)masterClass;
 + (Class)queryClass;
@@ -52,8 +53,8 @@
 
 - initWithMasterController: (id <MasterController>) aMaster;
 
-- (void)setFieldEditor: (NSText *)aFieldEditor;
-- (NSText *)fieldEditor;
+- (id <TypingController>)typingControllerForView: 
+   (id <ContentControllerQueryView>)aView;
 
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
