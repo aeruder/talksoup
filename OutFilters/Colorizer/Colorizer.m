@@ -29,6 +29,7 @@
 
 static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 {
+	// FIXME this needs to be highly optimized
 	int y;
 	id string;
 	id two;

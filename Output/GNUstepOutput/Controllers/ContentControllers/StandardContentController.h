@@ -105,6 +105,8 @@
 - (void)setTitle: (NSString *)aTitle;
 
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
+
+- (void)bringNameToFront: (NSString *)aName;
 @end
 
 #endif

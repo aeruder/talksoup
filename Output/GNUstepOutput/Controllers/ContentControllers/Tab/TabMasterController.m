@@ -68,13 +68,13 @@
 	
 	[super dealloc];
 }
-- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController
 {
-	return [self addView: aView withLabel: aLabel atIndex: numItems 
+	[self addView: aView withLabel: aLabel atIndex: numItems 
 	  forContentController: aContentController];
 }
-- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController
 {
 	AttributedTabViewItem *tabItem;
@@ -99,10 +99,9 @@
 	  aView, @"View",
 	  aContentController, @"Content",
 	  nil]];
-
-	return self;
 }
-- removeView: (id <ContentControllerQueryView>)aView
+- (void)
+- (void)removeView: (id <ContentControllerQueryView>)aView
 {
 	id tab;
 	id userInfo;
@@ -110,7 +109,7 @@
 
 	if (!(NSMapMember(viewToTab, aView, 0, 0)))
 	{
-		return self;
+		return;
 	}
 	
 	tab = NSMapGet(viewToTab, aView);
@@ -136,10 +135,8 @@
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
 	 object: content userInfo: userInfo];
-
-	return self;
 }
-- removeViewAtIndex: (int)aIndex
+- (void)removeViewAtIndex: (int)aIndex
 {
 	id aView;
 	id tab;
@@ -147,14 +144,14 @@
 	tab = [tabView tabViewItemAtIndex: aIndex];
 	if (!(NSMapMember(tabToView, tab, 0, 0)))
 	{
-		return self;
+		return;
 	}
 	
 	aView = NSMapGet(viewToTab, aView);
-	
-	return [self removeView: aView];
+
+	[self removeView: aView];
 }
-- moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
+- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
 {
 	int index;
 	id tab;
@@ -163,7 +160,7 @@
 	
 	if (!(NSMapMember(viewToTab, aView, 0, 0)))
 	{
-		return self;
+		return;
 	}
 	
 	tab = NSMapGet(viewToTab, aView);
@@ -172,7 +169,7 @@
 	
 	if (aIndex == index)
 	{
-		return self;
+		return;
 	}
 	
 	if (aIndex > index)
@@ -199,10 +196,8 @@
 	  aView, @"View",
 	  content, @"Content",
 	  nil]];
-
-	return self;
 }
-- moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex
+- (void)moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex
 {
 	id tab;
 	id aView;
@@ -211,12 +206,12 @@
 	
 	if (!(NSMapMember(tabToView, tab, 0, 0)))
 	{
-		return self;
+		return;
 	}
 	
 	aView = NSMapGet(tabToView, tab);
 	
-	return [self moveView: aView toIndex: aNewIndex];
+	[self moveView: aView toIndex: aNewIndex];
 }	 
 - (NSArray *)containedContentControllers
 {

@@ -25,7 +25,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>
  
-@class NSTextField, NSTabView, NSWindow, InputController, NSMutableArray;
+@class NSTextField, NSTabView, NSWindow, NSMutableArray;
 @class NSAttributedString;
 
 @interface TabMasterController : NSObject < MasterController >
@@ -43,21 +43,24 @@
 		NSWindow *window;
 		
 		int numItems;
-
-// FIXME: is this needed here????		
-		InputController *input;
 	}		
 		
-- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController;
-- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
    atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController;
 
-- removeView: (id <ContentControllerQueryView>)aView;
-- removeViewAtIndex: (int)aIndex;
+- (void)selectView: (id <ContentControllerQueryView)aView;
+- (void)selectViewAtIndex: (int)aIndex;
 
-- moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
-- moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
+- (void)removeView: (id <ContentControllerQueryView>)aView;
+- (void)removeViewAtIndex: (int)aIndex;
+
+- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
+- (void)moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
+
+- (int)indexForView: (id <ContentControllerQueryView>)aView;
+- (int)count;
 	 
 - (NSArray *)containedContentControllers;
 - (NSArray *)viewListForContentController: 

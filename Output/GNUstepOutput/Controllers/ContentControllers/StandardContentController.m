@@ -735,6 +735,19 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	lowercase = aFunction;
 }
+- (void)bringNameToFront: (NSString *)aName
+{
+	id <MasterController> master;
+	id <ContentControllerQueryView> view;
+
+	master = [nameToMaster objectForKey: lowercase(aName)];
+	view = [nameToController objectForKey: lowercase(aName)];
+	
+	if (master) {
+		[[master window] makeKeyAndOrderFront: nil];
+		[master selectView: view];
+	}
+}
 @end
 
 @implementation StandardContentController (PrivateMethods)

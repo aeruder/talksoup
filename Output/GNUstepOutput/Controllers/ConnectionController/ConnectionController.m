@@ -78,7 +78,7 @@
 	
 	if (!aContent)
 	{
-		content = [[TabContentController alloc] initWithConnectionController: self];
+		content = [TabContentController new];
 	}
 	else
 	{
