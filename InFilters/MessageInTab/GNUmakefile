@@ -13,12 +13,6 @@ main = MessageInTab.m
 
 MessageInTab_OBJC_FILES = $(main)
 
-ADDITIONAL_INCLUDE_DIRS = -I. -I../../Source
-
-ADDITIONAL_OBJCFLAGS = -Wall -Wno-protocol
-
-GUI_LIBS = 
-
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble

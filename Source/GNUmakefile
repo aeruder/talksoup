@@ -9,12 +9,6 @@ TalkSoup_INCLUDE_FILES = TalkSoup.h
 
 TalkSoup_FRAMEWORKS = -lTalkSoupBundles
 
-ADDITIONAL_OBJCFLAGS = -Wall
-
-ADDITIONAL_INCLUDE_DIRS += -ITalkSoupBundles
-
-GUI_LIBS =
-
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 include $(GNUSTEP_MAKEFILES)/application.make

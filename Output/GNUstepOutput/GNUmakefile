@@ -48,11 +48,6 @@ Models = Models/Channel.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
                            $(Models)
-
-ADDITIONAL_INCLUDE_DIRS = -I.  -I../../../Source
-
-ADDITIONAL_OBJCFLAGS = -Wall -Wno-protocol
-
 BUNDLE_LIBS = $(GUI_LIBS)
 
 -include GNUmakefile.preamble
