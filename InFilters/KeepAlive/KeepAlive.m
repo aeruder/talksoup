@@ -54,9 +54,9 @@
 }
 - pluginActivated
 {
-	timer = [NSTimer scheduledTimerWithTimeInterval: 180.0
+	timer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 180.0
 	  target: self selector: @selector(fireTimer:) userInfo: nil
-	  repeats: YES];
+	  repeats: YES]);
 	return self;
 }
 - pluginDeactivated

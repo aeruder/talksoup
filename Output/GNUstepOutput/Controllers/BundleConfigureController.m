@@ -180,8 +180,8 @@ static NSString *big_description = nil;
 	[availableTable setDelegate: self];
 	[loadedTable setDelegate: self];
 	
-	availCol = [availableTable tableColumnWithIdentifier: @"available"];
-	loadCol = [loadedTable tableColumnWithIdentifier: @"loaded"];
+	availCol = RETAIN([availableTable tableColumnWithIdentifier: @"available"]);
+	loadCol = RETAIN([loadedTable tableColumnWithIdentifier: @"loaded"]);
 
 	loadData[0] = [BundleDataSource new];
 	availData[0] = [BundleDataSource new];

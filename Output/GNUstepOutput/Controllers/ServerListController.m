@@ -190,6 +190,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	[browser setDoubleAction: @selector(connectHit:)];
 	[browser setDelegate: self];
+	[browser setTarget: self];
 	[window setDelegate: self];
 	[window makeKeyAndOrderFront: nil];
 	
@@ -201,6 +202,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	[browser setDelegate: nil];
 	[browser setDoubleAction: 0];
+	[browser setTarget: nil];
 	RELEASE(browser);
 	RELEASE(scrollView);
 	RELEASE(addGroupButton);
@@ -527,6 +529,8 @@ static int sort_server_dictionary(id first, id second, void *x)
 	if ([aNotification object] == window)
 	{
 		[window setDelegate: nil];
+		[browser setDelegate: nil];
+		[browser setTarget: nil];
 		DESTROY(window);
 		[_GS_ removeServerList: self];
 	}
