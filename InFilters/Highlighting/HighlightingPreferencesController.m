@@ -174,6 +174,14 @@
 - (BOOL)tableView: (NSTableView *)aTableView shouldSelectRow: (int)aRow
 {
 	currentlySelected = aRow;
+	if (currentlySelected >= [extraNames count])
+	{
+		[removeButton setEnabled: NO];
+	}
+	else
+	{
+		[removeButton setEnabled: YES];
+	}
 	return YES;
 }
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
