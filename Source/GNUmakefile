@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 APP_NAME = TalkSoup
 
-# SUBPROJECTS = TalkSoupBundles
+SUBPROJECTS = TalkSoupBundles
 
 TalkSoup_OBJC_FILES = TalkSoup.m main.m Dummy.m Functions.m
 TalkSoup_RESOURCE_FILES = Defaults.plist
