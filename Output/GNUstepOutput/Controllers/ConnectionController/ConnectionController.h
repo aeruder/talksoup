@@ -49,6 +49,9 @@
 	}
 - initWithIRCInfoDictionary: (NSDictionary *)aDict;
 
+- initWithIRCInfoDictionary: (NSDictionary *)aDict 
+   withContentController: (ContentController *)aContent;
+
 - connectToServer: (NSString *)aName onPort: (int)aPort;
 
 - updateTopicInspector;

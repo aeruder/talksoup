@@ -54,6 +54,9 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 }
 - initWithConnectionController: (ConnectionController *)connect;
 
+- (ConnectionController *)connectionController;
+- setConnectionController: (ConnectionController *)aConnectionController;
+
 - updatedColor: (NSString *)aKey old: (NSString *)oldValue;
 - (NSColor *)colorForKey: (NSString *)aKey;
 

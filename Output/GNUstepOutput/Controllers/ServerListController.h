@@ -43,6 +43,7 @@ extern NSString *ServerListInfoAutoConnect;
 		NSButton *removeButton;
 		NSButton *addEntryButton;
 		NSButton *editButton;
+		NSButton *forceButton;
 		NSBrowser *browser;
 		NSScrollView *scrollView;
 		NSWindow *window;
@@ -61,6 +62,7 @@ extern NSString *ServerListInfoAutoConnect;
 - (void)removeHit: (NSButton *)sender;
 - (void)connectHit: (NSButton *)sender;
 - (void)addGroupHit: (NSButton *)sender;
+- (void)forceHit: (NSButton *)sender;
 
 - (NSBrowser *)browser;
 - (NSWindow *)window;

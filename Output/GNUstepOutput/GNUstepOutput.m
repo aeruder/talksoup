@@ -256,6 +256,21 @@ GNUstepOutput *_GS_ = nil;
 	[connectionControllers removeObject: aCont];
 	return self;
 }
+- (NSArray *)unconnectedConnectionControllers
+{
+	NSEnumerator *iter;
+	id object;
+	NSMutableArray *arr;
+
+	arr = AUTORELEASE([NSMutableArray new]);
+
+	iter = [connectionControllers objectEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		if ([pendingConnection allKeysForObject: object] == 0 && 
+		  [object 
+	
 - addServerList: (ServerListController *)aCont
 {
 	[serverLists addObject: aCont];

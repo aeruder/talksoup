@@ -12,7 +12,7 @@ else
 TalkSoup_GUI_LIBS = -lTalkSoupBundles
 endif
 
-GUI_LIBS =
+GUI_LIB =
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/application.make

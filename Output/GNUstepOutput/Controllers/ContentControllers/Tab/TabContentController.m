@@ -125,6 +125,15 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	[window makeKeyAndOrderFront: nil];
 }
+- (ConnectionController *)connectionController
+{
+	return connection;
+}
+- setConnectionController: (ConnectionController *)aConnectionController
+{
+	connection = aConnectionController;
+	return self;
+}
 - (void)dealloc
 {
 	NSFreeMapTable(bothToName);

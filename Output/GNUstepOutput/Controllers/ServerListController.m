@@ -213,6 +213,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	RELEASE(editButton);
 	RELEASE(serverColumn);
 	RELEASE(connectButton);
+	RELEASE(forceButton);
 	[[editor window] close];
 	
 	[super dealloc];
@@ -511,6 +512,9 @@ static int sort_server_dictionary(id first, id second, void *x)
 	[window close];
 
 	[win makeKeyAndOrderFront: nil];	
+}
+- (void)forceHit: (NSButton *)sender
+{
 }
 - (NSBrowser *)browser
 {

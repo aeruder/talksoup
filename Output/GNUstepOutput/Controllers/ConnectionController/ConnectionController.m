@@ -96,6 +96,53 @@
 	
 	return self;
 } 	 
+- initWithIRCInfoDictionary: (NSDictionary *)aDict 
+   withContentController: (ContentController *)aContent
+{
+	id typeView;
+	
+	if (!(self = [super init])) return nil;
+	 
+	preNick = RETAIN([aDict objectForKey: IRCDefaultsNick]);
+	userName = RETAIN([aDict objectForKey: IRCDefaultsUserName]);
+	realName = RETAIN([aDict objectForKey: IRCDefaultsRealName]);
+	password = RETAIN([aDict objectForKey: IRCDefaultsPassword]);
+	
+	if (!aContent)
+	{
+		content = 
+	content = [[ContentController alloc] initWithConnectionController: self];
+	[NSBundle loadNibNamed: @"Content" owner: content];
+	[content setNickViewString: preNick];
+	[[content window] setDelegate: self];
+	
+	[content setLabel: S2AS(_l(@"Unconnected")) 
+	  forViewWithName: ContentConsoleName];
+	[[content window] setTitle: _l(@"Unconnected")];
+	
+	typeView = [content typeView];
+
+	nameToChannelData = [NSMutableDictionary new];
+	
+	fieldEditor = [KeyTextView new];
+	[fieldEditor setFieldEditor: YES];
+	[fieldEditor setKeyTarget: self];
+	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
+	[fieldEditor setUsesFontPanel: NO];
+	
+	inputController = [[InputController alloc] initWithConnectionController: self];
+	
+	[typeView setTarget: inputController];
+	[typeView setAction: @selector(enterPressed:)];
+	[typeView abortEditing];
+	[typeView setAllowsEditingTextAttributes: NO];
+	
+	[[content window] makeFirstResponder: typeView];
+	
+	[_GS_ addConnectionController: self];
+	
+	return self;
+}
 - (void)dealloc
 {
 	RELEASE(typedHost);

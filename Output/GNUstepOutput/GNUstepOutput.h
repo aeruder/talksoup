@@ -81,6 +81,8 @@ extern GNUstepOutput *_GS_;
 - removeConnectionController: (ConnectionController *)aCont;
 - (NSArray *)connectionControllers;
 
+- (NSArray *)unconnectedConnectionControllers;
+
 - addServerList: (ServerListController *)aServer;
 - removeServerList: (ServerListController *)aServer;
 

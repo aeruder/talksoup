@@ -18,7 +18,7 @@ else
 DCCSupport_BUNDLE_LIBS = -lTalkSoupBundles -lnetclasses
 endif
 
-GUI_LIBS = 
+GUI_LIB = 
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make

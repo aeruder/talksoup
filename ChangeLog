@@ -2,8 +2,10 @@
  * Decided I'm actually going to try to use this change log.
  * Hopefully fixed problem with buttons not showing up in bundle setup gui
 
-2003-11-01 Andy Ruder <aeruder at ksu dot edu>
+2003-10-15 Andy Ruder <aeruder at ksu dot edu>
  * TalkSoup compiles on OS X
+ * All bundles had localization info generated.
+ * Moved to using a netclasses framework
 
 2003-09-10 Andy Ruder <aeruder at ksu dot edu>
  * Got bundle setup gui in

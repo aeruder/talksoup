@@ -17,7 +17,7 @@ main = main.m Functions.m
 
 NetclassesInput_OBJC_FILES = $(main)
 
-GUI_LIBS = 
+GUI_LIB = 
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
