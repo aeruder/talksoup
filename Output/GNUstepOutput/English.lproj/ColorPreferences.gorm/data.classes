@@ -1,4 +1,18 @@
 {
+    ColorPreferencesController = {
+	Actions = (
+	    "setColorPreference:",
+	    "setDefaultColors:"
+	);
+	Outlets = (
+	    otherColorWell,
+	    personalColorWell,
+	    textColorWell,
+	    backgroundColorWell,
+	    preferencesView
+	);
+	Super = NSObject;
+    };
     FirstResponder = {
 	Actions = (
 	    "activateContextHelpMode:",
@@ -136,18 +150,9 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
-	);
-	Super = NSObject;
-    };
-    PreferencesController = {
-	Actions = (
-	);
-	Outlets = (
-	    scrollView,
-	    window,
-	    preferencesView,
-	    labelBox
+	    "zoom:",
+	    "setColorPreference:",
+	    "setDefaultColors:"
 	);
 	Super = NSObject;
     };

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                PreferencesController.m
+                         PreferencesController.m
                           -------------------
     begin                : Thu Apr  3 08:09:15 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -17,46 +17,50 @@
  *                                                                         *
  ***************************************************************************/
 
-#import "Controllers/PreferencesController.h"
-#import "Controllers/ConnectionController.h"
-#import "Controllers/ContentControllers/ContentController.h"
-#import "Controllers/QueryController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
-#import <TalkSoupBundles/TalkSoup.h>
-#import "Views/ScrollingTextView.h"
 
+#import <TalkSoupBundles/TalkSoup.h>
+
+#import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSArray.h>
-#import <AppKit/NSTextField.h>
-#import <AppKit/NSColorWell.h>
+#import <AppKit/NSScrollView.h>
 #import <AppKit/NSButton.h>
-#import <AppKit/NSTextView.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSView.h>
-#import <AppKit/NSFontPanel.h>
-#import <AppKit/NSFontManager.h>
-#import <AppKit/NSFont.h>
+#import <AppKit/NSMatrix.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSBox.h>
 
-NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
-NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
-NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
-NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
+#import "Controllers/Preferences/ColorPreferencesController.h"
+
+NSString *PreferencesChangedNotification = @"PreferencesChangedNotification";
+NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNotification";
+NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
+
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
-NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
-NSString *GNUstepOutputUserListFontName = @"GNUstepOutputUserListFontName";
-NSString *GNUstepOutputUserListFontSize = @"GNUstepOutputUserListFontSize";
 NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
 NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
 NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
+@interface PreferencesController (PrivateMethods)
+- (void)buttonClicked: (NSMatrix *)aCell;
+
+- (void)registerPreferencesModule: aPreferencesModule;
+- (void)unregisterPreferencesModule: aPreferencesModule;
+
+- (void)preferencesModuleAdded: (NSNotification *)aNotification;
+- (void)preferencesModuleRemoved: (NSNotification *)aNotification;
+@end
+
 @implementation PreferencesController
-- (void)init
+- init
 {
 	if (!(self = [super init])) return self;
 
@@ -67,6 +71,21 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 		[self dealloc];
 		return nil;
 	}
+
+	defaultPreferences = [[NSMutableDictionary alloc] initWithContentsOfFile: 
+	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
+	  pathForResource: @"Defaults"
+	  ofType: @"plist"]];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferencesModuleAdded:)
+	  name: PreferencesModuleAdditionNotification
+	  object: nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferencesModuleRemoved:)
+	  name: PreferencesModuleRemovalNotification
+	  object: nil];
 	
 	return self;
 }	
@@ -76,37 +95,118 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	 * from preferences.app.  Why redo what works
 	 * so nicely? 
 	 */
-
-	prefsList = [[NSMatrix alloc] initWithFrame: 
-	  NSMakeRect(0, 0, 64*30, 64)];
+	prefsList = AUTORELEASE([[NSMatrix alloc] initWithFrame: 
+	  NSMakeRect(0, 0, 64*30, 64)]);
 	[prefsList setCellClass: [NSButtonCell class]];
 	[prefsList setCellSize: NSMakeSize(64, 64)];
 	[prefsList setMode: NSRadioModeMatrix];
 	[prefsList setIntercellSpacing: NSZeroSize];
+
+	[prefsList setTarget: self];
+	[prefsList setAction: @selector(buttonClicked:)];
 	
-	[scrollView setDocumentView: iconList];
+	[scrollView setDocumentView: prefsList];
 	[scrollView setHasHorizontalScroller: YES];
 	[scrollView setHasVerticalScroller: NO];
 	[scrollView setBorderType: NSBezelBorder];
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(window);
 	DESTROY(prefsModules);
 
 	[super dealloc];
 }
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
+- setPreference: (id)aPreference forKey: (NSString *)aKey
 {
-	// FIXME
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
+		id newKey = [aKey substringFromIndex: 13];
+		id y;
+		
+		if ((y = [[NSUserDefaults standardUserDefaults] 
+			  objectForKey: @"GNUstepOutput"]))
+		{
+			[aDict addEntriesFromDictionary: y];
+		}
+		
+		if (aPreference)
+		{
+			[aDict setObject: aPreference forKey: newKey];
+		}
+		else
+		{
+			[aDict removeObjectForKey: newKey];
+		}
+		
+		[[NSUserDefaults standardUserDefaults]
+		   setObject: aDict forKey: @"GNUstepOutput"];
+	}
+	else
+	{
+		if (aPreference)
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  setObject: aPreference forKey: aKey];
+		}
+		else
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  removeObjectForKey: aKey];
+		}
+	}
+	
+	return self;
+}		
+- (id)preferenceForKey: (NSString *)aKey
+{
+	id z;
+	
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		id y;
+		id newKey = [aKey substringFromIndex: 13];
+		
+		y = [[NSUserDefaults standardUserDefaults] 
+		   objectForKey: @"GNUstepOutput"];
+		
+		if ((z = [y objectForKey: newKey]))
+		{
+			return z;
+		}
+		
+		z = [defaultPreferences objectForKey: newKey];
+		
+		[self setPreference: z forKey: aKey];
+		
+		return z;
+	}
+	
+	if ((z = [[NSUserDefaults standardUserDefaults]
+	     objectForKey: aKey]))
+	{
+		return z;
+	}
+	
+	z = [defaultPreferences objectForKey: aKey];
+	
+	[self setPreference: z forKey: aKey];
+	
+	return z;
 }
-- (void)refreshCurrentPanel
+- (id)defaultPreferenceForKey: (NSString *)aKey
 {
-	// FIXME
-}
-- (void)refreshAvailablePreferences
+	if ([aKey hasPrefix: @"GNUstepOutput"])
+	{
+		aKey = [aKey substringFromIndex: 13];
+	}
+	return [defaultPreferences objectForKey: aKey];
+}	  
+- (NSWindow *)window 
 {
-	// FIXME
+	return window;
 }
 /*	
 	
@@ -448,4 +548,130 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[_GS_ setPreferencesController: nil];
 }
 */
+@end
+
+@implementation PreferencesController (PrivateMethods)
+- (void)buttonClicked: (NSMatrix *)aMatrix
+{
+	id array = [prefsList cells];
+	int index;
+	id module;
+	id object;
+	NSView *view;
+	NSEnumerator *iter;
+	NSButtonCell *aCell;
+
+	aCell = [aMatrix selectedCell];
+
+	if (![array containsObject: aCell])
+		return;
+
+	index = [array indexOfObject: aCell];
+
+	if (index >= [prefsModules count])
+		return;
+
+	module = [prefsModules objectAtIndex: index];
+
+	if (currentPrefs == module) 
+		return;
+
+	view = [module preferencesView];
+	if (!view) 
+		return;
+
+	[currentPrefs deactivate];
+	iter = [[preferencesView subviews] objectEnumerator];
+	while ((object = [iter nextObject])) 
+	{
+		[preferencesView removeSubview: object];
+	}
+
+	[view setFrame: [preferencesView frame]];
+	[view setFrameOrigin: NSMakePoint(0,0)];
+	[preferencesView addSubview: view];
+	currentPrefs = module;
+	[labelBox setTitle: [module preferencesName]];
+	[module activate: self];
+}
+- (void)registerPreferencesModule: aPreferencesModule
+{
+	id bCell;
+	id icon;
+	id name;
+	
+	if (!(aPreferencesModule)) 
+		return;
+	
+	if (!(icon = [aPreferencesModule preferencesIcon]))
+		return;
+
+	if (!(name = [aPreferencesModule preferencesName]))
+		return;
+
+	bCell = AUTORELEASE([NSButtonCell new]);
+	if (!(bCell))
+		return;
+
+	[bCell setImage: icon];
+	[bCell setButtonType: NSOnOffButton];
+	[bCell setTitle: name];
+	[bCell setImagePosition: NSImageOnly];
+	[bCell setShowsStateBy: NSPushInCellMask];
+	[bCell setBordered: YES];
+	[bCell setBezelStyle: NSRegularSquareBezelStyle];
+
+	[prefsModules addObject: aPreferencesModule];
+	[prefsList addColumnWithCells: [NSArray arrayWithObject: bCell]];
+	[prefsList sizeToCells];
+	[prefsList setNeedsDisplay: YES];
+
+	// If its the first one, we should auto-click it
+	if ([prefsModules count] == 1)
+	{
+		[prefsList selectCellAtRow: 0 column: 0];
+		[self buttonClicked: prefsList];
+		[window makeFirstResponder: prefsList];
+	}
+}
+- (void)unregisterPreferencesModule: aPreferencesModule
+{
+	int index;
+	if (!(aPreferencesModule))
+		return;
+
+	if (!([prefsModules containsObject: aPreferencesModule]))
+		return;
+
+	index = [prefsModules indexOfObject: aPreferencesModule];
+
+	[prefsModules removeObjectAtIndex: index];
+	[prefsList removeColumn: index];
+	[prefsList sizeToCells];
+	[prefsList setNeedsDisplay: YES];
+}
+- (void)preferencesModuleAdded: (NSNotification *)aNotification
+{
+	id object;
+
+	if (![[aNotification name] isEqualToString: PreferencesModuleAdditionNotification])
+		return;
+
+	if (!(object = [aNotification object]))
+		return;
+
+	[self registerPreferencesModule: object];
+}	
+- (void)preferencesModuleRemoved: (NSNotification *)aNotification;
+{
+	id object;
+
+	if (![[aNotification name] isEqualToString: PreferencesModuleRemovalNotification])
+		return;
+
+	if (!(object = [aNotification object]))
+		return;
+
+	[self unregisterPreferencesModule: object];
+}
 @end

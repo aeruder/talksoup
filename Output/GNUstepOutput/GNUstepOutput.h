@@ -30,7 +30,7 @@ NSString *GNUstepOutputIdentificationForController(id controller);
 BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2);
 
 extern GNUstepOutput *_GS_;
-extern PreferencesController *_GSPREFS_;
+extern PreferencesController *_PREFS_;
 
 #ifdef _l
 	#undef _l
@@ -62,7 +62,6 @@ extern PreferencesController *_GSPREFS_;
 		NSMapTable *connectionToConnectionController;
 		NSMutableArray *connectionControllers;
 		NSMutableArray *serverLists;		
-		NSMutableDictionary *defaultPreferences;
 		NSMutableDictionary *bundlePreferences;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
@@ -87,11 +86,6 @@ extern PreferencesController *_GSPREFS_;
 
 - (TopicInspectorController *)topicInspectorController;
 - (PreferencesController *)preferencesController;
-
-- (id)preferenceForKey: (NSString *)aKey;
-- setPreference: (id)aPreference forKey: (NSString *)aKey;
-- (id)defaultPreferenceForKey: (NSString *)aKey;
-
 - (void)run;
 @end
 

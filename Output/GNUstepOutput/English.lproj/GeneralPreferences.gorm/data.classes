@@ -136,18 +136,21 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "setText:"
 	);
 	Super = NSObject;
     };
-    PreferencesController = {
+    GeneralPreferencesController = {
 	Actions = (
+	    "setText:"
 	);
 	Outlets = (
-	    scrollView,
-	    window,
 	    preferencesView,
-	    labelBox
+	    userView,
+	    nameView,
+	    passwordView,
+	    nickView
 	);
 	Super = NSObject;
     };

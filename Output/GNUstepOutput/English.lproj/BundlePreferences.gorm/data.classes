@@ -1,4 +1,12 @@
 {
+    BundlePreferencesController = {
+	Actions = (
+	);
+	Outlets = (
+	    preferencesView
+	);
+	Super = NSObject;
+    };
     FirstResponder = {
 	Actions = (
 	    "activateContextHelpMode:",
@@ -137,17 +145,6 @@
 	    "useStandardLigatures:",
 	    "yank:",
 	    "zoom:"
-	);
-	Super = NSObject;
-    };
-    PreferencesController = {
-	Actions = (
-	);
-	Outlets = (
-	    scrollView,
-	    window,
-	    preferencesView,
-	    labelBox
 	);
 	Super = NSObject;
     };

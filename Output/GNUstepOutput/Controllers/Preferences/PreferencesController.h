@@ -17,14 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-@class PreferencesController;
+@class PreferencesController, NSString;
 
-extern NSString *GNUstepOutputPersonalBracketColor;
-extern NSString *GNUstepOutputOtherBracketColor;
-extern NSString *GNUstepOutputTextColor;
-extern NSString *GNUstepOutputBackgroundColor;
 extern NSString *GNUstepOutputServerList;
-extern NSString *GNUstepOutputFontName;
 extern NSString *GNUstepOutputFontSize;
 extern NSString *GNUstepOutputScrollBack;
 
@@ -33,9 +28,23 @@ extern NSString *GNUstepOutputScrollBack;
 
 #import <Foundation/NSObject.h>
 
-@class NSScrollView, NSWindow, NSMatrix;
+@class NSView, NSString, NSImage, NSBox;
+@class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
+@class NSDictionary, NSMutableDictionary;
+
+
+/* object: the preferences module */
+extern NSString *PreferencesModuleAdditionNotification;
+
+/* object: the preferences module */
+extern NSString *PreferencesModuleRemovalNotification;
 
 @protocol GNUstepOutputPrefsModule
+- (NSView *)preferencesView;
+- (NSImage *)preferencesIcon;
+- (NSString *)preferencesName;
+- (void)activate: (PreferencesController *)aPrefs;
+- (void)deactivate;
 @end
 
 @interface PreferencesController : NSObject
@@ -43,14 +52,18 @@ extern NSString *GNUstepOutputScrollBack;
 		NSScrollView *scrollView;
 		NSWindow *window;
 		NSMatrix *prefsList;
-		NSScrollView *moduleScrollView;
-		int currentPrefs;
+		NSView *preferencesView;
 		NSMutableArray *prefsModules;
+		id currentPrefs;
+		NSMutableDictionary *defaultPreferences;
+		NSBox *labelBox;
 	}
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
-- (void)refreshCurrentPanel;
 
-- (void)refreshAvailablePreferences;
+- (id)preferenceForKey: (NSString *)aKey;
+- setPreference: (id)aPreference forKey: (NSString *)aKey;
+- (id)defaultPreferenceForKey: (NSString *)aKey;
+
+- (NSWindow *)window;
 @end
 
 #endif
