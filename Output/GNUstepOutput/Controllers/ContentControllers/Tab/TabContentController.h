@@ -104,6 +104,8 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 
 - renameViewWithName: (NSString *)aName to: (NSString *)newName;
 
+- focusViewWithName: (NSString *)aName;
+
 - (NSString *)currentViewName;
 
 - setNickViewString: (NSString *)aNick;

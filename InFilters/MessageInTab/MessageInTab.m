@@ -34,7 +34,7 @@
 		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 		  @"OpenTab", @"Process",
 	 	  name, @"TabName",
-		  S2AS(name), @"TabName", nil] onConnection: connection
+		  S2AS(name), @"TabLabel", nil] onConnection: connection
 		  sender: aPlugin];
 	}
 

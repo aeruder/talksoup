@@ -20,6 +20,8 @@ ADDITIONAL_INCLUDE_DIRS = -I. -Inetclasses -I../../../Source
 
 ADDITIONAL_OBJCFLAGS = -Wall -Wno-protocol
 
+GUI_LIBS = 
+
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble

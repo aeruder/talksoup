@@ -381,7 +381,11 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabView addTabViewItem: tabItem];
 	
+	name = [tabView selectedTabViewItem];
+	
 	[tabView selectTabViewItem: tabItem];
+	[tabView selectTabViewItem: name];
+
 	[tabView setNeedsDisplay: YES];
 
 	return self;
@@ -425,9 +429,15 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	[tabItem setView: [chan contentView]];
 	
+	name = [tabView selectedTabViewItem];
+	
 	[tabView addTabViewItem: tabItem];
 	
+	name = [tabView selectedTabViewItem];
+	
 	[tabView selectTabViewItem: tabItem];
+	[tabView selectTabViewItem: name];
+	
 	[tabView setNeedsDisplay: YES];
 	
 	return self;
@@ -484,6 +494,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 	NSMapRemove(tabItemToName, tab);
 	NSMapRemove(bothToName, view);
 	
+	[tabView setNeedsDisplay: YES];
+
 	return self;
 }
 - renameViewWithName: (NSString *)aName to: (NSString *)newName
@@ -539,6 +551,18 @@ NSString *ContentConsoleName = @"Content Console Name";
 		return self;
 	}
 	return self;	
+}
+- focusViewWithName: (NSString *)aName
+{
+	id tabItem = [nameToTabItem
+	 objectForKey: GNUstepOutputLowercase(aName)];
+
+	if (tabItem)
+	{
+		[tabView selectTabViewItem: tabItem];
+	}
+
+	return self;
 }
 - (NSString *)currentViewName
 {
