@@ -24,6 +24,7 @@
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
 @class NSDictionary;
 
+#import "Controllers/ContentControllers/ContentController.h"
 #import <Foundation/NSObject.h>
 
 @interface ConnectionController : NSObject
@@ -38,7 +39,7 @@
 		
 		KeyTextView *fieldEditor;
 		id connection;
-		ContentController *content;
+		id <ContentController> content;
 		NSArray *tabCompletion;
 		int tabCompletionIndex;
 		

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #import "Controllers/ConnectionController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
