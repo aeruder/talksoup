@@ -402,10 +402,9 @@ GNUstepOutput *_GS_ = nil;
 
 		if (!name) return self;
 
-		[[bundlePreferences objectForKey: name] shouldHide];
 		[bundlePreferences removeObjectForKey: name];
 	}
-	else if (!aConnection)
+	else if (aConnection)
 	{
 		id object;
 

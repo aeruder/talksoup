@@ -401,6 +401,7 @@ static NSInvocation *invoc = nil;
 - pluginDeactivated
 {
 #ifdef USE_APPKIT
+	[controller shouldHide];
 	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
 	  @"RemoveBundlePreferencesController", @"Process",
 	  @"Highlighting", @"Name", nil]
