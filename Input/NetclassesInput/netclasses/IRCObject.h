@@ -70,8 +70,8 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
    withUserName: (NSString *)user withRealName: (NSString *)realName
    withPassword: (NSString *)password;
 
-- setNickname: (NSString *)nickname;
-- (NSString *)nickname;
+- setNick: (NSString *)nickname;
+- (NSString *)nick;
 
 - setUserName: (NSString *)user;
 - (NSString *)userName;
@@ -85,8 +85,6 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 - (NSString *)errorString;
 
 - (BOOL)connected;
-
-- (NSString *)nick;
 
 // IRC Operations
 - changeNick: (NSString *)aNick;

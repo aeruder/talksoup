@@ -382,9 +382,9 @@ static void rec_nick(IRCObject *client, NSString *command,
 		return;
 	}
 	
-	if ([[client nickname] isEqualToString: ExtractIRCNick(prefix)])
+	if ([[client nick] isEqualToString: ExtractIRCNick(prefix)])
 	{
-		[client setNickname: [paramList objectAtIndex: 0]];
+		[client setNick: [paramList objectAtIndex: 0]];
 	}
 	[client nickChangedTo: [paramList objectAtIndex: 0] from: prefix];
 }
@@ -683,7 +683,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	if (!(self = [super init])) return nil;
 	
-	if (![self setNickname: aNickname])
+	if (![self setNick: aNickname])
 	{
 		return nil;
 	}
@@ -720,7 +720,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	connected = NO;
 	[super connectionLost];
 }
-- setNickname: (NSString *)aNickname
+- setNick: (NSString *)aNickname
 {
 	if (aNickname == nick) return self;
 	
@@ -736,7 +736,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 
 	return self;
 }
-- (NSString *)nickname
+- (NSString *)nick
 {
 	return nick;
 }
@@ -833,10 +833,6 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	return connected;
 }
-- (NSString *)nick
-{
-	return nick;
-}
 - changeNick: (NSString *)aNick
 {
 	if ([aNick length] > 0)
@@ -849,7 +845,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		}
 		if (!connected && transport)
 		{
-			[self setNickname: aNick];
+			[self setNick: aNick];
 		}
 					
 		[self writeString: @"NICK %@", aNick];
@@ -1817,7 +1813,6 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 }
 - newNickNeededWhileRegistering
 {
-	[self setNickname: [nick stringByAppendingString: @"_"]];
 	[self changeNick: nick];
 	
 	return self;
