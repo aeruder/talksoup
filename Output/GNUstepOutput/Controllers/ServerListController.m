@@ -345,8 +345,15 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if (editor)
 	{
-		[[editor window] makeKeyAndOrderFront: nil];
-		return;
+		if ([editor isKindOf: [ServerEditorController class]])
+		{
+			[[editor window] makeKeyAndOrderFront: nil];
+			return;
+		}
+		else
+		{
+			[[editor window] close];
+		}
 	}
 	
 	if ([browser selectedColumn] < 0) return;
@@ -366,8 +373,15 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if (editor)
 	{
-		[[editor window] makeKeyAndOrderFront: nil];
-		return;
+		if ([editor isKindOf: [GroupEditorController class]])
+		{
+			[[editor window] makeKeyAndOrderFront: nil];
+			return;
+		}
+		else
+		{
+			[[editor window] close];
+		}
 	}
 	
 	editor = [[GroupEditorController alloc] init];
@@ -541,13 +555,15 @@ static int sort_server_dictionary(id first, id second, void *x)
 		[window setDelegate: nil];
 		/* FIXME [browser setDelegate: nil]; */
 		[browser setTarget: nil];
+		AUTORELEASE(RETAIN(self));
 		[_GS_ removeServerList: self];
 	}
 	else if ([aNotification object] == [editor window])
 	{
 		[[editor window] setDelegate: nil];
 		[[editor okButton] setTarget: nil];
-		DESTROY(editor);
+		AUTORELEASE(editor);
+		editor = nil;
 		wasEditing = -1;
 	}
 }	

@@ -48,6 +48,7 @@
 	[topicText setTextContainerInset: NSMakeSize(2, 2)];
 	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[topicText setFrameSize: [[topicText enclosingScrollView] contentSize]];
+	[topicText setBackgroundColor: [NSColor whiteColor]];
 }
 - (void)dealloc
 {

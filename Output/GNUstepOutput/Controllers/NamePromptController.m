@@ -81,6 +81,6 @@
 - (void)windowWillClose: (NSNotification *)aNotification
 {
 	[window setDelegate: nil];
-	RELEASE(self);
+	AUTORELEASE(self);
 }
 @end

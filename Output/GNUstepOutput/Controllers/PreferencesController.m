@@ -374,6 +374,7 @@
 @implementation PreferencesController (WindowDelegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {
+	AUTORELEASE(RETAIN(self));
 	[_GS_ setPreferencesController: nil];
 }
 @end
