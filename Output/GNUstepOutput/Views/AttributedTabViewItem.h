@@ -22,12 +22,13 @@
 
 #include <AppKit/NSTabViewItem.h>
 
-@class NSAttributedString;
+@class NSAttributedString, NSColor;
 
 @interface AttributedTabViewItem : NSTabViewItem
 	{
 		NSMutableAttributedString *attributedLabel;		
 	}
+- setLabelColor: (NSColor *)aColor;
 - setAttributedLabel: (NSAttributedString *)label;
 - (NSAttributedString *)attributedLabel;
 @end

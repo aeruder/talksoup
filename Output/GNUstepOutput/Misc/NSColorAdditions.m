@@ -99,7 +99,7 @@ static inline NSColor *map_color(NSString *aName)
 }
 + colorFromEncodedData: (id)aData
 {
-	return [NSUnarchiver unarchiveObjectWithData: aData];
+	return map_color(aData);
 }
 + (NSColor *)colorFromIRCString: (NSString *)aString
 {
@@ -107,7 +107,8 @@ static inline NSColor *map_color(NSString *aName)
 }
 - (id)encodeToData
 {
-	return [NSArchiver archivedDataWithRootObject: self];
+	return [NSString stringWithFormat: @"IRCColorCustom %f %f %f",
+	  [self redComponent], [self greenComponent], [self blueComponent]];
 }
 @end
 

@@ -52,7 +52,8 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 }
 - setTextColor: (NSColor *)aColor;
 
-- highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor;
+- highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor
+   withPriority: (BOOL)prio;
 
 - (NSArray *)allViews;
 - (NSArray *)allChannelNames;

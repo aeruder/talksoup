@@ -110,23 +110,20 @@ NSString *ContentConsoleName = @"Content Console Name";
 	[super dealloc];
 }
 - highlightTabWithName: (NSString *)aName withColor: (NSString *)aColorName
+   withPriority: (BOOL)prior
 {
 	NSString *lo = GNUstepOutputLowercase(aName);
-	id str = [nameToLabel objectForKey: lo];
 	id tab = [nameToTabItem objectForKey: lo];
-	id new = AUTORELEASE([[NSMutableAttributedString alloc] 
-	  initWithAttributedString: str]);
 	id aColor;
 		
 	if ([lo isEqualToString: current]) return self;
+	if ([highlightedTabs containsObject: lo] && !prior) return self;
 	
 	aColor = [NSColor colorFromIRCString: aColorName];
 	
 	if (aColor)
 	{
-		[new addAttribute: NSForegroundColorAttributeName value: aColor
-		  range: NSMakeRange(0, [new length])];
-		[tab setAttributedLabel: new];
+		[tab setLabelColor: aColor];
 		if (![highlightedTabs containsObject: lo])
 		{
 			[highlightedTabs addObject: lo];
@@ -134,7 +131,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	}
 	else
 	{
-		[tab setAttributedLabel: str];
+		[tab setLabelColor: nil];
 		[highlightedTabs removeObject: lo];
 	}
 
@@ -286,7 +283,6 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	if ([aString isKindOf: [NSString class]])
 	{
-		NSLog(@"Using %p", textColor);
 		[[[controller chatView] textStorage] appendAttributedString: 
 		 AUTORELEASE(([[NSAttributedString alloc] initWithString: aString
 		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
@@ -568,8 +564,8 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	if ([highlightedTabs containsObject: name])
 	{
-		[(AttributedTabViewItem *)tabViewItem setAttributedLabel: 
-		  [nameToLabel objectForKey: name]];
+		[(AttributedTabViewItem *)tabViewItem setLabelColor: nil];
+		[highlightedTabs removeObject: name];
 	}
 	
 	RELEASE(current);	

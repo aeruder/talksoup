@@ -18,6 +18,7 @@
 #include "Views/AttributedTabViewItem.h"
 
 #include <AppKit/NSAttributedString.h>
+#include <AppKit/NSColor.h>
 
 @implementation AttributedTabViewItem
 - (void)dealloc
@@ -37,22 +38,30 @@
 	
 	[attributedLabel drawAtPoint: NSMakePoint(tabRect.origin.x, NSMaxY(tabRect) + 4)];	
 }
+- setLabelColor: (NSColor *)aColor
+{
+	if (!aColor)
+	{
+		[attributedLabel removeAttribute: NSForegroundColorAttributeName
+		  range: NSMakeRange(0, [attributedLabel length])];
+		[[self tabView] setNeedsDisplay: YES];
+		return self;
+	}
+	
+	[attributedLabel addAttribute: NSForegroundColorAttributeName value:
+	  aColor range: NSMakeRange(0, [attributedLabel length])];
+	
+	[[self tabView] setNeedsDisplay: YES];
+
+	return self;
+}	
 - setAttributedLabel: (NSAttributedString *)aString
 {
-	id mutable;
-	NSRange aRange;
-	
-	mutable = [[NSMutableAttributedString alloc] initWithAttributedString: aString];
-
-	aRange.location = 0;
-	aRange.length = [[mutable string] length];
-	
-	[mutable setAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-	  [[self tabView] font], NSFontAttributeName, nil] 
-	  range: aRange];
+	if (!aString) return self;
 	
 	RELEASE(attributedLabel);
-	attributedLabel = mutable;
+	attributedLabel = [[NSMutableAttributedString alloc] initWithAttributedString:
+	  aString];
 
 	[self setLabel: [attributedLabel string]];
 
