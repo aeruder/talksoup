@@ -495,17 +495,15 @@
 	return self;
 }
 - requestNamesOnChannel: (NSAttributedString *)aChannel 
-   fromServer: (NSAttributedString *)aServer 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
 	[_TS_ requestNamesOnChannel: aChannel
-	  fromServer: aServer onConnection: self 
+	  onConnection: self 
 	  withNickname: aNick
 	  sender: control];
-	[super requestNamesOnChannel: AS2S(aChannel)
-	  fromServer: AS2S(aServer)];
+	[super requestNamesOnChannel: AS2S(aChannel)];
 	return self;
 }
 - requestMOTDOnServer: (NSAttributedString *)aServer onConnection: aConnection 
@@ -624,20 +622,6 @@
 	[super requestInfoOnServer: AS2S(aServer)];
 	return self;
 }
-- requestServiceListWithMask: (NSAttributedString *)aMask 
-   ofType: (NSAttributedString *)type 
-   onConnection: aConnection
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[_TS_ requestServiceListWithMask: aMask ofType: type
-	  onConnection: self 
-	  withNickname: aNick
-	  sender: control];
-	[super requestServiceListWithMask: AS2S(aMask)
-	  ofType: AS2S(type)];
-	return self;
-}
 - requestServerRehashOnConnection: aConnection 
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
@@ -697,20 +681,6 @@
 	  withNickname: aNick
 	  sender: control];
 	[super sendWallops: AS2S(message)];
-	return self;
-}
-- queryService: (NSAttributedString *)aService 
-   withMessage: (NSAttributedString *)aMessage 
-   onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[_TS_ queryService: aService withMessage: aMessage
-	  onConnection: self 
-	  withNickname: aNick
-	  sender: control];
-	[super queryService: AS2S(aService)
-	  withMessage: AS2S(aMessage)];
 	return self;
 }
 - listWho: (NSAttributedString *)aMask onlyOperators: (BOOL)operators 
