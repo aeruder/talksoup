@@ -279,13 +279,26 @@ GNUstepOutput *_GS_ = nil;
    sender: aPlugin
 {
 	id control;
-	control = NSMapGet(connectionToConnectionController, connection);
 	
-	[control lostConnection: connection withNickname: aNick
-	  sender: aPlugin];
+	if ((control = 
+		  [pendingIdentToConnectionController objectForKey: [connection identification]]))
+	{
+		[control systemMessage: BuildAttributedString(_l(@"Error: "), 
+		  [connection errorMessage], nil) onConnection: nil];
+		[control lostConnection: connection withNickname: aNick
+		  sender: aPlugin];
+		[pendingIdentToConnectionController removeObjectForKey: [connection identification]];
+	}
+	else
+	{
+		control = NSMapGet(connectionToConnectionController, connection);
 	
-	NSMapRemove(connectionToConnectionController, connection);
-	NSMapRemove(connectionToConnectionController, control);
+		[control lostConnection: connection withNickname: aNick
+		  sender: aPlugin];
+	
+		NSMapRemove(connectionToConnectionController, connection);
+		NSMapRemove(connectionToConnectionController, control);
+	}
 	
 	return self;
 }

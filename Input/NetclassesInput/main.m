@@ -112,12 +112,30 @@
 - (void)dealloc
 {
 	RELEASE(identification);
+	RELEASE(errorMessage);
 
 	[super dealloc];
 }
+- connectingFailed: (NSString *)error
+{
+	[control removeConnection: self];
+	errorMessage = RETAIN(error);
+	[_TS_ lostConnection: self
+	 withNickname: S2AS(nick)
+	 sender: control];
+	return self;
+}
+- connectingStarted: (TCPConnecting *)aConnection
+{
+	return self;
+}	
 - (NSString *)identification
 {
 	return identification;
+}
+- (NSString *)errorMessage
+{
+	return errorMessage;
 }
 - (int)port
 {

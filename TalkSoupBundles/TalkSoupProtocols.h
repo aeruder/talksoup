@@ -257,6 +257,8 @@
 @protocol TalkSoupConnectionProtocol < TalkSoupOutFilterProtocol >
 - (NSString *)identification;
 
+- (NSString *)errorMessage;
+
 - (BOOL)connected;
 
 - (NSString *)nick;

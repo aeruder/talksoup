@@ -33,9 +33,10 @@
 - (NSArray *)connections;
 @end
 
-@interface NetclassesConnection : IRCObject
+@interface NetclassesConnection : IRCObject <TCPConnecting>
 	{
 		NSString *identification;
+		NSString *errorMessage;
 		int port;
 		id control;
 	}
@@ -43,6 +44,12 @@
    withRealName: (NSString *)real withPassword: (NSString *)aPass
    withIdentification: (NSString *)ident onPort: (int)aPort
    withControl: plugin;
+
+- connectingFailed: (NSString *)error;
+
+- connectingStarted: (TCPConnecting *)aConnection;
+
+- (NSString *)errorMessage;
 
 - (NSString *)identification;
 

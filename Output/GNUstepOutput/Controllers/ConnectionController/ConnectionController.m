@@ -121,6 +121,13 @@
 	typedHost = RETAIN(aName);
 	typedPort = aPort;
 	
+	if (!aHost)
+	{
+		[self systemMessage: BuildAttributedString(_l(@"Host not found: "),
+		  aName, nil) onConnection: nil];
+		return self;
+	}
+	
 	if (connection)
 	{
 		[[_TS_ pluginForInput] closeConnection: connection];
