@@ -32,7 +32,7 @@
 {
 	id temp = nothingView;
 	nothingView = RETAIN([temp contentView]);
-	RELEASE(temp);
+	AUTORELEASE(temp);
 	contentView = RETAIN([window contentView]);
 
 	[window setContentView: nothingView];

@@ -359,6 +359,7 @@
 	while ((object = [iter nextObject]))
 	{
 		[[object contentController] setChatFont: font];
+		[object setFieldFont: font];
 	}
 
 	[fontField setStringValue: [NSString stringWithFormat: @"%@ %@",

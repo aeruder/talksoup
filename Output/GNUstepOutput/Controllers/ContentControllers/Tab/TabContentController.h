@@ -112,6 +112,8 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 - setNickViewString: (NSString *)aNick;
 
 - setChatFont: (NSFont *)aFont;
+
+- (NSFont *)chatFont;
 @end
 
 #endif

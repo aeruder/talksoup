@@ -21,7 +21,7 @@
 #define CONNECTION_CONTROLLER_H
 
 @class NSString, KeyTextView, InputController, ContentController, NSArray;
-@class NSColor, Channel, NSMutableDictionary, GNUstepOutput;
+@class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
 
 #include <Foundation/NSObject.h>
 
@@ -65,6 +65,8 @@
 
 - setPassword: (NSString *)aString;
 - (NSString *)password;
+
+- setFieldFont: (NSFont *)aFont;
 
 - (InputController *)inputController;
 

@@ -718,6 +718,10 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	return self;
 }	
+- (NSFont *)chatFont
+{
+	return chatFont;
+}
 @end
 
 @implementation ContentController (WindowTabViewDelegate)
