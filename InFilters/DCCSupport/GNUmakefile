@@ -25,6 +25,7 @@ endif
 
 DCCSupport_LANGUAGES = English
 DCCSupport_LOCALIZED_RESOURCE_FILES += Localizable.strings
+DCCSupport_RESOURCE_FILES = AllLanguages/Defaults.plist
 
 DCCSupport_PRINCIPAL_CLASS = DCCSupport
 

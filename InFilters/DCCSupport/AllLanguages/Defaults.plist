@@ -1,0 +1,8 @@
+{
+	GetTimeout = "30";
+	SendTimeout = "30";
+	PortRange = "";
+	BlockSize = "2000";
+	CompletedDirectory = "~/";
+	DownloadedDirectory = "~/";
+}

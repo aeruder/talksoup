@@ -30,6 +30,14 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSString.h>
 
+#define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
+#define set_default(_x, _y) \
+{	[DCCSupport setDefaultsObject: _y forKey: _x];\
+	[controller reloadData];}
+
+#define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
+#define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
+
 @implementation DCCSupportPreferencesController
 #ifndef USE_APPKIT
 - (void)reloadData
@@ -43,6 +51,14 @@
 }
 - (void)reloadData
 {
+	[changeCompletedField setStringValue: 
+	  get_default(DCCCompletedDirectory)];
+	[changeDownloadField setStringValue:
+	  get_default(DCCDownloadDirectory)];
+	[blockSizeField setIntegerValue:
+	  GET_DEFAULT_INT(DCCBlockSize)];
+	[portRangeField setIntegerValue:
+	  get_default(DCCPortRange)];
 }
 - (void)shouldDisplay
 {
@@ -91,9 +107,55 @@
 }
 - (void)blockSizeHit: (NSTextField *)sender
 {
+	SET_DEFAULT_INT(DCCBlockSize, [sender integerValue]);
+	[self reloadData];
 }
 - (void)portRangeHit: (NSTextField *)sender
 {
+	NSMutableArray *array;
+	
+	array = [NSMutableArray arrayWithArray: 
+	  [[sender stringValue] componentsSeparatedByString: @"-"]];
+
+	[array removeObject: @""];
+
+	if ([array count] == 0)
+	{
+		set_default(DCCPortRange, @"");
+	}
+	else if ([array count] == 1)
+	{
+		NSString *tmp;
+
+		tmp = [NSString stringWithFormat: @"%d", 
+		  [[array objectAtIndex: 0] intValue]];
+
+		set_default(DCCPortRange, ([NSString stringWithFormat: @"%@-%@",
+		  tmp, tmp]));
+	}
+	else
+	{
+		int x1,x2;
+		NSString *tmp;
+
+		x1 = [[array objectAtIndex: 0] intValue];
+		x2 = [[array objectAtIndex: 1] intValue];
+
+		if (x1 > x2)
+		{
+			int tmp2;
+			tmp2 = x2;
+			x2 = x1;
+			x1 = tmp2;
+		}
+
+		tmp = [NSString stringWithFormat: @"%d-%d",
+		  x1, x2];
+
+		set_default(DCCPortRange, tmp);
+	}
+		
+	[self reloadData];		
 }
 #endif
 @end
