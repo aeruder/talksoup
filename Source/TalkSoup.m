@@ -27,6 +27,8 @@
 #include <Foundation/NSPathUtilities.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSUserDefaults.h>
+#include <Foundation/NSDebug.h>
+#include <Foundation/NSNull.h>
 
 NSString *IRCDefaultsNick =  @"Nick";
 NSString *IRCDefaultsRealName = @"RealName";
@@ -69,6 +71,10 @@ id _TSDummy_;
 }
 @end
 #endif
+
+@interface TalkSoup (Commands)
+- (void)setupCommandList;
+@end
 
 static inline id activate_bundle(NSDictionary *a, NSString *name)
 {
@@ -124,14 +130,11 @@ static inline NSArray *get_directories_with_talksoup()
 	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, 
 	  NSAllDomainsMask, YES);
 
-	NSLog(@"%@", x);
-
 	fm = [NSFileManager defaultManager];
 
 	iter = [x objectEnumerator];
 	y = [NSMutableArray new];
 
-	NSLog(@"%@", x);
 	while ((object = [iter nextObject]))
 	{
 		object = [object stringByAppendingString: 
@@ -224,54 +227,6 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	return self;
 }
-- (void)setupCommandList
-{
-	id invoc;
-	
-	invoc = [NSInvocation invocationWithMethodSignature:
-	  [self methodSignatureForSelector: 
-	  @selector(commandLoad:connection:)]];
-	
-	[invoc retainArguments];
-	
-	[invoc setSelector: @selector(commandLoad:connection:)];
-	[invoc setTarget: self];
-	
-	[self addCommand: @"load" withInvocation: invoc];
-
-	invoc = [NSInvocation invocationWithMethodSignature:
-	  [self methodSignatureForSelector: 
-	  @selector(commandUnload:connection:)]];
-	
-	[invoc retainArguments];
-	
-	[invoc setSelector: @selector(commandUnload:connection:)];
-	[invoc setTarget: self];
-	
-	[self addCommand: @"unload" withInvocation: invoc];
-	
-	invoc = [NSInvocation invocationWithMethodSignature:
-	  [self methodSignatureForSelector: 
-	  @selector(commandLoaded:connection:)]];
-	
-	[invoc retainArguments];
-	
-	[invoc setSelector: @selector(commandLoaded:connection:)];
-	[invoc setTarget: self];
-	
-	[self addCommand: @"loaded" withInvocation: invoc];
-	
-	invoc = [NSInvocation invocationWithMethodSignature:
-	  [self methodSignatureForSelector: 
-	  @selector(commandSaveLoaded:connection:)]];
-	
-	[invoc retainArguments];
-	
-	[invoc setSelector: @selector(commandSaveLoaded:connection:)];
-	[invoc setTarget: self];
-	
-	[self addCommand: @"saveloaded" withInvocation: invoc];	
-}
 - (void)refreshPluginList
 {
 	NSArray *dirList;
@@ -311,126 +266,6 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 		  [object stringByAppendingString: @"/Output"]);
 		carefully_add_bundles(outputNames, arr);
 	}
-}
-- (NSAttributedString *)commandSaveLoaded: (NSString *)args 
-   connection: (id)connection
-{
-	id dict = [NSDictionary dictionaryWithObjectsAndKeys:
-	  activatedInput, @"Input",
-	  activatedOutput, @"Output",
-	  [self activatedOutFilters], @"OutFilters",
-	  [self activatedInFilters], @"InFilters",
-	  nil];
-	
-	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
-	
-	return S2AS(_(@"Saved loaded bundles into preferences"));
-}
-- (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
-{
-	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
-	  _(@"Output: "), activatedOutput, @"\n",
-	  _(@"Input: "), activatedInput, @"\n",
-	  _(@"Output Filters: "), [[self activatedOutFilters]
-	    componentsJoinedByString: @", "], @"\n",
-	  _(@"Input Filters: "), [[self activatedInFilters]
-	    componentsJoinedByString: @", "], nil);
-}
-- (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
-{
-	id x = [args separateIntoNumberOfArguments: 3];
-	id first, second;
-	id array = nil;
-	BOOL isIn = NO;
-	
-	if ([x count] < 1)
-	{
-		return S2AS(_(@"Usage: /load <in/out> <name>"));
-	}
-	
-	first = [x objectAtIndex: 0];
-	
-	if ([first isEqualToString: @"in"])
-	{
-		array = [inNames allKeys];
-		isIn = YES;
-	}
-	else if ([first isEqualToString: @"out"])
-	{
-		array = [outNames allKeys];
-	}
-	else
-	{
-		return S2AS(_(@"Usage: /load <in/out> <name>"));
-	}
-	
-	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
-	
-	if (!second || ![array containsObject: second])
-	{
-		return BuildAttributedString(
-		  _(@"Possible filters: "), 
-		  [array componentsJoinedByString: @", "], nil);
-	}
-	
-	if (isIn)
-	{
-		[self activateInFilter: second];
-	}
-	else
-	{
-		[self activateOutFilter: second];
-	}
-	
-	return BuildAttributedString(second, _(@" loaded"), nil);
-}
-- (NSAttributedString *)commandUnload: (NSString *)args connection: (id)connection
-{
-	id x = [args separateIntoNumberOfArguments: 3];
-	id first, second;
-	id array = nil;
-	BOOL isIn = NO;
-	
-	if ([x count] < 1)
-	{
-		return S2AS(_(@"Usage: /unload <in/out> <name>"));
-	}
-	
-	first = [x objectAtIndex: 0];
-	
-	if ([first isEqualToString: @"in"])
-	{
-		array = [self activatedInFilters];
-		isIn = YES;
-	}
-	else if ([first isEqualToString: @"out"])
-	{
-		array = [self activatedOutFilters];
-	}
-	else
-	{
-		return S2AS(_(@"Usage: /unload <in/out> <name>"));
-	}
-	
-	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
-	
-	if (!second || ![array containsObject: second])
-	{
-		return BuildAttributedString(
-		  _(@"Possible filters: "), 
-		  [array componentsJoinedByString: @", "], nil);
-	}
-	
-	if (isIn)
-	{
-		[self deactivateInFilter: second];
-	}
-	else
-	{
-		[self deactivateOutFilter: second];
-	}
-	
-	return BuildAttributedString(second, _(@" unloaded"), nil);
 }
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
@@ -498,7 +333,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 
 	if ((index = [in indexOfObjectIdenticalTo: sender]) != NSNotFound)
 	{
-		NSLog(@"In %@ by %@", selString, sender);
+		NSDebugLLog(@"TalkSoup", @"In %@ by %@", selString, sender);
 		if (index == ([in count] - 1))
 		{
 			next = output;
@@ -525,7 +360,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	else if ((index = [out indexOfObjectIdenticalTo: sender]) != NSNotFound)
 	{
 		id connection;
-		NSLog(@"Out %@ by %@", selString, sender);
+		NSDebugLLog(@"TalkSoup", @"Out %@ by %@", selString, sender);
 		if (![selString hasSuffix: @"Connection:sender:"])
 		{
 			[super forwardInvocation: aInvocation];
@@ -855,3 +690,279 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	return input;
 }
 @end
+
+#define MARK [NSNull null]
+#define NO_CONNECT S2AS(_(@"Connect to a server before using this command"))
+
+@implementation TalkSoup (Commands)
+- (NSAttributedString *)commandSaveLoaded: (NSString *)args 
+   connection: (id)connection
+{
+	id dict = [NSDictionary dictionaryWithObjectsAndKeys:
+	  activatedInput, @"Input",
+	  activatedOutput, @"Output",
+	  [self activatedOutFilters], @"OutFilters",
+	  [self activatedInFilters], @"InFilters",
+	  nil];
+	
+	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
+	
+	return S2AS(_(@"Saved loaded bundles into preferences"));
+}
+- (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
+{
+	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
+	  MARK, IRCBold, MARK, _(@"Output: "), activatedOutput, @"\n",
+	  MARK, IRCBold, MARK, _(@"Input: "), activatedInput, @"\n",
+	  MARK, IRCBold, MARK, _(@"Output Filters: "), [[self activatedOutFilters]
+	    componentsJoinedByString: @", "], @"\n",
+	  MARK, IRCBold, MARK, _(@"Input Filters: "), [[self activatedInFilters]
+	    componentsJoinedByString: @", "], nil);
+}
+- (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
+{
+	id x = [args separateIntoNumberOfArguments: 3];
+	id first, second;
+	id array = nil;
+	BOOL isIn = NO;
+	
+	if ([x count] < 1)
+	{
+		return S2AS(_(@"Usage: /load <in/out> <name>"));
+	}
+	
+	first = [x objectAtIndex: 0];
+	
+	if ([first isEqualToString: @"in"])
+	{
+		array = [inNames allKeys];
+		isIn = YES;
+	}
+	else if ([first isEqualToString: @"out"])
+	{
+		array = [outNames allKeys];
+	}
+	else
+	{
+		return S2AS(_(@"Usage: /load <in/out> <name>"));
+	}
+	
+	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
+	
+	if (!second || ![array containsObject: second])
+	{
+		return BuildAttributedString(
+		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
+		  [array componentsJoinedByString: @", "], nil);
+	}
+	
+	if (isIn)
+	{
+		[self activateInFilter: second];
+	}
+	else
+	{
+		[self activateOutFilter: second];
+	}
+	
+	return BuildAttributedString(second, _(@" loaded"), nil);
+}
+- (NSAttributedString *)commandUnload: (NSString *)args connection: (id)connection
+{
+	id x = [args separateIntoNumberOfArguments: 3];
+	id first, second;
+	id array = nil;
+	BOOL isIn = NO;
+	
+	if ([x count] < 1)
+	{
+		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+	}
+	
+	first = [x objectAtIndex: 0];
+	
+	if ([first isEqualToString: @"in"])
+	{
+		array = [self activatedInFilters];
+		isIn = YES;
+	}
+	else if ([first isEqualToString: @"out"])
+	{
+		array = [self activatedOutFilters];
+	}
+	else
+	{
+		return S2AS(_(@"Usage: /unload <in/out> <name>"));
+	}
+	
+	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
+	
+	if (!second || ![array containsObject: second])
+	{
+		return BuildAttributedString(
+		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
+		  [array componentsJoinedByString: @", "], nil);
+	}
+	
+	if (isIn)
+	{
+		[self deactivateInFilter: second];
+	}
+	else
+	{
+		[self deactivateOutFilter: second];
+	}
+	
+	return BuildAttributedString(second, _(@" unloaded"), nil);
+}
+- (NSAttributedString *)commandJoin: (NSString *)aString connection: connection
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 3];
+	id pass;
+	
+	if (!connection) return NO_CONNECT;
+	
+	if ([x count] == 0)
+	{
+		return S2AS(_(@"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"));
+	}
+	
+	pass = ([x count] == 2) ? [x objectAtIndex: 1] : nil;
+	
+	[_TS_ joinChannel: S2AS([x objectAtIndex: 0]) withPassword: S2AS(pass) 
+	  onConnection: connection
+	  sender: output];
+	  
+	return nil;
+}
+- (NSAttributedString *)commandMsg: (NSString *)aString connection: connection
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	
+	if (!connection) return NO_CONNECT;
+	
+	if ([x count] < 2)
+	{
+		return S2AS(_(@"Usage: /msg <person> <message>"));
+	}
+	
+	[_TS_ sendMessage: S2AS([x objectAtIndex: 1]) to: 
+	  S2AS([x objectAtIndex: 0])
+	  onConnection: connection sender: output];
+
+	return nil;
+}
+- (NSAttributedString *)commandPart: (NSString *)args connection: connection
+{
+	id x = [args separateIntoNumberOfArguments: 2];
+	id name, msg;
+	
+	if (!connection) return NO_CONNECT;
+	
+	msg = name = nil;
+	
+	if ([x count] >= 1)
+	{
+		name = [x objectAtIndex: 0];
+	}
+	if ([x count] >= 2)
+	{
+		msg = [x objectAtIndex: 1];
+	}
+	
+	if (!name)
+	{
+		return S2AS(_(@"Usage: /part <channel> [message]"));
+	}
+	
+	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
+	  onConnection: connection sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandNotice: (NSString *)aString connection: connection
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	
+	if (!connection) return NO_CONNECT;
+	
+	if ([x count] < 2)
+	{
+		return S2AS(_(@"Usage: /notice <person> <message>"));
+	}
+	
+	[_TS_ sendNotice: S2AS([x objectAtIndex: 1]) to: 
+	  S2AS([x objectAtIndex: 0])
+	  onConnection: connection sender: output];
+
+	return nil;
+}
+- (NSAttributedString *)commandAway: (NSString *)aString connection: connection
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 1];
+	id y = nil;
+	
+	if (!connection) return NO_CONNECT;
+	
+	if ([x count] > 0)
+	{
+		y = [x objectAtIndex: 0];
+	}
+	
+	[_TS_ setAwayWithMessage: S2AS(y) onConnection: connection
+	  sender: output];
+	
+	return nil;
+}
+- commandNick: (NSString *)aString connection: connection
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	
+	if (!connection) return NO_CONNECT;
+	
+	if ([x count] == 0)
+	{
+		return S2AS(_(@"Usage: /nick <newnick>"));
+	}
+	
+	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
+	  sender: output];
+	
+	return nil;
+}
+- commandQuit: (NSString *)aString connection: connection
+{
+	if (!connection) return NO_CONNECT;
+	
+	[_TS_ quitWithMessage: S2AS(aString) onConnection: connection
+	  sender: output];
+	
+	return nil;
+}
+- (void)setupCommandList
+{
+#define ADD_COMMAND(_sel, _name) { id invoc; \
+	invoc = [NSInvocation invocationWithMethodSignature: \
+	  [self methodSignatureForSelector: \
+	  (_sel)]]; \
+	[invoc retainArguments];\
+	[invoc setSelector: (_sel)];\
+	[invoc setTarget: self];\
+	[self addCommand: (_name) withInvocation: invoc];}
+
+	ADD_COMMAND(@selector(commandLoad:connection:), @"load");
+	ADD_COMMAND(@selector(commandUnload:connection:), @"unload");
+	ADD_COMMAND(@selector(commandLoaded:connection:), @"loaded");
+	ADD_COMMAND(@selector(commandSaveLoaded:connection:), @"saveloaded");
+	ADD_COMMAND(@selector(commandJoin:connection:), @"join");
+	ADD_COMMAND(@selector(commandMsg:connection:), @"msg");
+	ADD_COMMAND(@selector(commandPart:connection:), @"part");
+	ADD_COMMAND(@selector(commandNotice:connection:), @"notice");
+	ADD_COMMAND(@selector(commandAway:connection:), @"away");
+
+#undef ADD_COMMAND
+}
+@end
+
+#undef MARK
+

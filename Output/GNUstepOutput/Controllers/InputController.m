@@ -82,8 +82,6 @@ id _output_ = nil;
 	historyIndex--;
 	modIndex = [history count] - historyIndex;
 
-	NSLog(@"%d(%d) %d(%d)", historyIndex, [history count], modIndex, [modHistory count]);
-	
 	[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
 	
 	if (modIndex < [modHistory count])
@@ -113,8 +111,6 @@ id _output_ = nil;
 	 
 	historyIndex++;
 	modIndex = [history count] - historyIndex;
-
-	NSLog(@"%d(%d) %d(%d)", historyIndex, [history count], modIndex + 1, [modHistory count]);
 
 	[modHistory replaceObjectAtIndex: modIndex + 1 withObject: 
 	  [NSString stringWithString: [fieldEditor string]]];
@@ -243,7 +239,6 @@ id _output_ = nil;
 		}
 		if (commandSelector == 0 && connection)
 		{
-			NSLog(@"Couldn't find nothin', gonna try raw string...");
 			[_TS_ writeRawString: 
 			S2AS(([NSString stringWithFormat: @"%@ %@", 
 			    substring, arguments]))
@@ -260,7 +255,6 @@ id _output_ = nil;
 		return;
 	}
 
-	NSLog(@"Getting ready to send...");
 	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
 	  onConnection: connection sender: _output_];
 }
@@ -296,31 +290,9 @@ id _output_ = nil;
 
 	return self;
 }	
-- commandJoin: (NSString *)aString
-{
-	NSArray *x = [aString separateIntoNumberOfArguments: 3];
-	id pass;
-	
-	if ([x count] == 0)
-	{
-		[controller showMessage: 
-		  S2AS(_l(@"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"))
-		  onConnection: nil];
-		return self;
-	}
-	
-	pass = ([x count] == 2) ? [x objectAtIndex: 1] : nil;
-	
-	[_TS_ joinChannel: S2AS([x objectAtIndex: 0]) withPassword: S2AS(pass) 
-	  onConnection: [_output_ connectionToConnectionController: controller]
-	  sender: _output_];
-	  
-	return self;
-}
 - commandNick: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
-	NSString *before;
 	id connection = [controller connection];
 	
 	if ([x count] == 0)
@@ -338,17 +310,15 @@ id _output_ = nil;
 		return self;
 	}
 	
-	before = AUTORELEASE(RETAIN([connection nick]));
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
 	  sender: _output_];
+	
 	if (![connection connected])
 	{
-		if (![before isEqualToString: [connection nick]])
-		{
-			[[controller contentController] setNickViewString:
-			  [connection nick]];
-		}
+		[[controller contentController] setNickViewString:
+		  [connection nick]];
 	}
+	
 	return self;
 }
 - commandMe: (NSString *)aString
@@ -364,24 +334,6 @@ id _output_ = nil;
 	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
 	  currentViewName]) onConnection: [controller connection]
 	  sender: _output_];
-	return self;
-}
-- commandMsg: (NSString *)aString
-{
-	NSArray *x = [aString separateIntoNumberOfArguments: 2];
-	
-	if ([x count] < 2)
-	{
-		[controller showMessage:
-		  S2AS(_l(@"Usage: /msg <person> <message>"))
-		  onConnection: nil];
-		return self;
-	}
-	
-	[_TS_ sendMessage: S2AS([x objectAtIndex: 1]) to: 
-	  S2AS([x objectAtIndex: 0])
-	  onConnection: [controller connection] sender: _output_];
-
 	return self;
 }
 - commandQuery: (NSString *)aString
@@ -434,6 +386,40 @@ id _output_ = nil;
 	
 	[[controller contentController] closeViewWithName: o];
 
+	return self;
+}
+- commandPart: (NSString *)args
+{
+	id x = [args separateIntoNumberOfArguments: 2];
+	id name, msg;
+	id content = [controller contentController];
+	
+	msg = nil;
+	if (![content isChannelName: name = [content currentViewName]])
+	{
+		name = nil;
+	}
+	
+	if ([x count] >= 1)
+	{
+		name = [x objectAtIndex: 0];
+	}
+	if ([x count] >= 2)
+	{
+		msg = [x objectAtIndex: 1];
+	}
+	
+	if (!name)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /part <channel> [message]"))
+		  onConnection: nil];
+		return self;
+	}
+	
+	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
+	  onConnection: [controller connection] sender: _output_];
+	
 	return self;
 }
 @end

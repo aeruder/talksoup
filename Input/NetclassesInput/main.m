@@ -135,7 +135,6 @@
 }
 - connectionEstablished: (id)aTransport
 {
-	NSLog(@"%@", self);
 	id x = [super connectionEstablished: aTransport];
 	[_TS_ newConnection: self sender: control];
 	return x;

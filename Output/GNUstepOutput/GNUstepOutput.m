@@ -554,10 +554,10 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	if (connection)
 	{
 		[_TS_ setTopicForChannel: S2AS(channel) to: 
-		 S2AS([sender string]) onConnection: connection
+		 S2AS([sender string]) onConnection: [connection connection]
 		 sender: self];
 		[_TS_ setTopicForChannel: S2AS(channel) to:
-		 nil onConnection: connection
+		 nil onConnection: [connection connection]
 		 sender: self];
 	}
 	

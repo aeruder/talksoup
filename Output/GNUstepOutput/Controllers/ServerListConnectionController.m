@@ -116,9 +116,12 @@
 	if ([[ServerListController serverInGroup: serverGroup row: serverRow]
 	  isEqual: serverInfo])
 	{	
+		NSRect size;
 		tmp = [NSMutableDictionary dictionaryWithDictionary: serverInfo];
 	
-		[tmp setObject: NSStringFromRect([window frame]) 
+		size = [window frame];
+		size.size = [[window contentView] frame].size;
+		[tmp setObject: NSStringFromRect(size) 
 		  forKey: ServerListInfoWindowFrame];
 	
 		[ServerListController setServer: tmp inGroup: serverGroup

@@ -94,7 +94,6 @@ extern id _TSDummy_;
 	}
 + (TalkSoup *)sharedInstance;
 
-- (void)setupCommandList;
 - (void)refreshPluginList;
 
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand;
