@@ -222,8 +222,8 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 	NSDictionary *so = AUTORELEASE([NSDictionary new]);
 	id begF;
 	id begB;
-	id nowF = nil;
-	id nowB = nil;
+	id nowF = @"";
+	id nowB = @"";
 	NSMutableString *aString = [NSMutableString new];
 	int len = [atr length];
 	
@@ -236,13 +236,13 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		
 		begB = [b objectForKey: IRCBold];
 		begF = [so objectForKey: IRCBold];
-		if (begB != begF && [begB isEqual: begF])
+		if ((!begB || !begF) && (begF || begB))
 		{
 			[aString appendString: @"\002"];
 		}
 		begB = [b objectForKey: IRCUnderline];
 		begF = [so objectForKey: IRCUnderline];
-		if (begB != begF && [begB isEqual: begF])
+		if ((!begB || !begF) && (begF || begB))
 		{
 			[aString appendString: @"\037"];
 		}
@@ -252,66 +252,47 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		nowF = [b objectForKey: IRCColor];
 		nowB = [b objectForKey: IRCBackgroundColor];
 		
-		if (!nowF && begF)
+		if (!nowF) nowF = @"";
+		if (!nowB) nowB = @"";
+		
+		if (![nowF isEqualToString: begF] && ![nowB isEqualToString: begB])
 		{
 			[aString appendString: @"\003"];
-			if (nowB)
+			if ([nowB length] > 0)
 			{
-				[aString appendString: @"\003,"];
-				[aString appendString: lookup_color(nowB)];
+				[aString appendString: [NSString stringWithFormat: @"%@,%@",
+				 lookup_color(nowF), lookup_color(nowB)]];
 			}
-		}
-		if (!nowB && begB)
-		{
-			[aString appendString: @"\003"];
-			if (nowF)
+			else if ([nowF length] > 0)
 			{
-				[aString appendString: @"\003"];
 				[aString appendString: lookup_color(nowF)];
 			}
 		}
-		
-		if (nowF && !begF)
+		else if (![nowF isEqualToString: begF])
 		{
 			[aString appendString: @"\003"];
 			[aString appendString: lookup_color(nowF)];
-			if (nowB)
+		}
+		else if (![nowB isEqualToString: begB])
+		{
+			[aString appendString: @"\003"];
+			if ([nowB length] > 0)
 			{
-				[aString appendString: @","];
-				[aString appendString: lookup_color(nowB)];
+				[aString appendString: [NSString stringWithFormat: @"%@,%@",
+				  lookup_color(nowF), lookup_color(nowB)]];
+			}
+			else if ([nowF length] > 0)
+			{
+				[aString appendString: [NSString stringWithFormat: @"\003%@",
+				  lookup_color(nowF)]];
 			}
 		}
 		
-		if (nowB && !begB)
-		{
-			[aString appendString: @"\003"];
-			if (nowF)
-			{
-				[aString appendString: lookup_color(nowF)];
-			}
-			[aString appendString: @","];
-			[aString appendString: lookup_color(nowB)];
-		}
-		
-		if (![nowF isEqual: begF] && nowF)
-		{
-			[aString appendString: @"\003"];
-			[aString appendString: lookup_color(nowF)];
-			if (![begB isEqual: nowB] && nowB)
-			{
-				[aString appendString: @","];
-				[aString appendString: lookup_color(nowB)];
-			}
-		}
-		else if (![nowB isEqual: begB] && nowB)
-		{
-			[aString appendString: @"\003,"];
-			[aString appendString: lookup_color(nowB)];
-		}
-	
 		[aString appendString: [[atr string] substringWithRange: work]];
 		cur.location = work.location + work.length;
-		cur.length = len - cur.length; 
+		
+		if (len <= cur.location) break;	
+		cur.length = len - cur.location; 
 		
 		so = b;
 	}

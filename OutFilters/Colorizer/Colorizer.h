@@ -25,6 +25,71 @@
 @class NSAttributedString;
 
 @interface Colorizer : NSObject
+- quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- partChannel: (NSAttributedString *)channel 
+   withMessage: (NSAttributedString *)aMessage 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+	sender: aPlugin;
+
+- sendCTCPReply: (NSAttributedString *)aCTCP 
+   withArgument: (NSAttributedString *)args
+   to: (NSAttributedString *)aPerson 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- sendCTCPRequest: (NSAttributedString *)aCTCP 
+   withArgument: (NSAttributedString *)args
+   to: (NSAttributedString *)aPerson onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+	sender: aPlugin;
+
+- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick    
+	sender: aPlugin;
+
+- sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection
+   withNickname: (NSAttributedString *)aNick 
+	sender: aPlugin;
+
+- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+	sender: aPlugin;
+
+- sendWallops: (NSAttributedString *)message onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- setTopicForChannel: (NSAttributedString *)aChannel 
+   to: (NSAttributedString *)aTopic 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- kick: (NSAttributedString *)aPerson offOf: (NSAttributedString *)aChannel 
+   for: (NSAttributedString *)reason 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- setAwayWithMessage: (NSAttributedString *)message onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+
+- sendPingWithArgument: (NSAttributedString *)aString onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
+	
+- sendPongWithArgument: (NSAttributedString *)aString onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 @end
 
 #endif

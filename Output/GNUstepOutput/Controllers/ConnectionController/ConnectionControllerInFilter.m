@@ -230,6 +230,7 @@
 {
 	[self systemMessage: BuildAttributedFormat(_l(@"Error: %@"), anError)
 	  onConnection: nil];
+	
 	return self;
 }
 - wallopsReceived: (NSAttributedString *)message 
@@ -238,6 +239,9 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
+	[content putMessage: BuildAttributedFormat(_l(@"Wallops(%@): %@"),
+	  sender, message) in: ContentConsoleName];
+	  
 	return self;
 }
 - userKicked: (NSAttributedString *)aPerson 
