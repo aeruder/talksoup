@@ -76,7 +76,6 @@ Controllers/ConnectionController/ConnectionControllerTabCompletion.m
 
 ContentController = Controllers/ContentControllers/StandardContentController.m \
 Controllers/ContentControllers/ContentController.m \
-Controllers/ContentControllers/Tab/TabContentController.m \
 Controllers/ContentControllers/Tab/TabMasterController.m \
 Controllers/ContentControllers/StandardChannelController.m \
 Controllers/ContentControllers/StandardQueryController.m
@@ -87,8 +86,7 @@ Controllers/Preferences/ColorPreferencesController.m \
 Controllers/Preferences/FontPreferencesController.m \
 Controllers/Preferences/PreferencesController.m
 
-Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-              Controllers/TopicInspectorController.m \
+Controllers = Controllers/TopicInspectorController.m \
 			  $(ContentController)
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \

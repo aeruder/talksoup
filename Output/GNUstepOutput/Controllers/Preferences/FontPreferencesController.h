@@ -41,7 +41,8 @@ extern NSString *GNUstepOutputUserListFont;
 		id fontSetView;
 		id lastView;
 	}
-- (NSFont *)getFontFromPreferences: (NSString *)aPrefName;
++ (NSFont *)getFontFromPreferences: (NSString *)aPrefName;
+
 - (void)hitFontButton: (NSButton *)aButton;
 
 - (NSString *)preferencesName;

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                QueryController.m
+                                StandardQueryController.m
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -17,7 +17,7 @@
 
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/Preferences/ColorPreferencesController.h"
-#import "Controllers/QueryController.h"
+#import "Controllers/ContentControllers/StandardQueryController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
@@ -28,7 +28,11 @@
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSScrollView.h>
 
-@implementation QueryController
+@implementation StandardQueryController
++ (NSString *)standardNib
+{
+	return @"StandardQuery";
+}
 - (void)awakeFromNib
 {	
 	id x;
@@ -63,7 +67,7 @@
 	DESTROY(window);
 	[super dealloc];
 }
-- (ScrollingTextView *)chatView
+- (NSTextView *)chatView
 {
 	return chatView;
 }

@@ -115,24 +115,29 @@
 }
 - (void)dealloc
 {
+	DESTROY(channelSource);
 	RELEASE(window);
 	[super dealloc];
 }
-- (ScrollingTextView *)chatView
+- (Channel *)channelSource
+{
+	return channelSource;
+}
+- (void)attachChannelSource: (Channel *)aChannel
+{
+	ASSIGN(channelSource, aChannel);
+}
+- (void)detachChannelSource
+{
+	DESTROY(channelSource);
+}
+- (NSTextView *)chatView
 {
 	return chatView;
 }
 - (NSView *)contentView
 {
 	return window;
-}
-- (NSSplitView *)splitView
-{
-	return splitView;
-}
-- (NSTableView *)tableView
-{
-	return tableView;
 }
 @end
 

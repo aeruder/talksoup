@@ -16,11 +16,31 @@
  ***************************************************************************/
  
 #import "Controllers/ContentControllers/StandardContentController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
+#import "Controllers/ContentControllers/StandardQueryController.h"
+#import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Misc/NSAttributedStringAdditions.h"
+#import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
 
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSAttributedString.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSNotification.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSDictionary.h>
+#import <Foundation/NSNull.h>
+
+static NSString *TypeOfColor = @"TypeOfColor";
  
+@interface StandardContentController (PrivateMethods)
+- (NSColor *)colorForKey: (NSString *)aKey;
+@end
+
 @implementation StandardContentController
 /* Initializes the content controller with the console channel in a new master
  * controller 
@@ -42,12 +62,16 @@
 	// FIXME: this should create a console view and a new master controller,
 	// should also be configurable to create within another master controller
 	lowercase = IRCLowercase;
+
+	chatFont = RETAIN([FontPreferencesController
+	  getFontFromPreferences: GNUstepOutputChatFont]);
 	
-	channelClass = [StandardChannel class]; // FIXME: is this right? should there be a method to set
-	queryClass = [StandardQuery class];     // new ones?
+	channelClass = [StandardChannelController class];
+	queryClass = [StandardQueryController class];
 	
 	return self;
 }
+// FIXME a dealloc needs to be written
 /* Returns an array of all master controllers that are used by any of the channels or 
  * queries within this controller
  */
@@ -64,7 +88,7 @@
 }
 /* Sets another primary master controller, <var>aController</var>
  */
-- setPrimaryMasterController: (id <MasterController>)aController
+- (void)setPrimaryMasterController: (id <MasterController>)aController
 {
 	[masterControllers removeObject: aController];
 	[masterControllers insertObject: aController atIndex: 0];
@@ -290,9 +314,9 @@
 	id string;
 	NSRange aRange;
 	
-	if (!aString) return self;
+	if (!aMessage) return self;
 	
-	if ([aCName conformsToProtocol: @protocol(ContentControllerQueryView)])
+	if ([aName conformsToProtocol: @protocol(ContentControllerQueryView)])
 	{
 		controller = aName;
 	}
@@ -313,27 +337,29 @@
 		iter = [aName objectEnumerator];
 		while ((object = [iter nextObject]))
 		{
-			[self putMessage: aString in: object withEndLine: aBool];
+			[self putMessage: aMessage in: object withEndLine: hasEnd];
 		}
 		return self;
 	}
 	
 	if (controller == nil)
 	{
-		controller = [nameToBoth objectForKey: current];
+		// FIXME this should put it in the current window
+		// whatever that means now.
+		//controller = [nameToBoth objectForKey: current];
 	}
 
 	controller = [[controller chatView] textStorage];	
 	
-	if ([aString isKindOfClass: [NSAttributedString class]])
+	if ([aMessage isKindOfClass: [NSAttributedString class]])
 	{
-		aRange = NSMakeRange(0, [aString length]);
+		aRange = NSMakeRange(0, [aMessage length]);
 		// Change those attributes used by the underlying TalkSoup system into attributes
 		// used by AppKit
-		string = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
+		string = [aMessage substituteColorCodesIntoAttributedStringWithFont: chatFont];
 		
 		// NOTE: a large part of the code below sets an attribute called 'TypeOfColor' to the
-		// GNUstepOutput type of color.  This is used to more quickly change the colors should
+		// GNUstepOutput type of color.  This is used to more accurately change the colors should
 		// the colors change at a later time.
 		
 		// Set the foreground to the default background color when the foreground color
@@ -384,9 +410,9 @@
 	else
 	{
 		// just make it all the foreground color if they just passed in a regular string
-		aRange = NSMakeRange(0, [[aString description] length]);
+		aRange = NSMakeRange(0, [[aMessage description] length]);
 		string = AUTORELEASE(([[NSMutableAttributedString alloc] 
-		  initWithString: [aString description]
+		  initWithString: [aMessage description]
 		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
 			 chatFont, NSFontAttributeName,
 			 TypeOfColor, GNUstepOutputTextColor,
@@ -512,7 +538,8 @@
 	
 	if (!aMaster) aMaster = [masterControllers objectAtIndex: 0];
 	
-	[aMaster addView: controller forContentController: self];
+	[aMaster addView: controller withLabel: aLabel 
+	  forContentController: self];
 	[nameToMasterController setObject: aMaster forKey: name];
 	
 	return self;
@@ -545,7 +572,7 @@
 	[nameToBoth removeObjectForKey: lo];
 	[nameToPresentation removeObjectForKey: lo];
 	[nameToLabel removeObjectForKey: lo];
-	NSMapRemove(bothToName, view);
+	NSMapRemove(bothToName, cont);
 		
 	return self;
 }
@@ -624,7 +651,8 @@
 	
 	[nameToLabel setObject: aLabel forKey: lowercase(aName)];
 	
-	[NSNotificationCenter postNotificationName: ContentControllerChangedLabelNotification
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ContentControllerChangedLabelNotification
 	 object: self userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
 	  label, @"OldLabel",
 	  aLabel, @"Label",
@@ -659,8 +687,16 @@
 
 	return self;
 }
-- setLowercasingFunction: (NSString * (*aFunction)(NSString *))
+- setLowercasingFunction: (NSString * (*)(NSString *))aFunction
 {
 	lowercase = aFunction;
+}
+@end
+
+@implementation StandardContentController (PrivateMethods)
+- (NSColor *)colorForKey: (NSString *)aKey
+{
+	return [NSColor colorFromEncodedData: [_PREFS_ preferenceForKey:
+	  aKey]];
 }
 @end

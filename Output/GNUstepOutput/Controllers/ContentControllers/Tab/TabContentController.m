@@ -48,7 +48,7 @@
 {
 	return [masterControllers objectAtIndex: 0];
 }
-- setPrimaryMasterController: (id <MasterController>)aController
+- (void)setPrimaryMasterController: (id <MasterController>)aController
 {
 	[masterControllers removeObject: aController];
 	[masterControllers insertObject: aController atIndex: 0];

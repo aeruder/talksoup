@@ -26,6 +26,7 @@
 #import <Foundation/NSMapTable.h>
 
 @class NSMutableArray, NSMutableDictionary, NSArray, NSString, NSAttributedString;
+@class NSFont;
 
 @interface StandardContentController : NSObject < ContentController >
 	{
@@ -41,10 +42,11 @@
 		NSString * (*lowercase)(NSString *);
 		Class channelClass;
 		Class queryClass;
+		NSFont *chatFont;
 	}
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
-- setPrimaryMasterController: (id <MasterController>)aController;
+- (void)setPrimaryMasterController: (id <MasterController>)aController;
 
 - (id <MasterController>)masterControllerForName: (NSString *)aName;
 - (NSView *)viewForName: (NSString *)aName;

@@ -25,7 +25,7 @@
 @protocol ContentControllerDelegate;
 
 @class ConnectionController, NSView, NSString, NSAttributedString;
-@class NSArray, NSTextView, NSTextField, NSWindow;
+@class NSArray, NSTextView, NSTextField, NSWindow, Channel;
 
 extern NSString *ContentControllerChannelType;
 extern NSString *ContentControllerQueryType;
@@ -44,10 +44,9 @@ extern NSString *ContentConsoleName;
 //@end
 
 @protocol ContentControllerChannelView < ContentControllerQueryView >
-- (NSArray *)channelNames;
-- setChannelNames: (NSArray *)names;
-- addChannelName: (NSString *)aName;
-- removeChannelName: (NSString *)aName;
+- (Channel *)channelSource;
+- (void)attachChannelSource: (Channel *)aChannel;
+- (void)detachChannelSource;
 @end
 
 
@@ -78,7 +77,7 @@ extern NSString *ContentConsoleName;
 @protocol ContentController
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
-- setPrimaryMasterController: (id <MasterController>)aController;
+- (void)setPrimaryMasterController: (id <MasterController>)aController;
 
 - (NSView *)viewForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;

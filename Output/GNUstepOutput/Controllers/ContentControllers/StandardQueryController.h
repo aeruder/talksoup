@@ -1,5 +1,5 @@
 /***************************************************************************
-                                QueryController.h
+                       StandardQueryController.h
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,25 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 
-@class QueryController;
+@class StandardQueryController;
 
 #ifndef QUERY_CONTROLLER_H
 #define QUERY_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
+#import "Controllers/ContentControllers/ContentController.h"
 
 @class NSView, ScrollingTextView;
  
-@interface QueryController : NSObject
+@interface StandardQueryController : NSObject < ContentControllerQueryView >
 	{
 		id window;
 		id chatView;
 	}
-
++ (NSString *)standardNib;
 - (NSView *)contentView;
-
-- (ScrollingTextView *)chatView;
-
+- (NSTextView *)chatView;
 @end
 
 #endif

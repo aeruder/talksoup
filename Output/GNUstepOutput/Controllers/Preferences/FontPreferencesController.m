@@ -49,6 +49,60 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 @end
 
 @implementation FontPreferencesController
++ (NSFont *)getFontFromPreferences: (NSString *)aPrefName
+{
+	NSString *fontName;
+	id tmpSize;
+	float fontSize;
+	BOOL changed = NO;
+	NSFont *userFont = [NSFont userFontOfSize: 0.0];
+	NSFont *font;
+	NSString *aPrefSize;
+
+	aPrefSize = [aPrefName stringByAppendingString: @"Size"];
+	
+	fontName = [_PREFS_ preferenceForKey: aPrefName];
+	tmpSize = [_PREFS_ preferenceForKey: aPrefSize];
+	fontSize = (tmpSize) ? [tmpSize floatValue] : 0.0;
+
+	if ((!fontName) || ([fontName length] == 0)
+	 || (fontSize <= 0.001) ||
+	 !(font = [NSFont fontWithName: fontName size: fontSize]))
+	{
+		font = userFont;
+	}
+
+	if (![[font fontName] isEqualToString: fontName])
+	{
+		[_PREFS_ setPreference: [font fontName]
+		 forKey: aPrefName];
+		changed = YES;
+	}
+
+	if (fabs([font pointSize] - fontSize) >= .1)
+	{
+		id pref = [NSString stringWithFormat: @"%0.1f", 
+		  [font pointSize]];
+		[_PREFS_ setPreference: pref
+		  forKey: aPrefSize];
+		changed = YES;
+	}
+
+	if (changed)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: DefaultsChangedNotification
+		 object: aPrefName 
+		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+		  _GS_, @"Bundle",
+		  [font fontName], @"New",
+		  self, @"Owner",
+		  fontName, @"Old",
+		  nil]];
+	}
+
+	return font;
+}
 - init
 {
 	id path;
@@ -124,60 +178,6 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	RELEASE(preferencesIcon);
 	[super dealloc];
 }
-- (NSFont *)getFontFromPreferences: (NSString *)aPrefName
-{
-	NSString *fontName;
-	id tmpSize;
-	float fontSize;
-	BOOL changed = NO;
-	NSFont *userFont = [NSFont userFontOfSize: 0.0];
-	NSFont *font;
-	NSString *aPrefSize;
-
-	aPrefSize = [aPrefName stringByAppendingString: @"Size"];
-	
-	fontName = [_PREFS_ preferenceForKey: aPrefName];
-	tmpSize = [_PREFS_ preferenceForKey: aPrefSize];
-	fontSize = (tmpSize) ? [tmpSize floatValue] : 0.0;
-
-	if ((!fontName) || ([fontName length] == 0)
-	 || (fontSize <= 0.001) ||
-	 !(font = [NSFont fontWithName: fontName size: fontSize]))
-	{
-		font = userFont;
-	}
-
-	if (![[font fontName] isEqualToString: fontName])
-	{
-		[_PREFS_ setPreference: [font fontName]
-		 forKey: aPrefName];
-		changed = YES;
-	}
-
-	if (fabs([font pointSize] - fontSize) >= .1)
-	{
-		id pref = [NSString stringWithFormat: @"%0.1f", 
-		  [font pointSize]];
-		[_PREFS_ setPreference: pref
-		  forKey: aPrefSize];
-		changed = YES;
-	}
-
-	if (changed)
-	{
-		[[NSNotificationCenter defaultCenter]
-		 postNotificationName: DefaultsChangedNotification
-		 object: aPrefName 
-		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
-		  _GS_, @"Bundle",
-		  [font fontName], @"New",
-		  self, @"Owner",
-		  fontName, @"Old",
-		  nil]];
-	}
-
-	return font;
-}
 - (void)hitFontButton: (NSButton *)aButton
 {
 	id panel;
@@ -238,7 +238,8 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 
 	userInfo = [aNotification userInfo];
 
-	if ([userInfo objectForKey: @"Owner"] == self) return;
+	if (([userInfo objectForKey: @"Owner"] == self) ||
+	    ([userInfo objectForKey: @"Owner"] == [self class])) return;
 
 	[self refreshFromPreferences];
 }
@@ -247,9 +248,9 @@ NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 	id uFont;
 	id cFont;
 
-	uFont = [self getFontFromPreferences: 
+	uFont = [FontPreferencesController getFontFromPreferences: 
 	  GNUstepOutputUserListFont];
-	cFont = [self getFontFromPreferences:
+	cFont = [FontPreferencesController getFontFromPreferences:
 	  GNUstepOutputChatFont];
 
 	[userFontField setStringValue:
