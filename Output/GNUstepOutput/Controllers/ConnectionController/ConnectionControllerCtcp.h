@@ -14,3 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#ifndef CONNECTION_CONTROLLER_CTCP_H
+#define CONNECTION_CONTROLLER_CTCP_H
+
+#include "Controllers/ConnectionController/ConnectionController.h"
+
+@interface ConnectionController (CTCP)
+@end
+
+#endif
+

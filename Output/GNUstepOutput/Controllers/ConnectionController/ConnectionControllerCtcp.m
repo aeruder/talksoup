@@ -14,3 +14,56 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+ 
+#include "Controllers/ConnectionController.h"
+#include "TalkSoupBundles/TalkSoup.h"
+#include "Controllers/ContentController.h"
+#include "GNUstepOutput.h"
+
+#include <Foundation/NSAttributedString.h>
+
+@implementation ConnectionController (CTCP)
+- CTCPRequestPING: (NSAttributedString *)argument from: (NSAttributedString *)aPerson
+{
+	[_TS_ sendCTCPReply: S2AS(@"PING") withArgument: argument to: 
+	  [IRCUserComponents(aPerson) objectAtIndex: 0] onConnection: connection
+	  sender: _GS_]; 
+	  
+	[content putMessage: 
+	  BuildAttributedFormat(@"Received a CTCP PING from %@", 
+	  [IRCUserComponents(aPerson) objectAtIndex: 0]) in: ContentConsoleName];
+	
+	return self;
+}
+- CTCPRequestVERSION: (NSAttributedString *)query from: (NSAttributedString *)aPerson
+{
+	[_TS_ sendCTCPReply: S2AS(@"VERSION") withArgument:
+	  BuildAttributedFormat(@"TalkSoup.app %@", 
+	    [[[NSBundle mainBundle] infoDictionary] objectForKey: @"ApplicationRelease"])
+	  to: [IRCUserComponents(aPerson) objectAtIndex: 0] 
+	  onConnection: connection sender: _GS_];
+
+	return nil;
+}
+- CTCPRequestCLIENTINFO: (NSAttributedString *)query from: (NSAttributedString *)aPerson
+{
+	[_TS_ sendCTCPReply: S2AS(@"CLIENTINFO") withArgument:
+	  BuildAttributedString(@"TalkSoup can be obtained from: "
+	    @"http://linuks.mine.nu/andy/ "
+		 @"http://www.freshmeat.net/talksoup/ or "
+		 @"http://andyruder.tripod.com", nil)
+	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
+	  onConnection: connection sender: _GS_];
+
+	return nil;
+}
+- CTCPRequestXYZZY: (NSAttributedString *)query from: (NSAttributedString *)aPerson
+{
+	[_TS_ sendCTCPReply: S2AS(@"XYZZY") withArgument:
+	  S2AS(@"Nothing happened.") 
+	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
+	  onConnection: connection sender: _GS_];
+	
+	return nil;
+}
+@end

@@ -73,6 +73,8 @@ NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 
+GNUstepOutput *_GS_ = nil;
+
 @implementation GNUstepOutput
 - init
 {
@@ -100,6 +102,9 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  nil];
+	
+	RELEASE(_GS_);
+	_GS_ = RETAIN(self);
 	
 	return self;
 }

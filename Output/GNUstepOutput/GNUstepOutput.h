@@ -31,6 +31,8 @@ extern NSString *GNUstepOutputTextColor;
 extern NSString *GNUstepOutputBackgroundColor;
 extern NSString *GNUstepOutputServerList;
 
+extern GNUstepOutput *_GS_;
+
 #ifdef _l
 	#undef _l
 #endif

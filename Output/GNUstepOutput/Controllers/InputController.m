@@ -32,8 +32,6 @@
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTextStorage.h>
 
-id _output_ = nil; 
-
 @interface InputController (PrivateInputController)
 - (void)singleLineTyped: (NSString *)aLine;
 @end
@@ -46,17 +44,6 @@ id _output_ = nil;
 
 	controller = RETAIN(aController);
 	
-	if (!(_output_))
-	{
-		_output_ = RETAIN([_TS_ pluginForOutput]);
-	}
-	
-	if (![_output_ isKindOf: [GNUstepOutput class]])
-	{
-		RELEASE(self);
-		return nil;
-	}
-
 	history = [NSMutableArray new];
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
@@ -181,7 +168,7 @@ id _output_ = nil;
 	id name;
 	
 	connection = AUTORELEASE(RETAIN(
-	  [_output_ connectionToConnectionController: controller]));
+	  [_GS_ connectionToConnectionController: controller]));
 	
 	if ([command length] == 0)
 	{
@@ -243,7 +230,7 @@ id _output_ = nil;
 			[_TS_ writeRawString: 
 			S2AS(([NSString stringWithFormat: @"%@ %@", 
 			    substring, arguments]))
-			  onConnection: connection sender: _output_]; 
+			  onConnection: connection sender: _GS_]; 
 		}
 		return;
 	}
@@ -257,7 +244,7 @@ id _output_ = nil;
 	}
 
 	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
-	  onConnection: connection sender: _output_];
+	  onConnection: connection sender: _GS_];
 }
 @end
 
@@ -312,7 +299,7 @@ id _output_ = nil;
 	}
 	
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
-	  sender: _output_];
+	  sender: _GS_];
 	
 	if (![connection connected])
 	{
@@ -334,7 +321,7 @@ id _output_ = nil;
 	
 	[_TS_ sendAction: S2AS(aString) to: S2AS([[controller contentController]
 	  currentViewName]) onConnection: [controller connection]
-	  sender: _output_];
+	  sender: _GS_];
 	return self;
 }
 - commandQuery: (NSString *)aString
@@ -381,7 +368,7 @@ id _output_ = nil;
 	{
 		[controller leaveChannel: o];
 		[_TS_ partChannel: S2AS(o) withMessage: S2AS(@"")
-		  onConnection: [controller connection] sender: _output_];
+		  onConnection: [controller connection] sender: _GS_];
 	}
 	
 	[[controller contentController] closeViewWithName: o];
@@ -418,7 +405,7 @@ id _output_ = nil;
 	}
 	
 	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
-	  onConnection: [controller connection] sender: _output_];
+	  onConnection: [controller connection] sender: _GS_];
 	
 	return self;
 }

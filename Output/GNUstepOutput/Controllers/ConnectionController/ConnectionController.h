@@ -21,7 +21,7 @@
 #define CONNECTION_CONTROLLER_H
 
 @class NSString, KeyTextView, InputController, ContentController, NSArray;
-@class NSColor, Channel, NSMutableDictionary;
+@class NSColor, Channel, NSMutableDictionary, GNUstepOutput;
 
 #include <Foundation/NSObject.h>
 
