@@ -243,6 +243,7 @@ static NSInvocation *invoc = nil;
 	id x = [args separateIntoNumberOfArguments: 2];
 	id key = nil, val;
 	int cnt = [x count];
+	id msg = @"";
 	
 	if (cnt > 0)
 	{
@@ -253,7 +254,23 @@ static NSInvocation *invoc = nil;
 		key = @"";
 	}
 	
-	if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
+	if ([key caseInsensitiveCompare: @"shouldhighlightnick"] == NSOrderedSame)
+	{
+		val = get_pref(HighlightingShouldDoNick);
+		if (!val || [val isEqualToString: @"YES"])
+		{
+			val = @"NO";
+			msg = _l(@"Turning off nick highlighting...\n");
+		}
+		else
+		{
+			val = "YES";
+			msg = _l(@"Turning on nick highlighting...\n");
+		}
+		set_pref(HighlightingShouldDoNick, @"YES");
+		[main_controller reloadData];
+	}
+	else if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
 	{
 		if (cnt == 1)
 		{
@@ -355,7 +372,7 @@ static NSInvocation *invoc = nil;
 		  nil);
 	}
 
-	return S2AS(_l(@"Ok."));
+	return S2AS([NSString stringWithFormat: @"%@%@", msg, _l(@"Ok.")]);
 }
 - (NSAttributedString *)pluginDescription
 {

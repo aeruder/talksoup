@@ -196,13 +196,22 @@
 - (BOOL)tableView: (NSTableView *)aTableView
  shouldEditTableColumn: (NSTableColumn *)aTableColumn row: (int)rowIndex
 {
-	if (rowIndex == [extraNames count]) return YES;
+	if (rowIndex <= [extraNames count]) return YES;
 	return NO;
 }
 - (void)tableView: (NSTableView *)aTableView setObjectValue: (id)anObject
  forTableColumn: (NSTableColumn *)aTableColumn row: (int)rowIndex
 {
-	[extraNames addObject: anObject];
+	if (rowIndex >= [extraNames count])
+	{
+		[extraNames addObject: anObject];
+	}
+	else
+	{
+		[extraNames insertObject: anObject atIndex: rowIndex];
+		[extraNames removeObjectAtIndex: rowIndex + 1];
+	}
+	
 	set_pref(HighlightingExtraWords, AUTORELEASE([extraNames copy]));
 	[aTableView reloadData];
 }
