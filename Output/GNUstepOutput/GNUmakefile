@@ -43,8 +43,8 @@ Images/general_prefs.tiff
 GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff \
  AllLanguages/Defaults.plist $(Pref_Images)
 
-All_NonLocalized_Nibs = AllLanguages/Channel.nib AllLanguages/Query.nib \
-AllLanguages/Content.nib
+All_NonLocalized_Nibs = AllLanguages/StandardChannel.nib AllLanguages/StandardQuery.nib \
+AllLanguages/TabContent.nib
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 Extra_Resources = $(All_NonLocalized_Nibs)
