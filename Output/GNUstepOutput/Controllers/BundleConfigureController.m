@@ -40,45 +40,78 @@
 @end
 
 @interface BundleConfigureController (PrivateStuff)
-- (void)refreshList: (int)aList;
+- (void)reloadDefaultsInList: (int)aList;
 - (void)updateButtons;
 - (NSAttributedString *)descriptionForSelected: (int)row;
+- (void)loadBundlesInList: (int)aList;
+- (void)setupLists;
 @end
 
 @implementation BundleConfigureController (PrivateStuff)
-- (void)refreshList: (int)aList
+- (void)loadBundlesInList: (int)aList
 {
-	id x;
-	id y;
-	
-	if (aList == 0)
+	if (!aList)
 	{
-		x = [_TS_ activatedInFilters];
-
-		[loadData[0] setBundleList: x];
-		y = [NSMutableArray arrayWithArray: 
-		  [[_TS_ allInFilters] allKeys]];
-
-		[y removeObjectsInArray: x];
-
-		[availData[0] setBundleList: y];
+		[_TS_ setActivatedInFilters: [loadData[0] bundleList]];
 	}
 	else
 	{
-		x = [_TS_ activatedOutFilters];
-
-		[loadData[1] setBundleList: x];
-		y = [NSMutableArray arrayWithArray: 
-		  [[_TS_ allOutFilters] allKeys]];
-
-		[y removeObjectsInArray: x];
-
-		[availData[1] setBundleList: y];
+		[_TS_ setActivatedOutFilters: [loadData[1] bundleList]];
 	}
+	[_TS_ savePluginList];
+}
+- (void)setupLists
+{
+	id y;
+	
+	defaults[0] = RETAIN([NSArray arrayWithArray: [_TS_ activatedInFilters]]);
+
+	[loadData[0] setBundleList: defaults[0]];
+	y = [NSMutableArray arrayWithArray: 
+	  [[_TS_ allInFilters] allKeys]];
+
+	[y removeObjectsInArray: defaults[0]];
+
+	[availData[0] setBundleList: y];
+	
+	defaults[1] = RETAIN([NSArray arrayWithArray: [_TS_ activatedOutFilters]]);
+
+	[loadData[1] setBundleList: defaults[1]];
+	y = [NSMutableArray arrayWithArray: 
+	  [[_TS_ allOutFilters] allKeys]];
+
+	[y removeObjectsInArray: defaults[1]];
+
+	[availData[1] setBundleList: y];
 
 	[availableTable reloadData];
 	[loadedTable reloadData];
 }	
+- (void)reloadDefaultsInList: (int)aList
+{
+	id x;
+	
+	[loadData[aList] setBundleList: defaults[aList]];
+	x = (!aList) ? [NSMutableArray arrayWithArray: 
+	  [[_TS_ allInFilters] allKeys]] : [NSMutableArray arrayWithArray:
+	  [[_TS_ allOutFilters] allKeys]];
+
+	[x removeObjectsInArray: defaults[aList]];
+
+	[availData[aList] setBundleList: x];
+
+	if (!aList)
+	{
+		[_TS_ setActivatedInFilters: x];
+	}
+	else
+	{
+		[_TS_ setActivatedOutFilters: x];
+	}
+	
+	[availableTable reloadData];
+	[loadedTable reloadData];
+}
 - (void)updateButtons
 {
 	if (currentTable == loadedTable)
@@ -170,6 +203,11 @@ static NSString *big_description = nil;
 	 @"not.  Use the arrow in the center to move bundles between "
 	 @"the two tables.\n\n"
 
+	 @"All the changes will be automatically applied to TalkSoup.  If "
+	 @"you should want to revert to the bundles that were loaded when you "
+	 @"opened the bundle setup dialog, just hit the button in the bottom "
+	 @"left.\n\n"
+	 
 	 @"Clicking on any bundle will show information about "
 	 @"that bundle in this text area."));
 }
@@ -203,8 +241,7 @@ static NSString *big_description = nil;
 	loadData[1] = [BundleDataSource new];
 	availData[1] = [BundleDataSource new];
 
-	[self refreshList: 0];
-	[self refreshList: 1];
+	[self setupLists];
 
 	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
 	
@@ -248,6 +285,8 @@ static NSString *big_description = nil;
 	RELEASE(loadData[0]);
 	RELEASE(availData[1]);
 	RELEASE(loadData[1]);
+	RELEASE(defaults[0]);
+	RELEASE(defaults[1]);
 	RELEASE(availCol);
 	RELEASE(loadCol);
 	RELEASE(window);
@@ -277,26 +316,15 @@ static NSString *big_description = nil;
 	[x insertObject: object atIndex: row - 1];
 	
 	[loadedTable reloadData];
+	[self loadBundlesInList: currentShowing];
 
 	[loadedTable selectRow: row - 1 byExtendingSelection: NO];
 }
 - (void)refreshHit: (id)sender
 {
 	[_TS_ refreshPluginList];
-	[self refreshList: currentShowing];
+	[self reloadDefaultsInList: currentShowing];
 	[self showingSelected: showingPopUp];
-}
-- (void)cancelHit: (id)sender
-{
-	[window close];
-}
-- (void)okHit: (id)sender
-{
-	[_TS_ setActivatedInFilters: [loadData[0] bundleList]];
-	[_TS_ setActivatedOutFilters: [loadData[1] bundleList]];
-	[_TS_ savePluginList];
-
-	[window close];
 }
 - (void)downHit: (id)sender
 {	
@@ -317,6 +345,7 @@ static NSString *big_description = nil;
 	[x insertObject: object atIndex: row + 1];
 	
 	[loadedTable reloadData];
+	[self loadBundlesInList: currentShowing];
 
 	[loadedTable selectRow: row + 1 byExtendingSelection: NO];
 }
@@ -335,6 +364,7 @@ static NSString *big_description = nil;
 
 	[loadedTable reloadData];
 	[availableTable reloadData];
+	[self loadBundlesInList: currentShowing];
 
 	rows = [[from bundleList] count];
 

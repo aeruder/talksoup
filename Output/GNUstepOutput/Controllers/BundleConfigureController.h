@@ -39,6 +39,7 @@
 		NSTableColumn *loadCol;
 		id loadData[2];
 		id availData[2];
+		id defaults[2];
 		int currentShowing;
 		id currentTable;
 		id otherTable;
@@ -52,8 +53,6 @@
 
 - (void)upHit: (id)sender;
 - (void)refreshHit: (id)sender;
-- (void)cancelHit: (id)sender;
-- (void)okHit: (id)sender;
 - (void)downHit: (id)sender;
 - (void)middleHit: (id)sender;
 - (void)showingSelected: (id)sender;

@@ -3,8 +3,6 @@
 	Actions = (
 	    "upHit:",
 	    "refreshHit:",
-	    "cancelHit:",
-	    "okHit:",
 	    "downHit:",
 	    "leftHit:",
 	    "rightHit:",
