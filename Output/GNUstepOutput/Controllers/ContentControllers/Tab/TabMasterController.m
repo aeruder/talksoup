@@ -105,7 +105,6 @@
 - removeView: (id <ContentControllerQueryView>)aView
 {
 	id tab;
-	int index;
 	id userInfo;
 	id content;
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ChannelController.m
+                      StandardChannelController.m
                           -------------------
     begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -24,6 +24,7 @@
 #import "GNUstepOutput.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
+#import <AppKit/NSNibLoading.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSSplitView.h>
 #import <AppKit/NSTextView.h>

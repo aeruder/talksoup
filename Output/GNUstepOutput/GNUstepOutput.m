@@ -27,6 +27,7 @@
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/Tab/TabContentController.h"
 #import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Misc/NSColorAdditions.h"
