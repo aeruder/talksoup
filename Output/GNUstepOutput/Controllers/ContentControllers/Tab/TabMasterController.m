@@ -27,7 +27,13 @@
 #import <Foundation/NSValue.h>
 #import <AppKit/NSNibLoading.h>
 
+@interface TabMasterController (PrivateMethods)
+- (void)setNickname: (NSString *)aNickname;
+@end
+
 @interface TabMasterController (DelegateMethods)
+- (void)nicknameChanged: (NSNotification *)aNotification;
+- (void)titleChanged: (NSNotification *)aNotification;
 - (void)typeViewEnterPressed: (NSTextField *)aField;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
@@ -54,8 +60,6 @@
 		[self dealloc];
 		return nil;
 	}
-
-	NSLog(@"TabMasterController created!");
 	return self;
 }
 - (void)awakeFromNib
@@ -69,6 +73,12 @@
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+	  name: ContentControllerChangedNicknameNotification
+	  object: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+	  name: ContentControllerChangedTitleNotification
+	  object: nil];
 	NSFreeMapTable(viewControllerToTab);
 	NSFreeMapTable(viewControllerToContent);
 	NSFreeMapTable(tabToViewController);
@@ -142,10 +152,25 @@
 	[typingController losingFieldEditorForField: typeView
 	  forMasterController: self];
 
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+	  name: ContentControllerChangedNicknameNotification
+	  object: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver: self
+	  name: ContentControllerChangedTitleNotification
+	  object: nil];
+
 	selectedController = aController;
 
 	[tabView selectTabViewItem: tab];
 
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(titleChanged:)
+	  name: ContentControllerChangedTitleNotification
+	  object: selectedController];
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(nicknameChanged:)
+	  name: ContentControllerChangedNicknameNotification
+	  object: content];
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerSelectedNameNotification
 	 object: content userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
@@ -153,9 +178,13 @@
 	  content, @"Content",
 	  self, @"Master",
 	  nil]];
+
 	RELEASE(typingController);
 	typingController = RETAIN([content 
 	     typingControllerForViewController: aController]);
+
+	[self setNickname: [content nickname]];
+	[window setTitle: [content titleForViewController: aController]];
 
 	[typeView abortEditing];
 	[window makeFirstResponder: typeView]; 
@@ -388,7 +417,53 @@
 }
 @end
 
+@implementation TabMasterController (PrivateMethods)
+- (void)setNickname: (NSString *)aNickname
+{
+	NSRect nick;
+	NSRect type;
+
+	[nickView setStringValue: aNickname];
+	[nickView sizeToFit];
+	
+	nick = [nickView frame];
+	nick.origin.y = 8;
+
+	type = [typeView frame];
+	type.origin.y = 4;
+	type.origin.x = NSMaxX(nick) + 4;
+	type.size.width = [[window contentView] frame].size.width - 4 - type.origin.x;
+	
+	[nickView setFrame: nick];
+	[typeView setFrame: type];
+	
+	[[window contentView] setNeedsDisplay: YES];
+}
+@end
+
 @implementation TabMasterController (DelegateMethods)
+- (void)nicknameChanged: (NSNotification *)aNotification
+{
+	id content;
+
+	content = NSMapGet(viewControllerToContent, selectedController);
+	/* Somehow we got a notification for the non-current content controller */
+	if (content != [aNotification object])
+	{
+		return;
+	}
+
+	[self setNickname: [content nickname]];
+}
+- (void)titleChanged: (NSNotification *)aNotification
+{
+	if (selectedController != [aNotification object])
+	{
+		return;
+	}
+
+	[window setTitle: [[aNotification userInfo] objectForKey: @"Title"]];
+}
 - (void)typeViewEnterPressed: (NSTextField *)aField
 {
 	id content;

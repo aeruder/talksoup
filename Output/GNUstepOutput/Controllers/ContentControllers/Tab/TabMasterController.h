@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
  
- @class TabMasterController;
+@class TabMasterController;
  
 #ifndef TAB_MASTER_CONTROLLER_H
 #define TAB_MASTER_CONTROLLER_H

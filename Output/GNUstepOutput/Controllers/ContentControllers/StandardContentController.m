@@ -699,13 +699,51 @@ static NSString *TypeOfColor = @"TypeOfColor";
 
 	return;
 }
-- (NSString *)title
+- (NSString *)titleForViewController: (id <ContentControllerQueryController>)aController
 {
-	return title;
+	id name;
+	id title;
+
+	name = NSMapGet(bothToName, aController);
+	if (name && (title = [nameToTitle objectForKey: name]))
+	{
+		return title;
+	} 
+	else if (!name) 
+	{
+		return nil;
+	}
+
+	return [nameToPresentation objectForKey: name];
 }
 - (void)setTitle: (NSString *)aTitle
+    forViewController: (id <ContentControllerQueryController>)aController
 {
-	ASSIGN(title, aTitle);
+	id name;
+	
+	name = NSMapGet(bothToName, aController);
+	if (!name) 
+	{
+		return;
+	}
+
+	if (!aTitle)
+	{
+		[nameToTitle removeObjectForKey: name];
+	} 
+	else
+	{
+		[nameToTitle setObject: aTitle forKey: name];
+	}
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ContentControllerChangedTitleNotification 
+	 object: aController 
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  [self titleForViewController: aController], @"Title",
+	  self, @"Content",
+	  [nameToMasterController objectForKey: name], @"Master",
+	  nil]];
 }
 - (NSString * (*)(NSString *))lowercasingFunction
 {

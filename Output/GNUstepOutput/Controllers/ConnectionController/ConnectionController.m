@@ -98,7 +98,8 @@
 	
 	[content setLabel: S2AS(_l(@"Unconnected")) 
 	  forName: ContentConsoleName];
-	[content setTitle: _l(@"Unconnected")];
+	[content setTitle: _l(@"Unconnected") 
+	  forViewController: [content viewControllerForName: ContentConsoleName]];
 
 	nameToChannelData = [NSMutableDictionary new];
 	inputToName = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
@@ -157,7 +158,8 @@
 	[content setLabel: S2AS(_l(@"Connecting")) 
 	  forName: ContentConsoleName];
 	[content setTitle: [NSString stringWithFormat: 
-	  _l(@"Connecting to %@"), typedHost]];
+	  _l(@"Connecting to %@"), typedHost]
+	  forViewController: [content viewControllerForName: ContentConsoleName]];
 	
 	registered = NO;
 	

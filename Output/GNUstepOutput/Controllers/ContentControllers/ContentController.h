@@ -151,8 +151,9 @@ extern NSString *ContentConsoleName;
 - (NSString *)nickname;
 - (void)setNickname: (NSString *)aNickname;
 
-- (NSString *)title;
-- (void)setTitle: (NSString *)aTitle;
+- (NSString *)titleForViewController: (id <ContentControllerQueryController>)aController;
+- (void)setTitle: (NSString *)aTitle
+    forViewController: (id <ContentControllerQueryController>)aController;
 
 - (NSString * (*)(NSString *))lowercasingFunction;
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
@@ -202,6 +203,16 @@ extern NSString *ContentControllerRemovedFromMasterControllerNotification;
 	@"Content":     The content controller
 */
 extern NSString *ContentControllerChangedNicknameNotification;
+
+/* 
+	object:          The view controller
+	
+	userinfo:
+	@"Title":       New title 
+	@"View":        The view controller
+	@"Content":     The content controller
+*/
+extern NSString *ContentControllerChangedTitleNotification;
 
 /* 
 	object:       The content controller

@@ -67,35 +67,25 @@ static void send_message(id command, id name, id connection)
 
 @interface InputController (PrivateInputController)
 - (void)singleLineTyped: (NSString *)aLine;
-
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
-
 - (void)previousHistoryItem: (NSText *)aFieldEditor;
-
 - (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender;
-
 - (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender;
 @end
 
 @interface InputController (TabCompletion)
 - (void)nonTabPressed: (id)sender;
-
 - (void)tabPressed: (id)sender;
-
 - (void)extraTabPressed: (id)sender;
-
 - (void)firstTabPressed: (id)sender;
 
 - (NSArray *)completionsInArray: (NSArray *)x
   startingWith: (NSString *)pre
   largestValue: (NSString **)large;
-
 - (NSArray *)commandStartingWith: (NSString *)pre 
   largestValue: (NSString **)large;
-
 - (NSArray *)channelStartingWith: (NSString *)pre 
   largestValue: (NSString **)large;
-
 - (NSArray *)nameStartingWith: (NSString *)pre 
   largestValue: (NSString **)large;
 @end

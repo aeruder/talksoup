@@ -38,10 +38,10 @@
 		NSMutableDictionary *nameToLabel;
 		NSMutableDictionary *nameToMasterController;
 		NSMutableDictionary *nameToTyping;
+		NSMutableDictionary *nameToTitle;
 		NSMapTable *bothToName;
 		NSString *nickname;
 		NSString * (*lowercase)(NSString *);
-		NSString *title;
 		Class channelClass;
 		Class queryClass;
 		ConnectionController *connectionController;
@@ -103,8 +103,9 @@
 - (NSString *)nickname;
 - (void)setNickname: (NSString *)aNickname;
 
-- (NSString *)title;
-- (void)setTitle: (NSString *)aTitle;
+- (NSString *)titleForViewController: (id <ContentControllerQueryController>)aController;
+- (void)setTitle: (NSString *)aTitle
+    forViewController: (id <ContentControllerQueryController>)aController;
 
 - (NSString * (*)(NSString *))lowercasingFunction;
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;

@@ -27,6 +27,7 @@ NSString *ContentControllerMovedInMasterControllerNotification = @"ContentContro
 NSString *ContentControllerAddedToMasterControllerNotification = @"ContentControllerAddedToMasterControllerNotification";
 NSString *ContentControllerRemovedFromMasterControllerNotification = @"ContentControllerRemovedFromMasterControllerNotification";
 NSString *ContentControllerChangedNicknameNotification = @"ContentControllerChangedNicknameNotification";
+NSString *ContentControllerChangedTitleNotification = @"ContentControllerChangedTitleNotification";
 NSString *ContentControllerSelectedNameNotification = @"ContentControllerSelectedNameNotification";
 NSString *ContentControllerChangedLabelNotification = @"ContentControllerChangedLabelNotification";
 

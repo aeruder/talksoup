@@ -65,7 +65,8 @@
 	
 	[content setLabel: S2AS(_l(@"Unconnected")) 
 	  forName: ContentConsoleName];
-	[content setTitle: _l(@"Unconnected")];
+	[content setTitle: _l(@"Unconnected")
+	  forViewController: [content viewControllerForName: ContentConsoleName]];
 	
 	RELEASE(preNick);
 	preNick = RETAIN([aConnection nick]);
@@ -401,7 +402,8 @@
 		object = [IRCUserComponents(sender) objectAtIndex: 0];
 		[content setLabel: object
 		 forName: ContentConsoleName];
-		[content setTitle: [object string]];
+		[content setTitle: [object string]
+		  forViewController: [content viewControllerForName: [object string]]];
 		registered = YES;
 	}
 	

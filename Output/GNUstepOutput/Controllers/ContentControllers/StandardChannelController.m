@@ -160,14 +160,18 @@
 }
 - (void)attachChannelSource: (Channel *)aChannel
 {
+	[tableView setDataSource: nil];
 	ASSIGN(channelSource, aChannel);
+	[tableView setDataSource: channelSource];
 }
 - (void)detachChannelSource
 {
+	[tableView setDataSource: nil];
 	DESTROY(channelSource);
 }
 - (void)refreshFromChannelSource
 {
+	[tableView reloadData];
 }
 - (NSTextView *)chatView
 {
