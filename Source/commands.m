@@ -50,6 +50,7 @@
 {
 	id x = [args separateIntoNumberOfArguments: 3];
 	id first, second;
+	id key;
 	id array = nil;
 	BOOL isIn = NO;
 	
@@ -77,8 +78,23 @@
 	}
 	
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
+
+	if (second && [array containsObject: second]) 
+	{
+		key = second;
+	}
+	else if (second)
+	{
+		NSEnumerator *iter;
+		iter = [array objectEnumerator];
+		while ((key = [iter nextObject])) 
+		{
+			if ([[key lowercaseString] isEqualToString: second])
+				break;
+		}
+	}
 	
-	if (!second || ![array containsObject: second])
+	if (!second || !key)
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /load <in/out> <filter>"), @"\n",
@@ -88,19 +104,20 @@
 	
 	if (isIn)
 	{
-		[self activateInFilter: second];
+		[self activateInFilter: key];
 	}
 	else
 	{
-		[self activateOutFilter: second];
+		[self activateOutFilter: key];
 	}
 	
-	return BuildAttributedString(second, _(@" loaded"), nil);
+	return BuildAttributedString(key, _(@" loaded"), nil);
 }
 - (NSAttributedString *)commandUnload: (NSString *)args connection: (id)connection
 {
 	id x = [args separateIntoNumberOfArguments: 3];
 	id first, second;
+	id key;
 	id array = nil;
 	BOOL isIn = NO;
 	
@@ -124,10 +141,25 @@
 	{
 		return S2AS(_(@"Usage: /unload <in/out>"));
 	}
-	
+
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
 	
-	if (!second || ![array containsObject: second])
+	if (second && [array containsObject: second]) 
+	{
+		key = second;
+	}
+	else if (second)
+	{
+		NSEnumerator *iter;
+		iter = [array objectEnumerator];
+		while ((key = [iter nextObject])) 
+		{
+			if ([[key lowercaseString] isEqualToString: second])
+				break;
+		}
+	}
+	
+	if (!second || !key)
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /unload <in/out> <filter>"), @"\n", 
@@ -137,14 +169,14 @@
 	
 	if (isIn)
 	{
-		[self deactivateInFilter: second];
+		[self deactivateInFilter: key];
 	}
 	else
 	{
-		[self deactivateOutFilter: second];
+		[self deactivateOutFilter: key];
 	}
 	
-	return BuildAttributedString(second, _(@" unloaded"), nil);
+	return BuildAttributedString(key, _(@" unloaded"), nil);
 }
 - (NSAttributedString *)commandJoin: (NSString *)aString connection: connection
 {
