@@ -3,6 +3,8 @@
    retain when assigned to the instance variable.  Therefore I should be
    releasing those things either!  The only reason it worked was due to a
    GNUstep mem-leak.  I am a retard!
+ * Fixed a bug with DCC file transfer support where it never would download
+   without an explicit directory given on the /dcc get line.
 
 2003-12-07 Andy Ruder <aeruder at ksu dot edu>
  * Made the serverlist reuse unconnected windows (with an option to force a

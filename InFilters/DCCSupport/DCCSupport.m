@@ -923,13 +923,12 @@ static NSInvocation *invoc = nil;
 	if ([path length] == 0)
 	{
 		path = [dict objectForKey: DCCInfoFileName];
-		path = fix_file_name(path);
 		x = get_default(dcc_dir);
-		if (![dfm fileExistsAtPath: path isDirectory: &isDir] || !isDir)
+		if (![dfm fileExistsAtPath: x isDirectory: &isDir] || !isDir)
 		{
 			return S2AS(_l(@"Invalid download directory, see /dcc setdir."));
 		}
-		path = [NSString stringWithFormat: @"%@/%@", x, path];
+		path = [NSString stringWithFormat: @"%@/%@", x, fix_file_name(path)];
 	}
 	
 	path = [path stringByExpandingTildeInPath];
