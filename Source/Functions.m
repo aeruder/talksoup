@@ -15,16 +15,81 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "TalkSoup.h"
 #include <Foundation/NSObject.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSCharacterSet.h>
+#include <Foundation/NSScanner.h>
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSNull.h>
 
 #include <stdarg.h>
 
+static NSDictionary *mappings = nil;
+
+static void build_mappings(void)
+{
+	RELEASE(mappings);
+	mappings = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys:
+	  IRCColorWhite, @"white",
+	  IRCColorBlack, @"black",
+	  IRCColorBlue, @"blue",
+	  IRCColorGreen, @"green",
+	  IRCColorRed, @"red",
+	  IRCColorMaroon, @"maroon", 
+	  IRCColorMagenta, @"magenta",
+	  IRCColorOrange, @"orange",
+	  IRCColorYellow, @"yellow",
+	  IRCColorLightGreen, @"light green",
+	  IRCColorTeal, @"teal",
+	  IRCColorLightCyan, @"light cyan",
+	  IRCColorLightBlue, @"light blue",
+	  IRCColorLightMagenta, @"light magenta",
+	  IRCColorLightGrey, @"light grey",
+	  IRCColorGrey, @"grey", nil]));
+}
+
+NSString *IRCColorFromUserColor(NSString *string)
+{
+	id x;
+	if (!mappings) build_mappings();
+
+	string = [string lowercaseString];	
+	x = [mappings objectForKey: string];
+	
+	if ([string hasPrefix: @"custom"])
+	{
+		int r,g,b;
+		id scan;
+		
+		scan = [NSScanner scannerWithString: string];
+		[scan scanUpToCharactersFromSet: [NSCharacterSet whitespaceCharacterSet]
+		  intoString: 0];
+		
+		[scan scanInt: &r];
+		[scan scanInt: &g];
+		[scan scanInt: &b];
+		
+		r = r % 1001;
+		g = g % 1001;
+		b = b % 1001;
+		
+		return [NSString stringWithFormat: @"IRCColorCustom %d %d %d",
+		  r, g, b];
+	}
+	
+	return x;
+}
+
+NSArray *PossibleUserColors(void)
+{
+	if (!mappings) build_mappings();
+
+	return [mappings allKeys];
+}
+	
 static NSArray *get_first_word(NSString *arg)
 {
 	NSRange aRange;

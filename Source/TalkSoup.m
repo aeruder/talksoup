@@ -939,6 +939,15 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	return nil;
 }
+- (NSAttributedString *)commandColors: (NSString *)aString connection: connection
+{
+	return BuildAttributedString(
+	 _(@"Valid color names include any color from the following list: "),
+	 [PossibleUserColors() componentsJoinedByString: @", "], @"\n",
+	 _(@"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "
+	  @"where [red], [green], [blue] are the red, green, and blue "
+	  @"components of the color on a scale of 0 to 1000."), nil);
+}  		  
 - (void)setupCommandList
 {
 #define ADD_COMMAND(_sel, _name) { id invoc; \
@@ -960,6 +969,7 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	ADD_COMMAND(@selector(commandNotice:connection:), @"notice");
 	ADD_COMMAND(@selector(commandAway:connection:), @"away");
 	ADD_COMMAND(@selector(commandQuit:connection:), @"quit");
+	ADD_COMMAND(@selector(commandColors:connection:), @"colors");
 
 #undef ADD_COMMAND
 }
