@@ -92,7 +92,34 @@ Commands:
 /colors
   This simply explains to you the valid colors that other commands may
   ask you to use.
-  
+
+/ctcp <nick> <ctcp> [args]
+  Sends the ctcp command <ctcp> with optional arguments [args] to
+  the person with the nick <nick>.  CTCP messages are used for a
+  lot of extensions to IRC such as DCC and getting information
+  from another person's IRC client.
+
+/version <nick>
+  This is a sortcut for /ctcp <nick> VERSION, which, on most
+  IRC clients, will return the person named <nick>'s IRC client 
+  and version.
+
+/clientinfo <nick>
+  This is a shortcut for /ctcp <nick> CLIENTINFO, which, on
+  most IRC clients, will return information on getting the
+  IRC client that the person named <nick> is using.
+
+/ping <nick> <argument>
+  This is a shortcut for /ctcp <nick> PING <argument>.  With
+  most IRC clients, the other client will respond immediately
+  with a PING CTCP message with the same argument.  You can
+  use this to see how lagged you are.
+
+/userinfo <nick>
+  This is a shortcut for /ctcp <nick> USERINFO.  On some
+  IRC clients this will respond with information about the
+  user named <nick>.
+
 ===============================================================================
 Commands specific to the GNUstep output plugin (GNUstepOutput)
 
