@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TalkSoup.h"
+#include "TalkSoupBundles/TalkSoup.h"
 #include <Foundation/NSObject.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSArray.h>
