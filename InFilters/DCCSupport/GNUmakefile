@@ -7,10 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 DCCSupport_PRINCIPAL_CLASS = DCCSupport
 
-DCCSupport_FRAMEWORKS = -lTalkSoupBundles
+DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m
 
-DCCSupport_OBJC_FILES = DCCSupport.m netclasses/NetTCP.m \
-                        netclasses/NetBase.m netclasses/DCCObject.m
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+DCCSupport_BUNDLE_LIBS = -framework netclasses -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+DCCSupport_BUNDLE_LIBS = -lTalkSoupBundles -lnetclasses
+endif
 
 GUI_LIBS = 
 

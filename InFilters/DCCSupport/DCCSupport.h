@@ -20,8 +20,8 @@
 #ifndef DCCSUPPORT_H
 #define DCCSUPPORT_H
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSMapTable.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
 
 @class NSAttributedString, NSMutableArray;
 

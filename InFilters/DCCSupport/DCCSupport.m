@@ -20,15 +20,15 @@
 #include "netclasses/NetTCP.h"
 #include "netclasses/DCCObject.h"
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSInvocation.h>
-#include <Foundation/NSValue.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSUserDefaults.h>
-#include <Foundation/NSFileManager.h>
-#include <Foundation/NSFileHandle.h>
-#include <Foundation/NSTimer.h>
-#include <Foundation/NSHost.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSValue.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSFileManager.h>
+#import <Foundation/NSFileHandle.h>
+#import <Foundation/NSTimer.h>
+#import <Foundation/NSHost.h>
 
 static NSString *dcc_default = @"DCCSupport";
 static NSString *dcc_dir = @"DCCSupportDirectory";
