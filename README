@@ -224,6 +224,9 @@ Commands specific to the GNUstep output plugin (GNUstepOutput)
 /scrollback <characters>
   This sets how many characters your scroll-back buffer holds.
   This change will automatically be saved to the defaults.
+
+/ping <person>
+  Good way to find out the lag between you and that person.
   
 ===================================
 Notes about GNUstepOutput (default)
