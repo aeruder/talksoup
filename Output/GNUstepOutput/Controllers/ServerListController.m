@@ -185,6 +185,8 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)awakeFromNib
 {
+	id tmp;
+	
 	[browser setMaxVisibleColumns: 2];
 	[browser setHasHorizontalScroller: NO];
 	[browser setAllowsMultipleSelection: NO];
@@ -196,6 +198,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 	[browser setTarget: self];
 	[window setDelegate: self];
 	[window makeKeyAndOrderFront: nil];
+	
+	tmp = mutablized_prefs();
+	[tmp sortUsingFunction: sort_server_dictionary context: 0]; 
+	[_GS_ setDefaultsObject: tmp
+	  forKey: GNUstepOutputServerList];
+	[browser reloadColumn: 0];
 	
 	[_GS_ addServerList: self];
 	
