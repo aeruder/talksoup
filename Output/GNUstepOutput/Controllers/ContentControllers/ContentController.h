@@ -32,7 +32,7 @@ extern NSString *ContentControllerQueryType;
 
 extern NSString *ContentConsoleName;
 
-@protocol ContentControllerQueryView < NSObject >
+@protocol ContentControllerQueryController < NSObject >
 + (NSString *)standardNib;
 - (NSTextView *)chatView;
 - (NSView *)contentView;
@@ -43,7 +43,8 @@ extern NSString *ContentConsoleName;
 //- (NSAttributedString *)presentationName;
 //@end
 
-@protocol ContentControllerChannelView < ContentControllerQueryView, NSObject >
+@protocol ContentControllerChannelController 
+              < ContentControllerQueryController, NSObject >
 - (Channel *)channelSource;
 - (void)attachChannelSource: (Channel *)aChannel;
 - (void)detachChannelSource;
@@ -52,32 +53,37 @@ extern NSString *ContentConsoleName;
 
 
 @protocol MasterController <NSObject>
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController;
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
-   atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController;
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
+   atIndex: (unsigned)aIndex 
+   forContentController: (id <ContentController>)aContentController;
 
-- (void)selectView: (id <ContentControllerQueryView>)aView;
-- (void)selectViewAtIndex: (unsigned)aIndex;
-- (id <ContentControllerQueryView>)selectedView;
+- (void)selectViewController: (id <ContentControllerQueryController>)aController;
+- (void)selectViewControllerAtIndex: (unsigned)aIndex;
+- (id <ContentControllerQueryController>)selectedViewController;
 
-- (void)removeView: (id <ContentControllerQueryView>)aView;
-- (void)removeViewAtIndex: (unsigned)aIndex;
+- (void)removeViewController: (id <ContentControllerQueryController>)aController;
+- (void)removeViewControllerAtIndex: (unsigned)aIndex;
 
-- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (unsigned)aIndex;
-- (void)moveViewAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex;
+- (void)moveViewController: (id <ContentControllerQueryController>)aController
+   toIndex: (unsigned)aIndex;
+- (void)moveViewControllerAtIndex: (unsigned)aIndex 
+   toIndex: (unsigned)aNewIndex;
 
-- (unsigned)indexForView: (id <ContentControllerQueryView>)aView;
+- (unsigned)indexForViewController: (id <ContentControllerQueryController>)aController;
 - (unsigned)count;
 
-- (NSAttributedString *)labelForView: (id <ContentControllerQueryView>)aView;
+- (NSAttributedString *)labelForViewController: (id <ContentControllerQueryController>)aController;
 - (void)setLabel: (NSAttributedString *)aLabel 
-    forView: (id <ContentControllerQueryView>)aView;
+    forViewController: (id <ContentControllerQueryController>)aController;
 	 
 - (NSArray *)containedContentControllers;
-- (NSArray *)viewListForContentController: 
+- (NSArray *)viewControllerListForContentController: 
     (id <ContentController>)aContentController;
-- (NSArray *)allViews;
+- (NSArray *)allViewControllers;
 
 - (NSTextField *)typeView;
 - (NSTextField *)nickView;
@@ -93,8 +99,8 @@ extern NSString *ContentConsoleName;
 @end
 
 @protocol ContentController <NSObject>
-- (id <TypingController>)typingControllerForView: 
-   (id <ContentControllerQueryView>)aView;
+- (id <TypingController>)typingControllerForViewController: 
+   (id <ContentControllerQueryController>)aController;
 
 // Not retained
 - (void)setConnectionController: (ConnectionController *)aController;
@@ -104,18 +110,15 @@ extern NSString *ContentConsoleName;
 - (id <MasterController>)primaryMasterController;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;
 
-- (NSString *)nameForView: (id <ContentControllerQueryView>)aController;
-- (NSView *)viewForName: (NSString *)aName;
+- (NSString *)nameForViewController: (id <ContentControllerQueryController>)aController;
 - (NSTextView *)chatViewForName: (NSString *)aName;
-- (id)controllerForName: (NSString *)aName;
+- (id <ContentControllerQueryController>)viewControllerForName: (NSString *)aName;
 - (NSString *)typeForName: (NSString *)aName;
 - (NSArray *)allChatViews;
 - (NSArray *)allControllers;
-- (NSArray *)allViews;
 - (NSArray *)allNames;
 - (NSArray *)allChatViewsOfType: (NSString *)aType;
-- (NSArray *)allControllersOfType: (NSString *)aType;
-- (NSArray *)allViewsOfType: (NSString *)aType;
+- (NSArray *)allViewControllersOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
 - (void)putMessage: (NSAttributedString *)aMessage in: (id)aName;
@@ -130,12 +133,12 @@ extern NSString *ContentConsoleName;
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
-- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+- (id <ContentControllerQueryController>)addViewControllerOfType: (NSString *)aType 
    withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster;
-- (void)removeControllerWithName: (NSString *)aName;
-- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName;
+- (void)removeViewControllerWithName: (NSString *)aName;
+- (void)renameViewControllerWithName: (NSString *)aName to: (NSString *)newName;
 
 - (NSString *)presentationalNameForName: (NSString *)aName;
 - (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName;
@@ -149,6 +152,7 @@ extern NSString *ContentConsoleName;
 - (NSString *)title;
 - (void)setTitle: (NSString *)aTitle;
 
+- (NSString * (*)(NSString *))lowercasingFunction;
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 
 - (void)bringNameToFront: (NSString *)aName;

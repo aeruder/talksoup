@@ -98,13 +98,13 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController
-- initWithView: (id <ContentControllerQueryView>)aViewController
+- initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController
 {
 	if (!(self = [super init])) return nil;
 
 	content = RETAIN(aContentController);
-	view = RETAIN(aViewController);
+	view = RETAIN(aController);
 	controller = [content connectionController];
 	
 	NSLog(@"Initializing with %@ %@", content, self);
@@ -134,7 +134,6 @@ static void send_message(id command, id name, id connection)
 {
 	lastMaster = aMaster;
 	activeTextField = aField;
-	NSLog(@"Returning that dern field editor");
 	return fieldEditor;
 }
 - (void)commandTyped: (NSString *)command
@@ -143,7 +142,14 @@ static void send_message(id command, id name, id connection)
 	NSEnumerator *iter, *iter2;
 	id object, object2;
 
-	NSLog(@"Command Typed: '%@'!!!", command);
+	if ([command length] == 0)
+	{
+		if ([lastMaster selectedViewController] == view) 
+		{
+			[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+		}
+		return;
+	}
 
 	lines = [command componentsSeparatedByString: @"\r\n"];
 		
@@ -160,27 +166,13 @@ static void send_message(id command, id name, id connection)
 			}
 		}
 	}
-}
-- (void)enterPressed: (id)sender
-{
-	id string = AUTORELEASE(RETAIN([sender stringValue]));
-	
-	if ([string length] == 0)
-	{
-		if ([lastMaster selectedView] == view) 
-		{
-			[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
-		}
-		return;
-	}
-	
+
 	[modHistory removeAllObjects];
 	[modHistory addObject: @""];
-	
-	[self commandTyped: string];
-	
-	[sender setStringValue: @""];
-	if ([lastMaster selectedView] == view)
+
+	[[lastMaster typeView] setStringValue: @""];
+
+	if ([lastMaster selectedViewController] == view)
 	{
 		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 	}
@@ -193,7 +185,6 @@ static void send_message(id command, id name, id connection)
 	id connection;
 	id name;
 	
-	NSLog(@"Boo!");
 	[history addObject: command];	
 	historyIndex = [history count];
 	
@@ -238,14 +229,12 @@ static void send_message(id command, id name, id connection)
 		
 		if (commandSelector && [self respondsToSelector: commandSelector])
 		{
-				NSLog(@"Performing selector!");
 				[self performSelector: commandSelector withObject: arguments];
 				return;
 		}
 		
 		if ((invoc = [_TS_ invocationForCommand: substring]))
 		{
-			NSLog(@"Performing invoc!");
 			[invoc setArgument: &arguments atIndex: 2];
 			[invoc setArgument: &connection atIndex: 3]; 
 			[invoc invoke];
@@ -271,8 +260,8 @@ static void send_message(id command, id name, id connection)
 
 	if (!connection) return;
 	
-	name = [content nameForView: view];
-	if ([name isEqualToString: ContentConsoleName]) 
+	name = [content nameForViewController: view];
+	if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)]) 
 	{
 		return;
 	}
@@ -309,7 +298,7 @@ static void send_message(id command, id name, id connection)
 		[fieldEditor setString: string];
 	}
 	
-	if ([lastMaster selectedView] == view)
+	if ([lastMaster selectedViewController] == view)
 	{
 		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 	}
@@ -370,14 +359,12 @@ static void send_message(id command, id name, id connection)
 	}
 	if (character == NSPageUpFunctionKey)
 	{
-// FIXME		id x = [content controllerForViewWithName: [content currentViewName]];
-	//	[[x chatView] pageUp];
+		[(ScrollingTextView *)[view chatView] pageUp];
 		return NO;
 	}
 	if (character == NSPageDownFunctionKey)
 	{
-	//	id x = [content controllerForViewWithName: [content currentViewName]];
-	//	[[x chatView] pageDown];
+		[(ScrollingTextView *)[view chatView] pageDown];
 		return NO;
 	}
 	
@@ -660,7 +647,7 @@ static void send_message(id command, id name, id connection)
 		topic = S2AS([x objectAtIndex: 0]);
 	}
 
-	name = [content nameForView: view];
+	name = [content nameForViewController: view];
 	if (![[content typeForName: name] isEqualToString: 
 	       ContentControllerChannelType])
 	{
@@ -809,7 +796,8 @@ static void send_message(id command, id name, id connection)
 		return self;
 	}
 	
-	[_TS_ sendAction: S2AS(aString) to: S2AS([content nameForView: view])
+	[_TS_ sendAction: S2AS(aString) 
+	  to: S2AS([content nameForViewController: view])
 	  onConnection: connection
 	  withNickname: S2AS([connection nick])
 	  sender: _GS_];
@@ -831,7 +819,7 @@ static void send_message(id command, id name, id connection)
 	
 	name = [x objectAtIndex: 0];
 	
-	[content addControllerOfType: ContentControllerQueryType
+	[content addViewControllerOfType: ContentControllerQueryType
 	  withName: name withLabel: S2AS(name) 
 	  inMasterController: lastMaster]; 
 	
@@ -843,7 +831,7 @@ static void send_message(id command, id name, id connection)
 	id name;
 	id connection = [controller connection];
 	
-	name = [content nameForView: view];
+	name = [content nameForViewController: view];
 	if ([x count] < 1)
 	{
 		if ([name isEqualToString: ContentConsoleName])
@@ -868,7 +856,7 @@ static void send_message(id command, id name, id connection)
 		  sender: _GS_];
 	}
 	
-	[content removeControllerWithName: name];
+	[content removeViewControllerWithName: name];
 
 	return self;
 }
@@ -880,7 +868,7 @@ static void send_message(id command, id name, id connection)
 	
 	msg = nil;
 
-	name = [content nameForView: view];
+	name = [content nameForViewController: view];
 	if (![[content typeForName: name] isEqualToString: 
 	       ContentControllerChannelType])
 	{

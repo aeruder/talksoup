@@ -96,7 +96,7 @@
 - numericHandler366: (NSArray *)arguments
 {
 	id name = GNUstepOutputLowercase([[arguments objectAtIndex: 0] string]);
-	id cont = [content controllerForName: name];
+	id cont = [content viewControllerForName: name];
 	id channel = [nameToChannelData objectForKey: name];
 
 	if (!channel)

@@ -35,7 +35,7 @@
 {
 	id where = [receiver string];
 	
-	if (![content controllerForName: where])
+	if (![content viewControllerForName: where])
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 
@@ -69,7 +69,7 @@
 {
 	id where = [receiver string];
 	
-	if (![content controllerForName: where])
+	if (![content viewControllerForName: where])
 	{
 		[content putMessage: BuildAttributedString(
 		  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @">", 

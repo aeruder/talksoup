@@ -40,9 +40,12 @@
 {
 	if (!(self = [super init])) return nil;
 		
-	viewToTab = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
-	viewToContent = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
-	tabToView = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
+	viewControllerToTab = 
+	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
+	viewControllerToContent = 
+	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
+	tabToViewController = 
+	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	contentControllers = [NSMutableArray new];
 
 	if (!([NSBundle loadNibNamed: @"TabContent" owner: self]))
@@ -66,9 +69,9 @@
 }
 - (void)dealloc
 {
-	NSFreeMapTable(viewToTab);
-	NSFreeMapTable(viewToContent);
-	NSFreeMapTable(tabToView);
+	NSFreeMapTable(viewControllerToTab);
+	NSFreeMapTable(viewControllerToContent);
+	NSFreeMapTable(tabToViewController);
 	DESTROY(contentControllers);
 	
 	[typeView setTarget: nil];
@@ -85,26 +88,28 @@
 	
 	[super dealloc];
 }
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController
 {
-	[self addView: aView withLabel: aLabel atIndex: numItems 
+	[self addViewController: aController withLabel: aLabel atIndex: numItems 
 	  forContentController: aContentController];
 }
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
    atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController
 {
 	AttributedTabViewItem *tabItem;
 	
 	tabItem = AUTORELEASE([AttributedTabViewItem new]);
 	
-	NSMapInsert(viewToTab, aView, tabItem);
-	NSMapInsert(viewToContent, aView, aContentController);
-	NSMapInsert(tabToView, tabItem, aView);
+	NSMapInsert(viewControllerToTab, aController, tabItem);
+	NSMapInsert(viewControllerToContent, aController, aContentController);
+	NSMapInsert(tabToViewController, tabItem, aController);
 	
-	[tabItem setView: [aView contentView]];
-	[tabItem setAttributedLabel: aLabel];
 	[tabView insertTabViewItem: tabItem atIndex: aIndex];
+	[tabItem setView: [aController contentView]];
+	[tabItem setAttributedLabel: aLabel];
 	
 	[tabView setNeedsDisplay: YES];
 
@@ -113,112 +118,113 @@
 	 object: aContentController userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
 	  [NSNumber numberWithInt: aIndex], @"Index",
 	  self, @"Master",
-	  aView, @"View",
+	  aController, @"View",
 	  aContentController, @"Content",
 	  nil]];
 }
-- (void)selectView: (id <ContentControllerQueryView>)aView
+- (void)selectViewController: (id <ContentControllerQueryController>)aController
 {
 	id tab, content;
 
-	tab = NSMapGet(viewToTab, aView);
-	content = NSMapGet(viewToContent, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
+	content = NSMapGet(viewControllerToContent, aController);
 
 	NSLog(@"Selecting view!");
 	if (!tab || !content) return;
 
-	selected = aView;
+	selectedController = aController;
 
 	[tabView selectTabViewItem: tab];
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerSelectedNameNotification
 	 object: content userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
-	  aView, @"View",
+	  aController, @"View",
 	  content, @"Content",
 	  self, @"Master",
 	  nil]];
 	RELEASE(typingController);
 	typingController = RETAIN([content 
-	     typingControllerForView: aView]);
+	     typingControllerForViewController: aController]);
 }
-- (void)selectViewAtIndex: (unsigned)aIndex
+- (void)selectViewControllerAtIndex: (unsigned)aIndex
 {
 	id view;
 
-	if (aIndex >= [indexToView count]) return;
+	if (aIndex >= [indexToViewController count]) return;
 
-	view = [indexToView objectAtIndex: aIndex];
+	view = [indexToViewController objectAtIndex: aIndex];
 
-	[self selectView: view];
+	[self selectViewController: view];
 }
-- (id <ContentControllerQueryView>)selectedView
+- (id <ContentControllerQueryController>)selectedViewController
 {
-	return selected;
+	return selectedController;
 }
-- (void)removeView: (id <ContentControllerQueryView>)aView
+- (void)removeViewController: (id <ContentControllerQueryController>)aController
 {
 	id tab;
 	id userInfo;
 	id content;
 
-	if (!(NSMapMember(viewToTab, aView, 0, 0)))
+	if (!(NSMapMember(viewControllerToTab, aController, 0, 0)))
 	{
 		return;
 	}
 	
-	tab = NSMapGet(viewToTab, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
 	
 	[tab setView: nil];
 	[tabView removeTabViewItem: tab];
 	
 	[tabView setNeedsDisplay: YES];
 	
-	content = NSMapGet(viewToContent, aView);
+	content = NSMapGet(viewControllerToContent, aController);
 	AUTORELEASE(RETAIN(content));
 
 	userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 	  self, @"Master",
-	  aView, @"View",
+	  aController, @"View",
 	  content, @"Content",
 	  nil];
 
-	NSMapRemove(viewToTab, aView);
-	NSMapRemove(viewToContent, aView);
-	NSMapRemove(tabToView, tab);
+	NSMapRemove(viewControllerToTab, aController);
+	NSMapRemove(viewControllerToContent, aController);
+	NSMapRemove(tabToViewController, tab);
 	
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
 	 object: content userInfo: userInfo];
 }
-- (void)removeViewAtIndex: (unsigned)aIndex
+- (void)removeViewControllerAtIndex: (unsigned)aIndex
 {
-	id aView;
+	id aController;
 	id tab;
 	
 	tab = [tabView tabViewItemAtIndex: aIndex];
-	if (!(NSMapMember(tabToView, tab, 0, 0)))
+	if (!(NSMapMember(tabToViewController, tab, 0, 0)))
 	{
 		return;
 	}
 	
-	aView = NSMapGet(viewToTab, aView);
+	aController = NSMapGet(tabToViewController, tab);
 
-	[self removeView: aView];
+	[self removeViewController: aController];
 }
-- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (unsigned)aIndex;
+- (void)moveViewController: (id <ContentControllerQueryController>)aController 
+   toIndex: (unsigned)aIndex;
 {
 	unsigned index;
 	id tab;
 	unsigned origIndex;
 	id content;
 	
-	if (!(NSMapMember(viewToTab, aView, 0, 0)))
+	if (!(NSMapMember(viewControllerToTab, aController, 0, 0)))
 	{
 		return;
 	}
 	
-	tab = NSMapGet(viewToTab, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
 	
 	origIndex = index = [tabView indexOfTabViewItem: tab];
 	
@@ -240,7 +246,7 @@
 	
 	[tabView insertTabViewItem: tab atIndex: index];
 
-	content = NSMapGet(viewToContent, aView);
+	content = NSMapGet(viewControllerToContent, aController);
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerMovedInMasterControllerNotification
@@ -248,32 +254,32 @@
 	  [NSNumber numberWithInt: origIndex], @"OldIndex",
 	  [NSNumber numberWithInt: index], @"Index",
 	  self, @"Master",
-	  aView, @"View",
+	  aController, @"View",
 	  content, @"Content",
 	  nil]];
 }
-- (void)moveViewAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex
+- (void)moveViewControllerAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex
 {
 	id tab;
-	id aView;
+	id aController;
 	
 	tab = [tabView tabViewItemAtIndex: aIndex];
 	
-	if (!(NSMapMember(tabToView, tab, 0, 0)))
+	if (!(NSMapMember(tabToViewController, tab, 0, 0)))
 	{
 		return;
 	}
 	
-	aView = NSMapGet(tabToView, tab);
+	aController = NSMapGet(tabToViewController, tab);
 	
-	[self moveView: aView toIndex: aNewIndex];
+	[self moveViewController: aController toIndex: aNewIndex];
 }	 
-- (unsigned)indexForView: (id <ContentControllerQueryView>)aView
+- (unsigned)indexForViewController: (id <ContentControllerQueryController>)aController
 {
 	NSTabViewItem *tab;
 	unsigned index;
 
-	tab = NSMapGet(viewToTab, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
 	if (!tab) return NSNotFound;
 
 	index = [tabView indexOfTabViewItem: tab];
@@ -282,19 +288,19 @@
 }
 - (unsigned)count
 {
-	return [indexToView count];
+	return [indexToViewController count];
 }
-- (NSAttributedString *)labelForView: (id <ContentControllerQueryView>)aView
+- (NSAttributedString *)labelForViewController: (id <ContentControllerQueryController>)aController
 {
 	AttributedTabViewItem *tab;
 
-	tab = NSMapGet(viewToTab, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
 	if (!tab) return nil;
 
 	return [tab attributedLabel];
 }
 - (void)setLabel: (NSAttributedString *)aLabel 
-    forView: (id <ContentControllerQueryView>)aView
+    forViewController: (id <ContentControllerQueryController>)aController
 {
 	AttributedTabViewItem *tab;
 
@@ -302,9 +308,9 @@
 		aLabel = AUTORELEASE([NSAttributedString new]);
 	}
 
-	if (!aView) return;
+	if (!aController) return;
 
-	tab = NSMapGet(viewToTab, aView);
+	tab = NSMapGet(viewControllerToTab, aController);
 	if (!tab) return;
 
 	[tab setAttributedLabel: aLabel];
@@ -313,7 +319,7 @@
 {
 	return [NSArray arrayWithArray: contentControllers];
 }
-- (NSArray *)viewListForContentController: 
+- (NSArray *)viewControllerListForContentController: 
     (id <ContentController>)aContentController
 {
 	id iter;
@@ -321,7 +327,7 @@
 	id vArray;
 	id results;
 	
-	vArray = NSAllMapTableKeys(viewToContent);
+	vArray = NSAllMapTableKeys(viewControllerToContent);
 	
 	iter = [vArray objectEnumerator];
 	
@@ -329,7 +335,7 @@
 	
 	while ((object = [iter nextObject]))
 	{
-		if (NSMapGet(viewToContent, object) == aContentController)
+		if (NSMapGet(viewControllerToContent, object) == aContentController)
 		{
 			[results addObject: object];
 		}
@@ -337,9 +343,9 @@
 	
 	return results;
 }	
-- (NSArray *)allViews
+- (NSArray *)allViewControllers
 {
-	return NSAllMapTableKeys(viewToContent);
+	return NSAllMapTableKeys(viewControllerToContent);
 }
 - (NSTextField *)typeView
 {
@@ -364,16 +370,16 @@
 {
 	id content;
 
-	content = NSMapGet(viewToContent, selected);
+	content = NSMapGet(viewControllerToContent, selectedController);
 
-	[[content typingControllerForView: selected] 
+	[[content typingControllerForViewController: selectedController] 
 	   commandTyped: [aField stringValue]];
 }
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
 	/* Basically we just need to force the 
 	 * notification to happen */
-	[self selectView: selected];
+	[self selectViewController: selectedController];
 }
 - (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
 {
@@ -381,11 +387,11 @@
 
 	if (anObject != typeView) return nil;
 
-	content = NSMapGet(viewToContent, selected);
+	content = NSMapGet(viewControllerToContent, selectedController);
 
 	NSLog(@"Requested field editor. content: %@", content);
 
-	return [[content typingControllerForView: selected]
+	return [[content typingControllerForViewController: selectedController]
 	  fieldEditorForField: typeView forMasterController: self];
 }
 - (void)tabView: (NSTabView *)tabView 
@@ -393,10 +399,10 @@
 {
 	id view;
 
-	view = NSMapGet(tabToView, tabViewItem);
+	view = NSMapGet(tabToViewController, tabViewItem);
 
-	if (view != selected) {
-		[self selectView: view];
+	if (view != selectedController) {
+		[self selectViewController: view];
 	}
 }
 @end

@@ -88,7 +88,8 @@
 		// Does this even make sense???
 		content = RETAIN(aContent);
 	}
-	[content addControllerOfType: ContentControllerQueryType 
+	[content setConnectionController: self];
+	[content addViewControllerOfType: ContentControllerQueryType 
 	  withName: ContentConsoleName 
 	  withLabel: AUTORELEASE([NSAttributedString new])
 	  inMasterController: nil];
@@ -254,7 +255,7 @@
 }
 - leaveChannel: (NSString *)channel
 {
-	id view = [content controllerForName: channel];
+	id view = [content viewControllerForName: channel];
 	
 	[view detachChannelSource];
 		

@@ -41,6 +41,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
  
 @interface StandardContentController (PrivateMethods)
 - (NSColor *)colorForKey: (NSString *)aKey;
+- (void)viewSelected: (NSNotification *)aNotification;
 @end
 
 @implementation StandardContentController
@@ -87,6 +88,10 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	channelClass = [[self class] channelClass];
 	queryClass = [[self class] queryClass];
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(viewSelected:)
+	  name: ContentControllerSelectedNameNotification
+	  object: self];
 	
 	return self;
 }
@@ -99,12 +104,13 @@ static NSString *TypeOfColor = @"TypeOfColor";
 }
 /* Returns the corresponding input manager for a view.
  */
-- (id <TypingController>)typingControllerForView:
-   (id <ContentControllerQueryView>)aView
+- (id <TypingController>)typingControllerForViewController:
+   (id <ContentControllerQueryController>)aController
 {
 	id name;
 
-	name = NSMapGet(bothToName, aView);
+	if (!aController) return nil;
+	name = NSMapGet(bothToName, aController);
 	if (!name) return nil;
 
 	return [nameToTyping objectForKey: name];
@@ -123,6 +129,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	return connectionController;
 }
 // FIXME a dealloc needs to be written
+// An additional note: don't forget to removeObserver:
 /* Returns an array of all master controllers that are used by any of the channels or 
  * queries within this controller
  */
@@ -146,7 +153,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 }	
 /* Returns the name of the view specified by <var>aController</var>
  */
-- (NSString *)nameForView: (id <ContentControllerQueryView>)aController
+- (NSString *)nameForViewController: (id <ContentControllerQueryController>)aController
 {
 	return NSMapGet(bothToName, aController);
 }
@@ -156,12 +163,6 @@ static NSString *TypeOfColor = @"TypeOfColor";
 - (id <MasterController>)masterControllerForName: (NSString *)aName
 {
 	return [nameToMasterController objectForKey: lowercase(aName)];
-}
-/* Returns the view for the name <var>aName</var>
- */
-- (NSView *)viewForName: (NSString *)aName
-{
-	return [nameToBoth objectForKey: lowercase(aName)];
 }
 /* Returns the chat view for the name <var>aName</var>
  */
@@ -174,9 +175,9 @@ static NSString *TypeOfColor = @"TypeOfColor";
  * a query or [(ContentControllerQueryView)] and [(ContentControllerChannelName)]
  * in the case of a channel. 
  */
-- (id)controllerForName: (NSString *)aName
+- (id)viewControllerForName: (NSString *)aName
 {
-	return [[nameToBoth objectForKey: lowercase(aName)] contentView];
+	return [nameToBoth objectForKey: lowercase(aName)];
 }
 /* Returns the type of view for the name <var>aName</var>.  The types is either
  * <var>ContentControllerChannelType</var> or <var>ContentControllerQueryType</var>.
@@ -187,12 +188,12 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (!object) return nil;
 	
-	if ([object conformsToProtocol: @protocol(ContentControllerChannelView)])
+	if ([object conformsToProtocol: @protocol(ContentControllerChannelController)])
 	{
 		return ContentControllerChannelType;
 	}
 	
-	if ([object conformsToProtocol: @protocol(ContentControllerQueryView)])
+	if ([object conformsToProtocol: @protocol(ContentControllerQueryController)])
 	{
 		return ContentControllerQueryType;
 	}
@@ -223,25 +224,6 @@ static NSString *TypeOfColor = @"TypeOfColor";
 - (NSArray *)allControllers
 {
 	return [nameToBoth allValues];
-}
-/* Returns an array of all views.
- */
-- (NSArray *)allViews
-{
-	NSMutableArray *anArray = [NSMutableArray new];
-	NSEnumerator *iter;
-	id obj;
-	
-	iter = [[nameToBoth allValues] objectEnumerator];
-	while ((obj = [iter nextObject]))
-	{
-		if ((obj = [obj contentView]))
-		{
-			[anArray addObject: obj];
-		}
-	}
-	
-	return AUTORELEASE(anArray);
 }
 /* Returns an array of all names.
  */
@@ -286,7 +268,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 /* Returns an array of all controllers of a certain type <var>aType</var> which can either
  * be <var>ContentControllerChannelType</var> or <var>ContentControllerQueryType</var>
  */
-- (NSArray *)allControllersOfType: (NSString *)aType
+- (NSArray *)allViewControllersOfType: (NSString *)aType
 {
 	if ([aType isEqualToString: ContentControllerChannelType])
 	{
@@ -299,40 +281,6 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	return AUTORELEASE([NSArray new]);
 }
-/* Returns an array of all views of a certain type <var>aType</var> which can either
- * be <var>ContentControllerChannelType</var> or <var>ContentControllerQueryType</var>
- */
-- (NSArray *)allViewsOfType: (NSString *)aType
-{
-	NSMutableArray *anArray = [NSMutableArray new];
-	NSArray *targetArray;
-	NSEnumerator *iter;
-	id obj;
-	
-	if ([aType isEqualToString: ContentControllerChannelType])
-	{
-		targetArray = [nameToChannel allValues];
-	}
-	else if ([aType isEqualToString: ContentControllerQueryType])
-	{
-		targetArray = [nameToQuery allValues];
-	}
-	else
-	{
-		return AUTORELEASE(anArray);
-	}
-	
-	iter = [targetArray objectEnumerator];
-	while ((obj = [iter nextObject]))
-	{
-		if ((obj = [obj contentView]))
-		{
-			[anArray addObject: obj];
-		}
-	}
-	
-	return AUTORELEASE(anArray);
-}	
 /* Returns array of all the names of a certain type <var>aType</var> which can
  * be either <var>ContentControllerChannelType</var> or <var>ContentControllerQueryType</var>
  */			
@@ -372,7 +320,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (!aMessage) return;
 	
-	if ([aName conformsToProtocol: @protocol(ContentControllerQueryView)])
+	if ([aName conformsToProtocol: @protocol(ContentControllerQueryController)])
 	{
 		controller = aName;
 	}
@@ -400,9 +348,8 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (controller == nil)
 	{
-		// FIXME this should put it in the current window
-		// whatever that means now.
-		//controller = [nameToBoth objectForKey: current];
+		controller = lastSelected;
+		NSLog(@"lastSelected: %@", lastSelected);
 	}
 
 	controller = [[controller chatView] textStorage];	
@@ -537,7 +484,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		[self putMessage: aMessage in: obj withEndLine: hasEnd];
 	}
 }
-- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+- (id <ContentControllerQueryController>)addViewControllerOfType: (NSString *)aType 
    withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster
@@ -590,19 +537,19 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (!aMaster) aMaster = [masterControllers objectAtIndex: 0];
 	
-	[aMaster addView: controller withLabel: aLabel 
+	[aMaster addViewController: controller withLabel: aLabel 
 	  forContentController: self];
 	[nameToMasterController setObject: aMaster forKey: name];
 	
 	[nameToTyping setObject: 
 	 AUTORELEASE([[InputController alloc] 
-	  initWithView: controller
+	  initWithViewController: controller
 	  contentController: self]) forKey: name];
 	NSLog(@"AGH!: name: %@, %@", name, [nameToTyping objectForKey: name]);
 	
 	return controller;
 }
-- (void)removeControllerWithName: (NSString *)aName
+- (void)removeViewControllerWithName: (NSString *)aName
 {
 	id master;
 	id lo;
@@ -623,7 +570,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		return;
 	}
 	
-	[master removeView: cont];
+	[master removeViewController: cont];
 	
 	[nameToChannel removeObjectForKey: lo];	
 	[nameToQuery removeObjectForKey: lo];
@@ -633,7 +580,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	[nameToTyping removeObjectForKey: lo];
 	NSMapRemove(bothToName, cont);
 }
-- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName
+- (void)renameViewControllerWithName: (NSString *)aName to: (NSString *)newName
 {
 	id lo1, lo2;
 	id obj, which;
@@ -659,7 +606,8 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	[nameToPresentation removeObjectForKey: lo1];
 		
 	obj = [nameToBoth objectForKey: lo1];
-	which = ([obj conformsToProtocol: @protocol(ContentControllerChannelView)]) ?
+	which = 
+	  ([obj conformsToProtocol: @protocol(ContentControllerChannelController)]) ?
 	  nameToChannel : nameToQuery;
 		
 	[nameToBoth setObject: obj forKey: lo2];
@@ -687,7 +635,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	lo = lowercase(aName);
 	
-	if (!(label = [nameToLabel objectForKey: lo]))
+	if (!(label = RETAIN([nameToLabel objectForKey: lo])))
 	{
 		return;
 	}
@@ -702,11 +650,13 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		return;
 	}
 	
+	AUTORELEASE(label);
+
 	if (label == aLabel) return;
 	
 	[nameToLabel setObject: aLabel forKey: lowercase(aName)];
 
-	[mast setLabel: aLabel forView: cont];
+	[mast setLabel: aLabel forViewController: cont];
 	
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerChangedLabelNotification
@@ -757,6 +707,10 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	ASSIGN(title, aTitle);
 }
+- (NSString * (*)(NSString *))lowercasingFunction
+{
+	return lowercase;
+}
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
 {
 	lowercase = aFunction;
@@ -764,14 +718,14 @@ static NSString *TypeOfColor = @"TypeOfColor";
 - (void)bringNameToFront: (NSString *)aName
 {
 	id <MasterController> master;
-	id <ContentControllerQueryView> view;
+	id <ContentControllerQueryController> view;
 
 	master = [nameToMasterController objectForKey: lowercase(aName)];
 	view = [nameToBoth objectForKey: lowercase(aName)];
 	
 	if (master) {
 		[master bringToFront];
-		[master selectView: view];
+		[master selectViewController: view];
 	}
 }
 @end
@@ -781,5 +735,9 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [NSColor colorFromEncodedData: [_PREFS_ preferenceForKey:
 	  aKey]];
+}
+- (void)viewSelected: (NSNotification *)aNotification
+{
+	lastSelected = [[aNotification userInfo] objectForKey: @"View"];
 }
 @end

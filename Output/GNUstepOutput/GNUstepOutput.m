@@ -449,7 +449,14 @@ PreferencesController *_PREFS_ = nil;
 	
 	while ((object = [iter nextObject]))
 	{
-		// FIXME [[[object contentController] window] close];
+		id masters;
+		id object2;
+
+		masters = [[object contentController] masterControllers];
+		while ((object2 = [iter nextObject]))
+		{
+			[[object2 window] close];
+		}
 	}
 }
 - (void)doApplicationTerminate: (id)sender

@@ -28,7 +28,7 @@
 @interface InputController : NSObject <TypingController>
 	{
 		id <ContentController> content;
-		id <ContentControllerQueryView> view;
+		id <ContentControllerQueryController> view;
 		id <MasterController> lastMaster;
 		ConnectionController *controller;
 		unsigned historyIndex;
@@ -39,7 +39,7 @@
 		NSMutableArray *tabCompletion;
 		unsigned tabCompletionIndex;
 	}
-- initWithView: (id <ContentControllerQueryView>)aViewController
+- initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController;
 
 - (void)commandTyped: (NSString *)aCommand;

@@ -262,7 +262,7 @@
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([aChannel string]);
-	id view = [content controllerForName: lowChan];
+	id view = [content viewControllerForName: lowChan];
 
 	if (GNUstepOutputCompare([aPerson string], [connection nick]))
 	{
@@ -351,7 +351,8 @@
 						user = [chan userWithName: 
 						  [[paramList objectAtIndex: argindex] string]];
 						[user setOperator: add];
-						[[content controllerForName: [anObject string]] 
+						[(id <ContentControllerChannelController>)
+						 [content viewControllerForName: [anObject string]] 
 						   refreshFromChannelSource];
 						argindex++;
 					}
@@ -363,7 +364,8 @@
 						user = [chan userWithName: 
 						  [[paramList objectAtIndex: argindex] string]];
 						[user setVoice: add];
-						[[content controllerForName: [anObject string]]
+						[(id <ContentControllerChannelController>)
+						 [content viewControllerForName: [anObject string]] 
 						   refreshFromChannelSource];
 						argindex++;
 					}
@@ -448,16 +450,17 @@
 		[[nameToChannelData objectForKey: 
 		  GNUstepOutputLowercase(object)] userRenamed: [oldName string] 
 		  to: [newName string]];
-		[[content controllerForName: object] refreshFromChannelSource];
+		[(id <ContentControllerChannelController>)
+		  [content viewControllerForName: object] refreshFromChannelSource];
 	}
 	
 	[content putMessage: BuildAttributedFormat(
 	  _l(@"%@ is now known as %@"), oldName, newName)
 	  in: array];
 	  
-	if ([content controllerForName: [oldName string]])
+	if ([content viewControllerForName: [oldName string]])
 	{
-		[content renameControllerWithName: [oldName string] to: [newName string]];
+		[content renameViewControllerWithName: [oldName string] to: [newName string]];
 		[content setLabel: S2AS([newName string]) 
 		  forName: [newName string]];
 	}
@@ -478,19 +481,21 @@
 	{
 		id x;
 
-		[content addControllerOfType: ContentControllerChannelType withName: name
+		[content addViewControllerOfType: ContentControllerChannelType withName: name
 		  withLabel: channel inMasterController: [content primaryMasterController]];
 		[content bringNameToFront: name];
 		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
 		  initWithIdentifier: lowName]) forKey: lowName];
 				
-		[[content controllerForName: lowName] attachChannelSource: x];
+		[(id <ContentControllerChannelController>)
+		 [content viewControllerForName: lowName] attachChannelSource: x];
 	}
 	else
 	{
 		[[nameToChannelData objectForKey: lowName] addUser: 
 		  [[array objectAtIndex: 0] string]];
-		[[content controllerForName: lowName] refreshFromChannelSource];
+		[(id <ContentControllerChannelController>)
+		  [content viewControllerForName: lowName] refreshFromChannelSource];
 	}
 	
 	[content putMessage: BuildAttributedFormat(_l(@"%@ (%@) has joined %@"),
@@ -506,7 +511,7 @@
 {
 	id name = [IRCUserComponents(parter) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([channel string]);
-	id view = [content controllerForName: lowChan];
+	id view = [content viewControllerForName: lowChan];
 
 	if (GNUstepOutputCompare([name string], [connection nick]))
 	{
@@ -542,7 +547,8 @@
 		id low = GNUstepOutputLowercase(object);
 		[[nameToChannelData objectForKey: low] 
 		  removeUser: [name string]];
-		[[content controllerForName: low] refreshFromChannelSource];
+		[(id <ContentControllerChannelController>)
+		  [content viewControllerForName: low] refreshFromChannelSource];
 	}
 	
 	[content putMessage:
@@ -589,7 +595,7 @@
 	
 	if (GNUstepOutputCompare([to string], [connection nick]))
 	{
-		if (![content controllerForName: where = whos])
+		if (![content viewControllerForName: where = whos])
 		{
 			where = nil;
 			string = privstring;
@@ -597,7 +603,7 @@
 	}
 	else
 	{
-		if (![content controllerForName: where = [to string]])
+		if (![content viewControllerForName: where = [to string]])
 		{
 			where = nil;
 			string = privstring;
@@ -630,7 +636,7 @@
 	
 	if (GNUstepOutputCompare([to string], [connection nick]))
 	{
-		if (![content controllerForName: where = whos])
+		if (![content viewControllerForName: where = whos])
 		{
 			where = nil;
 			prefix = @"***";
@@ -638,7 +644,7 @@
 	}
 	else
 	{
-		if (![content controllerForName: where = [to string]])
+		if (![content viewControllerForName: where = [to string]])
 		{
 			where = nil;
 			prefix = @"***";

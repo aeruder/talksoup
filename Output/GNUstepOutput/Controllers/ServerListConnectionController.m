@@ -77,7 +77,6 @@
 		
 		[[[[self contentController] primaryMasterController] window] 
 		  setFrame: a display: YES];
-		// FIXME [[[self contentController] window] setFrame: a display: YES];
 	}
 	
 	if ((tmp = [aInfo objectForKey: ServerListInfoServer]))
@@ -137,9 +136,9 @@
 	if ([tmp = [newInfo objectForKey: ServerListInfoCommands] length] > 0)
 	{
 		id views = [[content primaryMasterController]
-		  viewListForContentController: content];
+		  viewControllerListForContentController: content];
 		id view = ([views count]) ? [view objectAtIndex: 0] : nil;
-		id input = [content typingControllerForView: view];
+		id input = [content typingControllerForViewController: view];
 
 		if (input) 
 		{

@@ -46,6 +46,7 @@
 		Class queryClass;
 		ConnectionController *connectionController;
 		NSFont *chatFont;
+		id <ContentControllerQueryController>lastSelected;
 	}
 + (Class)masterClass;
 + (Class)queryClass;
@@ -53,26 +54,24 @@
 
 - initWithMasterController: (id <MasterController>) aMaster;
 
-- (id <TypingController>)typingControllerForView: 
-   (id <ContentControllerQueryView>)aView;
+- (id <TypingController>)typingControllerForViewController: 
+   (id <ContentControllerQueryController>)aController;
 
 - (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;
 
+- (NSString *)nameForViewController: (id <ContentControllerQueryController>)aController;
 - (id <MasterController>)masterControllerForName: (NSString *)aName;
-- (NSView *)viewForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;
-- (id)controllerForName: (NSString *)aName;
+- (id <ContentControllerQueryController>)viewControllerForName: (NSString *)aName;
 - (NSString *)typeForName: (NSString *)aName;
 
 - (NSArray *)allChatViews;
 - (NSArray *)allControllers;
-- (NSArray *)allViews;
 - (NSArray *)allNames;
 - (NSArray *)allChatViewsOfType: (NSString *)aType;
-- (NSArray *)allControllersOfType: (NSString *)aType;
-- (NSArray *)allViewsOfType: (NSString *)aType;
+- (NSArray *)allViewControllersOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
 - (void)putMessage: (NSAttributedString *)aMessage in: (id)aName;
@@ -87,12 +86,13 @@
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
-- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+- (id <ContentControllerQueryController>)addViewControllerOfType: (NSString *)aType 
    withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster;
-- (void)removeControllerWithName: (NSString *)aName;
-- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName;
+- (void)removeViewControllerWithName: (NSString *)aName;
+- (void)renameViewControllerWithName: (NSString *)aName 
+   to: (NSString *)newName;
 
 - (NSString *)presentationalNameForName: (NSString *)aName;
 - (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName;
@@ -106,6 +106,7 @@
 - (NSString *)title;
 - (void)setTitle: (NSString *)aTitle;
 
+- (NSString * (*)(NSString *))lowercasingFunction;
 - (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 
 - (void)bringNameToFront: (NSString *)aName;

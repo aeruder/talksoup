@@ -30,14 +30,14 @@
 
 @interface TabMasterController : NSObject < MasterController >
 	{
-		NSMutableArray *indexToView;
-		NSMapTable *viewToIndex;
-		NSMapTable *viewToTab;
-		NSMapTable *viewToContent;
-		NSMapTable *tabToView;
+		NSMutableArray *indexToViewController;
+		NSMapTable *viewControllerToIndex;
+		NSMapTable *viewControllerToTab;
+		NSMapTable *viewControllerToContent;
+		NSMapTable *tabToViewController;
 		NSMutableArray *contentControllers;
 		
-		id <ContentControllerQueryView> selected;
+		id <ContentControllerQueryController> selectedController;
 		id <TypingController> typingController;
 		NSTextField *typeView;
 		NSTextField *nickView;
@@ -47,31 +47,36 @@
 		unsigned numItems;
 	}		
 		
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
    forContentController: (id <ContentController>)aContentController;
-- (void)addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
-   atIndex: (unsigned)aIndex forContentController: (id <ContentController>)aContentController;
+- (void)addViewController: (id <ContentControllerQueryController>)aController
+   withLabel: (NSAttributedString *)aLabel
+   atIndex: (unsigned)aIndex 
+   forContentController: (id <ContentController>)aContentController;
 
-- (void)selectView: (id <ContentControllerQueryView>)aView;
-- (void)selectViewAtIndex: (unsigned)aIndex;
+- (void)selectViewController: (id <ContentControllerQueryController>)aController;
+- (void)selectViewControllerAtIndex: (unsigned)aIndex;
 
-- (void)removeView: (id <ContentControllerQueryView>)aView;
-- (void)removeViewAtIndex: (unsigned)aIndex;
+- (void)removeViewController: (id <ContentControllerQueryController>)aController;
+- (void)removeViewControllerAtIndex: (unsigned)aIndex;
 
-- (void)moveView: (id <ContentControllerQueryView>)aView toIndex: (unsigned)aIndex;
-- (void)moveViewAtIndex: (unsigned)aIndex toIndex: (unsigned)aNewIndex;
+- (void)moveViewController: (id <ContentControllerQueryController>)aController 
+   toIndex: (unsigned)aIndex;
+- (void)moveViewControllerAtIndex: (unsigned)aIndex 
+   toIndex: (unsigned)aNewIndex;
 
-- (unsigned)indexForView: (id <ContentControllerQueryView>)aView;
+- (unsigned)indexForViewController: (id <ContentControllerQueryController>)aController;
 - (unsigned)count;
 
-- (NSAttributedString *)labelForView: (id <ContentControllerQueryView>)aView;
+- (NSAttributedString *)labelForViewController: (id <ContentControllerQueryController>)aController;
 - (void)setLabel: (NSAttributedString *)aLabel 
-    forView: (id <ContentControllerQueryView>)aView;
+    forViewController: (id <ContentControllerQueryController>)aController;
 	 
 - (NSArray *)containedContentControllers;
-- (NSArray *)viewListForContentController: 
+- (NSArray *)viewControllerListForContentController: 
     (id <ContentController>)aContentController;
-- (NSArray *)allViews;
+- (NSArray *)allViewControllers;
 
 - (NSTextField *)typeView;
 - (NSTextField *)nickView;

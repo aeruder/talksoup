@@ -26,7 +26,8 @@
 #import <Foundation/NSObject.h>
 #import "Controllers/ContentControllers/ContentController.h"
 
-@interface StandardChannelController : NSObject < ContentControllerChannelView >
+@interface StandardChannelController : NSObject 
+   < ContentControllerChannelController >
 	{
 		NSTableView *tableView;
 		ScrollingTextView *chatView;

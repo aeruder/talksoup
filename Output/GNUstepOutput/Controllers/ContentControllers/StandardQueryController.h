@@ -25,7 +25,7 @@
 
 @class NSView, ScrollingTextView;
  
-@interface StandardQueryController : NSObject < ContentControllerQueryView >
+@interface StandardQueryController : NSObject < ContentControllerQueryController >
 	{
 		id window;
 		id chatView;

@@ -20,6 +20,7 @@
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
 
 #import <TalkSoupBundles/TalkSoup.h>
 
@@ -35,8 +36,6 @@
 #import <AppKit/NSMatrix.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSBox.h>
-
-#import "Controllers/Preferences/ColorPreferencesController.h"
 
 NSString *PreferencesChangedNotification = @"PreferencesChangedNotification";
 NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNotification";
