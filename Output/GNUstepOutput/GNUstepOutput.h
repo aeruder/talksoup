@@ -81,6 +81,8 @@ extern GNUstepOutput *_GS_;
 - addServerList: (ServerListController *)aServer;
 - removeServerList: (ServerListController *)aServer;
 
+- setPreferencesController: (PreferencesController *)aPrefs;
+
 - (TopicInspectorController *)topicInspectorController;
 - (void)run;
 @end

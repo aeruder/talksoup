@@ -74,8 +74,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	textColor = RETAIN([NSColor colorFromEncodedData: 
 	  [[_TS_ pluginForOutput] defaultsObjectForKey: GNUstepOutputTextColor]]);
 	
-	chatFont = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
-	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	chatFont = 
+	  RETAIN([NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]]);
 	 
 	connection = aConnection;
 	

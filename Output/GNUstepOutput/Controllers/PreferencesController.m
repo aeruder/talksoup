@@ -48,6 +48,8 @@
 	[userName setNextKeyView: nick];
 	[window makeKeyAndOrderFront: nil];
 	[window makeFirstResponder: nick];
+	[window setDelegate: self];
+	[_GS_ setPreferencesController: self];
 }
 - (void)dealloc
 {
@@ -59,6 +61,7 @@
 	[password setDelegate: nil];
 	[userName setTarget: nil];
 	[userName setDelegate: nil];
+	[window setDelegate: nil];
 	RELEASE(personalBracketColor);
 	RELEASE(backgroundColor);
 	RELEASE(otherBracketColor);
@@ -117,8 +120,7 @@
 	
 	[fontField setStringValue: [NSString stringWithFormat: @"%@ %@",
 	  [_GS_ defaultsObjectForKey: GNUstepOutputFontName],
-	  [_GS_ defaultsObjectForKey: GNUstepOutputFontSize],
-	  nil]];
+	  [_GS_ defaultsObjectForKey: GNUstepOutputFontSize]]];
 }
 - nickSet: (NSTextField *)sender
 {
@@ -310,11 +312,14 @@
 {
 	id font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
 	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	id panel;
+	
+	panel = [NSFontPanel sharedFontPanel];
 	
 	[[NSFontManager sharedFontManager] setSelectedFont: font
 	  isMultiple: NO];
 	  
-	[[NSFontPanel sharedFontPanel] orderFront: self];
+	[panel orderFront: self];
 	
 	return self;
 }
@@ -351,7 +356,10 @@
 	id object;
 	NSFont *font;
 
-	font = [sender convertFont: [sender selectedFont]];
+	font = [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]];
+	  
+	font = [sender convertFont: font];
 	
 	[_GS_ setDefaultsObject: [font fontName] forKey: GNUstepOutputFontName];
 	[_GS_ setDefaultsObject: [NSString stringWithFormat: @"%d", (int)[font pointSize]]
@@ -363,7 +371,19 @@
 	{
 		[[object contentController] setChatFont: font];
 	}
+
+	[fontField setStringValue: [NSString stringWithFormat: @"%@ %@",
+	  [_GS_ defaultsObjectForKey: GNUstepOutputFontName],
+	  [_GS_ defaultsObjectForKey: GNUstepOutputFontSize]]];
 }
 @end
 
+@interface PreferencesController (WindowDelegate)
+@end
 
+@implementation PreferencesController (WindowDelegate)
+- (void)windowWillClose: (NSNotification *)aNotification
+{
+	[_GS_ setPreferencesController: nil];
+}
+@end

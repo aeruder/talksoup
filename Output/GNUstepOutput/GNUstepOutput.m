@@ -250,6 +250,15 @@ GNUstepOutput *_GS_ = nil;
 		}
 	}
 	return self;
+}
+- setPreferencesController: (PreferencesController *)aPrefs
+{
+	if (prefs == aPrefs) return self;
+
+	RELEASE(prefs);
+	prefs = RETAIN(aPrefs);
+	
+	return self;
 }		
 - (NSArray *)connectionControllers
 {
@@ -333,6 +342,8 @@ GNUstepOutput *_GS_ = nil;
 	
 	if ([selS hasSuffix: @"nConnection:withNickname:sender:"]) return YES;
 	
+	if ([prefs respondsToSelector: aSel]) return YES;
+	
 	return [super respondsToSelector: aSel];
 }
 - (NSMethodSignature *)methodSignatureForSelector: (SEL)aSel
@@ -340,6 +351,11 @@ GNUstepOutput *_GS_ = nil;
 	id x;
 	
 	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
+	{
+		return x;
+	}
+	
+	if ((x = [prefs methodSignatureForSelector: aSel]))
 	{
 		return x;
 	}
@@ -369,6 +385,10 @@ GNUstepOutput *_GS_ = nil;
 		{
 			[aInvoc invokeWithTarget: object];
 		}
+	}
+	else if ([prefs respondsToSelector: sel])
+	{
+		[aInvoc invokeWithTarget: prefs];
 	}
 }
 - (TopicInspectorController *)topicInspectorController
@@ -578,10 +598,6 @@ GNUstepOutput *_GS_ = nil;
 @implementation GNUstepOutput (Delegate)
 - (void)windowWillClose: (NSNotification *)aNotification
 {
-	if ([aNotification object] == [prefs window])
-	{
-		DESTROY(prefs);
-	}
 	if ([aNotification object] == [topic window])
 	{
 		[[topic topicText] setKeyTarget: nil];
