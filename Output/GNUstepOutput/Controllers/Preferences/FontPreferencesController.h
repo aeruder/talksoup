@@ -24,6 +24,7 @@
 
 @class NSString, NSImage;
 @class NSView, NSImage;
+@class PreferencesController;
 
 @interface FontPreferencesController : NSObject 
 	{
@@ -33,7 +34,7 @@
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
-- (void)activate;
+- (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
 @end
 

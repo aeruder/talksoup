@@ -18,12 +18,8 @@
  ***************************************************************************/
 
 #import "Controllers/Preferences/PreferencesController.h"
-#import "Controllers/ConnectionController.h"
-#import "Controllers/ContentControllers/ContentController.h"
-#import "Controllers/QueryController.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
-#import "Views/ScrollingTextView.h"
 
 #import <TalkSoupBundles/TalkSoup.h>
 
@@ -33,15 +29,9 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSArray.h>
 #import <AppKit/NSScrollView.h>
-#import <AppKit/NSTextField.h>
-#import <AppKit/NSColorWell.h>
 #import <AppKit/NSButton.h>
-#import <AppKit/NSTextView.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSView.h>
-#import <AppKit/NSFontPanel.h>
-#import <AppKit/NSFontManager.h>
-#import <AppKit/NSFont.h>
 #import <AppKit/NSMatrix.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSBox.h>
@@ -221,14 +211,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 - (NSWindow *)window 
 {
 	return window;
-}
-- (BOOL)setCurrentModule: aPrefsModule
-{
-	// FIXME
-}
-- (void)refreshCurrentPanel
-{
-	// FIXME
 }
 /*	
 	
@@ -580,7 +562,6 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	id module;
 	id object;
 	NSView *view;
-	NSArray *subviews;
 	NSEnumerator *iter;
 	NSButtonCell *aCell;
 
@@ -616,7 +597,7 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	[preferencesView addSubview: view];
 	currentPrefs = module;
 	[labelBox setTitle: [module preferencesName]];
-	[module activate];
+	[module activate: self];
 }
 - (void)registerPreferencesModule: aPreferencesModule
 {

@@ -72,22 +72,22 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
-	  name: PreferencesChangedNotification 
+	  name: DefaultsChangedNotification 
 	  object: GNUstepOutputPersonalBracketColor];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
-	  name: PreferencesChangedNotification 
+	  name: DefaultsChangedNotification 
 	  object: GNUstepOutputTextColor];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
-	  name: PreferencesChangedNotification 
+	  name: DefaultsChangedNotification 
 	  object: GNUstepOutputBackgroundColor];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(preferenceChanged:)
-	  name: PreferencesChangedNotification 
+	  name: DefaultsChangedNotification 
 	  object: GNUstepOutputOtherBracketColor];
 
 	[[NSNotificationCenter defaultCenter]
@@ -142,7 +142,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	[_PREFS_ setPreference: newValue forKey: preference];
 
 	[[NSNotificationCenter defaultCenter]
-	 postNotificationName: PreferencesChangedNotification
+	 postNotificationName: DefaultsChangedNotification
 	 object: preference 
 	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
 	  _GS_, @"Bundle",
@@ -163,7 +163,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 {
 	return preferencesView;
 }
-- (void)activate
+- (void)activate: (PreferencesController *)aPrefs
 {
 	activated = YES;
 	[self refreshFromPreferences];

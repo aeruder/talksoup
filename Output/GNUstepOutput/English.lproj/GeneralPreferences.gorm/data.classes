@@ -136,12 +136,14 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "setText:"
 	);
 	Super = NSObject;
     };
     GeneralPreferencesController = {
 	Actions = (
+	    "setText:"
 	);
 	Outlets = (
 	    preferencesView,

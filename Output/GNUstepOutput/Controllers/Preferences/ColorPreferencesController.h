@@ -27,7 +27,7 @@ extern NSString *GNUstepOutputBackgroundColor;
 
 #import <Foundation/NSObject.h>
 
-@class NSString, NSImage;
+@class NSString, NSImage, PreferencesController;
 @class NSColorWell, NSView, NSImage;
 
 @interface ColorPreferencesController : NSObject 
@@ -44,7 +44,7 @@ extern NSString *GNUstepOutputBackgroundColor;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
-- (void)activate;
+- (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
 @end
 

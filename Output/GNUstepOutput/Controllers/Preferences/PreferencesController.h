@@ -33,15 +33,6 @@ extern NSString *GNUstepOutputScrollBack;
 @class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
 @class NSDictionary, NSMutableDictionary;
 
-/* object: the preference string 
- *
- * dictionary:
- *   @"Bundle" the bundle object 
- *   @"Old" the old value
- *   @"New" the new value
- *   @"Owner" the owner of the preference change
- */
-extern NSString *PreferencesChangedNotification;
 
 /* object: the preferences module */
 extern NSString *PreferencesModuleAdditionNotification;
@@ -53,7 +44,7 @@ extern NSString *PreferencesModuleRemovalNotification;
 - (NSView *)preferencesView;
 - (NSImage *)preferencesIcon;
 - (NSString *)preferencesName;
-- (void)activate;
+- (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
 @end
 
@@ -74,11 +65,6 @@ extern NSString *PreferencesModuleRemovalNotification;
 - (id)defaultPreferenceForKey: (NSString *)aKey;
 
 - (NSWindow *)window;
-
-- (BOOL)setCurrentModule: aPrefsModule;
-- (void)refreshCurrentPanel;
-
-- (void)refreshAvailablePreferences;
 @end
 
 #endif

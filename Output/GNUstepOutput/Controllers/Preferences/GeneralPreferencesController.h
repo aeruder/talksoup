@@ -24,16 +24,23 @@
 
 @class NSString, NSImage;
 @class NSView, NSImage;
+@class NSTextField, PreferencesController;
 
 @interface GeneralPreferencesController : NSObject 
 	{
 		NSView *preferencesView;
 		NSImage *preferencesIcon;
+		NSTextField *userView;
+		NSTextField *nameView;
+		NSTextField *passwordView;
+		NSTextField *nickView;
+		BOOL activated;
 	}
+- (void)setText: (NSTextField *)aField;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
-- (void)activate;
+- (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
 @end
 

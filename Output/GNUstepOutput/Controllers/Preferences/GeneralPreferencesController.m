@@ -19,12 +19,20 @@
 #import "Controllers/Preferences/PreferencesController.h"
 #import "GNUstepOutput.h"
 
+#import <TalkSoupBundles/TalkSoup.h>
+
 #import <AppKit/NSImage.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
+#import <AppKit/NSTextField.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+
+@interface GeneralPreferencesController (PrivateMethods)
+- (void)preferenceChanged: (NSNotification *)aNotification;
+- (void)refreshFromPreferences;
+@end
 
 @implementation GeneralPreferencesController
 - init
@@ -55,6 +63,26 @@
 		[self dealloc];
 		return nil;
 	}
+	
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: DefaultsChangedNotification 
+	  object: IRCDefaultsNick];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: DefaultsChangedNotification 
+	  object: IRCDefaultsRealName];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: DefaultsChangedNotification 
+	  object: IRCDefaultsUserName];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: DefaultsChangedNotification 
+	  object: IRCDefaultsPassword];
 
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: PreferencesModuleAdditionNotification 
@@ -72,9 +100,50 @@
 }
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(preferencesView);
 	RELEASE(preferencesIcon);
 	[super dealloc];
+}
+- (void)setText: (NSTextField *)aField
+{
+	NSString *preference, *newValue, *oldValue;
+
+	if (aField == userView)
+	{
+		preference = IRCDefaultsUserName;
+	} 
+	else if (aField == nameView) 
+	{
+		preference = IRCDefaultsRealName;
+	}
+	else if (aField == passwordView)
+	{
+		preference = IRCDefaultsPassword;
+	}
+	else if (aField == nickView)
+	{
+		preference = IRCDefaultsNick;
+	}
+	else
+	{
+		return;
+	}
+
+	oldValue = [_PREFS_ preferenceForKey: preference];
+	newValue = [aField stringValue];
+	
+	[_PREFS_ setPreference: newValue forKey: preference];
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: DefaultsChangedNotification
+	 object: preference 
+	 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	  _TS_, @"Bundle",
+	  newValue, @"New",
+	  self, @"Owner",
+	  oldValue, @"Old",
+	  nil]];
 }
 - (NSString *)preferencesName
 {
@@ -86,17 +155,49 @@
 }
 - (NSView *)preferencesView
 {
-	NSLog(@"preferencesView: %@", preferencesView);
 	return preferencesView;
 }
-- (void)activate
+- (void)activate: (PreferencesController *)aPrefs
 {
-	NSLog(@"Activated!");
-	// FIXME
+	activated = YES;
+	[self refreshFromPreferences];
 }
 - (void)deactivate
 {
+	activated = NO;
 	NSLog(@"Deactivated!");
 	// FIXME
+}
+@end
+
+@implementation GeneralPreferencesController (PrivateMethods)
+- (void)preferenceChanged: (NSNotification *)aNotification
+{
+	id userInfo;
+	if (!activated) return;
+
+	userInfo = [aNotification userInfo];
+
+	if ([userInfo objectForKey: @"Owner"] == self) return;
+
+	[self refreshFromPreferences];
+}
+- (void)refreshFromPreferences
+{
+	id nick, user, pass, rn;
+
+	nick = [_PREFS_ preferenceForKey:
+	  IRCDefaultsNick];
+	user = [_PREFS_ preferenceForKey:
+	  IRCDefaultsUserName];
+	pass = [_PREFS_ preferenceForKey:
+	  IRCDefaultsPassword];
+	rn = [_PREFS_ preferenceForKey:
+	  IRCDefaultsRealName];
+
+	[nickView setStringValue: nick];
+	[userView setStringValue: user];
+	[passwordView setStringValue: pass];
+	[nameView setStringValue: rn];
 }
 @end

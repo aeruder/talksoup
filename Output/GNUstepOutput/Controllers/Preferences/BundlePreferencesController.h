@@ -22,6 +22,7 @@
 
 #import <Foundation/NSObject.h>
 
+@class PreferencesController;
 @class NSString, NSImage;
 @class NSView, NSImage;
 
@@ -33,7 +34,7 @@
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;
 - (NSView *)preferencesView;
-- (void)activate;
+- (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
 @end
 

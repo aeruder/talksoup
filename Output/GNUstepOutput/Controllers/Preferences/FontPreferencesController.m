@@ -89,7 +89,7 @@
 	NSLog(@"preferencesView: %@", preferencesView);
 	return preferencesView;
 }
-- (void)activate
+- (void)activate: (PreferencesController *)aPrefs
 {
 	NSLog(@"Activated!");
 	// FIXME
