@@ -53,6 +53,26 @@ static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 	return YES;
 }
 
+static inline BOOL scan_one_char_from_set(NSScanner *beg, NSCharacterSet *aSet, NSString **y)
+{
+	unichar x;
+	int pos;
+	
+	if ([beg isAtEnd]) return NO;
+	
+	pos = [beg scanLocation];
+	
+	x = [[beg string] characterAtIndex: pos];
+	
+	if (![aSet characterIsMember: x]) return NO;
+
+	if (y) *y = [NSString stringWithCharacters: &x length: 1];
+	
+	[beg setScanLocation: pos + 1];
+	
+	return YES;
+}
+
 static NSCharacterSet *comma = nil;
 static NSCharacterSet *control = nil;
 static NSCharacterSet *color_control = nil;
@@ -106,7 +126,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 	NSMutableAttributedString *string = 
 	  AUTORELEASE([NSMutableAttributedString new]);
 	NSMutableDictionary *dict = AUTORELEASE([NSMutableDictionary new]);
-
+	
 	if (!str)
 	{
 		return nil;
@@ -132,7 +152,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		
 		if ([scan isAtEnd] == YES) break;
 		
-		if ([scan scanCharactersFromSet: bold_control intoString: 0])
+		if (scan_one_char_from_set(scan, bold_control, 0))
 		{
 			if (![dict objectForKey: IRCBold])
 			{
@@ -144,7 +164,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 				[dict removeObjectForKey: IRCBold];
 			}
 		}
-		else if ([scan scanCharactersFromSet: underline_control intoString: 0])
+		else if (scan_one_char_from_set(scan, underline_control, 0))
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
@@ -156,20 +176,20 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 				[dict removeObjectForKey: IRCUnderline];
 			}
 		}
-		else if ([scan scanCharactersFromSet: clear_control intoString: 0])
+		else if (scan_one_char_from_set(scan, clear_control, 0))
 		{
 			[dict removeAllObjects];
 		}
-		else if ([scan scanCharactersFromSet: color_control intoString: 0])
+		else if (scan_one_char_from_set(scan, color_control, 0))
 		{
 			if (scan_two_char_int(scan, &x))
 			{
 				x = x % 16;
 				[dict setObject: colors[x] forKey: 
 				  IRCColor];
-	
-				if ([scan scanCharactersFromSet: comma intoString: 0])
+				if (scan_one_char_from_set(scan, comma, 0))
 				{
+					NSLog(@"Found a background with foreground...");
 					if (scan_two_char_int(scan, &x))
 					{
 						x = x % 16;
@@ -178,7 +198,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 					}
 				}	
 			}
-			else if ([scan scanCharactersFromSet: comma intoString: 0])
+			else if (scan_one_char_from_set(scan, comma, 0))
 			{
 				if (scan_two_char_int(scan, &x))
 				{
@@ -192,11 +212,11 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 				[dict removeObjectForKey: IRCBackgroundColor];
 				[dict removeObjectForKey: IRCColor];
 			}
+			NSLog(@"Current dict: %@", dict);
 		}	
 	}
 	
-	return AUTORELEASE([[NSAttributedString alloc] initWithAttributedString:
-	  string]);
+	return string;
 }		
 
 static inline NSString *lookup_color(NSString *aString)
@@ -278,8 +298,8 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 			[aString appendString: @"\003"];
 			if ([nowB length] > 0)
 			{
-				[aString appendString: [NSString stringWithFormat: @"%@,%@",
-				  lookup_color(nowF), lookup_color(nowB)]];
+				[aString appendString: [NSString stringWithFormat: @",%@",
+				  lookup_color(nowB)]];
 			}
 			else if ([nowF length] > 0)
 			{
@@ -297,6 +317,7 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		so = b;
 	}
 
+	NSLog(@"aString: %@", aString);
 	return AUTORELEASE(aString);
 }
 

@@ -101,6 +101,26 @@ static void initialize_stuff(void)
 	RELEASE(apr);
 }
 
+static inline BOOL scan_one_char_from_set(NSScanner *beg, NSCharacterSet *aSet, NSString **y)
+{
+	unichar x;
+	int pos;
+	
+	if ([beg isAtEnd]) return NO;
+	
+	pos = [beg scanLocation];
+	
+	x = [[beg string] characterAtIndex: pos];
+	
+	if (![aSet characterIsMember: x]) return NO;
+
+	if (y) *y = [NSString stringWithCharacters: &x length: 1];
+	
+	[beg setScanLocation: pos + 1];
+	
+	return YES;
+}
+
 static inline NSAttributedString *as2cas(NSAttributedString *astr)
 {
 	NSScanner *scan;
@@ -153,13 +173,13 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 			break;
 		}
 		
-		if ([scan scanCharactersFromSet: control intoString: 0])
+		if (scan_one_char_from_set(scan, control, 0))
 		{
 			[string appendAttributedString: 
 			  AUTORELEASE([[NSAttributedString alloc] initWithString: @"%"
 			  attributes: [NSDictionary dictionaryWithDictionary: dict]])];
 		}
-		else if ([scan scanCharactersFromSet: bold_control intoString: 0])
+		else if (scan_one_char_from_set(scan, bold_control, 0))
 		{
 			if (![dict objectForKey: IRCBold])
 			{
@@ -171,7 +191,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 				[dict removeObjectForKey: IRCBold];
 			}
 		}
-		else if ([scan scanCharactersFromSet: underline_control intoString: 0])
+		else if (scan_one_char_from_set(scan, underline_control, 0))
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
@@ -183,11 +203,11 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 				[dict removeObjectForKey: IRCUnderline];
 			}
 		}
-		else if ([scan scanCharactersFromSet: clear_control intoString: 0])
+		else if (scan_one_char_from_set(scan, clear_control, 0))
 		{
 			[dict removeAllObjects];
 		}
-		else if ([scan scanCharactersFromSet: color_control intoString: 0])
+		else if (scan_one_char_from_set(scan, color_control, 0))
 		{
 			if (scan_two_char_int(scan, &x))
 			{
@@ -195,7 +215,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 				[dict setObject: colors[x] forKey: 
 				  IRCColor];
 	
-				if ([scan scanCharactersFromSet: comma intoString: 0])
+				if (scan_one_char_from_set(scan, comma, 0))
 				{
 					if (scan_two_char_int(scan, &x))
 					{
@@ -205,7 +225,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 					}
 				}	
 			}
-			else if ([scan scanCharactersFromSet: comma intoString: 0])
+			else if (scan_one_char_from_set(scan, comma, 0))
 			{
 				if (scan_two_char_int(scan, &x))
 				{
