@@ -65,6 +65,8 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 		NSString *password;
 
 		NSString *errorString;
+		
+		NSStringEncoding defaultEncoding;
 	}
 - initWithNickname: (NSString *)nickname
    withUserName: (NSString *)user withRealName: (NSString *)realName
@@ -85,6 +87,9 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 - (NSString *)errorString;
 
 - (BOOL)connected;
+
+- setEncoding: (NSStringEncoding)encoding;
+- (NSStringEncoding)encoding;
 
 // IRC Operations
 - changeNick: (NSString *)aNick;

@@ -266,6 +266,10 @@
 - (int)port;
 
 - (NSHost *)host;
+
+- setEncoding: (NSStringEncoding)encoding;
+
+- (NSStringEncoding)encoding;
 @end
 
 @protocol TalkSoupInFilterProtocol < TalkSoupPluginProtocol >

@@ -66,6 +66,7 @@ extern NSString *IRCReverseValue;
 #define TALKSOUP_H
 
 #include <Foundation/NSObject.h>
+#include <Foundation/NSMapTable.h>
 
 #include "TalkSoupProtocols.h"
 #include "TalkSoupMisc.h"
@@ -94,10 +95,13 @@ extern id _TSDummy_;
 		NSMutableDictionary *outObjects;
 				
 		NSMutableDictionary *commandList;
+		
+		NSMapTable *encodings;
 	}
 + (TalkSoup *)sharedInstance;
 
 - (void)refreshPluginList;
+- (void)buildEncodingsList;
 
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand;
 - addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc;
