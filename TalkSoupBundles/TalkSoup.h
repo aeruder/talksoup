@@ -58,7 +58,6 @@ extern NSString *IRCColorCustom;
 extern NSString *IRCBold;
 extern NSString *IRCUnderline;
 
-
 #ifndef TALKSOUP_H
 #define TALKSOUP_H
 
