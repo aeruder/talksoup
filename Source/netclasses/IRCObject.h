@@ -92,17 +92,11 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 
 - joinChannel: (NSString *)channel withPassword: (NSString *)aPassword;
 
-- sendCustomCTCP: (NSString *)aCTCP withArgument: (NSString *)anArgument
-    to: (NSString *)aPerson;
-	
-- sendVersionReplyTo: (NSString *)aPerson name:(NSString *)clientName
-      version: (NSString *)clientVersion environment: (NSString *)clientEnv;
+- sendCTCPReply: (NSString *)aCTCP withArgument: (NSString *)args
+   to: (NSString *)aPerson;
 
-- sendPingReplyTo: (NSString *)aPerson withArgument: (NSString *)argument;
-
-- sendClientInfo: (NSString *)clientInfo to: (NSString *)aPerson;
-
-- sendUserInfo: (NSString *)userInfo to: (NSString *)aPerson;
+- sendCTCPRequest: (NSString *)aCTCP withArgument: (NSString *)args
+   to: (NSString *)aPerson;
 
 - sendMessage: (NSString *)message to: (NSString *)receiver;
 
@@ -179,26 +173,10 @@ NSArray *SeparateIRCNickAndHost(NSString *prefix);
 
 - couldNotRegister: (NSString *)reason;
 
-- versionReplyReceived: (NSString *)versionInfo from: (NSString *)aPerson;
-
-- versionRequestReceived: (NSString *)query from: (NSString *)aPerson;
-
-- pingReplyReceived: (NSString *)argument from: (NSString *)aPerson;
-
-- pingRequestReceived: (NSString *)argument from: (NSString *)aPerson;
-
-- clientInfoReplyReceived: (NSString *)clientInfo from: (NSString *)aPerson;
-
-- clientInfoRequestReceived: (NSString *)query from: (NSString *)aPerson;
-
-- userInfoReplyReceived: (NSString *)userInfo from: (NSString *)aPerson;
-
-- userInfoRequestReceived: (NSString *)query from: (NSString *)aPerson;
-
-- customCTCPRequestReceived: (NSString *)aCTCP 
+- CTCPRequestReceived: (NSString *)aCTCP 
    withArgument: (NSString *)argument from: (NSString *)aPerson;
 
-- customCTCPReplyReceived: (NSString *)aCTCP
+- CTCPReplyReceived: (NSString *)aCTCP
    withArgument: (NSString *)argument from: (NSString *)aPerson;
 
 - errorReceived: (NSString *)anError;

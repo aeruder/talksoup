@@ -16,34 +16,48 @@
  ***************************************************************************/
 
 #import <Foundation/NSObject.h>
+#import <Foundation/NSFormatter.h>
 
 @class NSString, NSMutableArray;
 
 @interface ChannelUser : NSObject
 	{
-		NSString *name;
-		int mode;
+		NSString *userName;
+		int userMode;
 	}
+
+- initWithModifiedName: (NSString *)aName;
+
+- (NSString *)userName;
+- setUserName: (NSString *)aName;
+
+- (int)userMode;
+- setUserMode: (int)aMode;
+@end
+
+extern const int ChannelUserOperator;
+extern const int ChannelUserVoice;
+
+@interface ChannelFormatter : NSFormatter
 @end
 
 @interface Channel : NSObject
 	{
-		NSString *name;
+		NSString *identifier;
 		NSMutableArray *userList;
 		NSMutableArray *lowercaseList;
 		NSMutableArray *tempList;
-		NSMutableArray *tempLowercaseList;
 		BOOL resetFlag;
 	}
 - init;
 
-- setName: (NSString *)aName; // Should be the same as the corresponding
-                              // ChannelViewController
-- (NSString *)name;
+- setIdentifier: (NSString *)aName;
+- (NSString *)identifier;
 
 - addUser: (NSString *)aString;
 - (BOOL)containsUser: aString;
 - removeUser: (NSString *)aString;
+- userRenamed: (NSString *)oldName to: (NSString *)newName;
 
 - addServerUserList: (NSString *)aString;
 - endServerUserList;

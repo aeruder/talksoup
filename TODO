@@ -1,5 +1,11 @@
 - Detachable tabs perhaps?
-- Work on making managers for the different views
-  instead of putting all the code in the views
-  directly(MVC style)
-- Fix focusing problems
+- Fix focusing problems (My Problem?)   *DONE*
+- /clear command                        *DONE*
+- Nick completion
+- Preferences
+- Server list
+- Topic View
+- Copy/Paste                            *DONE*
+- Command History
+- Services                              *DONE*
+- Activity Display

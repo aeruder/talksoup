@@ -16,9 +16,11 @@
  ***************************************************************************/
 
 #import "Views/ScrollingTextView.h"
+#import "Misc/Functions.h"
 
 #import <AppKit/NSClipView.h>
 #import <AppKit/NSScrollView.h>
+#import <AppKit/NSTextStorage.h>
 #import <AppKit/NSView.h>
 #import <Foundation/NSGeometry.h>
 
@@ -58,4 +60,21 @@
 	}
 }
 @end
+
+@implementation NSTextView (appendText)
+- appendText: aText
+{
+	if ([aText isKindOf: [NSString class]])
+	{
+		[[self textStorage] appendAttributedString: 
+		  [aText attributedStringFromColorCodedString]];
+	}
+	else if ([aText isKindOf: [NSAttributedString class]])
+	{
+		[[self textStorage] appendAttributedString: aText];
+	}
+	return self;
+}
+@end
+
 

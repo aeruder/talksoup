@@ -16,20 +16,18 @@
  ***************************************************************************/
 
 #import "Windows/ChannelWindow.h"
-#import "Views/ChannelView.h"
+#import "Controllers/TalkController.h"
 
 #import <AppKit/AppKit.h>
 
-static NSFont *standard_font = nil;
+#define SIZE_X 100
+#define SIZE_Y 100
 
 @implementation ChannelWindow
-+ (void)initialize
-{
-	standard_font = [NSFont userFontOfSize: 12.0];
-}
 - init
 {
-	NSView *content = [[NSView alloc] initWithFrame: NSMakeRect(0,0, 108, 108)];
+	NSView *content = AUTORELEASE([[NSView alloc] initWithFrame: 
+	  NSMakeRect(0,0, SIZE_X, SIZE_Y)]);
 	NSRect size;
 	NSRect typeSize;
 	
@@ -46,7 +44,7 @@ static NSFont *standard_font = nil;
 	[nickView setBordered: NO];
 	[nickView setBezeled: NO];
 	[nickView setSelectable: NO];
-	[nickView setFont: standard_font];
+	[nickView setFont: [NSFont userFontOfSize: 12.0]];
 	[nickView setAutoresizingMask: 0];
 /* End Setup NickView */
 
@@ -57,7 +55,7 @@ static NSFont *standard_font = nil;
 	[typeView setDrawsBackground: YES];
 	[typeView setBordered: NO];
 	[typeView setBezeled: YES];
-	[typeView setFont: standard_font];
+	[typeView setFont: [NSFont userFontOfSize: 12.0]];
 	[typeView setAutoresizingMask: NSViewWidthSizable];
 	[typeView sizeToFit];
 /* End Setup TypeView */
@@ -67,9 +65,9 @@ static NSFont *standard_font = nil;
 	typeSize = [typeView frame];
 	size = [tabView frame];
 	size.origin.x = 4;
-	size.origin.y = typeSize.origin.y + typeSize.size.height + 8;
-	size.size.width = 100;
-	size.size.height = 104 - size.origin.y;
+	size.origin.y = NSMaxY(typeSize) + 8;
+	size.size.width = SIZE_X - 8;
+	size.size.height = SIZE_Y - 4 - size.origin.y;
 	[tabView setFrame: size];
 	[tabView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[tabView setAutoresizesSubviews: YES];
@@ -84,6 +82,14 @@ static NSFont *standard_font = nil;
 	[self updateNick: @"- - -"];
 
 	return self;
+}
+- (void)dealloc
+{
+	DESTROY(tabView);
+	DESTROY(typeView);
+	DESTROY(nickView);
+
+	[super dealloc];
 }
 - (NSTabView *)tabView
 {
@@ -112,7 +118,7 @@ static NSFont *standard_font = nil;
 
 	type = [typeView frame];
 	type.origin.y = 4;
-	type.origin.x = nick.origin.x + nick.size.width + 4;
+	type.origin.x = NSMaxX(nick) + 4;
 	type.size.width = [[self contentView] frame].size.width - 4 - type.origin.x;
 	
 	[nickView setFrame: nick];

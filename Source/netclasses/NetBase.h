@@ -38,7 +38,7 @@
 @end
 
 @protocol NetTransport
-- (NSString *)address;
+- (id)address;
 - writeData: (NSData *)data;
 - (BOOL)isDoneWriting;
 - (NSData *)readData: (int)maxReadSize;

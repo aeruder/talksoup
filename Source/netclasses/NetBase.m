@@ -143,7 +143,8 @@ NetApplication *netApplication;
 	else
 	{		
 		[NSException raise: NetException 
-		  format: @"[NetApplication addObject:] %@ does not follow < NetPort > or < NetObject >", 
+		  format: @"[NetApplication addObject:] %@ does not follow "
+		          @"< NetPort > or < NetObject >", 
 		    NSStringFromClass([anObject class])];
 	}
 	NSMapInsert(descTable, desc, anObject);

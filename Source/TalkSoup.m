@@ -18,18 +18,32 @@
 #import "TalkSoup.h"
 #import "Controllers/ConnectionController.h"
 
+#ifdef DEBUG
+#import "Misc/Debug.h"
+#import "netclasses/NetTCP.h"
+#import "Windows/ChannelWindow.h"
+#endif
+
 #import <Foundation/NSAutoreleasePool.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSException.h>
+#import <Foundation/NSHost.h>
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSMenu.h>
+
 
 int main(void)
 {
 	CREATE_AUTORELEASE_POOL(arp);
 	
-	[NSApplication sharedApplication];
+#ifdef DEBUG
+	[DebugObject poseAs: [NSObject class]];
+	[NSObject enableDoubleReleaseCheck: YES];
+	[ConnectionController debugClass];
+#endif
 	
+	[NSApplication sharedApplication];
+
 	[NSApp setDelegate: AUTORELEASE([[TalkSoup alloc] init])];
 	[NSApp run];
 
@@ -87,26 +101,60 @@ static TalkSoup *talksoup_instance = nil;
 	NSMenu *tempMenu;
 
 	menu = AUTORELEASE([NSMenu new]);
-	
-	item = [menu addItemWithTitle: @"Info"
-	  action: 0
-	  keyEquivalent: @""];
+
+// Info	
+	item = [menu addItemWithTitle: @"Info" action: 0 keyEquivalent: @""];
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 
 	[tempMenu addItemWithTitle: @"Info Panel..."
 	  action: @selector(orderFrontStandardInfoPanel:)
 	  keyEquivalent: @""];
-	
+
+// Edit	
+	item = [menu addItemWithTitle: @"Edit" action: 0 keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
+
+	[tempMenu addItemWithTitle: @"Cut"
+	  action: @selector(cut:)
+	  keyEquivalent: @"x"];
+	[tempMenu addItemWithTitle: @"Copy"
+	  action: @selector(copy:)
+	  keyEquivalent: @"c"];
+	[tempMenu addItemWithTitle: @"Paste"
+	  action: @selector(paste:)
+	  keyEquivalent: @"v"];
+	[tempMenu addItemWithTitle: @"Delete"
+	  action: @selector(delete:)
+	  keyEquivalent: @""];
+	[tempMenu addItemWithTitle: @"Select All"
+	  action: @selector(selectAll:)
+	  keyEquivalent: @"a"];
+
+// Windows
+	item = [menu addItemWithTitle: @"Windows" action: 0 keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
+	[tempMenu addItemWithTitle: @"New Window" action: 
+	  @selector(connectToServer:) keyEquivalent: @"n"];
+
+	[NSApp setWindowsMenu: tempMenu];
+
+// Services
+	item = [menu addItemWithTitle: @"Services" action: 0 keyEquivalent: @""];
+	tempMenu = AUTORELEASE([NSMenu new]);
+	[menu setSubmenu: tempMenu forItem: item];
+	[NSApp setServicesMenu: tempMenu];
+
+// Hide
 	[menu addItemWithTitle: @"Hide"
 	  action: @selector(hide:)
 	  keyEquivalent: @"h"];
-	
+
+// Quit
 	[menu addItemWithTitle: @"Quit" action: @selector(terminate:)
 	  keyEquivalent: @"q"];
-	
-	[menu addItemWithTitle: @"New Window" action: @selector(connectToServer:)
-	  keyEquivalent: @"n"];
 	
 	[NSApp setMainMenu: menu];
 }
@@ -115,10 +163,7 @@ static TalkSoup *talksoup_instance = nil;
 }
 - (void)connectToServer: (NSNotification *)aNotification
 {
-	id object = AUTORELEASE([ConnectionController new]);
-
-	[[TCPSystem sharedInstance] connectNetObjectInBackground: object
-	  toHost: @"irc.openprojects.net" onPort: 6667 withTimeout: 30];
+	AUTORELEASE([ConnectionController new]); 
 }	
 @end
 

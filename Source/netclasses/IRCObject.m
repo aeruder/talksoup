@@ -285,67 +285,19 @@ static void rec_caction(IRCObject *client, NSString *prefix,
 	}
 	[client actionReceived: rest to: to from: prefix];
 }
-static void rec_cversion(IRCObject *client, NSString *prefix,
-                         NSString *command, NSString *rest, NSString *to)
-{
-	if ([command isEqualToString: @"NOTICE"])
-	{
-		[client versionReplyReceived: rest from: prefix];
-	}
-	else
-	{
-		[client versionRequestReceived: rest from: prefix];
-	}
-}
-static void rec_cping(IRCObject *client, NSString *prefix,
-                      NSString *command, NSString *rest, NSString *to)
-{
-	if ([command isEqualToString: @"NOTICE"])
-	{
-		[client pingReplyReceived: rest from: prefix];
-	}
-	else
-	{
-		[client pingRequestReceived: rest from: prefix];
-	}
-}
-static void rec_cclientinfo(IRCObject *client, NSString *prefix,
-                            NSString *command, NSString *rest, NSString *to)
-{
-	if ([command isEqualToString: @"NOTICE"])
-	{
-		[client clientInfoReplyReceived: rest from: prefix];
-	}
-	else
-	{
-		[client clientInfoRequestReceived: rest from: prefix];
-	}
-}
 static void rec_ccustom(IRCObject *client, NSString *prefix, 
                         NSString *command, NSString *rest, NSString *to,
                         NSString *ctcp)
 {
 	if ([command isEqualToString: @"NOTICE"])
 	{
-		[client customCTCPReplyReceived: ctcp withArgument: rest
+		[client CTCPReplyReceived: ctcp withArgument: rest
 		  from: prefix];
 	}
 	else
 	{
-		[client customCTCPRequestReceived: ctcp withArgument: rest
+		[client CTCPRequestReceived: ctcp withArgument: rest
 		  from: prefix];
-	}
-}
-static void rec_cuserinfo(IRCObject *client, NSString *prefix,
-                            NSString *command, NSString *rest, NSString *to)
-{
-	if ([command isEqualToString: @"NOTICE"])
-	{
-		[client userInfoReplyReceived: rest from: prefix];
-	}
-	else
-	{
-		[client userInfoRequestReceived: rest from: prefix];
 	}
 }
 static void rec_cdcc(IRCObject *client, NSString *prefix,
@@ -377,7 +329,7 @@ static void rec_cdcc(IRCObject *client, NSString *prefix,
 		port = [NSNumber numberWithUnsignedShort: 
 		 strtoul([[list objectAtIndex: 3] cString], 0, 10)];
 
-		address = [[TCPSystem sharedInstance] ipFromInt:
+		address = [[TCPSystem sharedInstance] hostFromInt:
 		 ntohl(strtoul([[list objectAtIndex: 2] cString], 0, 10))];
 		
 		fileName = [list objectAtIndex: 1];
@@ -688,13 +640,9 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	NSMapInsert(command_to_function, @"ERROR", rec_error);
 
 	ctcp_to_function = NSCreateMapTable(NSObjectMapKeyCallBacks,
-	   NSIntMapValueCallBacks, 6);
+	   NSIntMapValueCallBacks, 2);
 	
 	NSMapInsert(ctcp_to_function, @"\001ACTION", rec_caction);
-	NSMapInsert(ctcp_to_function, @"\001VERSION", rec_cversion);
-	NSMapInsert(ctcp_to_function, @"\001PING", rec_cping);
-	NSMapInsert(ctcp_to_function, @"\001USERINFO", rec_cuserinfo);
-	NSMapInsert(ctcp_to_function, @"\001CLIENTINFO", rec_cclientinfo);
 	NSMapInsert(ctcp_to_function, @"\001DCC", rec_cdcc);
 }
 - initWithNickname: (NSString *)aNickname withUserName: (NSString *)aUser
@@ -734,6 +682,11 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	DESTROY(errorString);
 	
 	[super dealloc];
+}
+- (void)connectionLost
+{
+	connected = NO;
+	[super connectionLost];
 }
 - setNickname: (NSString *)aNickname
 {
@@ -935,38 +888,8 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 
 	return self;
 }
-- sendVersionReplyTo: (NSString *)aPerson name:(NSString *)clientName
-    version: (NSString *)clientVersion environment: (NSString *)clientEnv
-{
-	if ([clientName length] == 0)
-	{	
-		return self;
-	}
-	if ([clientVersion length] == 0)
-	{
-		return self;
-	}
-	if ([clientEnv length] == 0)
-	{
-		return self;
-	}
-	if ([aPerson length] == 0)
-	{
-		return self;
-	}
-	if (contains_a_space(aPerson))
-	{
-		[NSException raise: IRCException format: 
-		 @"[IRCObject sendVersionReplyTo: '%@' name: '%@' version: '%@' environment: '%@'] Person contains a space",
-		  aPerson, clientName, clientVersion, clientEnv];
-	}
-	
-	[self writeString: @"NOTICE %@ :\001VERSION %@ %@ %@\001",
-	 aPerson, clientName, clientVersion, clientEnv];
-	return self;
-}
-- sendCustomCTCP: (NSString *)aCTCP withArgument: (NSString *)anArgument
-    to: (NSString *)aPerson
+- sendCTCPReply: (NSString *)aCTCP withArgument: (NSString *)args
+   to: (NSString *)aPerson
 {
 	if ([aPerson length] == 0)
 	{
@@ -975,50 +898,28 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	if (contains_a_space(aPerson))
 	{
 		[NSException raise: IRCException format:
-		  @"[IRCObject sendCustomCTCP: '%@' withArgument: '%@' to: '%@'] Person contains a space",
-		    aCTCP, anArgument, aPerson];
+		  @"[IRCObject sendCTCPReply: '%@'withArgument: '%@' to: '%@'] Person contains a space",
+		    aCTCP, args, aPerson];
 	}
 	if (!aCTCP)
 	{
 		aCTCP = @"";
 	}
-	if ([anArgument length] == 0)
+	if ([args length])
 	{
-		[self writeString: @"NOTICE %@ :\001%@\001", aPerson, aCTCP];
+		[self writeString: @"NOTICE %@ :\001%@ %@\001", aPerson, aCTCP, args];
 	}
 	else
 	{
-		[self writeString: @"NOTICE %@ :\001%@ %@\001", aPerson, aCTCP, 
-		  anArgument];
+		[self writeString: @"NOTICE %@ :\001%@\001", aPerson, aCTCP];
 	}
+		
+	
 	return self;
 }
-- sendPingReplyTo: (NSString *)aPerson withArgument: (NSString *)argument
+- sendCTCPRequest: (NSString *)aCTCP withArgument: (NSString *)args
+   to: (NSString *)aPerson
 {
-	if ([aPerson length] == 0)
-	{
-		return self;
-	}
-	if ([argument length] == 0)
-	{
-		return self;
-	}
-	if (contains_a_space(aPerson))
-	{
-		[NSException raise: IRCException format:
-		 @"[IRCObject sendPingReplyTo: '%@' withArgument: '%@'] Person contains a space",
-		  aPerson, argument];
-	}
-
-	[self writeString: @"NOTICE %@ :\001PING %@\001", aPerson, argument];
-	return self;
-}
-- sendClientInfo: (NSString *)clientInfo to: (NSString *)aPerson
-{
-	if ([clientInfo length] == 0)
-	{
-		return self;
-	}
 	if ([aPerson length] == 0)
 	{
 		return self;
@@ -1026,34 +927,22 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	if (contains_a_space(aPerson))
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject sendClientInfo: '%@' to: '%@'] Person contains a space",
-		  clientInfo, aPerson];
+		  @"[IRCObject sendCTCPRequest: '%@'withArgument: '%@' to: '%@'] Person contains a space",
+		    aCTCP, args, aPerson];
 	}
-
-	[self writeString: @"NOTICE %@ :\001CLIENTINFO %@\001", 
-	  aPerson, clientInfo];
-
-	return self;
-}
-- sendUserInfo: (NSString *)userInfo to: (NSString *)aPerson
-{
-	if ([userInfo length] == 0)
+	if (!aCTCP)
 	{
-		return self;
+		aCTCP = @"";
 	}
-	if ([aPerson length] == 0)
+	if ([args length])
 	{
-		 return self;
+		[self writeString: @"PRIVMSG %@ :\001%@ %@\001", aPerson, aCTCP, args];
 	}
-	if (contains_a_space(aPerson))
+	else
 	{
-		[NSException raise: IRCException format:
-		 @"[IRCObject sendUserInfo: '%@' to: '%@'] Person contains a space",
-		  userInfo, aPerson];
+		[self writeString: @"PRIVMSG %@ :\001%@\001", aPerson, aCTCP];
 	}
-
-	[self writeString: @"NOTICE %@ :\001USERINFO %@\001",
-	 aPerson, userInfo];
+		
 	
 	return self;
 }
@@ -1788,44 +1677,12 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	return self;
 }	
-- versionReplyReceived: (NSString *)versionInfo from: (NSString *)aPerson
-{
-	return self;
-}
-- versionRequestReceived: (NSString *)query from: (NSString *)aPerson
-{
-	return self;
-}
-- pingReplyReceived: (NSString *)argument from: (NSString *)aPerson
-{
-	return self;
-}
-- pingRequestReceived: (NSString *)argument from: (NSString *)aPerson
-{
-	return self;
-}
-- clientInfoReplyReceived: (NSString *)clientInfo from: (NSString *)aPerson
-{
-	return self;
-}
-- clientInfoRequestReceived: (NSString *)query from: (NSString *)aPerson
-{
-	return self;
-}
-- userInfoReplyReceived: (NSString *)userInfo from: (NSString *)aPerson
-{
-	return self;
-}
-- userInfoRequestReceived: (NSString *)query from: (NSString *)aPerson
-{
-	return self;
-}
-- customCTCPRequestReceived: (NSString *)aCTCP
+- CTCPRequestReceived: (NSString *)aCTCP
    withArgument: (NSString *)argument from: (NSString *)aPerson
 {
 	return self;
 }
-- customCTCPReplyReceived: (NSString *)aCTCP
+- CTCPReplyReceived: (NSString *)aCTCP
    withArgument: (NSString *)argument from: (NSString *)aPerson
 {
 	return self;
@@ -2166,7 +2023,7 @@ NSString *DCCInfoHost = @"DCCInfoHost";
 
 	connection = RETAIN([[TCPSystem sharedInstance] 
 	  connectNetObjectInBackground: self
-	  toIp: [aInfo objectForKey: DCCInfoHost]
+	  toHost: [aInfo objectForKey: DCCInfoHost]
 	  onPort: [[aInfo objectForKey: DCCInfoPort] unsignedShortValue]
 	  withTimeout: seconds]);
 	
@@ -2421,8 +2278,8 @@ static id connection_holder = nil;
 
 	dataToWrite = [[NSMutableData alloc] initWithCapacity: blockSize * 2];
 
-	address = [[TCPSystem sharedInstance] localIpForTransport: 
-	 [aDelegate transport]];
+	address = [[TCPSystem sharedInstance] hostForTransport: 
+	  [aDelegate transport]];
 	
 	portNum = [NSNumber numberWithUnsignedShort: 
 	  htons([port socketInfo]->sin_port)];

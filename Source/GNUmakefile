@@ -10,13 +10,18 @@ netclasses = netclasses/NetBase.m netclasses/NetTCP.m netclasses/LineObject.m \
 
 main = TalkSoup.m
 
-views = Views/ChannelView.m Views/ConsoleView.m Views/ScrollingTextView.m
+views = Views/ScrollingTextView.m Views/ColoredTabViewItem.m
 
 windows = Windows/ChannelWindow.m
 
-control = Controllers/ConnectionController.m Controllers/ChannelViewController.m
+control = Controllers/ConnectionController.m Controllers/ChannelController.m \
+          Controllers/TalkController.m Controllers/QueryController.m
 
 misc = Misc/Functions.m
+
+ifeq ($(debug),yes)
+  misc += Misc/Debug.m
+endif
 
 models = Models/Channel.m
 

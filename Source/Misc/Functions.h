@@ -15,8 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
+
+@class NSAttributedString;
+
+@interface NSString (ColorCodes)
+- (NSAttributedString *)attributedStringFromColorCodedString;
+@end
 
 @interface NSString (ContainsSpace)
 - (BOOL)containsSpace;

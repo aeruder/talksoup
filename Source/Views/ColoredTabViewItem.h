@@ -1,7 +1,7 @@
 /***************************************************************************
-                        ChannelViewController.h
+                                ColoredTabViewItem.h
                           -------------------
-    begin                : Thu Oct 24 12:50:49 CDT 2002
+    begin                : Thu Dec  5 00:25:40 CST 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,43 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <Foundation/NSObject.h>
+#import <AppKit/NSTabViewItem.h>
 
-@class NSString, NSTabViewItem, NSTextView, NSTableView;
-@class NSTableColumn, ConsoleView, Channel;
+@class NSColor;
 
-@interface ChannelViewController : NSObject
+@interface ColoredTabViewItem : NSTabViewItem
 	{
-		id view;
-		NSTabViewItem *tab;
-		NSString *name;
-		Channel *channelModel;
-		
-		ConsoleView *consoleView;
-		NSTableView *userTable;
-		NSTableColumn *userColumn;
+		NSColor *color;
 	}
-+ (ChannelViewController *)lookupByTab: (NSTabViewItem *)aTab;
-
-- init;
-
-- (NSTabViewItem *)tabItem;
-- setTabItem: (NSTabViewItem *)aTab;
-- setTabLabel: (NSString *)aName;
-
-- view;
-- setView: aView;
-
-- (NSString *)name;
-- setName: (NSString *)aName;
-
-- setChannelModel: (Channel *)aObject;
-- (Channel *)channelModel;
-- reloadUserList;
-
-- putMessage: aMessage;
-
-- (BOOL)hasUserList;
+- setLabelColor: (NSColor *)aColor;
 @end
-
-	

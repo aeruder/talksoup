@@ -1,7 +1,7 @@
 /***************************************************************************
-                                Server.h
+                                ChannelController.h
                           -------------------
-    begin                : Sun Oct  6 15:54:42 CDT 2002
+    begin                : Sun Nov 10 13:03:07 CST 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,3 +14,23 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#import "Controllers/TalkController.h"
+
+@class NSTableView, NSTableColumn, NSScrollView, NSSplitView;
+
+@interface ChannelController : TalkController
+	{
+		NSSplitView *splitView;
+		NSTableView *userTable;
+		NSTableColumn *userColumn;
+		NSScrollView *userScroll;
+	}
+- (NSSplitView *)splitView;
+
+- (NSTableView *)userTable;
+
+- (NSTableColumn *)userColumn;
+
+- (NSScrollView *)userScroll;
+@end

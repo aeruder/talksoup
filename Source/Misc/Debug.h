@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ConsoleView.h
+                                Debug.h
                           -------------------
-    begin                : Thu Oct 24 13:05:09 CDT 2002
+    begin                : Wed Mar 13 00:20:02 UTC 2002
     copyright            : (C) 2002 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,24 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <AppKit/NSView.h>
-#import <AppKit/NSTextView.h>
+#import <Foundation/NSObject.h>
 
-@class NSScrollView, NSTextView, NSBox;
-
-@interface NSTextView (appendText)
-- appendText: aText;
+@interface DebugObject : NSObject
++ (void)initialize; 
++ (void)debugClass;
+- (void)dealloc;
++ allocWithZone: (NSZone *)zone;
+- retain;
+- (oneway void)release;
 @end
-	
-@interface ConsoleView : NSView
-	{
-		NSScrollView *chatScroll;
-		NSTextView *chatView;
-	}
-- initWithBorder: (BOOL)border;
 
-- putMessage: message;
 
-- (NSScrollView *)chatScroll;
-- (NSTextView *)chatView;
-@end

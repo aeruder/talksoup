@@ -20,3 +20,6 @@
 @interface ScrollingTextView : NSTextView
 @end
 
+@interface NSTextView (appendText)
+- appendText: aText;
+@end

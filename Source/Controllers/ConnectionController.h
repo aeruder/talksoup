@@ -18,23 +18,32 @@
 #import "netclasses/IRCObject.h"
 #import "netclasses/NetTCP.h"
 
+#import <Foundation/NSDictionary.h>
+
 NSArray *SeparateOutFirstWord(NSString *aString);
 
-@class ServerController, NSArray, ChannelWindow, TCPConnecting, NSTabViewItem;
-@class ChannelView, ConsoleView, ChannelViewController;
+@class TCPConnecting, ChannelWindow, TalkController, QueryController;
+@class NSTabViewItem, ChannelController, NSString, NSHost;
+@class ColoredTabViewItem;
 
 @interface ConnectionController : IRCObject < TCPConnecting >
 	{
 		TCPConnecting *connecting;
-		ChannelWindow *window;
-		
 		NSMutableDictionary *nameToChannel;
-		NSMutableDictionary *nameToDeadChannel;
-		
-		ChannelViewController *console;
-		ChannelViewController *current;
+		NSMutableDictionary *nameToChannelData;
+		NSMutableDictionary *nameToQuery;
+		NSMutableDictionary *nameToTalk;
+		NSMutableDictionary *nameToDeadChannel; // Parted channels
+		NSMutableDictionary *nameToTypedName; // Typed name
+		NSMutableArray *connectCommands; // Commands to run when connection is made
+		NSMapTable *talkToHolder; // Maps views to container;
+		NSString *currentHost;
+		ChannelWindow *window;
+		QueryController *console;
+		TalkController *current;
 
-		NSString *nextServer;
+		int typedPort;
+		NSString *typedHost;
 	}
 - init;
 - (void)dealloc;
@@ -42,14 +51,20 @@ NSArray *SeparateOutFirstWord(NSString *aString);
 - connectingStarted: (TCPConnecting *)aConnection;
 - connectingFailed: (NSString *)aReason;
 
-- putMessage: aMessage inChannel: aChannel;
+- addConnectCommands: (NSArray *)aCommand;
+- addConnectCommand: (NSString *)aCommand;
+- resetConnectCommands;
 
-- (ChannelViewController *)addTabWithName: (NSString *)aName
-    withLabel: (NSString *)aLabel withUserList: (BOOL)flag;
-- (void)removeTabWithName: (NSString *)aName;
+- (ColoredTabViewItem *)addTabViewItemWithName: (NSString *)key 
+    withView: (TalkController *)aView;
+- removeTabViewItemWithName: (NSString *)key;
 
-- (ChannelWindow *)window;
+- setLabel: (NSString *)aLabel forView: (TalkController *)aView;
+
+- putMessage: (NSString *)message in: channel;
 
 - (NSArray *)channelsWithUser: (NSString *)aUser;
+
+- updateHostName;
 @end
 
