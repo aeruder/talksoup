@@ -34,6 +34,7 @@
 #include <AppKit/NSColor.h>
 #include <AppKit/NSEvent.h>
 #include <AppKit/NSTextField.h>
+#include <AppKit/NSImage.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSRunLoop.h>
 #include <Foundation/NSAttributedString.h>
@@ -449,6 +450,10 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	  keyEquivalent: @"q"];
 	
 	[NSApp setMainMenu: menu];
+	[NSApp setApplicationIconImage: 
+	  AUTORELEASE([[NSImage alloc] initWithContentsOfFile:
+	  [[NSBundle bundleForClass: [self class]]
+	    pathForResource: @"TalkSoup" ofType: @"tiff"]])];
 }
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {

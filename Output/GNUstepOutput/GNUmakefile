@@ -6,7 +6,7 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/ApplicationSupport/TalkSoup/Out
 
 BUNDLE_EXTENSION = .bundle
 
-GNUstepOutput_RESOURCE_FILES = Images/irc.tiff
+GNUstepOutput_RESOURCE_FILES = Images/TalkSoup.tiff
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \

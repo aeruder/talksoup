@@ -122,6 +122,8 @@ static inline NSArray *get_directories_with_talksoup()
 	x = NSSearchPathForDirectoriesInDomains(NSUserDirectory, 
 	  NSAllDomainsMask, YES);
 
+	NSLog(@"%@", x);
+
 	fm = [NSFileManager defaultManager];
 
 	iter = [x objectEnumerator];
