@@ -1,3 +1,9 @@
+2003-12-30 Andy Ruder <aeruder at ksu dot edu>
+ * Added the ability for bundles to register preferences with 
+   GNUstepOutputBundle
+ * Redid Bundle Configurator to use drag'n'drop
+ * Finished Highlighting's preferences
+
 2003-12-21 Andy Ruder <aeruder at ksu dot edu>
  * OFTC made it into the server list
  * made a change to the topic inspector that will hopefully make it

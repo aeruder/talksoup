@@ -88,7 +88,7 @@
 			RealName = "";
 			Server = irc.cwitaly.it;
 			UserName = "";
-		},
+		}
 		);
 		Name = IRCNet;
 		},

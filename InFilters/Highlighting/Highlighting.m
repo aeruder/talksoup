@@ -264,10 +264,10 @@ static NSInvocation *invoc = nil;
 		}
 		else
 		{
-			val = "YES";
+			val = @"YES";
 			msg = _l(@"Turning on nick highlighting...\n");
 		}
-		set_pref(HighlightingShouldDoNick, @"YES");
+		set_pref(HighlightingShouldDoNick, val);
 		[main_controller reloadData];
 	}
 	else if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
@@ -367,12 +367,13 @@ static NSInvocation *invoc = nil;
 		  _l(@"Type /highlighting usercolor"), @"\n",
 		  _l(@"or /highlighting tabreferencecolor"), @"\n",
 		  _l(@"or /highlighting tabanythingcolor"), @"\n",
-		  _l(@"or /highlighting extrawords" @"\n"),
+		  _l(@"or /highlighting extrawords"), @"\n",
+		  _l(@"or /highlighting shouldhighlightnick"), @"\n",
 		  _l(@"for more information."), 
 		  nil);
 	}
 
-	return S2AS([NSString stringWithFormat: @"%@%@", msg, _l(@"Ok.")]);
+	return S2AS(([NSString stringWithFormat: @"%@%@", msg, _l(@"Ok.")]));
 }
 - (NSAttributedString *)pluginDescription
 {

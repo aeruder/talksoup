@@ -137,15 +137,12 @@
 }
 - (void)highlightingHit: (id)sender
 {
-	NSLog(@"Testing: %@", sender);
 	if ([sender state] == NSOffState)
 	{
-		NSLog(@"Setting to no");
 		set_pref(HighlightingShouldDoNick, @"NO");
 	}
 	else
 	{
-		NSLog(@"Setting to yes");
 		set_pref(HighlightingShouldDoNick, @"YES");
 	}
 }
