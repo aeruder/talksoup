@@ -21,7 +21,7 @@
 #define CONNECTION_CONTROLLER_H
 
 @class NSString, NSAttributedString, NSDictionary, InputController, ContentController;
-@class NSColor;
+@class NSColor, NSMutableDictionary;
 
 #include <Foundation/NSObject.h>
 
@@ -39,10 +39,10 @@
 		id connection;
 		ContentController *content;
 		
-		NSAttributedString *personalLeft;
-		NSAttributedString *personalRight;
-		NSAttributedString *otherLeft;
-		NSAttributedString *otherRight;
+		NSColor *personalColor;
+		NSColor *otherColor;
+		
+		NSMutableDictionary *nameToChannelData;
 		
 		BOOL registered;
 	}

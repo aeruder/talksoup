@@ -19,8 +19,8 @@
 
 extern NSString *ContentConsoleName;
 
-#ifndef CHANNEL_CONTROLLER_H
-#define CHANNEL_CONTROLLER_H
+#ifndef CONTENT_CONTROLLER_H
+#define CONTENT_CONTROLLER_H
 
 #include <Foundation/NSObject.h>
 #include <Foundation/NSMapTable.h>

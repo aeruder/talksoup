@@ -20,9 +20,11 @@
 #include <Foundation/NSArray.h>
 #include <Foundation/NSCharacterSet.h>
 #include <Foundation/NSAttributedString.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSNull.h>
 
 #include <stdarg.h>
- 
+
 static NSArray *get_first_word(NSString *arg)
 {
 	NSRange aRange;
@@ -92,33 +94,162 @@ static NSArray *get_first_word(NSString *arg)
 }
 @end
 
+@implementation NSMutableAttributedString (AttributesAppend)
+- (void)addAttributeIfNotPresent: (NSString *)name value: (id)aVal
+   withRange: (NSRange)aRange
+{
+	NSRange effect;
+	NSDictionary *aDict;
+	NSMutableDictionary *aDict2;
+	
+	[self beginEditing];
+	
+	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
+	
+	while (1)
+	{
+		if (![aDict objectForKey: name])
+		{
+			if (effect.location + effect.length > aRange.location + aRange.length)
+			{
+				effect.length = aRange.location + aRange.length - effect.location;
+			}
+				
+			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
+			[aDict2 setObject: aVal forKey: name];
+			[self setAttributes: aDict2 range: effect];
+		}
+		effect.location = effect.location + effect.length;
+		if (effect.location < aRange.length + aRange.location)
+		{
+			aDict = [self attributesAtIndex: effect.location 
+			  effectiveRange: &effect];
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	[self endEditing];
+}
+- (void)replaceAttribute: (NSString *)name withValue: (id)aVal
+   withValue: (id)newVal withRange: (NSRange)aRange
+{
+	NSRange effect;
+	NSDictionary *aDict;
+	NSMutableDictionary *aDict2;
+	
+	[self beginEditing];
+	
+	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
+	
+	while (1)
+	{
+		if ([[aDict objectForKey: name] isEqual: aVal])
+		{
+			if (effect.location + effect.length > aRange.location + aRange.length)
+			{
+				effect.length = aRange.location + aRange.length - effect.location;
+			}
+				
+			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
+			[aDict2 setObject: newVal forKey: name];
+			[self setAttributes: aDict2 range: effect];
+		}
+			
+		effect.location = effect.location + effect.length;
+		if (effect.location < aRange.length + aRange.location)
+		{
+			aDict = [self attributesAtIndex: effect.location 
+			  effectiveRange: &effect];
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	[self endEditing];
+}
+@end
+
+
 NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 {
 	va_list ap;
 	NSMutableAttributedString *str;
+	id objects;
+	id keys;
+	int state = 0;
+	id newstr = nil;
+	int x;
+	int y;
 	
 	if (aObject == nil) return AUTORELEASE([[NSAttributedString alloc] initWithString: @""]);
+	
+	objects = [NSMutableArray new];
+	keys = [NSMutableArray new];
 	
 	str = AUTORELEASE([[NSMutableAttributedString alloc] initWithString: @""]);
 	va_start(ap, aObject);
 	
 	do
 	{
-		if ([aObject isKindOf: [NSAttributedString class]])
+		if (state != 0)
 		{
-			[str appendAttributedString: aObject];
+			if (state == 1)
+			{
+				[keys addObject: aObject];
+				state = 2;
+			}
+			else if (state == 2)
+			{
+				[objects addObject: aObject];
+				state = 0;
+			}
 		}
 		else
 		{
-			[str appendAttributedString: AUTORELEASE([[NSAttributedString alloc]
-			  initWithString: [aObject description]])];
+			if ([aObject isKindOf: [NSNull class]])
+			{
+				state = 1;
+			}
+			else
+			{
+				if ([aObject isKindOf: [NSAttributedString class]])
+				{
+					newstr = [[NSMutableAttributedString alloc] 
+					  initWithAttributedString: aObject];
+				}
+				else
+				{
+					newstr = [[NSMutableAttributedString 
+					  alloc] initWithString: [aObject description]];
+				}
+				
+				if (newstr)
+				{
+					y = [objects count];
+					for (x = 0; x < y; x++)
+					{
+						[newstr addAttributeIfNotPresent: [keys objectAtIndex: x]
+						  value: [objects objectAtIndex: x] withRange:
+						   NSMakeRange(0, [newstr length])];
+					}
+					[objects removeAllObjects];
+					[keys removeAllObjects];
+					[str appendAttributedString: newstr];
+					DESTROY(newstr);
+				}
+			}
 		}
-		
-		aObject = va_arg(ap, id);
-	} while (aObject != nil);
+	} while ((aObject = va_arg(ap, id)));
 
 	va_end(ap);
-
+	RELEASE(objects);
+	RELEASE(keys);
+	
 	return str;
 }
 

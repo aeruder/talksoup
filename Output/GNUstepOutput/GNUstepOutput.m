@@ -21,6 +21,7 @@
 #include "Controllers/PreferencesController.h"
 #include "Misc/NSColorAdditions.h"
 
+#include <AppKit/NSAttributedString.h>
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>

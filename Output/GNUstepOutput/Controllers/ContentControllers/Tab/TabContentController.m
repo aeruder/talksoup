@@ -21,7 +21,6 @@
 #include "Controllers/ChannelController.h"
 #include "Controllers/InputController.h"
 #include "Views/AttributedTabViewItem.h"
-#include "Misc/NSAttributedStringAdditions.h"
 #include "Misc/NSColorAdditions.h"
 #include <AppKit/NSColor.h>
 #include <AppKit/NSNibLoading.h>
@@ -110,24 +109,14 @@ NSString *ContentConsoleName = @"Content Console Name";
 	{
 		NSEnumerator *iter;
 		id object;
-		id string;
 
 		iter = [[nameToBoth allValues] objectEnumerator];
 		while ((object = [iter nextObject]))
 		{
 			object = [[object chatView] textStorage];
-			
-			string = AUTORELEASE([[NSMutableAttributedString alloc] 
-			  initWithAttributedString: object]);
-			[string replaceAttribute: NSForegroundColorAttributeName 
-			  withValue: textColor withValue: aColor withRange:
-			  NSMakeRange(0, [string length])];
-			[object setAttributedString: string];
-
-/*			object = [[object chatView] textStorage];
 			[object replaceAttribute: NSForegroundColorAttributeName 
 			  withValue: textColor withValue: aColor withRange:
-			  NSMakeRange(0, [object length])];*/
+			  NSMakeRange(0, [object length])];
 		}
 		
 		RELEASE(textColor);

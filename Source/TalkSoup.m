@@ -33,12 +33,14 @@ id _TSDummy_;
 @interface NSException (blah)
 @end
 
+#if 0
 @implementation NSException (blah)
 - (void)raise
 {
 	abort();
 }
 @end
+#endif
 
 @implementation TalkSoup
 + (TalkSoup *)sharedInstance

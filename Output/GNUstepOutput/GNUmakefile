@@ -18,9 +18,12 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m
 
-Misc = Misc/NSColorAdditions.m Misc/NSAttributedStringAdditions.m
+Misc = Misc/NSColorAdditions.m
 
-GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)
+Models = Models/Channel.m
+
+GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
+                           $(Models)
 
 ADDITIONAL_INCLUDE_DIRS = -I.  -I../../../Source
 

@@ -18,12 +18,18 @@
 #ifndef TALKSOUP_MISC_H
 #define TALKSOUP_MISC_H
 
-@class NSMutableAttributedString;
-
+#include <Foundation/NSAttributedString.h>
 #include <Foundation/NSString.h>
 
 @interface NSString (Separation)
 - separateIntoNumberOfArguments: (int)num;
+@end
+
+@interface NSMutableAttributedString (AttributesAppend)
+- (void)addAttributeIfNotPresent: (NSString *)name value: (id)aVal
+   withRange: (NSRange)aRange;
+- (void)replaceAttribute: (NSString *)name withValue: (id)aVal
+   withValue: (id)newVal withRange: (NSRange)aRange;
 @end
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...);
