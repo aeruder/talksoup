@@ -33,6 +33,9 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextStorage.h>
 
+#include <sys/time.h>
+#include <time.h>
+
 static void send_message(id command, id name, id connection)
 {
 	NSRange aRange = NSMakeRange(0, [command length]);
@@ -273,6 +276,45 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController (CommonCommands)
+- commandPing: (NSString *)aString
+{
+	NSArray *x;
+	id who;
+	struct timeval tv = {0,0};
+	id arg;
+	id connection;
+	
+	x = [aString separateIntoNumberOfArguments: 2];
+	
+	if ([x count] == 0)
+	{
+		[controller showMessage: 
+		  S2AS(_l(@"Usage: /ping <receiver>" @"\n"
+		  @"Sends a CTCP ping message to <receiver> (which may be a user "
+		  @"or a channel).  Their reply should allow the amount of lag "
+		  @"between you and them to be determined.")) onConnection: nil];
+		return self;
+	}
+	
+	who = [x objectAtIndex: 0];
+	if (gettimeofday(&tv, NULL) == -1)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"gettimeofday() failed")) onConnection: nil];
+		return self;
+	}
+	arg = [NSString stringWithFormat: @"%u.%u", (unsigned)tz.tv_sec, 
+	  (unsigned)tz.tv_usec];
+	
+	connection = [controller connection];
+	
+	[_TS_ sendCTCPRequest: S2AS(@"PING")
+	  withArgument: S2AS(arg) to: S2AS(who) 
+	  onConnection: connection
+	  withNickname: S2AS([connection nick])
+	  sender: _GS_];
+	return self;
+}				
 - commandTopic: (NSString *)aString
 {
 	NSArray *x;
