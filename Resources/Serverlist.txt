@@ -1,0 +1,39 @@
+G
+OpenProjects Network
+S
+irc.gnome.org
+6667
+#mono
+
+lgarcia
+Gnome
+S
+irc.debian.org
+6667
+#gnustep,#linuxmty
+
+lgarcia
+Debian Support Channel
+S
+irc.red-latina.org
+6667
+#linuxmexico
+
+
+Red Latina
+G
+ChatJunkiesNet
+S
+irc.xchat.org
+6667
+
+#linux
+
+ChatJunkiesNet Random Server
+S
+us.xchat.org
+6667
+
+#linux
+
+ChatJunkiesNet U.S.

@@ -1,0 +1,13 @@
+{
+    ApplicationDescription = "An IRC Client for GNUstep";
+    ApplicationIcon = irc;
+    ApplicationName = Charla;
+    ApplicationRelease = "0.0.7";
+    ApplicationURL = "http://200.76.205.106/";
+    Authors = ("Luis García Alanís <luis.garcia@mac.com>");
+    Copyright = "Copyright \u00a9 2002 Luis García Alanís <luis.garcia@mac.com>";
+    CopyrightDescription = "Released under the GNU GPL. See COPYING for details.";
+    FullVersionID = "0.0.19";
+    NSIcon="irc.tiff";
+}
+
