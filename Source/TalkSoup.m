@@ -957,9 +957,9 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	
 	array = [command separateIntoNumberOfArguments: 3];
 	
-	if ([array count] <= 2)
+	if ([array count] < 2)
 	{
-		return S2AS(_(@"Usage: /ctcp <nick> <ctcp> [args]")); 
+		return S2AS(_(@"Usage: /ctcp <nick> <ctcp> [arguments]")); 
 	}
 
 	args = ([array count] == 3) ? [array objectAtIndex: 2] : nil;
