@@ -550,6 +550,13 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
+	[content putMessage:
+	  BuildAttributedFormat(_l(@"%@ changed the topic in %@ to '%@'"),
+	   [IRCUserComponents(aPerson) objectAtIndex: 0], channel, aTopic)
+	  in: [channel string]];
+	
+	[_TS_ setTopicForChannel: S2AS([channel string]) to: nil onConnection: aConnection
+	  withNickname: S2AS([aConnection nick]) sender: _GS_];
 	return self;
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
