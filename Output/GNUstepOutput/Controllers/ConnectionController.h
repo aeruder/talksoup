@@ -21,5 +21,3 @@
 #import "Controllers/ConnectionController/ConnectionControllerInFilter.h"
 #import "Controllers/ConnectionController/ConnectionControllerNumericCommands.h"
 #import "Controllers/ConnectionController/ConnectionControllerOutFilter.h"
-#import "Controllers/ConnectionController/ConnectionControllerTabCompletion.h"
-
