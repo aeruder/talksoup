@@ -210,28 +210,24 @@ static NSInvocation *invoc = nil;
    connection: connection
 {
 	id x = [args separateIntoNumberOfArguments: 2];
-	id key, val;
+	id key = nil, val;
 	int cnt = [x count];
 	
-	if (cnt == 0)
+	if (cnt > 0)
 	{
-		return BuildAttributedString([NSNull null], IRCBold, [NSNull null], 
-		  @"Highlighting.bundle Configurator:", @"\n",
-		  @"Usage: /highlighting <key> <value>", @"\n",
-		  @"Possible keys: usercolor, tabreferencecolor, tabanythingcolor, extrawords", 
-		  @"\n",
-		  @"Not specifying a value will bring up help for that particular key",
-		  nil);
+		key = [x objectAtIndex: 0];
 	}
-	
-	key = [x objectAtIndex: 0];
+	else
+	{
+		key = @"";
+	}
 	
 	if ([key caseInsensitiveCompare: @"usercolor"] == NSOrderedSame)
 	{
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color of the person who says either your nickname "
+			  @"Sets the color that the person will turn who says your nickname "
 			  @"or a word specified in your extra words field.", @"\n",
 			  COLOR_MSG, nil);
 		}
@@ -250,7 +246,7 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color that the tab will change when a person says either "
+			  @"Sets the color that the tab will turn when a person says either "
 			  @"your nickname or a word specified in your extra words field.", @"\n",
 			  COLOR_MSG, nil);
 		}
@@ -269,7 +265,7 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the color that the tab will change when a person says something",
+			  @"Sets the color that the tab will change when a person says something.",
 			  @"\n",
 			  COLOR_MSG, nil);
 		}
@@ -292,10 +288,9 @@ static NSInvocation *invoc = nil;
 		if (cnt == 1)
 		{
 			return BuildAttributedString(
-			  @"Sets the other words that a sender could say and result "
-			  @"in being highlighted", @"\n",
+			  @"Other words that can be said to activate the highlighting.  "
 			  @"The value should be a list of words separated by '^' or "
-			  @"nil to clear the list", @"\n", 
+			  @"nil to clear the list.", @"\n", 
 			  @"The list is currently: ", val, 
 			  nil);
 		}
@@ -316,7 +311,7 @@ static NSInvocation *invoc = nil;
 		  @"Usage: /highlighting <key> <value>", @"\n",
 		  @"Possible keys: usercolor, tabreferencecolor, tabanythingcolor, extrawords", 
 		  @"\n",
-		  @"Not specifying a value will bring up help for that particular key",
+		  @"Leaving the value field blank will result in help for a particular option.",
 		  nil);
 	}
 
