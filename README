@@ -69,6 +69,33 @@ Commands:
   if there are multiple channels specified, then multiple
   passwords separated only by a comma)
 
+/nick <nick>
+  Changes your nickname to <nick>
+
+/msg <nick> <message>
+  Sends the private message <message> to the person named <nick>
+
+/quit <message>
+  Disconnects you from the currently connected IRC server.  If 
+  <message> is specified, it will use that as the quit message.
+
+/notice <nick> <message>
+  Sends the private notice <message> to the person named <nick>
+  Most of the time, you should send people regular messages using
+  the /msg command.  However, in certain cases, you may want to
+  use a notice instead.
+
+/away <message>
+  This command sets your away message if <message> is specified.  If you
+  don't specify <message>, it will mark you as back.
+
+/colors
+  This simply explains to you the valid colors that other commands may
+  ask you to use.
+  
+===============================================================================
+Commands specific to the GNUstep output plugin (GNUstepOutput.bundle)
+
 /me <action>
   Sends an action to the channel, for example:
   
@@ -76,21 +103,19 @@ Commands:
   
   would print * <nick> runs around the channel screaming 'GNUstep rules'
 
-/nick <nick>
-  Changes your nickname to <nick>
-
-/server <server> [port]
-  Disconnects from current server and connects to <server>.  If
-  [port] is unspecified, it defaults to 6667.
-
 /query <nick>
   Opens a new tab for a person named <nick>.  All of their private 
   messages will appear in there, and typing to the person in that tab
   will send them private messages.
 
-/msg <nick> <message>
-  Sends the private message <message> to the person named <nick>
+/server <server> [port]
+  Disconnects from current server and connects to <server>.  If
+  [port] is unspecified, it defaults to 6667.
 
+/close [name]
+  This closes the tab named [name].  If you don't specify the name, it will
+  close the current tab.
+  
 ===============================================================================
 Notes about GNUstepOutput.bundle (default):
   
@@ -100,18 +125,23 @@ Notes about GNUstepOutput.bundle (default):
 	  to the left and right, respectively.
 	
 ===============================================================================
+Please read the INSTALL file for the details on installing TalkSoup.
+The FAQ (Frequently Asked Questions) also covers many common questions
+that TalkSoup users have.
+
+===============================================================================
 Special Thanks To:
   
   Luis Garcia Alanis <luis.garcia at mac.com>
     For his initial drive to make a GNUstep IRC client using netclasses
     and his first version of Charla.app
-  Lyndon Tremblay <humasect at shaw.ca>
-    For his time and effort in both testing and making TalkSoup
-	an icon.
   Alex Perez <aperez at student.santarosa.edu>
     For his immense testing efforts and all his suggestions and
 	he also drew the icon that is currently being used by the
 	GNUstep output plugin right now.
+  Lyndon Tremblay <humasect at shaw.ca>
+    For his time and effort in both testing and making TalkSoup
+	an icon.
   Gregory Casemento <greg_casamento at yahoo.com>
     For his tremendous work on Gorm, which made TalkSoup possible.
   Alexander Malmberg <alexander at malmberg.org>
