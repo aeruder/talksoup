@@ -300,7 +300,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 /* Calls putMessage:in:withEndLine: as [self putMessage: aMessage: in: aName 
  * withEndLine: YES];
  */
-- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName
+- (void)putMessage: aMessage in: (id)aName
 {
 	[self putMessage: aMessage in: aName withEndLine: YES];
 }
@@ -311,7 +311,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
  * or an NSArray of any of the above.  If it is nil, it'll put it in the 
  * currently visible channel.
  */
-- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName 
+- (void)putMessage: aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd
 {
 	id controller = nil;
@@ -435,11 +435,11 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	//clear_scrollback(controller);
 	// FIXME: the controllers should handle the removing of extra LINES (need to get rid of this byte nonsense)
 }
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
 {
 	[self putMessageInAll: aMessage withEndLine: YES];
 }
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
     withEndLine: (BOOL)hasEnd
 {
 	NSEnumerator *iter;
@@ -452,12 +452,12 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		[self putMessage: aMessage in: obj withEndLine: hasEnd];
 	}
 }
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
     ofType: (NSString *)aType
 {
 	[self putMessageInAll: aMessage ofType: aType withEndLine: YES];
 }
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd
 {

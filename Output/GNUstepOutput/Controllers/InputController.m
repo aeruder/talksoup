@@ -16,14 +16,16 @@
  ***************************************************************************/
 
 #import <TalkSoupBundles/TalkSoup.h>
-#import "Controllers/InputController.h"
+
 #import "Controllers/ConnectionController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/ContentControllers/StandardQueryController.h"
+#import "Controllers/InputController.h"
 #import "Controllers/Preferences/PreferencesController.h"
-#import "Views/ScrollingTextView.h"
-#import "Misc/NSObjectAdditions.h"
 #import "GNUstepOutput.h"
+#import "Misc/NSObjectAdditions.h"
+#import "Models/Channel.h"
+#import "Views/ScrollingTextView.h"
 
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTextStorage.h>
@@ -413,8 +415,7 @@ static void send_message(id command, id name, id connection)
 }
 - (void)extraTabPressed: (id)sender
 {
-	// FIXME
-/*	id field = [content typeView];
+	id field = [lastMaster typeView];
 	NSString *typed = [field stringValue];
 	int start;
 	NSRange range;
@@ -436,13 +437,12 @@ static void send_message(id command, id name, id connection)
 	[fieldEditor setStringValue: [NSString stringWithFormat: @"%@%@",
 	  [typed substringToIndex: start], 
 	  [tabCompletion objectAtIndex: tabCompletionIndex]]];
+
 	tabCompletionIndex = (tabCompletionIndex + 1) % [tabCompletion count];
-*/
 }
 - (void)firstTabPressed: (id)sender
 {
-	/* FIXME
-	id field = [content typeView];
+	id field = [lastMaster typeView];
 	NSString *typed = [field stringValue];
 	NSArray *possibleCompletions;
 	int start;
@@ -499,7 +499,6 @@ static void send_message(id command, id name, id connection)
 		tabCompletionIndex = -1;
 		tabCompletion = RETAIN(possibleCompletions);
 	}
-	*/
 }
 - (NSArray *)completionsInArray: (NSArray *)x
   startingWith: (NSString *)pre
@@ -589,13 +588,21 @@ static void send_message(id command, id name, id connection)
 - (NSArray *)nameStartingWith: (NSString *)pre 
   largestValue: (NSString **)large
 {
-	/*
 	NSMutableArray *x = AUTORELEASE([NSMutableArray new]);
 	NSEnumerator *iter;
 	id object;
-	
-	iter = [[[nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase([content currentViewName])]
+	id <ContentControllerChannelController> channel;
+
+	if ([view conformsToProtocol: @protocol(ContentControllerChannelController)])
+	{
+		channel = (id <ContentControllerChannelController>)view;
+	}
+	else
+	{
+		return AUTORELEASE([NSArray new]);
+	}
+
+	iter = [[[channel channelSource]
 	  userList] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
@@ -605,7 +612,6 @@ static void send_message(id command, id name, id connection)
 	
 	return [self completionsInArray: x startingWith: pre
 	  largestValue: large];
-	FIXME*/
 	return AUTORELEASE([NSArray new]);
 }
 @end

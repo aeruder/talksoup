@@ -74,15 +74,15 @@
 - (NSArray *)allViewControllersOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
-- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName;
-- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName 
+- (void)putMessage: aMessage in: (id)aName;
+- (void)putMessage: aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd;
-- (void)putMessageInAll: (NSAttributedString *)aMessage;
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage;
+- (void)putMessageInAll: aMessage
     withEndLine: (BOOL)hasEnd;
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
     ofType: (NSString *)aType;
-- (void)putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: aMessage
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
