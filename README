@@ -155,6 +155,12 @@ Commands:
   no formatting or command substitution will take place on
   the string.
 
+/encoding <encoding>
+  This command changes the encoding for incoming and
+  outgoing messages on that particular connection.  By not
+  specifying <encoding> the command will list the available
+  encodings.
+
 ===============================================================================
 Commands specific to the GNUstep output plugin (GNUstepOutput)
 
