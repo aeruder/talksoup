@@ -1121,13 +1121,17 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	array = [command separateIntoNumberOfArguments: 2];
 
-	if ([array count] <= 1)
+	if ([array count] < 1)
 	{
-		return S2AS(_(@"Usage: /topic <channel> <topic>"));
+		return S2AS(_(@"Usage: /topic <channel> [topic]"));
 	}
 
 	who = [array objectAtIndex: 0];
-	arg = [array objectAtIndex: 1];
+	
+	if ([array count] > 1)
+	{
+		arg = [array objectAtIndex: 1];
+	}
 	
 	[_TS_ setTopicForChannel: S2AS(who) to: S2AS(arg)
 	  onConnection: connection withNickname: S2AS([connection nick])
