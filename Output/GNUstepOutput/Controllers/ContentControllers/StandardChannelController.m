@@ -249,7 +249,10 @@
 	  componentsSeparatedByString: @"\n"] count] - 1;
 
 	if (numLines > scrollLines)
+	{
 		[textStorage chopNumberOfLines: numLines - scrollLines];
+		numLines = scrollLines;
+	}
 }
 @end
 
