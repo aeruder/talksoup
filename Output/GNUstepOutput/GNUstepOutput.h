@@ -28,6 +28,7 @@ extern NSString *GNUstepOutputPersonalBracketColor;
 extern NSString *GNUstepOutputOtherBracketColor;
 extern NSString *GNUstepOutputTextColor;
 extern NSString *GNUstepOutputBackgroundColor;
+extern NSString *GNUstepOutputServerList;
 
 #ifdef _l
 	#undef _l

@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ServerListController.h
+                                GroupEditorController.m
                           -------------------
-    begin                : Wed Apr 30 14:31:01 CDT 2003
+    begin                : Tue May  6 14:34:46 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,37 +15,46 @@
  *                                                                         *
  ***************************************************************************/
 
-@class ServerListController;
+#include "Controllers/GroupEditorController.h"
 
-#ifndef SERVER_LIST_CONTROLLER_H
-#define SERVER_LIST_CONTROLLER_H
+#include <Foundation/NSString.h>
+#include <AppKit/NSTextField.h>
+#include <AppKit/NSWindow.h>
+#include <AppKit/NSButton.h>
 
-#include <Foundation/NSObject.h>
-
-@class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView;
-
-@interface ServerListController : NSObject
-	{
-		NSButton *connectButton;
-		NSButton *addGroupButton;
-		NSButton *removeButton;
-		NSButton *addEntryButton;
-		NSButton *editButton;
-		NSBrowser *browser;
-		NSScrollView *scrollView;
-		NSWindow *window;
-		NSTableColumn *serverColumn;
-		id editor;
-		int wasEditing;
-	}
-- (void)editHit: (NSButton *)sender;
-- (void)addEntryHit: (NSButton *)sender;
-- (void)removeHit: (NSButton *)sender;
-- (void)connectHit: (NSButton *)sender;
-- (void)addGroupHit: (NSButton *)sender;
-
-- (NSBrowser *)browser;
-- (NSWindow *)window;
+@implementation GroupEditorController
+- (void)awakeFromNib
+{
+	[window makeKeyAndOrderFront: nil];
+}
+- (void)dealloc
+{
+	DESTROY(extraField);
+	DESTROY(okButton);
+	DESTROY(window);
+	DESTROY(entryField);
+	
+	[super dealloc];
+}
+- (NSButton *)okButton
+{
+	return okButton;
+}
+- (NSTextField *)extraField
+{
+	return extraField;
+}
+- (NSTextField *)entryField
+{
+	return entryField;
+}
+- (NSWindow *)window
+{
+	return window;
+}
+- (void)setEntry: (id)sender
+{
+	[okButton performClick: nil];
+}
 @end
-
-#endif
+ 

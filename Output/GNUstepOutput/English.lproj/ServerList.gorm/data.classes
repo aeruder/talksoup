@@ -157,7 +157,8 @@
 	    editButton,
 	    scrollView,
 	    window,
-	    addEntryButton
+	    addEntryButton,
+	    browser
 	);
 	Super = NSObject;
     };

@@ -65,6 +65,7 @@ NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColo
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
+NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 
 @implementation GNUstepOutput
 - init
@@ -91,6 +92,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	    blue: 0.0 alpha: 1.0]) encodeToData], GNUstepOutputPersonalBracketColor,
 	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
 	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
+	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  nil];
 
 	return self;
@@ -312,7 +314,6 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 }
 - (void)run
 {
-	[NSObject enableDoubleReleaseCheck: YES];
 	[NSApplication sharedApplication];
 	[NSApp setDelegate: self];
 	[NSApp run];
@@ -416,12 +417,12 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 - (void)openServerList: (NSNotification *)aNotification
 {
 	[NSBundle loadNibNamed: @"ServerList" owner: 
-	  [ServerListController new]];
+	  AUTORELEASE([ServerListController new])];
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
 	[NSBundle loadNibNamed: @"NamePrompt" owner:
-	  [NamePromptController new]];
+	  AUTORELEASE([NamePromptController new])];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {

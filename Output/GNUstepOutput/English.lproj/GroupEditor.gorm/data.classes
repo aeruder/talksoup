@@ -142,31 +142,23 @@
 	);
 	Super = NSObject;
     };
-    ServerEditorController = {
+    GroupEditorController = {
 	Actions = (
-	    "setConnect:",
-	    "setCommands:",
-	    "setPort:",
-	    "setServer:",
+	    "setNick:",
+	    "setReal:",
 	    "setUser:",
 	    "setPassword:",
-	    "setReal:",
-	    "setNick:",
 	    "setEntry:"
 	);
 	Outlets = (
-	    connectButton,
-	    commandsField,
-	    portField,
-	    serverField,
+	    passwordField,
 	    userField,
 	    realField,
-	    passwordField,
-	    extraField,
-	    okButton,
+	    nickField,
 	    entryField,
 	    window,
-	    nickField
+	    okButton,
+	    extraField
 	);
 	Super = NSObject;
     };

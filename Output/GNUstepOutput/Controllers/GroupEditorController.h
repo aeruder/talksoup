@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ServerListController.h
+                                GroupEditorController.h
                           -------------------
-    begin                : Wed Apr 30 14:31:01 CDT 2003
+    begin                : Tue May  6 14:34:46 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,37 +15,30 @@
  *                                                                         *
  ***************************************************************************/
 
-@class ServerListController;
+@class GroupEditorController;
 
-#ifndef SERVER_LIST_CONTROLLER_H
-#define SERVER_LIST_CONTROLLER_H
+#ifndef GROUP_EDITOR_CONTROLLER_H
+#define GROUP_EDITOR_CONTROLLER_H
 
 #include <Foundation/NSObject.h>
 
-@class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView;
+@class NSTextField, NSWindow, NSButton;
 
-@interface ServerListController : NSObject
+@interface GroupEditorController : NSObject
 	{
-		NSButton *connectButton;
-		NSButton *addGroupButton;
-		NSButton *removeButton;
-		NSButton *addEntryButton;
-		NSButton *editButton;
-		NSBrowser *browser;
-		NSScrollView *scrollView;
+		NSTextField *entryField;
+		NSTextField *extraField;
+		NSButton *okButton;
 		NSWindow *window;
-		NSTableColumn *serverColumn;
-		id editor;
-		int wasEditing;
 	}
-- (void)editHit: (NSButton *)sender;
-- (void)addEntryHit: (NSButton *)sender;
-- (void)removeHit: (NSButton *)sender;
-- (void)connectHit: (NSButton *)sender;
-- (void)addGroupHit: (NSButton *)sender;
 
-- (NSBrowser *)browser;
+- (NSButton *)okButton;
+- (NSTextField *)extraField;
+- (NSTextField *)entryField;
 - (NSWindow *)window;
+
+- (void)setEntry: (id)sender;
 @end
 
-#endif
+#endif 
+ 

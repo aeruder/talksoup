@@ -10,7 +10,8 @@ GNUstepOutput_RESOURCE_FILES = Images/irc.tiff
 GNUstepOutput_LOCALIZED_RESOURCE_FILES = Channel.gorm Content.gorm Query.gorm\
                                          Localizable.strings Preferences.gorm \
                                          ServerEditor.gorm ServerList.gorm \
-                                         NamePrompt.gorm
+                                         NamePrompt.gorm GroupEditor.gorm \
+										 ServerEditor.gorm
 GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
@@ -22,7 +23,9 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 	      Controllers/ConnectionController.m \
 	      Controllers/PreferencesController.m \
 	      Controllers/NamePromptController.m \
-	      Controllers/ServerListController.m
+	      Controllers/ServerListController.m \
+		  Controllers/GroupEditorController.m \
+		  Controllers/ServerEditorController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/KeyTextView.m

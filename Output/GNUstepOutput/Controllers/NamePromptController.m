@@ -31,6 +31,15 @@
 	[window setDelegate: self];
 	[window makeKeyAndOrderFront: nil];
 	[window makeFirstResponder: typeView];
+	RETAIN(self);
+}
+- (void)dealloc
+{
+	[window setDelegate: nil];
+	DESTROY(window);
+	DESTROY(typeView);
+	
+	[super dealloc];
 }
 - (void)returnHit: (NSTextField *)sender
 {
@@ -49,7 +58,7 @@
 	x = [ConnectionController new];
 	[x connectToServer: [components objectAtIndex: 0] onPort: 6667];
 	
-	[window close];
+	[window close]; // This object is officially destroyed at this point...
 	
 	content = [x contentController];
 	
