@@ -1,0 +1,8 @@
+{
+	ExtraWords = (
+	);
+	ShouldDoNick = YES;
+	TabAnythingColor = "IRCColorCustom 410 130 140";
+	TabReferenceColor = "IRCColorCustom 130 140 410";
+	UserColor = IRCColorBlue;
+}
