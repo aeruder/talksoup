@@ -79,9 +79,9 @@
 	x = AUTORELEASE([[NSCell alloc] initTextCell: @""]);
 	[x setFormatter: AUTORELEASE([ChannelFormatter new])];
 	
-	font = [NSFont userFontOfSize: 12.0];
+	font = [NSFont userFontOfSize: 0.0];
 	[x setFont: font];
-	[tableView setRowHeight: 17.0];
+	[tableView setRowHeight: [font pointSize] * 1.5];
 	
 	[userColumn setDataCell: x];
 	
