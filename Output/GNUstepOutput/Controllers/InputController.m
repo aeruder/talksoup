@@ -35,6 +35,7 @@ id _output_ = nil;
 - (void)singleLineTyped: (NSString *)aLine;
 @end
 
+
 @implementation InputController
 - initWithConnectionController: (ConnectionController *)aController
 {
@@ -53,12 +54,75 @@ id _output_ = nil;
 		return nil;
 	}
 
+	history = [NSMutableArray new];
+	modHistory = [NSMutableArray new];
+	[modHistory addObject: @""];
+
 	return self;
 }
 - (void)dealloc
 {
+	RELEASE(modHistory);
+	RELEASE(history);
 	RELEASE(controller);
 	[super dealloc];
+}
+- (void)previousHistoryItem: (NSText *)fieldEditor
+{
+	int modIndex;
+	id string;
+	
+	if (historyIndex == 0)
+	{
+		return;
+	}
+
+	string = [NSString stringWithString: [fieldEditor string]];
+	
+	historyIndex--;
+	modIndex = [history count] - historyIndex;
+
+	NSLog(@"%d(%d) %d(%d)", historyIndex, [history count], modIndex, [modHistory count]);
+	
+	[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
+	
+	if (modIndex < [modHistory count])
+	{
+		[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
+
+		[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
+	}
+	else
+	{
+		string = [history objectAtIndex: historyIndex];
+		[modHistory addObject: string];
+		[fieldEditor setString: string];
+	}
+	
+	[[[controller contentController] window] makeFirstResponder:
+	  [[controller contentController] typeView]];
+}
+- (void)nextHistoryItem: (NSText *)fieldEditor
+{
+	int modIndex;
+	
+	if (historyIndex == [history count])
+	{
+		return;
+	}
+	 
+	historyIndex++;
+	modIndex = [history count] - historyIndex;
+
+	NSLog(@"%d(%d) %d(%d)", historyIndex, [history count], modIndex + 1, [modHistory count]);
+
+	[modHistory replaceObjectAtIndex: modIndex + 1 withObject: 
+	  [NSString stringWithString: [fieldEditor string]]];
+	
+	[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
+
+	[[[controller contentController] window] makeFirstResponder:
+	  [[controller contentController] typeView]];
 }
 - (void)lineTyped: (NSString *)command
 {
@@ -94,7 +158,15 @@ id _output_ = nil;
 }
 - (void)enterPressed: (id)sender
 {
-	[self lineTyped: AUTORELEASE(RETAIN([sender stringValue]))];
+	id string = AUTORELEASE(RETAIN([sender stringValue]));
+	[self lineTyped: string];
+	
+	[modHistory removeAllObjects];
+	[modHistory addObject: @""];
+	
+	[history addObject: string];	
+	historyIndex = [history count];
+	
 	[sender setStringValue: @""];
 	[[[controller contentController] window] makeFirstResponder: sender];
 }

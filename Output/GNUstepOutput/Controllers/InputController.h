@@ -21,15 +21,22 @@
 #define INPUT_CONTROLLER_H
 
 #include <Foundation/NSObject.h>
+#include <Foundation/NSMapTable.h>
 
-@class ConnectionController;
+@class ConnectionController, NSText;
 
 @interface InputController : NSObject
 	{
 		ConnectionController *controller;
+		int historyIndex;
+		NSMutableArray *history;
+		NSMutableArray *modHistory;
 	}
-
 - initWithConnectionController: (ConnectionController *)aController;
+
+- (void)previousHistoryItem: (NSText *)fieldEditor;
+- (void)nextHistoryItem: (NSText *)fieldEditor;
+
 - (void)lineTyped: (NSString *)command;
 - (void)enterPressed: (id)sender;
 @end
