@@ -74,12 +74,12 @@
 		}
 		if ([dict objectForKey: IRCBold])
 		{
-			[dict setObject: [NSFont boldSystemFontOfSize: -1.0]
+			[dict setObject: [NSFont boldSystemFontOfSize: 0.0]
 			  forKey: NSFontAttributeName];
 		}
 		else
 		{
-			[dict setObject: [NSFont userFontOfSize: -1.0]
+			[dict setObject: [NSFont userFontOfSize: 0.0]
 			  forKey: NSFontAttributeName];
 		}
 	
