@@ -89,7 +89,7 @@
 	{
 		[[_TS_ pluginForInput] closeConnection: connection];
 	}
-	[[_TS_ pluginForOutput] removeConnectionController: self];
+	[_GS_ removeConnectionController: self];
 	
 	[[content window] setDelegate: nil];
 	RELEASE(self);

@@ -37,7 +37,7 @@
 @implementation ConnectionController
 - init
 {
-	id output = [_TS_ pluginForOutput];
+	id output = _GS_;
 	
 	return [self initWithIRCInfoDictionary: 
 	  [NSDictionary dictionaryWithObjectsAndKeys:
@@ -128,7 +128,7 @@
 		[[_TS_ pluginForInput] closeConnection: connection];
 	}
 	
-	[[_TS_ pluginForOutput] waitingForConnection: ident
+	[_GS_ waitingForConnection: ident
 	  onConnectionController: self];
 	  
 	[[_TS_ pluginForInput] initiateConnectionToHost: aHost onPort: aPort
@@ -152,7 +152,7 @@
 	id data;
 	id current;
 	
-	topic = [[_TS_ pluginForOutput] topicInspectorController];
+	topic = [_GS_ topicInspectorController];
 		
 	if ((data = [nameToChannelData objectForKey: 
 	  GNUstepOutputLowercase(current = [content currentViewName])]))

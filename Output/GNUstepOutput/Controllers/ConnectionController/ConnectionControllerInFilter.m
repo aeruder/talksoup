@@ -644,7 +644,7 @@
 {
 	[_TS_ sendPongWithArgument: arg onConnection: aConnection
 	  withNickname: aNick
-	  sender: [_TS_ pluginForOutput]];
+	  sender: _GS_];
 
 	return self;
 }

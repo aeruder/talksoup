@@ -43,7 +43,7 @@ NSString *ServerListInfoAutoConnect = @"AutoConnect";
 
 static inline NSMutableArray *mutablized_prefs()
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	NSEnumerator *iter, *iter2;
 	id o1, o2;
@@ -90,7 +90,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 @implementation ServerListController
 + (BOOL)startAutoconnectServers
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	NSEnumerator *iter;
 	NSEnumerator *iter2;
@@ -121,7 +121,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 + (NSDictionary *)serverInGroup: (int)group row: (int)row
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	
 	if (group >= [tmp count] || group < 0) return nil;
@@ -147,12 +147,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	[array replaceObjectAtIndex: row withObject: x];
 
-	[[_TS_ pluginForOutput] setDefaultsObject: tmp forKey: 
+	[_GS_ setDefaultsObject: tmp forKey: 
 	  GNUstepOutputServerList];
 }
 + (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	NSEnumerator *iter;
 	NSEnumerator *iter2;
@@ -254,7 +254,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		}
 	
 		[x sortUsingFunction: sort_server_dictionary context: 0]; 
-		[[_TS_ pluginForOutput] setDefaultsObject: x
+		[_GS_ setDefaultsObject: x
 		 forKey: GNUstepOutputServerList];
 	
 		[browser reloadColumn: 0]; 
@@ -338,7 +338,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		}
 	
 		[array sortUsingFunction: sort_server_dictionary context: 0];
-		[[_TS_ pluginForOutput] setDefaultsObject: prefs
+		[_GS_ setDefaultsObject: prefs
 		 forKey: GNUstepOutputServerList];
 	
 		[browser reloadColumn: 1]; 
@@ -389,7 +389,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)editHit: (NSButton *)sender
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 	  GNUstepOutputServerList];
 	int row;
 	id o;
@@ -455,7 +455,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[prefs removeObjectAtIndex: row];
 		
-		[[_TS_ pluginForOutput] setDefaultsObject: prefs
+		[_GS_ setDefaultsObject: prefs
 		 forKey: GNUstepOutputServerList];
 	
 		[browser reloadColumn: 0];
@@ -474,7 +474,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[x removeObjectAtIndex: row];
 		
-		[[_TS_ pluginForOutput] setDefaultsObject: prefs
+		[_GS_ setDefaultsObject: prefs
 		 forKey: GNUstepOutputServerList];
 	
 		[browser reloadColumn: 1];
@@ -482,7 +482,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)connectHit: (NSButton *)sender
 {
-	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id tmp = [_GS_ defaultsObjectForKey:
 	  GNUstepOutputServerList];
 	id win;
 	
@@ -548,7 +548,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 @implementation ServerListController (BrowserDelegate)
 - (int)browser: (NSBrowser *)sender numberOfRowsInColumn: (int)column
 {
-	id serverList = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id serverList = [_GS_ defaultsObjectForKey:
 	  GNUstepOutputServerList];
 	
 	if (!serverList)
@@ -595,7 +595,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 - (void)browser: (NSBrowser *)sender willDisplayCell: (id)cell
   atRow: (int)row column: (int)column
 {
-	id serverList = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	id serverList = [_GS_ defaultsObjectForKey:
 	  GNUstepOutputServerList];
 
 	if (!serverList) return;

@@ -128,12 +128,12 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[_GS_ setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsNick];
 	}
 	else
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsNick];
+		[_GS_ setDefaultsObject: nil forKey: IRCDefaultsNick];
 	}
 	  	
 	return self;
@@ -144,12 +144,12 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[_GS_ setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsPassword];
 	}
 	else
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsPassword];
+		[_GS_ setDefaultsObject: nil forKey: IRCDefaultsPassword];
 	}
 	
 	return self;
@@ -160,12 +160,12 @@
 	
 	if ([array count] != 0)
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[_GS_ setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsUserName];
 	}
 	else
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsUserName];
+		[_GS_ setDefaultsObject: nil forKey: IRCDefaultsUserName];
 	}
 	
 	return self;
@@ -176,12 +176,12 @@
 
 	if ([array count] != 0)
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
+		[_GS_ setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsRealName];
 	}
 	else
 	{
-		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsRealName];
+		[_GS_ setDefaultsObject: nil forKey: IRCDefaultsRealName];
 	}
 	
 	return self;
@@ -193,12 +193,12 @@
 	id color = [sender color];
 
 	color = [color encodeToData];		
-	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
+	[_GS_ setDefaultsObject: color forKey:
 	  GNUstepOutputPersonalBracketColor];
 	
 	color = [NSColor colorFromEncodedData: color];
 		
-	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
+	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -216,12 +216,12 @@
 	id color = [sender color];
 	
 	color = [color encodeToData];		
-	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
+	[_GS_ setDefaultsObject: color forKey:
 	  GNUstepOutputBackgroundColor];
 	
 	color = [NSColor colorFromEncodedData: color];
 			
-	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
+	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
@@ -278,7 +278,7 @@
 }
 - resetColors: (NSButton *)sender
 {
-	id output = [_TS_ pluginForOutput];
+	id output = _GS_;
 	id y;
 	
 	y = [NSColor colorFromEncodedData: 

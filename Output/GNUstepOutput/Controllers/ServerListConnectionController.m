@@ -37,7 +37,7 @@
  inGroup: (int)group atRow: (int)row
 {
 	id tmp;
-	id output = [_TS_ pluginForOutput];
+	id output = _GS_;
 	
 	tmp = [NSMutableDictionary dictionaryWithDictionary: aInfo];
 	if ([[tmp objectForKey: IRCDefaultsNick] length] == 0)
