@@ -346,7 +346,6 @@ static NSString *unique_path(NSString *path)
 - (NSAttributedString *)commandDCCPORTRANGE: (NSString *)command connection: (id)connection
 {
 	id x;
-	int val;
 
 	x = [command separateIntoNumberOfArguments: 1];
 	if ([x count] == 0)
@@ -415,6 +414,7 @@ static NSString *unique_path(NSString *path)
 
 			set_default(DCCPortRange, tmp);
 		}	
+	}
 
 	return S2AS(_l(@"Ok."));
 }
@@ -422,7 +422,7 @@ static NSString *unique_path(NSString *path)
 {
 	id x;
 	int val;
-
+	
 	x = [command separateIntoNumberOfArguments: 2];
 
 	if ([x count] == 0)
