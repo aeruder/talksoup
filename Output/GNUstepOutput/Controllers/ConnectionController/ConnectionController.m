@@ -168,6 +168,7 @@
 }
 - (NSString *)nameForInputController: (InputController *)aInputController
 {
+	NSLog(@"nameForInputController called: %@", aInputController);
 	return NSMapGet(inputToName, aInputController);
 }
 - setNick: (NSString *)aString

@@ -27,6 +27,8 @@
 @class ConnectionController, NSMutableArray, NSText, KeyTextView, NSTextField;
 @interface InputController : NSObject <TypingController>
 	{
+		id <ContentController> content;
+		id <ContentControllerQueryView> view;
 		ConnectionController *controller;
 		unsigned historyIndex;
 		NSMutableArray *history;
@@ -36,7 +38,8 @@
 		NSMutableArray *tabCompletion;
 		unsigned tabCompletionIndex;
 	}
-- initWithConnectionController: (ConnectionController *)aController;
+- initWithView: (id <ContentControllerQueryView>)aViewController
+    contentController: (id <ContentController>)aContentController;
 
 - (void)commandTyped: (NSString *)aCommand;
 - (NSText *)fieldEditorForField: (NSTextField *)aField;

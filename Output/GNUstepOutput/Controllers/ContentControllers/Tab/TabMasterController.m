@@ -27,6 +27,13 @@
 #import <Foundation/NSValue.h>
 #import <AppKit/NSNibLoading.h>
 
+@interface TabMasterController (DelegateMethods)
+- (void)windowDidBecomeKey:(NSNotification *)aNotification;
+- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
+- (void)tabView: (NSTabView *)tabView 
+  didSelectTabViewItem: (NSTabViewItem *)tabViewItem;
+@end
+
 @implementation TabMasterController
 - init
 {
@@ -114,7 +121,10 @@
 	tab = NSMapGet(viewToTab, aView);
 	content = NSMapGet(viewToContent, aView);
 
+	NSLog(@"Selecting view!");
 	if (!tab || !content) return;
+
+	selected = aView;
 
 	[tabView selectTabViewItem: tab];
 
@@ -138,6 +148,10 @@
 	view = [indexToView objectAtIndex: aIndex];
 
 	[self selectView: view];
+}
+- (id <ContentControllerQueryView>)selectedView
+{
+	return selected;
 }
 - (void)removeView: (id <ContentControllerQueryView>)aView
 {
@@ -342,3 +356,35 @@
 }
 @end
 
+@implementation TabMasterController (DelegateMethods)
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+	/* Basically we just need to force the 
+	 * notification to happen */
+	[self selectView: selected];
+}
+- (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
+{
+	id content;
+
+	if (anObject != typeView) return nil;
+
+	content = NSMapGet(viewToContent, selected);
+
+	NSLog(@"Requested field editor. content: %@", content);
+
+	return [[content typingControllerForView: selected]
+	  fieldEditorForField: typeView];
+}
+- (void)tabView: (NSTabView *)tabView 
+  didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	id view;
+
+	view = NSMapGet(tabToView, tabViewItem);
+
+	if (view != selected) {
+		[self selectView: view];
+	}
+}
+@end

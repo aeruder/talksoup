@@ -75,23 +75,24 @@
 - (NSArray *)allViewsOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
-- putMessage: (NSAttributedString *)aMessage in: (id)aName;
-- putMessage: (NSAttributedString *)aMessage in: (id)aName 
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName;
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd;
-- putMessageInAll: (NSAttributedString *)aMessage;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage;
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     withEndLine: (BOOL)hasEnd;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType;
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
-- addControllerOfType: (NSString *)aType withName: (NSString *)aName 
+- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+   withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster;
-- removeControllerWithName: (NSString *)aName;
-- renameControllerWithName: (NSString *)aName to: (NSString *)newName;
+- (void)removeControllerWithName: (NSString *)aName;
+- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName;
 
 - (NSString *)presentationalNameForName: (NSString *)aName;
 - (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName;

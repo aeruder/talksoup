@@ -98,31 +98,41 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController
-- initWithConnectionController: (ConnectionController *)aController
+- initWithView: (id <ContentControllerQueryView>)aViewController
+    contentController: (id <ContentController>)aContentController
 {
 	if (!(self = [super init])) return nil;
 
-	controller = RETAIN(aController);
+	content = RETAIN(aContentController);
+	view = RETAIN(aViewController);
+	controller = [content connectionController];
 	
+	NSLog(@"Initializing with %@ %@", content, self);
 	history = [NSMutableArray new];
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
 
 	fieldEditor = [KeyTextView new];
 	[fieldEditor setFieldEditor: YES];
+	[fieldEditor setKeyTarget: self];
+	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
 
 	return self;
 }
 - (void)dealloc
 {
+	[fieldEditor setKeyTarget: nil];
+	RELEASE(fieldEditor);
 	RELEASE(modHistory);
 	RELEASE(history);
-	RELEASE(controller);
+	RELEASE(content);
+	RELEASE(view);
 	[super dealloc];
 }
 - (NSText *)fieldEditorForField: (NSTextField *)aField
 {
 	activeTextField = aField;
+	NSLog(@"Returning that dern field editor");
 	return fieldEditor;
 }
 - (void)commandTyped: (NSString *)command

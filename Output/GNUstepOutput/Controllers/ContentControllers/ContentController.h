@@ -59,6 +59,7 @@ extern NSString *ContentConsoleName;
 
 - (void)selectView: (id <ContentControllerQueryView>)aView;
 - (void)selectViewAtIndex: (unsigned)aIndex;
+- (id <ContentControllerQueryView>)selectedView;
 
 - (void)removeView: (id <ContentControllerQueryView>)aView;
 - (void)removeViewAtIndex: (unsigned)aIndex;
@@ -127,7 +128,8 @@ extern NSString *ContentConsoleName;
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
-- (void)addControllerOfType: (NSString *)aType withName: (NSString *)aName 
+- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+   withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster;
 - (void)removeControllerWithName: (NSString *)aName;

@@ -15,25 +15,26 @@
  *                                                                         *
  ***************************************************************************/
  
-#import "Controllers/ContentControllers/StandardContentController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
+#import "Controllers/ContentControllers/StandardContentController.h"
 #import "Controllers/ContentControllers/StandardQueryController.h"
-#import "Controllers/Preferences/PreferencesController.h"
-#import "Controllers/Preferences/FontPreferencesController.h"
+#import "Controllers/InputController.h"
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
+#import "Controllers/Preferences/PreferencesController.h"
+#import "GNUstepOutput.h"
 #import "Misc/NSAttributedStringAdditions.h"
 #import "Misc/NSColorAdditions.h"
-#import "GNUstepOutput.h"
 
+#import <AppKit/NSAttributedString.h>
+#import <AppKit/NSFont.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTextView.h>
-#import <AppKit/NSFont.h>
-#import <AppKit/NSAttributedString.h>
 #import <AppKit/NSWindow.h>
-#import <Foundation/NSMapTable.h>
-#import <Foundation/NSNotification.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSDictionary.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSNotification.h>
 #import <Foundation/NSNull.h>
 
 static NSString *TypeOfColor = @"TypeOfColor";
@@ -66,6 +67,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	nameToPresentation = [NSMutableDictionary new];
 	nameToLabel = [NSMutableDictionary new];
 	nameToMasterController = [NSMutableDictionary new];
+	nameToTyping = [NSMutableDictionary new];
 	bothToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	  
@@ -344,10 +346,9 @@ static NSString *TypeOfColor = @"TypeOfColor";
 /* Calls putMessage:in:withEndLine: as [self putMessage: aMessage: in: aName 
  * withEndLine: YES];
  */
-- putMessage: (NSAttributedString *)aMessage in: (id)aName
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName
 {
 	[self putMessage: aMessage in: aName withEndLine: YES];
-	return self;
 }
 /* Puts the message <var>aMessage</var> in <var>aName</var> with an optional
  * endline character appended to the end (specified by <var>hasEnd</var>).
@@ -356,14 +357,14 @@ static NSString *TypeOfColor = @"TypeOfColor";
  * or an NSArray of any of the above.  If it is nil, it'll put it in the 
  * currently visible channel.
  */
-- putMessage: (NSAttributedString *)aMessage in: (id)aName 
+- (void)putMessage: (NSAttributedString *)aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd
 {
 	id controller = nil;
 	id string;
 	NSRange aRange;
 	
-	if (!aMessage) return self;
+	if (!aMessage) return;
 	
 	if ([aName conformsToProtocol: @protocol(ContentControllerQueryView)])
 	{
@@ -388,7 +389,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		{
 			[self putMessage: aMessage in: object withEndLine: hasEnd];
 		}
-		return self;
+		return;
 	}
 	
 	if (controller == nil)
@@ -478,16 +479,14 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		  chatFont, NSFontAttributeName, nil]]))];
 	}
 	
-	return self;
 	//clear_scrollback(controller);
 	// FIXME: the controllers should handle the removing of extra LINES (need to get rid of this byte nonsense)
 }
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
 {
 	[self putMessageInAll: aMessage withEndLine: YES];
-	return self;	
 }
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     withEndLine: (BOOL)hasEnd
 {
 	NSEnumerator *iter;
@@ -499,16 +498,13 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	{
 		[self putMessage: aMessage in: obj withEndLine: hasEnd];
 	}
-	
-	return self;
 }
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType
 {
 	[self putMessageInAll: aMessage ofType: aType withEndLine: YES];
-	return self;
 }
-- putMessageInAll: (NSAttributedString *)aMessage
+- (void)putMessageInAll: (NSAttributedString *)aMessage
     ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd
 {
@@ -526,7 +522,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	}
 	else
 	{
-		return self;
+		return;
 	}
 	
 	iter = [targetArray objectEnumerator];
@@ -534,9 +530,9 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	{
 		[self putMessage: aMessage in: obj withEndLine: hasEnd];
 	}
-	return self;
 }
-- addControllerOfType: (NSString *)aType withName: (NSString *)aName 
+- (id <ContentControllerQueryView>)addControllerOfType: (NSString *)aType 
+   withName: (NSString *)aName 
    withLabel: (NSAttributedString *)aLabel 
    inMasterController: (id <MasterController>)aMaster
 {
@@ -549,15 +545,15 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	name = lowercase(aName);
 	
-	if ([nameToBoth objectForKey: name])
+	if ((controller = [nameToBoth objectForKey: name]))
 	{
 		[self setLabel: aLabel forName: name];
-		return nil;
+		return controller;
 	}
 		
 	if (!isQuery && !isChannel)
 	{
-		return self;
+		return nil;
 	}
 	if (isQuery)
 	{
@@ -592,9 +588,15 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	  forContentController: self];
 	[nameToMasterController setObject: aMaster forKey: name];
 	
-	return self;
+	[nameToTyping setObject: 
+	 AUTORELEASE([[InputController alloc] 
+	  initWithView: controller
+	  contentController: self]) forKey: name];
+	NSLog(@"AGH!: name: %@, %@", name, [nameToTyping objectForKey: name]);
+	
+	return controller;
 }
-- removeControllerWithName: (NSString *)aName
+- (void)removeControllerWithName: (NSString *)aName
 {
 	id master;
 	id lo;
@@ -606,13 +608,13 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	
 	if (!master)
 	{
-		return self;
+		return;
 	}
 	
 	cont = [nameToBoth objectForKey: lo];
 	if (!cont)
 	{
-		return self;
+		return;
 	}
 	
 	[master removeView: cont];
@@ -622,11 +624,10 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	[nameToBoth removeObjectForKey: lo];
 	[nameToPresentation removeObjectForKey: lo];
 	[nameToLabel removeObjectForKey: lo];
+	[nameToTyping removeObjectForKey: lo];
 	NSMapRemove(bothToName, cont);
-		
-	return self;
 }
-- renameControllerWithName: (NSString *)aName to: (NSString *)newName
+- (void)renameControllerWithName: (NSString *)aName to: (NSString *)newName
 {
 	id lo1, lo2;
 	id obj, which;
@@ -634,7 +635,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	lo1 = lowercase(aName);
 	lo2 = lowercase(newName);
 	
-	if (![nameToBoth objectForKey: lo1]) return self;
+	if (![nameToBoth objectForKey: lo1]) return;
 	
 	if ([lo1 isEqualToString: lo2])
 	{
@@ -643,10 +644,10 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		{
 			[nameToPresentation setObject: newName forKey: lo2];
 		}
-		return self;
+		return;
 	}
 	
-	if ([nameToBoth objectForKey: lo2]) return self;
+	if ([nameToBoth objectForKey: lo2]) return;
 	
 	[nameToPresentation setObject: newName forKey: lo2];
 	[nameToPresentation removeObjectForKey: lo1];
@@ -666,8 +667,6 @@ static NSString *TypeOfColor = @"TypeOfColor";
 	[nameToLabel setObject: [nameToLabel objectForKey:
 	  lo1] forKey: lo2];
 	[nameToLabel removeObjectForKey: lo1];
-		
-	return self;
 }
 - (NSAttributedString *)labelForName: (NSString *)aName
 {
