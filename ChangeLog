@@ -1,3 +1,7 @@
+2003-12-06 Andy Ruder <aeruder at ksu dot edu>
+ * Made a makefile fix that should disable AppKit from being linked in on OSX
+   where it need not be.
+
 2003-11-21 Andy Ruder <aeruder at ksu dot edu>
  * Decided I'm actually going to try to use this change log.
  * Hopefully fixed problem with buttons not showing up in bundle setup gui

@@ -39,62 +39,13 @@
 @implementation ConnectionController
 - init
 {
-	id output = _GS_;
-	
-	return [self initWithIRCInfoDictionary: 
-	  [NSDictionary dictionaryWithObjectsAndKeys:
-	    [output defaultsObjectForKey: IRCDefaultsNick], 
-	      IRCDefaultsNick,
-	    [output defaultsObjectForKey: IRCDefaultsRealName],
-	      IRCDefaultsRealName,
-	    [output defaultsObjectForKey: IRCDefaultsUserName],
-	      IRCDefaultsUserName,
-	    [output defaultsObjectForKey: IRCDefaultsPassword],
-	      IRCDefaultsPassword,
-	    nil]];
+	return [self initWithIRCInfoDictionary: nil
+	  withContentController: nil];
 }
 - initWithIRCInfoDictionary: (NSDictionary *)aDict
 {
-	id typeView;
-	
-	if (!(self = [super init])) return nil;
-	 
-	preNick = RETAIN([aDict objectForKey: IRCDefaultsNick]);
-	userName = RETAIN([aDict objectForKey: IRCDefaultsUserName]);
-	realName = RETAIN([aDict objectForKey: IRCDefaultsRealName]);
-	password = RETAIN([aDict objectForKey: IRCDefaultsPassword]);
-	
-	content = [[ContentController alloc] initWithConnectionController: self];
-	[NSBundle loadNibNamed: @"Content" owner: content];
-	[content setNickViewString: preNick];
-	[[content window] setDelegate: self];
-	
-	[content setLabel: S2AS(_l(@"Unconnected")) 
-	  forViewWithName: ContentConsoleName];
-	[[content window] setTitle: _l(@"Unconnected")];
-	
-	typeView = [content typeView];
-
-	nameToChannelData = [NSMutableDictionary new];
-	
-	fieldEditor = [KeyTextView new];
-	[fieldEditor setFieldEditor: YES];
-	[fieldEditor setKeyTarget: self];
-	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
-	[fieldEditor setUsesFontPanel: NO];
-	
-	inputController = [[InputController alloc] initWithConnectionController: self];
-	
-	[typeView setTarget: inputController];
-	[typeView setAction: @selector(enterPressed:)];
-	[typeView abortEditing];
-	[typeView setAllowsEditingTextAttributes: NO];
-	
-	[[content window] makeFirstResponder: typeView];
-	
-	[_GS_ addConnectionController: self];
-	
-	return self;
+	return [self initWithIRCInfoDictionary: aDict 
+	  withContentController: nil];
 } 	 
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
    withContentController: (ContentController *)aContent
@@ -102,7 +53,21 @@
 	id typeView;
 	
 	if (!(self = [super init])) return nil;
-	 
+
+	if (!aDict)
+	{
+	  aDict = [NSDictionary dictionaryWithObjectsAndKeys:
+	    [_GS_ defaultsObjectForKey: IRCDefaultsNick], 
+	      IRCDefaultsNick,
+	    [_GS_ defaultsObjectForKey: IRCDefaultsRealName],
+	      IRCDefaultsRealName,
+	    [_GS_ defaultsObjectForKey: IRCDefaultsUserName],
+	      IRCDefaultsUserName,
+	    [_GS_ defaultsObjectForKey: IRCDefaultsPassword],
+	      IRCDefaultsPassword,
+	    nil];
+	}
+		
 	preNick = RETAIN([aDict objectForKey: IRCDefaultsNick]);
 	userName = RETAIN([aDict objectForKey: IRCDefaultsUserName]);
 	realName = RETAIN([aDict objectForKey: IRCDefaultsRealName]);
@@ -110,9 +75,15 @@
 	
 	if (!aContent)
 	{
-		content = 
-	content = [[ContentController alloc] initWithConnectionController: self];
-	[NSBundle loadNibNamed: @"Content" owner: content];
+		content = [[ContentController alloc] initWithConnectionController: self];
+		[NSBundle loadNibNamed: @"Content" owner: content];
+	}
+	else
+	{
+		content = RETAIN(aContent);
+		[content setConnectionController: self];
+	}
+
 	[content setNickViewString: preNick];
 	[[content window] setDelegate: self];
 	

@@ -31,7 +31,7 @@
 	}
 
 - initWithServerListDictionary: (NSDictionary *)info
- inGroup: (int)group atRow: (int)row;
+ inGroup: (int)group atRow: (int)row withContentController: (id)aContent;
 @end
 
 #endif

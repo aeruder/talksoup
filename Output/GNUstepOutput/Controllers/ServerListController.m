@@ -112,7 +112,8 @@ static int sort_server_dictionary(id first, id second, void *x)
 			  isEqualToString: @"YES"])
 			{
 				AUTORELEASE([[ServerListConnectionController alloc]
-				 initWithServerListDictionary: o2 inGroup: g atRow: r]);
+				 initWithServerListDictionary: o2 inGroup: g atRow: r
+				 withContentController: nil]);
 				hadOne = YES;
 			}	
 			r++;
@@ -489,6 +490,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	id tmp = [_GS_ defaultsObjectForKey:
 	  GNUstepOutputServerList];
 	id win;
+	id aContent = nil;
 	
 	int first, row;
 	if ([browser selectedColumn] != 1) return;
@@ -502,9 +504,22 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	if (row >= (int)[tmp count]) return;
 
+	if ([forceButton state] == NSOffState)
+	{
+		id tmpArray;
+		tmpArray = [_GS_ unconnectedConnectionControllers];
+		if ([tmpArray count])
+		{
+			aContent = RETAIN([[tmpArray objectAtIndex: 0] contentController]);
+			AUTORELEASE(aContent);
+			[[aContent window] close]; // Cause the connection controller to
+			                           // die
+		}
+	}	
+
 	AUTORELEASE(win = [[ServerListConnectionController alloc]
 	  initWithServerListDictionary: [tmp objectAtIndex: row]
-	  inGroup: first atRow: row]);
+	  inGroup: first atRow: row withContentController: aContent]);
 
 	win = [[win contentController] window];
 	

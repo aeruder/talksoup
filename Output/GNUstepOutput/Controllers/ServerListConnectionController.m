@@ -35,34 +35,34 @@
 
 @implementation ServerListConnectionController
 - initWithServerListDictionary: (NSDictionary *)aInfo
- inGroup: (int)group atRow: (int)row
+ inGroup: (int)group atRow: (int)row withContentController: (id)aContent
 {
 	id tmp;
-	id output = _GS_;
 	
 	tmp = [NSMutableDictionary dictionaryWithDictionary: aInfo];
 	if ([[tmp objectForKey: IRCDefaultsNick] length] == 0)
 	{
-		[tmp setObject: [output defaultsObjectForKey: IRCDefaultsNick]
+		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsNick]
 		  forKey: IRCDefaultsNick];
 	}
 	if ([[tmp objectForKey: IRCDefaultsUserName] length] == 0)
 	{
-		[tmp setObject: [output defaultsObjectForKey: IRCDefaultsUserName]
+		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsUserName]
 		  forKey: IRCDefaultsUserName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsRealName] length] == 0)
 	{
-		[tmp setObject: [output defaultsObjectForKey: IRCDefaultsRealName]
+		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsRealName]
 		  forKey: IRCDefaultsRealName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsPassword] length] == 0)
 	{
-		[tmp setObject: [output defaultsObjectForKey: IRCDefaultsPassword]
+		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsPassword]
 		  forKey: IRCDefaultsPassword];
 	}
 	
-	if (!(self = [super initWithIRCInfoDictionary: tmp])) return nil;
+	if (!(self = [super initWithIRCInfoDictionary: tmp 
+	 withContentController: aContent])) return nil;
 	
 	oldInfo = RETAIN(aInfo);
 	newInfo = [[NSMutableDictionary alloc] initWithDictionary: aInfo];
@@ -70,7 +70,7 @@
 	serverRow = row;
 	serverGroup = group;
 
-	if ((tmp = [aInfo objectForKey: ServerListInfoWindowFrame]))
+	if ((tmp = [aInfo objectForKey: ServerListInfoWindowFrame]) && !aContent)
 	{
 		NSRect a = NSRectFromString(tmp);
 		

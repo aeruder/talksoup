@@ -268,9 +268,15 @@ GNUstepOutput *_GS_ = nil;
 
 	while ((object = [iter nextObject]))
 	{
-		if ([pendingConnection allKeysForObject: object] == 0 && 
-		  [object 
+		if ([[pendingIdentToConnectionController allKeysForObject: object] count] == 0 && 
+		  ![object connection])
+		{
+			[arr addObject: object];
+		}
+	}
 	
+	return arr;
+}
 - addServerList: (ServerListController *)aCont
 {
 	[serverLists addObject: aCont];
