@@ -286,10 +286,7 @@ GNUstepOutput *_GS_ = nil;
 }
 - setPreferencesController: (PreferencesController *)aPrefs
 {
-	if (prefs == aPrefs) return self;
-
-	RELEASE(prefs);
-	prefs = RETAIN(aPrefs);
+	ASSIGN(prefs, aPrefs);
 	
 	return self;
 }		
@@ -607,11 +604,13 @@ GNUstepOutput *_GS_ = nil;
 	if ([aNotification object] == [topic window])
 	{
 		[[topic topicText] setKeyTarget: nil];
-		DESTROY(topic);
+		AUTORELEASE(topic);
+		topic = nil;
 	}
 	if ([aNotification object] == [bundle window])
 	{
-		DESTROY(bundle);
+		AUTORELEASE(bundle);
+		bundle = nil;
 	}
 }
 - (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
