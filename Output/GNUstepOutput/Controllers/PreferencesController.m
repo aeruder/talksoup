@@ -122,6 +122,10 @@
 		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsNick];
 	}
+	else
+	{
+		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsNick];
+	}
 	  	
 	return self;
 }
@@ -133,6 +137,10 @@
 	{
 		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsPassword];
+	}
+	else
+	{
+		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsPassword];
 	}
 	
 	return self;
@@ -146,6 +154,10 @@
 		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsUserName];
 	}
+	else
+	{
+		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsUserName];
+	}
 	
 	return self;
 }
@@ -157,6 +169,10 @@
 	{
 		[[_TS_ pluginForOutput] setDefaultsObject: [array objectAtIndex: 0] forKey:
 		  IRCDefaultsRealName];
+	}
+	else
+	{
+		[[_TS_ pluginForOutput] setDefaultsObject: nil forKey: IRCDefaultsRealName];
 	}
 	
 	return self;

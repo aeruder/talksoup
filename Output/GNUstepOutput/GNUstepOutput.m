@@ -116,8 +116,6 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 }
 - setDefaultsObject: aObject forKey: (NSString *)aKey
 {
-	if (!aObject) return nil;
-	
 	if ([aKey hasPrefix: @"GNUstepOutput"])
 	{
 		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
@@ -130,15 +128,30 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 			[aDict addEntriesFromDictionary: y];
 		}
 		
-		[aDict setObject: aObject forKey: newKey];
+		if (aObject)
+		{
+			[aDict setObject: aObject forKey: newKey];
+		}
+		else
+		{
+			[aDict removeObjectForKey: newKey];
+		}
 		
 		[[NSUserDefaults standardUserDefaults]
 		   setObject: aDict forKey: @"GNUstepOutput"];
 	}
 	else
 	{
-		[[NSUserDefaults standardUserDefaults]
-		  setObject: aObject forKey: aKey];
+		if (aObject)
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  setObject: aObject forKey: aKey];
+		}
+		else
+		{
+			[[NSUserDefaults standardUserDefaults]
+			  removeObjectForKey: aKey];
+		}
 	}
 	
 	return self;
