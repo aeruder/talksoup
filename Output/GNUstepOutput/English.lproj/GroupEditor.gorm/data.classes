@@ -144,21 +144,12 @@
     };
     GroupEditorController = {
 	Actions = (
-	    "setNick:",
-	    "setReal:",
-	    "setUser:",
-	    "setPassword:",
 	    "setEntry:"
 	);
 	Outlets = (
-	    passwordField,
-	    userField,
-	    realField,
-	    nickField,
 	    entryField,
 	    window,
-	    okButton,
-	    extraField
+	    okButton
 	);
 	Super = NSObject;
     };
