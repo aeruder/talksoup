@@ -67,7 +67,7 @@
 	  attributes: attrib]);
 	
 	[content putMessage: 
-	  BuildAttributedString(_l(@"Topic for %@ set by %@ at %@"),
+	  BuildAttributedFormat(_l(@"Topic for %@ set by %@ at %@"),
 	  channel, who, date) in: channel];
 		
 	[data setTopicAuthor: [who string]];
