@@ -80,7 +80,7 @@
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection 
    withNickname: (NSAttributedString *)aNick    
-	sender: aPlugin;
+   sender: aPlugin;
 
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection
