@@ -15,18 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TalkSoupBundles/TalkSoup.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSUserDefaults.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSAutoreleasePool.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSBundle.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSRunLoop.h>
-#include <Foundation/NSHost.h>
-
-#include <Foundation/NSEnumerator.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSBundle.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSRunLoop.h>
+#import <Foundation/NSHost.h>
+#import <Foundation/NSEnumerator.h>
 
 #include <stdlib.h>
 
@@ -69,7 +68,9 @@ int main(void)
 	NSDictionary *defaultPlugins;
 	CREATE_AUTORELEASE_POOL(apr);
 
+#ifdef GNUSTEP
 	[NSObject enableDoubleReleaseCheck: YES];
+#endif
 
 	[TalkSoup sharedInstance];
 	
