@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ChannelController.h"
+#import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Controllers/InputController.h"
@@ -57,13 +57,13 @@
 	if (!aDict)
 	{
 	  aDict = [NSDictionary dictionaryWithObjectsAndKeys:
-	    [_GS_ defaultsObjectForKey: IRCDefaultsNick], 
+	    [_PREFS_ preferenceForKey: IRCDefaultsNick], 
 	      IRCDefaultsNick,
-	    [_GS_ defaultsObjectForKey: IRCDefaultsRealName],
+	    [_PREFS_ preferenceForKey: IRCDefaultsRealName],
 	      IRCDefaultsRealName,
-	    [_GS_ defaultsObjectForKey: IRCDefaultsUserName],
+	    [_PREFS_ preferenceForKey: IRCDefaultsUserName],
 	      IRCDefaultsUserName,
-	    [_GS_ defaultsObjectForKey: IRCDefaultsPassword],
+	    [_PREFS_ preferenceForKey: IRCDefaultsPassword],
 	      IRCDefaultsPassword,
 	    nil];
 	}
