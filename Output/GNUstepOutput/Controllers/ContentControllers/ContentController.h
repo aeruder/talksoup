@@ -86,7 +86,7 @@ extern NSString *ContentConsoleName;
 @end
 
 @protocol TypingController <NSObject>
-- (NSText *)fieldEditor;
+- (NSText *)fieldEditorForField: (NSTextField *)aField;
 - (void)commandTyped: (NSString *)aCommand;
 @end
 

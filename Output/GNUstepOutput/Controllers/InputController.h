@@ -21,14 +21,18 @@
 #define INPUT_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
-#import <Foundation/NSMapTable.h>
 
+#import "ContentControllers/ContentController.h"
+
+@class ConnectionController, NSMutableArray, NSText, KeyTextView, NSTextField;
 @interface InputController : NSObject <TypingController>
 	{
 		ConnectionController *controller;
 		int historyIndex;
 		NSMutableArray *history;
 		NSMutableArray *modHistory;
+		KeyTextView *fieldEditor;
+		NSTextField *activeTextField;
 	}
 - initWithConnectionController: (ConnectionController *)aController;
 
@@ -36,7 +40,7 @@
 - (void)nextHistoryItem: (NSText *)fieldEditor;
 
 - (void)commandTyped: (NSString *)aCommand;
-- (NSText *)fieldEditor;
+- (NSText *)fieldEditorForField: (NSTextField *)aField;
 @end
 
 #endif

@@ -26,6 +26,7 @@
 
 #import "Controllers/ContentControllers/ContentController.h"
 #import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
 
 @interface ConnectionController : NSObject
 	{

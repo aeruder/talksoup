@@ -78,6 +78,9 @@ static void send_message(id command, id name, id connection)
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
 
+	fieldEditor = [KeyTextView new];
+	[fieldEditor setFieldEditor: YES];
+
 	return self;
 }
 - (void)dealloc
@@ -87,7 +90,12 @@ static void send_message(id command, id name, id connection)
 	RELEASE(controller);
 	[super dealloc];
 }
-- (void)previousHistoryItem: (NSText *)fieldEditor
+- (NSText *)fieldEditorForField: (NSTextField *)aField
+{
+	activeTextField = aField;
+	return fieldEditor;
+}
+- (void)previousHistoryItem: (NSText *)aFieldEditor
 {
 	int modIndex;
 	id string;
@@ -121,7 +129,7 @@ static void send_message(id command, id name, id connection)
 	//[[[controller contentController] window] makeFirstResponder:
 	//  [[controller contentController] typeView]];
 }
-- (void)nextHistoryItem: (NSText *)fieldEditor
+- (void)nextHistoryItem: (NSText *)aFieldEditor
 {
 	int modIndex;
 	
@@ -143,7 +151,7 @@ static void send_message(id command, id name, id connection)
 	  [[controller contentController] typeView]];
 	*/
 }
-- (void)lineTyped: (NSString *)command
+- (void)commandTyped: (NSString *)command
 {
 	NSArray *lines;
 	NSEnumerator *iter, *iter2;
@@ -180,7 +188,7 @@ static void send_message(id command, id name, id connection)
 	[modHistory removeAllObjects];
 	[modHistory addObject: @""];
 	
-	[self lineTyped: string];
+	[self commandTyped: string];
 	
 	[sender setStringValue: @""];
 	/* FIXME
