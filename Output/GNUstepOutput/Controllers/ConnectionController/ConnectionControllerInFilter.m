@@ -188,10 +188,98 @@
 	  in: nil];
 	return self;
 }
-- modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
+- modeChanged: (NSAttributedString *)aMode on: (NSAttributedString *)anObject 
    withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
    onConnection: (id)aConnection sender: aPlugin
 {
+	Channel *chan;
+	unichar m;
+	BOOL add = YES;
+	int argindex = 0;
+	id mode = [aMode string];
+	int modeindex;
+	int modelen = [mode length];
+	int argcnt = [paramList count];
+	id who = [IRCUserComponents(aPerson) objectAtIndex: 0];
+	
+	id params;
+	NSEnumerator *iter;
+	id object = nil;
+	
+	iter = [paramList objectEnumerator];
+	params = AUTORELEASE([NSMutableAttributedString new]);
+	
+	object = [iter nextObject];
+	if (object)
+	{
+		[params setAttributedString: object];
+	}
+	
+	while ((object = [iter nextObject]))
+	{
+		if (object)
+		{
+			[params appendAttributedString: S2AS(@" ")];
+			[params appendAttributedString: object];
+		}
+	}
+		
+	chan = [nameToChannelData objectForKey: 
+	  GNUstepOutputLowercase([anObject string])];
+
+	for (modeindex = 0; modeindex < modelen; modeindex++)
+	{
+		m = [mode characterAtIndex: modeindex];
+		switch (m)
+		{
+			case '+':
+				add = YES;
+				continue;
+			case '-':
+				add = NO;
+				continue;
+			default:
+				break;
+		}
+				
+		if (chan)
+		{
+			switch (m)
+			{
+				case 'o':
+					if (argindex < argcnt)
+					{
+						id user;
+						user = [chan userWithName: 
+						  [[paramList objectAtIndex: argindex] string]];
+						[user setOperator: add];
+						[[[content controllerForViewWithName: [anObject string]] tableView] 
+						   reloadData];
+						argindex++;
+					}
+					break;
+				case 'v':
+					if (argindex < argcnt)
+					{
+						id user;
+						user = [chan userWithName: 
+						  [[paramList objectAtIndex: argindex] string]];
+						[user setVoice: add];
+						[[[content controllerForViewWithName: [anObject string]] tableView] 
+						   reloadData];
+						argindex++;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	
+	[content putMessage: 
+	  BuildAttributedString(who, _l(@" sets mode "), anObject, @" ", aMode, @" ",
+	    params, nil) in: [anObject string]];
+	
 	return self;
 }
 - numericCommandReceived: (NSAttributedString *)command 
