@@ -28,7 +28,7 @@
 {
 	struct objc_method_list *list;
 #ifdef __APPLE__
-	struct objc_method_list **out_list;
+	void *iterator;
 #endif
 	Class class;
 	int z;
@@ -39,9 +39,9 @@
 	class = [self class];
 
 #ifdef __APPLE__	
-	for (out_list = class->methodLists; *out_list != 0; out_list++)
+	iterator = 0;
+	while ((list = class_nextMethodList(class, &iterator)))
 	{
-		list = *out_list;
 #else
 	for (list = class->methods; list != NULL; list=list->method_next)
 	{
@@ -50,7 +50,12 @@
 		for (z = 0; z < y; z++)
 		{
 			sel = list->method_list[z].method_name;
+#ifdef __APPLE__
+			[array addObject: AUTORELEASE([[NSString alloc] initWithUTF8String:
+			  sel])];
+#else
 			[array addObject: NSStringFromSelector(sel)];
+#endif
 		}
 	}
 
