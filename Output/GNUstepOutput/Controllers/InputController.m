@@ -658,6 +658,29 @@ static void send_message(id command, id name, id connection)
 	  sender: _GS_];
 	return self;
 }				
+- commandSay: (NSString *)aString
+{
+	NSString *name;
+
+	if ([aString length] == 0)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /say <text>" @"\n"
+		  @"Sends text to the current channel."))
+		  onConnection: nil];
+		return self;
+	}
+
+	name = [content nameForViewController: view];
+	if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)])
+		return self;
+
+	if (![controller connection])
+		return self;
+		
+	send_message(aString, name, [controller connection]);
+	return self;
+}
 - commandTopic: (NSString *)aString
 {
 	NSArray *x;
@@ -666,14 +689,7 @@ static void send_message(id command, id name, id connection)
 	id name;
 
 	x = [aString separateIntoNumberOfArguments: 1];
-	if ([x count] == 0)
-	{
-		topic = nil;
-	}
-	else
-	{
-		topic = S2AS([x objectAtIndex: 0]);
-	}
+	topic = ([x count]) ? (S2AS([x objectAtIndex: 0])) : nil;
 
 	name = [content nameForViewController: view];
 	if (![[content typeForName: name] isEqualToString: 
