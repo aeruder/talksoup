@@ -25,6 +25,7 @@
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSColor.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSRunLoop.h>
 #include <Foundation/NSAttributedString.h>
@@ -52,6 +53,11 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 	  GNUstepOutputLowercase(aString2)];
 }
 
+NSColor *GNUstepOutputColor(NSColor *aColor)
+{
+	return [aColor colorUsingColorSpaceName: [NSColor commonColorSpaceName]];
+}
+
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
@@ -74,14 +80,14 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	  @"", IRCDefaultsRealName,
 	  @"", IRCDefaultsUserName,
 	  @"", IRCDefaultsPassword,
-	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
-	    blue: 0.8627 alpha: 1.0] encodeToData], GNUstepOutputBackgroundColor,
-	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputTextColor,
-	  [[NSColor colorWithCalibratedRed: 1.0 green: 0.0
-	    blue: 0.0 alpha: 1.0] encodeToData], GNUstepOutputPersonalBracketColor,
-	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
-	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
+	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 1.0 green: 0.9725 
+	    blue: 0.8627 alpha: 1.0]) encodeToData], GNUstepOutputBackgroundColor,
+	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 0.0 alpha: 1.0]) encodeToData], GNUstepOutputTextColor,
+	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 1.0 green: 0.0
+	    blue: 0.0 alpha: 1.0]) encodeToData], GNUstepOutputPersonalBracketColor,
+	  [GNUstepOutputColor([NSColor colorWithCalibratedRed: 0.0 green: 0.0
+	    blue: 1.0 alpha: 1.0]) encodeToData], GNUstepOutputOtherBracketColor,
 	  nil];
 
 	return self;

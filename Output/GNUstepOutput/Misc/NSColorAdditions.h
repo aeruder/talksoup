@@ -21,6 +21,7 @@
 #include <AppKit/NSColor.h>
 
 @interface NSColor (EncodingAdditions)
++ (NSString *)commonColorSpaceName;
 + colorFromEncodedData: (id)aData;
 - (id)encodeToData;
 @end

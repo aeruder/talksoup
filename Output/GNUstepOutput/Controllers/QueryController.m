@@ -37,6 +37,7 @@
 	  NSMakeSize([chatView frame].size.width, 1e7)];
 	[[chatView textContainer] setWidthTracksTextView: YES];
 	[chatView setTextContainerInset: NSMakeSize(2, 0)];
+	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
 	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputBackgroundColor]]];

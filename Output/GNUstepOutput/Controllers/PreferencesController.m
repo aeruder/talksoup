@@ -141,15 +141,16 @@
 {
 	NSEnumerator *iter;
 	id object;
+	id color = GNUstepOutputColor([sender color]);
 
-	[[_TS_ output] setDefaultsObject: [[sender color] encodeToData] forKey:
+	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputPersonalBracketColor];
 		
 	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[object setPersonalColor: [sender color]];
+		[object setPersonalColor: color];
 	}
 	
 	return self;
@@ -160,8 +161,9 @@
 	id object;
 	NSEnumerator *iter2;
 	id object2;
-
-	[[_TS_ output] setDefaultsObject: [[sender color] encodeToData] forKey:
+	id color = GNUstepOutputColor([sender color]);
+	
+	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputBackgroundColor];
 			
 	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
@@ -172,7 +174,7 @@
 		
 		while ((object2 = [iter2 nextObject]))
 		{
-			[[object2 chatView] setBackgroundColor: [sender color]];
+			[[object2 chatView] setBackgroundColor: color];
 		}
 	}
 
@@ -182,15 +184,16 @@
 {
 	NSEnumerator *iter;
 	id object;
+	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ output] setDefaultsObject: [[sender color] encodeToData] forKey:
+	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputOtherBracketColor];
 		
 	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[object setOtherColor: [sender color]];
+		[object setOtherColor: color];
 	}
 	
 	return self;
@@ -199,22 +202,16 @@
 {
 	NSEnumerator *iter;
 	id object;
-	NSEnumerator *iter2;
-	id object2;
-
-	[[_TS_ output] setDefaultsObject: [[sender color] encodeToData] forKey:
+	id color = GNUstepOutputColor([sender color]);
+	
+	[[_TS_ output] setDefaultsObject: [color encodeToData] forKey:
 	  GNUstepOutputTextColor];
-		
+	
 	iter = [[[_TS_ output] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		iter2 = [[[object contentController] allViews] objectEnumerator];
-		
-		while ((object2 = [iter2 nextObject]))
-		{
-			[[object2 chatView] setTextColor: [sender color]];
-		}
+		[[object contentController] setTextColor: color];
 	}
 
 	return self;

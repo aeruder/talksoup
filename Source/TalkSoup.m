@@ -34,10 +34,10 @@ id _TSDummy_;
 @end
 
 @implementation NSException (blah)
-/*- (void)raise
+- (void)raise
 {
 	abort();
-}*/
+}
 @end
 
 @implementation TalkSoup

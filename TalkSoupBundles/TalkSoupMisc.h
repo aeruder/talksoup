@@ -18,7 +18,7 @@
 #ifndef TALKSOUP_MISC_H
 #define TALKSOUP_MISC_H
 
-@class NSAttributedString;
+@class NSMutableAttributedString;
 
 #include <Foundation/NSString.h>
 
@@ -26,7 +26,7 @@
 - separateIntoNumberOfArguments: (int)num;
 @end
 
-NSAttributedString *BuildAttributedString(id aObject, ...);
+NSMutableAttributedString *BuildAttributedString(id aObject, ...);
 
 NSArray *IRCUserComponents(NSAttributedString *from);
 

@@ -92,7 +92,7 @@ static NSArray *get_first_word(NSString *arg)
 }
 @end
 
-NSAttributedString *BuildAttributedString(id aObject, ...)
+NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 {
 	va_list ap;
 	NSMutableAttributedString *str;

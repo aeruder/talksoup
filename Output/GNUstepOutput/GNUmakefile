@@ -18,7 +18,7 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m
 
-Misc = Misc/NSColorAdditions.m
+Misc = Misc/NSColorAdditions.m Misc/NSAttributedStringAdditions.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)
 

@@ -21,6 +21,9 @@
 #include "Controllers/ChannelController.h"
 #include "Controllers/InputController.h"
 #include "Views/AttributedTabViewItem.h"
+#include "Misc/NSAttributedStringAdditions.h"
+#include "Misc/NSColorAdditions.h"
+#include <AppKit/NSColor.h>
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTabView.h>
@@ -59,6 +62,9 @@ NSString *ContentConsoleName = @"Content Console Name";
 	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	
+	textColor = RETAIN([NSColor colorFromEncodedData: 
+	  [[_TS_ output] defaultsObjectForKey: GNUstepOutputTextColor]]);
+	
 	return self;
 }	
 - (void)awakeFromNib
@@ -84,6 +90,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 
 	[tabView setDelegate: nil];
 	[typeView setTarget: nil];
+	RELEASE(textColor);
 	RELEASE(typeView);
 	RELEASE(nickView);
 	RELEASE(tabView);
@@ -96,6 +103,28 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(nameToTabItem);
 	
 	[super dealloc];
+}
+- setTextColor: (NSColor *)aColor
+{
+	if (![aColor isEqual: textColor])
+	{
+		NSEnumerator *iter;
+		id object;
+
+		iter = [[nameToBoth allValues] objectEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			object = [[object chatView] textStorage];
+			[object replaceAttribute: NSForegroundColorAttributeName 
+			  withValue: textColor withValue: aColor withRange:
+			  NSMakeRange(0, [object length])];
+		}
+		
+		RELEASE(textColor);
+		textColor = RETAIN(aColor);
+	
+	}
+	return self;
 }
 - (NSArray *)allViews
 {
@@ -179,10 +208,20 @@ NSString *ContentConsoleName = @"Content Console Name";
 	
 	if ([aString isKindOf: [NSString class]])
 	{
-		[[[controller chatView] textStorage] appendAttributedString: S2AS(aString)];
+		NSLog(@"Using %p", textColor);
+		[[[controller chatView] textStorage] appendAttributedString: 
+		 AUTORELEASE(([[NSAttributedString alloc] initWithString: aString
+		  attributes: [NSDictionary dictionaryWithObjectsAndKeys:
+		    textColor, NSForegroundColorAttributeName,
+		     nil]]))];
 	}
 	else if ([aString isKindOf: [NSAttributedString class]])
 	{
+		NSLog(@"Using %p", textColor);		
+		aString = AUTORELEASE([[NSMutableAttributedString alloc] 
+		   initWithAttributedString: aString]);
+		[aString addAttributeIfNotPresent: NSForegroundColorAttributeName value: textColor
+		  withRange: NSMakeRange(0, [aString length])];
 		[[[controller chatView] textStorage] appendAttributedString: aString];
 	}
 	

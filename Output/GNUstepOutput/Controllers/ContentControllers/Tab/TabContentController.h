@@ -28,6 +28,7 @@ extern NSString *ContentConsoleName;
 @class NSTextField, NSTabView, NSWindow;
 @class NSMutableDictionary, NSString, NSAttributedString;
 @class NSTabViewItem, NSArray;
+@class NSColor;
 
 @interface ContentController : NSObject
 {
@@ -44,7 +45,10 @@ extern NSString *ContentConsoleName;
 	NSMapTable *tabItemToName;
 	NSMapTable *bothToName;
 	NSString *current;
+	NSColor *textColor;
 }
+- setTextColor: (NSColor *)aColor;
+
 - (NSArray *)allViews;
 
 - (NSTextField *)typeView;

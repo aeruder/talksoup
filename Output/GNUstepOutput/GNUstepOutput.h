@@ -15,13 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-@class GNUstepOutput, NSString;
+@class GNUstepOutput, NSString, NSColor;
 
 #include <Foundation/NSObject.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString);
 NSString *GNUstepOutputIdentificationForController(id controller);
 BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2);
+NSColor *GNUstepOutputColor(NSColor *aColor);
 
 extern NSString *GNUstepOutputPersonalBracketColor;
 extern NSString *GNUstepOutputOtherBracketColor;

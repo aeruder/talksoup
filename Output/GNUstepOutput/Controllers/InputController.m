@@ -184,9 +184,6 @@ id _output_ = nil;
 	NSLog(@"Getting ready to send...");
 	[_TS_ sendMessage: S2AS(command) to: S2AS(name)
 	  onConnection: connection sender: _output_];
-	[_TS_ messageReceived: S2AS(command) to: S2AS(name)
-	  from: S2AS([connection nick]) onConnection: connection 
-	  sender: [_TS_ input]];
 }
 @end
 
