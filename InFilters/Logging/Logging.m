@@ -57,7 +57,7 @@ static NSInvocation *invoc = nil;
 	
 	if (!connection)
 	{
-		return S2AS(@"Connect to a server before using this command");
+		return S2AS(_l(@"Connect to a server before using this command"));
 	}
 	
 	if ([arr count] == 0)
@@ -65,16 +65,16 @@ static NSInvocation *invoc = nil;
 		x = NSMapGet(files, connection);
 		if (!x)
 		{
-			return S2AS(@"Usage: /logging <file>");
+			return S2AS(_l(@"Usage: /logging <file>"));
 		}
 		else
 		{
-			[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING DEACTIVATED\n",
+			[x writeData: [[NSString stringWithFormat: _l(@"[%@] LOGGING DEACTIVATED\n"),
 			  USE_DATE]
 			  dataUsingEncoding: [NSString defaultCStringEncoding]
 			  allowLossyConversion: YES]];
 			NSMapRemove(files, connection);
-			return S2AS(@"Logging turned off.");
+			return S2AS(_l(@"Logging turned off."));
 		}
 	}
 	
@@ -96,29 +96,29 @@ static NSInvocation *invoc = nil;
 	}
 	else
 	{
-		return BuildAttributedString(@"Could not open file for writing: ", path, nil);
+		return BuildAttributedString(_l(@"Could not open file for writing: "), path, nil);
 	}
 	
 	NSMapInsert(files, connection, x);
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING ACTIVATED\n",
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] LOGGING ACTIVATED\n"),
 	  USE_DATE]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
 	
-	return S2AS(@"Logging turned on.");
+	return S2AS(_l(@"Logging turned on."));
 }
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"This command can handle logging to a file. "
+	 _l(@"Description: "), _l(@"This command can handle logging to a file. "
 	 @"To use it, simply type /logging <file> on any connection to "
 	 @"log that connection.  To set up persistent logging, please "
-	 @"see the FAQ distributed with TalkSoup."
+	 @"see the FAQ distributed with TalkSoup."),
 	 @"\n\n",
-	 @"Copyright (C) 2003 by Andrew Ruder",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
 	 nil);
 }
 - pluginActivated
@@ -145,7 +145,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC (%@)\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ has quit IRC (%@)\n"), 
 	  USE_DATE, [aConnection nick], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -169,7 +169,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 	
-	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REPLY %@ %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] <%@:%@> CTCP-REPLY %@ %@\n"), 
 	  USE_DATE, [aConnection nick], [aPerson string], [aCTCP string], 
 	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -193,7 +193,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] <%@:%@> CTCP-REQUEST %@ %@\n"), 
 	  USE_DATE, [aConnection nick], [aPerson string], [aCTCP string], 
 	  [args string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -280,11 +280,11 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] Connection Terminated\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] Connection Terminated\n"), 
 	  USE_DATE] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
-	[x writeData: [[NSString stringWithFormat: @"[%@] LOGGING DEACTIVATED\n",
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] LOGGING DEACTIVATED\n"),
 	  USE_DATE]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -311,7 +311,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] <%@:%@> CTCP-REQUEST %@ %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] <%@:%@> CTCP-REQUEST %@ %@\n"), 
 	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
 	  [receiver string], [aCTCP string], [argument string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -360,7 +360,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] ERROR: %@\n", USE_DATE,
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] ERROR: %@\n"), USE_DATE,
 	  [anError string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
 	  allowLossyConversion: YES]];
@@ -383,7 +383,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] Wallops(%@): %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] Wallops(%@): %@\n"), 
 	  USE_DATE, [[IRCUserComponents(sender) objectAtIndex: 0] string], 
 	  [message string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -408,7 +408,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ was kicked from %@ by %@ (%@)\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ was kicked from %@ by %@ (%@)\n"), 
 	  USE_DATE, [aPerson string], [aChannel string], 
 	  [[IRCUserComponents(kicker) objectAtIndex: 0] string], [reason string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -431,7 +431,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has invited you to %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@(%@) has invited you to %@\n"), 
 	  USE_DATE, [[IRCUserComponents(inviter) objectAtIndex: 0] string], 
 	  [[IRCUserComponents(inviter) objectAtIndex: 1] string], [aChannel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -471,7 +471,7 @@ static NSInvocation *invoc = nil;
 		}
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ sets mode %@ %@ %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ sets mode %@ %@ %@\n"), 
 	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string], 
 	  [mode string], [anObject string], str] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -534,7 +534,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ is now known as %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ is now known as %@\n"), 
 	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
 	  [newName string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -558,7 +558,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@(%@) has joined %@\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@(%@) has joined %@\n"), 
 	  USE_DATE, [[IRCUserComponents(joiner) objectAtIndex: 0] string],
 	  [[IRCUserComponents(joiner) objectAtIndex: 1] string], [channel string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -582,7 +582,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has parted %@(%@)\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ has parted %@(%@)\n"), 
 	  USE_DATE, [[IRCUserComponents(parter) objectAtIndex: 0] string],
 	  [channel string], [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -605,7 +605,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ has quit IRC(%@)\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ has quit IRC(%@)\n"), 
 	  USE_DATE, [[IRCUserComponents(quitter) objectAtIndex: 0] string],
 	  [aMessage string]] 
 	  dataUsingEncoding: [NSString defaultCStringEncoding]
@@ -628,7 +628,7 @@ static NSInvocation *invoc = nil;
 		return self;
 	}
 
-	[x writeData: [[NSString stringWithFormat: @"[%@] %@ changed the topic in %@ to '%@'\n", 
+	[x writeData: [[NSString stringWithFormat: _l(@"[%@] %@ changed the topic in %@ to '%@'\n"), 
 	  USE_DATE, [[IRCUserComponents(aPerson) objectAtIndex: 0] string],
 	  [channel string], [aTopic string]]
 	  dataUsingEncoding: [NSString defaultCStringEncoding]

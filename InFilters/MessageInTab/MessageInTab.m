@@ -25,12 +25,12 @@
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"This bundle will open a new tab for "
-	 @"any incoming private messages."
+	 _l(@"Description: "), _l(@"This bundle will open a new tab for "
+	 @"any incoming private messages."),
 	 @"\n\n",
-	 @"Copyright (C) 2003 by Andrew Ruder",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
 	 nil);
 }
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to

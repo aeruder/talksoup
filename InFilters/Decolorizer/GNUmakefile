@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+Decolorizer_LANGUAGES = English
+Decolorizer_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Decolorizer_PRINCIPAL_CLASS = Decolorizer
 
 Decolorizer_OBJC_FILES = Decolorizer.m

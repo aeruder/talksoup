@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #import "TalkSoup.h"
+#import "TalkSoupPrivate.h"
 
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
@@ -758,7 +759,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 @end
 
 #define MARK [NSNull null]
-#define NO_CONNECT S2AS(_(@"Connect to a server before using this command"))
+#define NO_CONNECT S2AS(_l(@"Connect to a server before using this command"))
 
 @implementation TalkSoup (Commands)
 - (NSAttributedString *)commandSaveLoaded: (NSString *)args 
@@ -766,16 +767,16 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 {
 	[self savePluginList];
 
-	return S2AS(_(@"The loaded bundles will now load automagically on TalkSoup startup."));
+	return S2AS(_l(@"The loaded bundles will now load automagically on TalkSoup startup."));
 }
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
 {
-	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
-	  MARK, IRCBold, IRCBoldValue, _(@"Output: "), activatedOutput, @"\n",
-	  MARK, IRCBold, IRCBoldValue, _(@"Input: "), activatedInput, @"\n",
-	  MARK, IRCBold, IRCBoldValue, _(@"Output Filters: "), [[self activatedOutFilters]
+	return BuildAttributedString(_l(@"Currently loaded bundles:\n"),
+	  MARK, IRCBold, IRCBoldValue, _l(@"Output: "), activatedOutput, @"\n",
+	  MARK, IRCBold, IRCBoldValue, _l(@"Input: "), activatedInput, @"\n",
+	  MARK, IRCBold, IRCBoldValue, _l(@"Output Filters: "), [[self activatedOutFilters]
 	    componentsJoinedByString: @", "], @"\n",
-	  MARK, IRCBold, IRCBoldValue, _(@"Input Filters: "), [[self activatedInFilters]
+	  MARK, IRCBold, IRCBoldValue, _l(@"Input Filters: "), [[self activatedInFilters]
 	    componentsJoinedByString: @", "], nil);
 }
 - (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
@@ -789,7 +790,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] < 1)
 	{
-		return S2AS(_(@"Usage: /load <in/out>"));
+		return S2AS(_l(@"Usage: /load <in/out>"));
 	}
 	
 	first = [x objectAtIndex: 0];
@@ -805,7 +806,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	}
 	else
 	{
-		return S2AS(_(@"Usage: /load <in/out>"));
+		return S2AS(_l(@"Usage: /load <in/out>"));
 	}
 	
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
@@ -813,8 +814,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	if (!second || ![array containsObject: second])
 	{
 		return BuildAttributedString(
-		  _(@"Usage: /load <in/out> <filter>"), @"\n",
-		  MARK, IRCBold, IRCBoldValue, _(@"Possible filters: "), 
+		  _l(@"Usage: /load <in/out> <filter>"), @"\n",
+		  MARK, IRCBold, IRCBoldValue, _l(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	
@@ -827,7 +828,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		[self activateOutFilter: second];
 	}
 	
-	return BuildAttributedString(second, _(@" loaded"), nil);
+	return BuildAttributedString(second, _l(@" loaded"), nil);
 }
 - (NSAttributedString *)commandUnload: (NSString *)args connection: (id)connection
 {
@@ -838,7 +839,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] < 1)
 	{
-		return S2AS(_(@"Usage: /unload <in/out>"));
+		return S2AS(_l(@"Usage: /unload <in/out>"));
 	}
 	
 	first = [x objectAtIndex: 0];
@@ -854,7 +855,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	}
 	else
 	{
-		return S2AS(_(@"Usage: /unload <in/out>"));
+		return S2AS(_l(@"Usage: /unload <in/out>"));
 	}
 	
 	second = ([x count] > 1) ? [x objectAtIndex: 1] : nil;
@@ -862,8 +863,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	if (!second || ![array containsObject: second])
 	{
 		return BuildAttributedString(
-		  _(@"Usage: /unload <in/out> <filter>"), @"\n", 
-		  MARK, IRCBold, IRCBoldValue, _(@"Possible filters: "), 
+		  _l(@"Usage: /unload <in/out> <filter>"), @"\n", 
+		  MARK, IRCBold, IRCBoldValue, _l(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	
@@ -876,7 +877,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		[self deactivateOutFilter: second];
 	}
 	
-	return BuildAttributedString(second, _(@" unloaded"), nil);
+	return BuildAttributedString(second, _l(@" unloaded"), nil);
 }
 - (NSAttributedString *)commandJoin: (NSString *)aString connection: connection
 {
@@ -887,7 +888,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] == 0)
 	{
-		return S2AS(_(@"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"));
+		return S2AS(_l(@"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"));
 	}
 	
 	pass = ([x count] == 2) ? [x objectAtIndex: 1] : nil;
@@ -907,7 +908,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] < 2)
 	{
-		return S2AS(_(@"Usage: /msg <person> <message>"));
+		return S2AS(_l(@"Usage: /msg <person> <message>"));
 	}
 	
 	[_TS_ sendMessage: S2AS([x objectAtIndex: 1]) to: 
@@ -938,7 +939,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if (!name)
 	{
-		return S2AS(_(@"Usage: /part <channel> [message]"));
+		return S2AS(_l(@"Usage: /part <channel> [message]"));
 	}
 	
 	[_TS_ partChannel: S2AS(name) withMessage: S2AS(msg) 
@@ -956,7 +957,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] < 2)
 	{
-		return S2AS(_(@"Usage: /notice <person> <message>"));
+		return S2AS(_l(@"Usage: /notice <person> <message>"));
 	}
 	
 	[_TS_ sendNotice: S2AS([x objectAtIndex: 1]) to: 
@@ -993,7 +994,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([x count] == 0)
 	{
-		return S2AS(_(@"Usage: /nick <newnick>"));
+		return S2AS(_l(@"Usage: /nick <newnick>"));
 	}
 	
 	[_TS_ changeNick: S2AS([x objectAtIndex: 0]) onConnection: connection
@@ -1014,11 +1015,11 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 - (NSAttributedString *)commandColors: (NSString *)aString connection: connection
 {
 	return BuildAttributedString(
-	 _(@"Valid color names include any color from the following list: "),
+	 _l(@"Valid color names include any color from the following list: "),
 	 [PossibleUserColors() componentsJoinedByString: @", "], @"\n",
-	 _(@"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "),
-	  _(@"where [red], [green], [blue] are the red, green, and blue "),
-	  _(@"components of the color on a scale of 0 to 1000."), nil);
+	 _l(@"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "),
+	  _l(@"where [red], [green], [blue] are the red, green, and blue "),
+	  _l(@"components of the color on a scale of 0 to 1000."), nil);
 }  		  
 - (NSAttributedString *)commandCtcp: (NSString *)command connection: connection
 {
@@ -1033,7 +1034,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([array count] < 2)
 	{
-		return S2AS(_(@"Usage: /ctcp <nick> <ctcp> [arguments]")); 
+		return S2AS(_l(@"Usage: /ctcp <nick> <ctcp> [arguments]")); 
 	}
 
 	args = ([array count] == 3) ? [array objectAtIndex: 2] : nil;
@@ -1058,7 +1059,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if ([array count] == 0)
 	{
-		return S2AS(_(@"Usage: /version <nick>"));
+		return S2AS(_l(@"Usage: /version <nick>"));
 	}
 
 	who = [array objectAtIndex: 0];
@@ -1081,7 +1082,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] == 0)
 	{
-		return S2AS(_(@"Usage: /clientinfo <nick>"));
+		return S2AS(_l(@"Usage: /clientinfo <nick>"));
 	}
 
 	who = [array objectAtIndex: 0];
@@ -1104,7 +1105,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] == 0)
 	{
-		return S2AS(_(@"Usage: /userinfo <nick>"));
+		return S2AS(_l(@"Usage: /userinfo <nick>"));
 	}
 
 	who = [array objectAtIndex: 0];
@@ -1128,7 +1129,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] <= 1)
 	{
-		return S2AS(_(@"Usage: /ping <nick> <argument>"));
+		return S2AS(_l(@"Usage: /ping <nick> <argument>"));
 	}
 
 	who = [array objectAtIndex: 0];
@@ -1152,7 +1153,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] < 1)
 	{
-		return S2AS(_(@"Usage: /topic <channel> [topic]"));
+		return S2AS(_l(@"Usage: /topic <channel> [topic]"));
 	}
 
 	who = [array objectAtIndex: 0];
@@ -1181,7 +1182,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] <= 1)
 	{
-		return S2AS(_(@"Usage: /kick <channel> <user> [comment]"));
+		return S2AS(_l(@"Usage: /kick <channel> <user> [comment]"));
 	}
 
 	who = [array objectAtIndex: 1];
@@ -1208,7 +1209,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 
 	if ([array count] == 0)
 	{
-		return S2AS(_(@"Usage: /raw <message>"));
+		return S2AS(_l(@"Usage: /raw <message>"));
 	}
 
 	arg = [array objectAtIndex: 0];
@@ -1235,7 +1236,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	if (max <= 1)
 	{
-		return S2AS(_(@"Usage: /mode <object> <mode(s)> [arguments]"));
+		return S2AS(_l(@"Usage: /mode <object> <mode(s)> [arguments]"));
 	}
 
 	mode = [array objectAtIndex: 1];
@@ -1274,14 +1275,14 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	if (!enc)
 	{
 		temp = NSAllMapTableKeys(encodings);
-		return BuildAttributedString(_(@"Usage: /encoding <encoding>"), @"\n", 
-		  _(@"Available encodings: "), [temp componentsJoinedByString: @", "], @"\n",
-		  _(@"Current encoding: "), StringFromEncoding([connection encoding]), nil);
+		return BuildAttributedString(_l(@"Usage: /encoding <encoding>"), @"\n", 
+		  _l(@"Available encodings: "), [temp componentsJoinedByString: @", "], @"\n",
+		  _l(@"Current encoding: "), StringFromEncoding([connection encoding]), nil);
 	}
 	
 	[connection setEncoding: enc];
 	
-	return S2AS(_(@"Ok."));
+	return S2AS(_l(@"Ok."));
 }
 - (void)setupCommandList
 {

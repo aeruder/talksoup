@@ -22,6 +22,14 @@
 
 #import <Foundation/NSObject.h>
 
+#ifdef _l
+	#undef _l
+#endif
+
+#define _l(X) [[NSBundle bundleForClass: [Decolorizer class]] \
+               localizedStringForKey: (X) value: nil \
+               table: @"Localizable"]
+
 @class NSAttributedString;
 
 @interface Decolorizer : NSObject

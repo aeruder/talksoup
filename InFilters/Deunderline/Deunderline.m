@@ -33,11 +33,11 @@ static NSAttributedString *deul(id a)
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"Removes underline from incoming messages.",
+	 _l(@"Description: "), _l(@"Removes underline from incoming messages."),
 	 @"\n\n",
-	 @"Copyright (C) 2003 by Andrew Ruder",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
 	 nil);
 }
 - CTCPReplyReceived: (NSAttributedString *)aCTCP

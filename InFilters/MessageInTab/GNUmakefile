@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+MessageInTab_LANGUAGES = English
+MessageInTab_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 MessageInTab_PRINCIPAL_CLASS = MessageInTab
 
 main = MessageInTab.m

@@ -16,6 +16,8 @@
  ***************************************************************************/
 
 #import "TalkSoup.h"
+#import "TalkSoupPrivate.h"
+
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
@@ -35,22 +37,22 @@ static void build_mappings(void)
 {
 	RELEASE(mappings);
 	mappings = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys:
-	  IRCColorWhite, _(@"white"),
-	  IRCColorBlack, _(@"black"),
-	  IRCColorBlue, _(@"blue"),
-	  IRCColorGreen, _(@"green"),
-	  IRCColorRed, _(@"red"),
-	  IRCColorMaroon, _(@"maroon"), 
-	  IRCColorMagenta, _(@"magenta"),
-	  IRCColorOrange, _(@"orange"),
-	  IRCColorYellow, _(@"yellow"),
-	  IRCColorLightGreen, _(@"light green"),
-	  IRCColorTeal, _(@"teal"),
-	  IRCColorLightCyan, _(@"light cyan"),
-	  IRCColorLightBlue, _(@"light blue"),
-	  IRCColorLightMagenta, _(@"light magenta"),
-	  IRCColorLightGrey, _(@"light grey"),
-	  IRCColorGrey, _(@"grey"), nil]));
+	  IRCColorWhite, _l(@"white"),
+	  IRCColorBlack, _l(@"black"),
+	  IRCColorBlue, _l(@"blue"),
+	  IRCColorGreen, _l(@"green"),
+	  IRCColorRed, _l(@"red"),
+	  IRCColorMaroon, _l(@"maroon"), 
+	  IRCColorMagenta, _l(@"magenta"),
+	  IRCColorOrange, _l(@"orange"),
+	  IRCColorYellow, _l(@"yellow"),
+	  IRCColorLightGreen, _l(@"light green"),
+	  IRCColorTeal, _l(@"teal"),
+	  IRCColorLightCyan, _l(@"light cyan"),
+	  IRCColorLightBlue, _l(@"light blue"),
+	  IRCColorLightMagenta, _l(@"light magenta"),
+	  IRCColorLightGrey, _l(@"light grey"),
+	  IRCColorGrey, _l(@"grey"), nil]));
 }
 
 NSString *IRCColorFromUserColor(NSString *string)
@@ -61,7 +63,7 @@ NSString *IRCColorFromUserColor(NSString *string)
 	string = [string lowercaseString];	
 	x = [mappings objectForKey: string];
 	
-	if ([string hasPrefix: _(@"custom")])
+	if ([string hasPrefix: _l(@"custom")])
 	{
 		int r,g,b;
 		id scan;

@@ -1,90 +1,4 @@
-/**************************** File: TalkSoup.m */
-
-
-"Usage: /load <in/out>" = "Usage: /load <in/out>";
-
-"Possible filters: " = "Possible filters: ";
-
-"Usage: /unload <in/out>" = "Usage: /unload <in/out>";
-
-"Connect to a server before using this command"
-= "Connect to a server before using this command";
-
-"The loaded bundles will now load automagically on TalkSoup startup."
-= "The loaded bundles will now load automagically on TalkSoup startup.";
-
-"Currently loaded bundles:\n" = "Currently loaded bundles:\n";
-
-"Output: " = "Output: ";
-
-"Input: " = "Input: ";
-
-"Output Filters: " = "Output Filters: ";
-
-"Input Filters: " = "Input Filters: ";
-
-"Usage: /load <in/out> <filter>" = "Usage: /load <in/out> <filter>";
-
-" loaded" = " loaded";
-
-"Usage: /unload <in/out> <filter>" = "Usage: /unload <in/out> <filter>";
-
-" unloaded" = " unloaded";
-
-"Usage: /join <channel1[,channel2...]> [password1[,password2...]]"
-= "Usage: /join <channel1[,channel2...]> [password1[,password2...]]";
-
-"Usage: /msg <person> <message>" = "Usage: /msg <person> <message>";
-
-"Usage: /part <channel> [message]" = "Usage: /part <channel> [message]";
-
-"Usage: /notice <person> <message>" = "Usage: /notice <person> <message>";
-
-"Usage: /nick <newnick>" = "Usage: /nick <newnick>";
-
-"Valid color names include any color from the following list: "
-= "Valid color names include any color from the following list: ";
-
-"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "
-= "Also, a string is valid if it is of the form 'custom [red] [green] [blue]' ";
-
-"where [red], [green], [blue] are the red, green, and blue "
-= "where [red], [green], [blue] are the red, green, and blue ";
-
-"components of the color on a scale of 0 to 1000."
-= "components of the color on a scale of 0 to 1000.";
-
-"Usage: /ctcp <nick> <ctcp> [arguments]"
-= "Usage: /ctcp <nick> <ctcp> [arguments]";
-
-"Usage: /version <nick>" = "Usage: /version <nick>";
-
-"Usage: /userinfo <nick>" = "Usage: /userinfo <nick>";
-
-"Usage: /ping <nick> <argument>" = "Usage: /ping <nick> <argument>";
-
-"Usage: /topic <channel> [topic]" = "Usage: /topic <channel> [topic]";
-
-"Usage: /kick <channel> <user> [comment]"
-= "Usage: /kick <channel> <user> [comment]";
-
-"Usage: /raw <message>" = "Usage: /raw <message>";
-
-"Usage: /mode <object> <mode(s)> [arguments]"
-= "Usage: /mode <object> <mode(s)> [arguments]";
-
-"Usage: /encoding <encoding>" = "Usage: /encoding <encoding>";
-
-"Available encodings: " = "Available encodings: ";
-
-"Current encoding: " = "Current encoding: ";
-
-"Ok." = "Ok.";
-
-
-
-
-/*************************** File: Functions.m */
+/* Functions.m */
 "white" = "white";
 "black" = "black";
 "blue" = "blue";
@@ -102,4 +16,47 @@
 "light grey" = "light grey";
 "grey" = "grey";
 "custom" = "custom";
+
+
+/* TalkSoup.m */
+"Connect to a server before using this command" = "Connect to a server before using this command";
+"The loaded bundles will now load automagically on TalkSoup startup." = "The loaded bundles will now load automagically on TalkSoup startup.";
+"Currently loaded bundles:\n" = "Currently loaded bundles:\n";
+"Output: " = "Output: ";
 "Input: " = "Input: ";
+"Output Filters: " = "Output Filters: ";
+"Input Filters: " = "Input Filters: ";
+"Usage: /load <in/out>" = "Usage: /load <in/out>";
+"Usage: /load <in/out>" = "Usage: /load <in/out>";
+"Usage: /load <in/out> <filter>" = "Usage: /load <in/out> <filter>";
+"Possible filters: " = "Possible filters: ";
+" loaded" = " loaded";
+"Usage: /unload <in/out>" = "Usage: /unload <in/out>";
+"Usage: /unload <in/out>" = "Usage: /unload <in/out>";
+"Usage: /unload <in/out> <filter>" = "Usage: /unload <in/out> <filter>";
+"Possible filters: " = "Possible filters: ";
+" unloaded" = " unloaded";
+"Usage: /join <channel1[,channel2...]> [password1[,password2...]]" = "Usage: /join <channel1[,channel2...]> [password1[,password2...]]";
+"Usage: /msg <person> <message>" = "Usage: /msg <person> <message>";
+"Usage: /part <channel> [message]" = "Usage: /part <channel> [message]";
+"Usage: /notice <person> <message>" = "Usage: /notice <person> <message>";
+"Usage: /nick <newnick>" = "Usage: /nick <newnick>";
+"Valid color names include any color from the following list: " = "Valid color names include any color from the following list: ";
+"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' " = "Also, a string is valid if it is of the form 'custom [red] [green] [blue]' ";
+"where [red], [green], [blue] are the red, green, and blue " = "where [red], [green], [blue] are the red, green, and blue ";
+"components of the color on a scale of 0 to 1000." = "components of the color on a scale of 0 to 1000.";
+"Usage: /ctcp <nick> <ctcp> [arguments]" = "Usage: /ctcp <nick> <ctcp> [arguments]";
+"Usage: /version <nick>" = "Usage: /version <nick>";
+"Usage: /clientinfo <nick>" = "Usage: /clientinfo <nick>";
+"Usage: /userinfo <nick>" = "Usage: /userinfo <nick>";
+"Usage: /ping <nick> <argument>" = "Usage: /ping <nick> <argument>";
+"Usage: /topic <channel> [topic]" = "Usage: /topic <channel> [topic]";
+"Usage: /kick <channel> <user> [comment]" = "Usage: /kick <channel> <user> [comment]";
+"Usage: /raw <message>" = "Usage: /raw <message>";
+"Usage: /mode <object> <mode(s)> [arguments]" = "Usage: /mode <object> <mode(s)> [arguments]";
+"Usage: /encoding <encoding>" = "Usage: /encoding <encoding>";
+"Available encodings: " = "Available encodings: ";
+"Current encoding: " = "Current encoding: ";
+"Ok." = "Ok.";
+
+

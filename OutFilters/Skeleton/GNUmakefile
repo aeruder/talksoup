@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/OutFilters
 
+Skeleton_LANGUAGES = English
+Skeleton_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Skeleton_PRINCIPAL_CLASS = Skeleton
 
 Skeleton_OBJC_FILES = Skeleton.m

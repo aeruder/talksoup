@@ -33,11 +33,13 @@
 {
 	id string;
 	
-	string = [self label];
+	string = RETAIN([self label]);
 
 	[self setLabel: @""];
 	[super drawLabel: shouldTruncateLabel inRect: tabRect];
 	[self setLabel: string]; 	
+
+	RELEASE(string);
 	
 	tabRect.size.height += 5;
 	[attributedLabel drawInRect: tabRect];	

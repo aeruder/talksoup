@@ -1,0 +1,7 @@
+/* KeepAlive.m */
+"Author: " = "Author: ";
+"Description: " = "Description: ";
+"A simple bundle that will send a ping to all connected servers every 3 minutes.  This can be used to stay connected on flaky connections." = "A simple bundle that will send a ping to all connected servers every 3 minutes.  This can be used to stay connected on flaky connections.";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
+
+

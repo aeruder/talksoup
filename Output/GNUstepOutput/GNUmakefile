@@ -20,10 +20,7 @@ GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.gorm \
                                          BundleConfigure.gorm
 endif
 
-GNUstepOutput_RESOURCE_FILES = Images/UpArrow.tiff \
- Images/RightArrow.tiff Images/LeftArrow.tiff \
- Images/DownArrow.tiff \
- Images/common_ret.tiff Images/common_retH.tiff
+GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 GNUstepOutput_RESOURCE_FILES += AllLanguages/Channel.nib AllLanguages/Query.nib \

@@ -22,6 +22,14 @@
 
 #import <Foundation/NSObject.h>
 
+#ifdef _l
+	#undef _l
+#endif
+
+#define _l(X) [[NSBundle bundleForClass: [KeepAlive class]] \
+               localizedStringForKey: (X) value: nil \
+               table: @"Localizable"]
+
 @class NSAttributedString, NSTimer;
 
 @interface KeepAlive : NSObject

@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/OutFilters
 
+Piper_LANGUAGES = English
+Piper_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Piper_PRINCIPAL_CLASS = Piper
 
 Piper_OBJC_FILES = Piper.m

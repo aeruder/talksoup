@@ -1,0 +1,30 @@
+/* Logging.m */
+"Connect to a server before using this command" = "Connect to a server before using this command";
+"Usage: /logging <file>" = "Usage: /logging <file>";
+"[%@] LOGGING DEACTIVATED\n" = "[%@] LOGGING DEACTIVATED\n";
+"Logging turned off." = "Logging turned off.";
+"Could not open file for writing: " = "Could not open file for writing: ";
+"[%@] LOGGING ACTIVATED\n" = "[%@] LOGGING ACTIVATED\n";
+"Logging turned on." = "Logging turned on.";
+"Author: " = "Author: ";
+"Description: " = "Description: ";
+"This command can handle logging to a file. To use it, simply type /logging <file> on any connection to log that connection.  To set up persistent logging, please see the FAQ distributed with TalkSoup." = "This command can handle logging to a file. To use it, simply type /logging <file> on any connection to log that connection.  To set up persistent logging, please see the FAQ distributed with TalkSoup.";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
+"[%@] %@ has quit IRC (%@)\n" = "[%@] %@ has quit IRC (%@)\n";
+"[%@] <%@:%@> CTCP-REPLY %@ %@\n" = "[%@] <%@:%@> CTCP-REPLY %@ %@\n";
+"[%@] <%@:%@> CTCP-REQUEST %@ %@\n" = "[%@] <%@:%@> CTCP-REQUEST %@ %@\n";
+"[%@] Connection Terminated\n" = "[%@] Connection Terminated\n";
+"[%@] LOGGING DEACTIVATED\n" = "[%@] LOGGING DEACTIVATED\n";
+"[%@] <%@:%@> CTCP-REQUEST %@ %@\n" = "[%@] <%@:%@> CTCP-REQUEST %@ %@\n";
+"[%@] ERROR: %@\n" = "[%@] ERROR: %@\n";
+"[%@] Wallops(%@): %@\n" = "[%@] Wallops(%@): %@\n";
+"[%@] %@ was kicked from %@ by %@ (%@)\n" = "[%@] %@ was kicked from %@ by %@ (%@)\n";
+"[%@] %@(%@) has invited you to %@\n" = "[%@] %@(%@) has invited you to %@\n";
+"[%@] %@ sets mode %@ %@ %@\n" = "[%@] %@ sets mode %@ %@ %@\n";
+"[%@] %@ is now known as %@\n" = "[%@] %@ is now known as %@\n";
+"[%@] %@(%@) has joined %@\n" = "[%@] %@(%@) has joined %@\n";
+"[%@] %@ has parted %@(%@)\n" = "[%@] %@ has parted %@(%@)\n";
+"[%@] %@ has quit IRC(%@)\n" = "[%@] %@ has quit IRC(%@)\n";
+"[%@] %@ changed the topic in %@ to '%@'\n" = "[%@] %@ changed the topic in %@ to '%@'\n";
+
+

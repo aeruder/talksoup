@@ -115,9 +115,9 @@ NSInvocation *invoc = nil;
 	
 	if ([x count] == 0)
 	{
-		return BuildAttributedString(@"Usage: /piper <commands>", @"\n",
-		  @"<commands> is a list of commands separated by the '^' character", 
-		  @" to pipe outgoing messages through.", nil);
+		return BuildAttributedString(_l(@"Usage: /piper <commands>"), @"\n",
+		  _l(@"<commands> is a list of commands separated by the '^' character" 
+		  @" to pipe outgoing messages through."), nil);
 	}
 	
 	x = [NSMutableArray arrayWithArray: 
@@ -126,19 +126,19 @@ NSInvocation *invoc = nil;
 	
 	[[NSUserDefaults standardUserDefaults] setObject: x forKey: @"Piper"];
 	
-	return S2AS(@"Ok.");
+	return S2AS(_l(@"Ok."));
 }
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"Piper can pipe outgoing messages through "
+	 _l(@"Description: "), _l(@"Piper can pipe outgoing messages through "
 	 @"an arbitrary shell program.  The syntax is simply "
 	 @"/piper <program>.  To pipe through multiple programs, separate "
-	 @"them with a ^ character."
+	 @"them with a ^ character."),
 	 @"\n\n",
-	 @"Copyright (C) 2003 by Andrew Ruder",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
 	 nil);
 }
 - pluginActivated

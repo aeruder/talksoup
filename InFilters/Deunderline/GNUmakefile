@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+Deunderline_LANGUAGES = English
+Deunderline_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Deunderline_PRINCIPAL_CLASS = Deunderline
 
 Deunderline_OBJC_FILES = Deunderline.m

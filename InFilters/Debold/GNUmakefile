@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+Debold_LANGUAGES = English
+Debold_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Debold_PRINCIPAL_CLASS = Debold
 
 Debold_OBJC_FILES = Debold.m

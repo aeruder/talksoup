@@ -43,13 +43,13 @@
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Andrew Ruder\n\n",
+	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"A simple bundle that will send a ping to "
+	 _l(@"Description: "), _l(@"A simple bundle that will send a ping to "
 	 @"all connected servers every 3 minutes.  This can be used "
-	 @"to stay connected on flaky connections."
+	 @"to stay connected on flaky connections."),
 	 @"\n\n",
-	 @"Copyright (C) 2003 by Andrew Ruder",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"),
 	 nil);
 }
 - pluginActivated

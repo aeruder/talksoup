@@ -25,9 +25,9 @@
 - (NSAttributedString *)pluginDescription
 {
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
-	 @"Author: ", @"Somebody\n\n",
+	 _l(@"Author: "), @"Somebody\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 @"Description: ", @"None",
+	 _l(@"Description: "), _l(@"None"),
 	 nil);
 }
 @end

@@ -363,7 +363,8 @@ GNUstepOutput *_GS_ = nil;
 	
 	selS = NSStringFromSelector(aSel);
 	
-	if ([selS hasSuffix: @"nConnection:withNickname:sender:"]) return YES;
+	if ([selS hasSuffix: @"nConnection:withNickname:sender:"] && 
+	    [ConnectionController instancesRespondToSelector: aSel]) return YES;
 	
 	if ([prefs respondsToSelector: aSel]) return YES;
 	
@@ -406,8 +407,7 @@ GNUstepOutput *_GS_ = nil;
 		
 		if (sel && [object respondsToSelector: sel])
 		{
-			[aInvoc invokeWithTarget: object];
-		}
+			[aInvoc invokeWithTarget: object]; }
 	}
 	else if (sel && [prefs respondsToSelector: sel])
 	{

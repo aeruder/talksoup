@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+KeepAlive_LANGUAGES = English
+KeepAlive_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 KeepAlive_PRINCIPAL_CLASS = KeepAlive
 
 KeepAlive_OBJC_FILES = KeepAlive.m

@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+Logging_LANGUAGES = English
+Logging_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Logging_PRINCIPAL_CLASS = Logging
 
 Logging_OBJC_FILES = Logging.m

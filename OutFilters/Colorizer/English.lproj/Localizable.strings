@@ -1,0 +1,8 @@
+/* Colorizer.m */
+"Author: " = "Author: ";
+"Description: " = "Description: ";
+"Adds color into outgoing messages. The syntax is %C#[,#] for colors.  The first # specifies the foreground color and the second # specifies the optional second color.  The colors are in the range of 0-15\n" = "Adds color into outgoing messages. The syntax is %C#[,#] for colors.  The first # specifies the foreground color and the second # specifies the optional second color.  The colors are in the range of 0-15\n";
+"Bold is %B, underline is %U, and %R is reverse.  Repeating any one of these a second time will result in the turning off of that attribute.  Use %O to clear all colors and attributes." = "Bold is %B, underline is %U, and %R is reverse.  Repeating any one of these a second time will result in the turning off of that attribute.  Use %O to clear all colors and attributes.";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
+
+

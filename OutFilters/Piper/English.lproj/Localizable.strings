@@ -1,0 +1,10 @@
+/* Piper.m */
+"Usage: /piper <commands>" = "Usage: /piper <commands>";
+"<commands> is a list of commands separated by the '^' character to pipe outgoing messages through." = "<commands> is a list of commands separated by the '^' character to pipe outgoing messages through.";
+"Ok." = "Ok.";
+"Author: " = "Author: ";
+"Description: " = "Description: ";
+"Piper can pipe outgoing messages through an arbitrary shell program.  The syntax is simply /piper <program>.  To pipe through multiple programs, separate them with a ^ character." = "Piper can pipe outgoing messages through an arbitrary shell program.  The syntax is simply /piper <program>.  To pipe through multiple programs, separate them with a ^ character.";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
+
+

@@ -5,6 +5,9 @@ BUNDLE_EXTENSION =
 
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 
+Dereverse_LANGUAGES = English
+Dereverse_LOCALIZED_RESOURCE_FILES = Localizable.strings
+
 Dereverse_PRINCIPAL_CLASS = Dereverse
 
 Dereverse_OBJC_FILES = Dereverse.m

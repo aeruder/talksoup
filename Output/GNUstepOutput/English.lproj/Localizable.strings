@@ -1,6 +1,3 @@
-/* GNUstepOutput.h */
-
-
 /* GNUstepOutput.m */
 "Error: " = "Error: ";
 "Info" = "Info";
@@ -31,36 +28,12 @@
 "NamePrompt" = "NamePrompt";
 
 
-/* Controllers/BundleConfigureController.h */
-
-
 /* Controllers/BundleConfigureController.m */
 "Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area." = "Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area.";
 
 
-/* Controllers/ChannelController.h */
-
-
-/* Controllers/ChannelController.m */
-
-
-/* Controllers/ConnectionController.h */
-
-
-/* Controllers/ContentController.h */
-
-
 /* Controllers/ContentController.m */
 "Unconnected" = "Unconnected";
-
-
-/* Controllers/GroupEditorController.h */
-
-
-/* Controllers/GroupEditorController.m */
-
-
-/* Controllers/InputController.h */
 
 
 /* Controllers/InputController.m */
@@ -74,95 +47,11 @@
 "Current value is: " = "Current value is: ";
 
 
-/* Controllers/NamePromptController.h */
-
-
-/* Controllers/NamePromptController.m */
-
-
-/* Controllers/PreferencesController.h */
-
-
-/* Controllers/PreferencesController.m */
-
-
-/* Controllers/QueryController.h */
-
-
-/* Controllers/QueryController.m */
-
-
-/* Controllers/ServerEditorController.h */
-
-
-/* Controllers/ServerEditorController.m */
-
-
-/* Controllers/ServerListConnectionController.h */
-
-
-/* Controllers/ServerListConnectionController.m */
-
-
-/* Controllers/ServerListController.h */
-
-
 /* Controllers/ServerListController.m */
 "Specify entry name" = "Specify entry name";
 "Specify the server" = "Specify the server";
 "Groups" = "Groups";
 "Servers" = "Servers";
-
-
-/* Controllers/TopicInspectorController.h */
-
-
-/* Controllers/TopicInspectorController.m */
-
-
-/* Misc/NSAttributedStringAdditions.h */
-
-
-/* Misc/NSAttributedStringAdditions.m */
-
-
-/* Misc/NSColorAdditions.h */
-
-
-/* Misc/NSColorAdditions.m */
-
-
-/* Misc/NSObjectAdditions.h */
-
-
-/* Misc/NSObjectAdditions.m */
-
-
-/* Models/Channel.h */
-
-
-/* Models/Channel.m */
-
-
-/* Views/AttributedTabViewItem.h */
-
-
-/* Views/AttributedTabViewItem.m */
-
-
-/* Views/KeyTextView.h */
-
-
-/* Views/KeyTextView.m */
-
-
-/* Views/ScrollingTextView.h */
-
-
-/* Views/ScrollingTextView.m */
-
-
-/* Controllers/ConnectionController/ConnectionController.h */
 
 
 /* Controllers/ConnectionController/ConnectionController.m */
@@ -173,20 +62,8 @@
 "Connecting to %@" = "Connecting to %@";
 
 
-/* Controllers/ConnectionController/ConnectionControllerCtcp.h */
-
-
 /* Controllers/ConnectionController/ConnectionControllerCtcp.m */
 "TalkSoup can be obtained from: " = "TalkSoup can be obtained from: ";
-
-
-/* Controllers/ConnectionController/ConnectionControllerDelegate.h */
-
-
-/* Controllers/ConnectionController/ConnectionControllerDelegate.m */
-
-
-/* Controllers/ConnectionController/ConnectionControllerInFilter.h */
 
 
 /* Controllers/ConnectionController/ConnectionControllerInFilter.m */
@@ -207,23 +84,8 @@
 "%@ changed the topic in %@ to '%@'" = "%@ changed the topic in %@ to '%@'";
 
 
-/* Controllers/ConnectionController/ConnectionControllerNumericCommands.h */
-
-
 /* Controllers/ConnectionController/ConnectionControllerNumericCommands.m */
 "Topic for %@ is \"%@\"" = "Topic for %@ is \"%@\"";
 "Topic for %@ set by %@ at %@" = "Topic for %@ set by %@ at %@";
-
-
-/* Controllers/ConnectionController/ConnectionControllerOutFilter.h */
-
-
-/* Controllers/ConnectionController/ConnectionControllerOutFilter.m */
-
-
-/* Controllers/ConnectionController/ConnectionControllerTabCompletion.h */
-
-
-/* Controllers/ConnectionController/ConnectionControllerTabCompletion.m */
 
 
