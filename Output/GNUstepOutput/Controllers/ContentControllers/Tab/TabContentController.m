@@ -90,10 +90,6 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	highlightedTabs = [NSMutableArray new];
 	
-	chatFont = 
-	  RETAIN([NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
-	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]]);
-	 
 	connection = aConnection;
 	
 	return self;
@@ -108,6 +104,9 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	[nickView setFont: [NSFont userFontOfSize: 12.0]];
 	[tabView setFont: [NSFont systemFontOfSize: 12.0]];
 	[tabView setDelegate: self];
+	
+	[self setChatFont: RETAIN([NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]])];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
 	  _l(@"Unconnected")])];
@@ -413,7 +412,9 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	if (aBool)
 	{
-		[controller appendAttributedString: S2AS(@"\n")];
+		[controller appendAttributedString: AUTORELEASE(([[NSAttributedString alloc]
+		  initWithString: @"\n" attributes: [NSDictionary dictionaryWithObjectsAndKeys:
+		  chatFont, NSFontAttributeName, nil]]))];
 	}
 	
 	clear_scrollback(controller);
@@ -482,6 +483,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 
 	[tabView setNeedsDisplay: YES];
 
+	[[query chatView] setFont: chatFont];
 	[[query chatView] setKeyAction: @selector(tabsTextViewPressedKey:sender:)];
 	[[query chatView] setKeyTarget: self];
 
@@ -537,6 +539,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	[tabView setNeedsDisplay: YES];
 	
+	[[chan chatView] setFont: chatFont];
 	[[chan chatView] setKeyAction: @selector(tabsTextViewPressedKey:sender:)];
 	[[chan chatView] setKeyTarget: self];
 	
@@ -707,14 +710,19 @@ static void clear_scrollback(NSMutableAttributedString *back)
 		[object replaceAttribute: NSFontAttributeName 
 		  withValue: chatFont withValue: aFont withRange:
 		  NSMakeRange(0, [object length])];
-		[object replaceAttribute: NSFontAttributeName
-		  withValue: [NSFont boldSystemFontOfSize: [chatFont pointSize]]
-		  withValue: [NSFont boldSystemFontOfSize: [aFont pointSize]]
-		  withRange: NSMakeRange(0, [object length])];
 	}
 
 	RELEASE(chatFont);
 	chatFont = RETAIN(aFont);	
+	
+	aFont = [NSFont fontWithName: [chatFont fontName] size: 12.0];
+	
+	if (!aFont)
+	{
+		aFont = [NSFont userFontOfSize: 12.0];
+	}
+	
+	[typeView setFont: aFont];
 	
 	return self;
 }	

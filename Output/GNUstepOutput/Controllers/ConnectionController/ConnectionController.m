@@ -89,8 +89,6 @@
 	[typeView abortEditing];
 	[typeView setAllowsEditingTextAttributes: NO];
 	
-	[self setFieldFont: [content chatFont]];
-	
 	[[content window] makeFirstResponder: typeView];
 	
 	[_GS_ addConnectionController: self];
@@ -235,20 +233,6 @@
 {
 	return password;
 }
-- setFieldFont: (NSFont *)aFont
-{
-	aFont = [NSFont fontWithName: [aFont fontName] size: 12.0];
-	
-	if (!aFont)
-	{
-		aFont = [NSFont userFontOfSize: 12.0];
-	}
-	
-	[fieldEditor setFont: aFont];
-	[[content typeView] setFont: aFont];
-
-	return self;
-}	
 - (InputController *)inputController
 {
 	return inputController;

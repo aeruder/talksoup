@@ -66,8 +66,6 @@
 - setPassword: (NSString *)aString;
 - (NSString *)password;
 
-- setFieldFont: (NSFont *)aFont;
-
 - (InputController *)inputController;
 
 - (id)connection;

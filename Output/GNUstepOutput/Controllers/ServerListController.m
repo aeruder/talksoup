@@ -627,6 +627,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		[cell setStringValue: [tmp objectForKey: ServerListInfoName]];
 		[cell setLeaf: YES];
 	}
+	[cell setFont: [NSFont userFontOfSize: 0.0]];
 }
 
 @end
