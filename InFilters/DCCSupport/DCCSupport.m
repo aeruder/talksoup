@@ -662,7 +662,8 @@ static NSInvocation *invoc = nil;
 	if ([x count] == 0)
 	{
 		return BuildAttributedString(@"Usage: /dcc gettimeout <seconds>", @"\n",
-		  @"Sets the timeout in seconds on receiving files.", nil);
+		  @"Sets the timeout in seconds on receiving files.", @"\n",
+		  @"Current timeout: ", get_default(dcc_gettimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
@@ -683,7 +684,8 @@ static NSInvocation *invoc = nil;
 	if ([x count] == 0)
 	{
 		return BuildAttributedString(@"Usage: /dcc sendtimeout <seconds>", @"\n",
-		  @"Sets the timeout in seconds on sending files.", nil);
+		  @"Sets the timeout in seconds on sending files.", @"\n",
+		  @"Current timeout: ", get_default(dcc_sendtimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
