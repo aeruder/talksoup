@@ -30,25 +30,89 @@
 #include <Foundation/NSTimer.h>
 #include <Foundation/NSHost.h>
 
-static NSString *support_dir = @"DCCSupportDirectory";
+static NSString *dcc_default = @"DCCSupport";
+static NSString *dcc_dir = @"DCCSupportDirectory";
 
-static void set_defaults_dir(NSString *aDir)
+static id get_default_default(NSString *key)
 {
-	aDir = [aDir stringByExpandingTildeInPath];
-	[[NSUserDefaults standardUserDefaults] setObject: aDir forKey: support_dir];
-}
-
-static NSString *defaults_dir(void)
-{
-	id object = [[NSUserDefaults standardUserDefaults] objectForKey: support_dir];
+	static NSDictionary *dict = nil;
 	
-	if (!object)
+	if (!dict)
 	{
-		set_defaults_dir(object = @"~/");
+		dict = [[NSDictionary alloc] initWithObjectsAndKeys: 
+		  @"~/", dcc_dir,
+		  nil];
 	}
 	
-	return [object stringByExpandingTildeInPath];
-}	
+	return [dict objectForKey: key];
+}
+
+static void set_default(NSString *key, id value)
+{
+	if ([key hasPrefix: dcc_default] && ![key isEqualToString: dcc_default]) 
+	{
+		id dict;
+		key = [key substringFromIndex: [dcc_default length]];
+		
+		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
+		if (dict && [dict isKindOf: [NSDictionary class]])
+		{
+			dict = [NSMutableDictionary dictionaryWithDictionary: dict];
+		}
+		else
+		{
+			dict = AUTORELEASE([NSMutableDictionary new]);
+		}
+		
+		if (!value)
+		{
+			[dict removeObjectForKey: key];
+		}
+		else
+		{
+			[dict setObject: value forKey: key];
+		}
+		
+		[[NSUserDefaults standardUserDefaults] setObject: dict forKey: dcc_default];
+		return;
+	}
+	
+	if (!value)
+	{
+		[[NSUserDefaults standardUserDefaults] removeObjectForKey: key];
+	}
+	else
+	{
+		[[NSUserDefaults standardUserDefaults] setObject: value forKey: key];
+	}	
+}
+
+static id get_default(NSString *key)
+{
+	if ([key hasPrefix: dcc_default] && ![key isEqualToString: dcc_default]) 
+	{
+		id dict;
+		id sub;
+		sub = [key substringFromIndex: [dcc_default length]];
+		
+		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
+		if (!dict || ![dict isKindOf: [NSDictionary class]])
+		{
+			[[NSUserDefaults standardUserDefaults] setObject: 
+			  dict = AUTORELEASE([NSDictionary new]) forKey: dcc_default];
+		}
+		
+		if (!(sub = [dict objectForKey: sub]))
+		{
+			set_default(key, sub = get_default_default(key));
+		}
+		
+		return sub;
+	}
+	
+	return [[NSUserDefaults standardUserDefaults] objectForKey: key];
+}
+
 
 static NSString *fix_file_name(NSString *name)
 {
@@ -91,8 +155,14 @@ static NSInvocation *invoc = nil;
 
 @interface DCCSupport (PrivateSupport)
 - (void)finishedReceive: dcc onConnection: aConnection;
+- (void)finishedSend: dcc onConnection: aConnection;
 - (NSMutableArray *)getConnectionTable: aConnection;
 @end
+
+
+
+
+
 
 @interface DCCGetter : NSObject
 	{
@@ -124,6 +194,46 @@ static NSInvocation *invoc = nil;
 - (NSString *)path;
 @end
 
+
+
+
+
+@interface DCCSender : NSObject
+	{
+		NSFileHandle *file;
+		NSString *path;
+		DCCSendObject *sender;
+		NSString *status;
+		NSString *receiver;
+		id connection;
+		id delegate;
+		NSTimer *cpsTimer;
+		int cps;
+		uint32_t oldTransferredBytes;
+	}
+- initWithFilename: (NSString *)path 
+    withConnection: aConnection to: (NSString *)receiver withDelegate: aDel;
+
+- (NSString *)status;
+
+- (NSDictionary *)info;
+
+- (NSHost *)localHost;
+- (NSHost *)remoteHost;
+
+- (NSString *)percentDone;
+
+- (int)cps;
+- cpsTimer: (NSTimer *)aTimer;
+
+- (NSString *)path;
+- (NSString *)receiver;
+@end
+
+
+
+
+
 @implementation DCCGetter
 - initWithInfo: (NSDictionary *)aDict withFileName: (NSString *)aPath
    withConnection: aConnection withDelegate: aDel
@@ -145,13 +255,14 @@ static NSInvocation *invoc = nil;
 		return nil;
 	}
 	
+	connection = RETAIN(aConnection);
+	
 	file = RETAIN([NSFileHandle fileHandleForWritingAtPath: aPath]);
 	
 	path = RETAIN(aPath);
 	getter = [[DCCReceiveObject alloc] initWithReceiveOfFile: aDict 
 	  withDelegate: self withTimeout: 30 withUserInfo: nil];
 	
-	connection = RETAIN(aConnection);
 	delegate = aDel;
 	
 	return self;
@@ -164,6 +275,9 @@ static NSInvocation *invoc = nil;
 	RELEASE(path);
 	RELEASE(file);
 	RELEASE(connection);
+	RELEASE(status);
+	
+	[super dealloc];
 }
 - cpsTimer: (NSTimer *)aTimer
 {
@@ -173,16 +287,21 @@ static NSInvocation *invoc = nil;
 }
 - DCCInitiated: aConnection
 {
-	DESTROY(cpsTimer);
-	cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
-	  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
-	oldTransferredBytes = 0;
 	return self;
 }
 - DCCStatusChanged: (NSString *)aStatus forObject: aConnection
 {
 	if (status == aStatus) return self;
 	
+	if ([aStatus isEqualToString: DCCStatusTransferring])
+	{
+		[cpsTimer invalidate];
+		RELEASE(cpsTimer);
+		oldTransferredBytes = 0;
+		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
+		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
+	}
+		
 	RELEASE(status);
 	status = RETAIN(aStatus);
 	
@@ -246,7 +365,202 @@ static NSInvocation *invoc = nil;
 }
 @end
 
+
+
+
+
+@implementation DCCSender
+- initWithFilename: (NSString *)aPath 
+    withConnection: aConnection to: (NSString *)aReceiver withDelegate: aDel;
+{
+	id dfm;
+	NSNumber *fileSize;
+	id dict;
+	
+	dfm = [NSFileManager defaultManager];
+	
+	if (!(dict = [dfm fileAttributesAtPath: aPath traverseLink: YES]))
+	{
+		return nil;
+	}
+	
+	fileSize = [dict objectForKey: NSFileSize];
+	
+	if (!(self = [super init])) return nil;
+	
+	file = RETAIN([NSFileHandle fileHandleForReadingAtPath: aPath]);
+	
+	if (!file) 
+	{
+		[self dealloc];
+		return nil;
+	}
+	
+	path = RETAIN(aPath);
+
+	receiver = RETAIN(aReceiver);
+	
+	connection = RETAIN(aConnection);
+	
+	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
+	  withSize: fileSize
+	  withDelegate: self withTimeout: 30 withBlockSize: 2000 withUserInfo: nil];
+	
+	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
+	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
+	  to: S2AS(aReceiver) onConnection: aConnection withNickname: S2AS([aConnection nick])
+	  sender: [_TS_ pluginForOutput]];
+	
+	delegate = aDel;
+	
+	return self;
+}
+- (void)dealloc
+{
+	[cpsTimer invalidate];
+	DESTROY(cpsTimer);
+	RELEASE(sender);
+	RELEASE(path);
+	RELEASE(file);
+	RELEASE(connection);
+	RELEASE(status);
+	RELEASE(receiver);
+	
+	[super dealloc];
+}
+- cpsTimer: (NSTimer *)aTimer
+{
+	cps = ([sender transferredBytes] - oldTransferredBytes) / 5;
+	oldTransferredBytes = [sender transferredBytes];
+	return self;
+}
+- DCCInitiated: aConnection
+{
+	return self;
+}
+- DCCStatusChanged: (NSString *)aStatus forObject: aConnection
+{
+	if (status == aStatus) return self;
+	
+	if ([aStatus isEqualToString: DCCStatusTransferring])
+	{
+		[cpsTimer invalidate];
+		RELEASE(cpsTimer);
+		oldTransferredBytes = 0;
+		cpsTimer = RETAIN([NSTimer scheduledTimerWithTimeInterval: 5.0 target: self
+		  selector: @selector(cpsTimer:) userInfo: nil repeats: YES]);
+	}		
+		
+	RELEASE(status);
+	status = RETAIN(aStatus);
+	
+	NSLog(@"Status: %@", status);
+	
+	return self;
+}
+- DCCNeedsMoreData: aConnection
+{
+	NSData *data;
+	
+	data = [file readDataOfLength: [sender blockSize]];
+	
+	[sender writeData: ([data length]) ? data : nil];
+	
+	return self;
+}
+- DCCDone: aConnection
+{
+	[cpsTimer invalidate];
+	DESTROY(cpsTimer);
+	
+	[delegate finishedSend: self onConnection: connection];
+	
+	return self;
+}
+- (NSString *)status
+{
+	return status;
+}
+- (NSDictionary *)info
+{
+	return [sender info];
+}
+- (NSHost *)localHost
+{
+	return [connection localHost];
+}
+- (NSHost *)remoteHost
+{
+	return [connection remoteHost];
+}
+- (NSString *)percentDone
+{
+	id dict = [sender info];
+	int length;
+	
+	length = [[dict objectForKey: DCCInfoFileSize] intValue];
+	
+	if (length < 0)
+	{
+		return @"??%";
+	}
+	
+	return [NSString stringWithFormat: @"%d%%", 
+	  ([sender transferredBytes] * 100) / length];
+}
+- (int)cps
+{
+	return cps;
+}
+- (NSString *)path
+{
+	return path;
+}
+- (NSString *)receiver
+{
+	return receiver;
+}
+@end
+
+
+
+
 @implementation DCCSupport (PrivateSupport)
+- (void)finishedSend: (id)dcc onConnection: aConnection
+{
+	id status = [dcc status];
+	id cps = [NSString stringWithFormat: @"%d", [dcc cps]];
+	id path = [dcc path];
+	id nick = [dcc receiver];
+	id connections = [self getConnectionTable: aConnection];
+	
+	if ([status isEqualToString: DCCStatusDone])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ to %@ completed successfully! (%@ cps)",
+		  path, nick, cps) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusTimeout])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ to %@ timed out.",
+		  path, nick) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusAborted])
+	{
+		[[_TS_ pluginForOutput] showMessage:
+		  BuildAttributedFormat(@"Transfer of %@ to %@ aborted.",
+		  path, nick) onConnection: aConnection];
+	}
+	else if ([status isEqualToString: DCCStatusError])
+	{
+		[[_TS_ pluginForOutput] showMessage: 
+		  BuildAttributedFormat(@"There was an error sending %@ to %@.", 
+		  path, nick) onConnection: aConnection];
+	}
+
+	[connections removeObjectIdenticalTo: dcc];
+}
 - (void)finishedReceive: (id)dcc onConnection: aConnection
 {
 	id status = [dcc status];
@@ -296,6 +610,9 @@ static NSInvocation *invoc = nil;
 }
 @end
 
+
+
+
 @implementation DCCSupport
 + (void)initialize
 {
@@ -303,6 +620,48 @@ static NSInvocation *invoc = nil;
 	  [self instanceMethodSignatureForSelector: @selector(commandDCC:connection:)]]);
 	[invoc retainArguments];
 	[invoc setSelector: @selector(commandDCC:connection:)];
+}
+- (NSAttributedString *)commandDCCSEND: (NSString *)command connection: (id)connection
+{
+	id x;
+	id user;
+	id path;
+	id dfm;
+	BOOL isDir;
+	id sender;
+	id connections;
+	
+	x = [command separateIntoNumberOfArguments: 2];
+	dfm = [NSFileManager defaultManager];
+	
+	if ([x count] < 2)
+	{
+		return BuildAttributedString(
+		 @"Usage: /dcc send <user> <file>", @"\n",
+		 @"Requests <user> to receive file named <file>", nil);
+	}
+	
+	user = [x objectAtIndex: 0];
+	path = [x objectAtIndex: 1];
+	
+	path = [path stringByStandardizingPath];
+	
+	if (![dfm fileExistsAtPath: path isDirectory: &isDir] || isDir)
+	{
+		return S2AS(@"That file does not exist.");
+	}
+	
+	connections = [self getConnectionTable: connection];
+	
+	sender = AUTORELEASE([[DCCSender alloc] initWithFilename: path
+	  withConnection: connection to: user withDelegate: self]);
+	
+	if (sender)
+	{
+		[connections addObject: sender];
+	}
+
+	return S2AS(@"Ok.");
 }
 - (NSAttributedString *)commandDCCLIST: (NSString *)command connection: (id)connection
 {
@@ -342,11 +701,36 @@ static NSInvocation *invoc = nil;
 			    [[[object info] objectForKey: DCCInfoFileSize] intValue]],
 			  [NSString stringWithFormat: @"%d", [object cps]])];
 		}
+		if ([object isKindOf: [DCCSender class]])
+		{
+			if ([[object status] isEqualToString: DCCStatusConnecting])
+			{
+			[attr appendAttributedString: 
+			  BuildAttributedFormat(@"%@. %@ You have offered to send %@ to %@",
+			  [NSString stringWithFormat: @"%d", index + 1],
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"OFFERED", nil),
+			  [object path],  
+			  [object receiver])];
+			}
+			else
+			{
+			[attr appendAttributedString: 
+			  BuildAttributedFormat(@"%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)",
+			  [NSString stringWithFormat: @"%d", index + 1],
+			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, @"SENDING", nil),
+			  [object path],  
+			  [object receiver], 
+			  [object percentDone],
+			  [NSString stringWithFormat: @"%d", 
+			    [[[object info] objectForKey: DCCInfoFileSize] intValue]],
+			  [NSString stringWithFormat: @"%d", [object cps]])];
+			}
+		}
 		[attr appendAttributedString: S2AS(@"\n")];
 	}
 	
 	[attr appendAttributedString: 
-	  S2AS(@"Use /dcc list # for detailed information on a request or connection.")];
+	  S2AS(@"End of list.")];
 
 	return attr;
 }
@@ -368,6 +752,7 @@ static NSInvocation *invoc = nil;
 	if ([x count] == 0)
 	{
 		return BuildAttributedString(@"Usage: /dcc get <#> [-c] [filename]", @"\n",
+		  @"Receives the file at <#> position (see /dcc list)."
 		  @"If [filename] isn't specified, it will be put into the default",
 		  @" directory (see /dcc setdir) with the filename specified by the sender.",
 		  nil);
@@ -406,7 +791,7 @@ static NSInvocation *invoc = nil;
 	{
 		path = [dict objectForKey: DCCInfoFileName];
 		path = fix_file_name(path);
-		path = [NSString stringWithFormat: @"%@/%@", defaults_dir(), path];
+		path = [NSString stringWithFormat: @"%@/%@", get_default(dcc_dir), path];
 	}
 	
 	path = [path stringByExpandingTildeInPath];
@@ -466,10 +851,10 @@ static NSInvocation *invoc = nil;
 		return BuildAttributedString(@"Usage: /dcc setdir [-f] <directory>", @"\n",
 		  @"Sets the default download directory to <directory>, if -f is specified ",
 		  @"the directory will be created if it doesn't already exist.", @"\n",
-		  @"Currently: ", defaults_dir(), nil);
+		  @"Currently: ", [get_default(dcc_dir) stringByExpandingTildeInPath], nil);
 	}
 	
-	dfm = [NSFileManager defaultManager];
+	dfm = [NSFileManager defaultManager];	
 	dir = [dir stringByExpandingTildeInPath];
 	dir = [dir stringByStandardizingPath];
 	
@@ -523,7 +908,7 @@ static NSInvocation *invoc = nil;
 	
 	if (couldCreate)
 	{
-		set_defaults_dir(dir);
+		set_default(dcc_dir, dir);
 		return S2AS(@"Ok.");
 	}
 
