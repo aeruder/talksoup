@@ -43,6 +43,8 @@ static id get_default_default(NSString *key)
 	{
 		dict = [[NSDictionary alloc] initWithObjectsAndKeys: 
 		  @"~/", dcc_dir,
+		  @"30", dcc_gettimeout,
+		  @"300", dcc_sendtimeout,
 		  nil];
 	}
 	
@@ -267,7 +269,8 @@ static NSInvocation *invoc = nil;
 	
 	path = RETAIN(aPath);
 	getter = [[DCCReceiveObject alloc] initWithReceiveOfFile: aDict 
-	  withDelegate: self withTimeout: 30 withUserInfo: nil];
+	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_gettimeout) 
+	  withUserInfo: nil];
 	
 	delegate = aDel;
 	
@@ -411,7 +414,8 @@ static NSInvocation *invoc = nil;
 	
 	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
 	  withSize: fileSize
-	  withDelegate: self withTimeout: 300 withBlockSize: 2000 withUserInfo: nil];
+	  withDelegate: self withTimeout: GET_DEFAULT_INT(dcc_sendtimeout) 
+	  withBlockSize: 2000 withUserInfo: nil];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
 	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
@@ -540,7 +544,7 @@ static NSInvocation *invoc = nil;
 	id nick = [dcc receiver];
 	
 	[[_TS_ pluginForOutput] showMessage:
-	  BuildAttributedString(@"Transfer of %@ to %@ initiated.", path, nick)
+	  BuildAttributedFormat(@"Transfer of %@ to %@ initiated.", path, nick)
 	  onConnection: aConnection];
 }	
 - (void)finishedSend: (id)dcc onConnection: aConnection
@@ -730,7 +734,7 @@ static NSInvocation *invoc = nil;
 		[connections addObject: sender];
 	}
 
-	return S2AS(@"Ok.");
+	return BuildAttributedFormat(@"Offering %@ to %@.", path, user);
 }
 - (NSAttributedString *)commandDCCLIST: (NSString *)command connection: (id)connection
 {
