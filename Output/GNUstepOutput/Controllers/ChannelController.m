@@ -102,7 +102,7 @@
 	x = RETAIN([(NSWindow *)window contentView]);
 	[window close];
 	AUTORELEASE(window);
-	window = RETAIN(x);
+	window = x;
 	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
 - (void)dealloc

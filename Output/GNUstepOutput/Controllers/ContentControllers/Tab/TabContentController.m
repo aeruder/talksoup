@@ -105,8 +105,8 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	[tabView setFont: [NSFont systemFontOfSize: 12.0]];
 	[tabView setDelegate: self];
 	
-	[self setChatFont: RETAIN([NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
-	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]])];
+	[self setChatFont: [NSFont fontWithName: [_GS_ defaultsObjectForKey: GNUstepOutputFontName]
+	  size: (float)[[_GS_ defaultsObjectForKey: GNUstepOutputFontSize] intValue]]];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
 	  _l(@"Unconnected")])];

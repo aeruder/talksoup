@@ -327,19 +327,18 @@ static NSString *big_description = nil;
 
 	if (rows == 0)
 	{
-		[loadedTable deselectAll: nil];
-		[availableTable deselectAll: nil];
-		[availableTable setNeedsDisplay: YES];
-		[loadedTable setNeedsDisplay: YES];
-		currentTable = nil;
-		[self updateButtons];
+		[self showingSelected: showingPopUp];
 	}
 	else
 	{
 		if (row == rows) row--;
-		[currentTable selectRow: row 
-		  byExtendingSelection: NO];
-	}	
+		if ([[currentTable delegate] tableView: currentTable
+		   shouldSelectRow: row])
+		{
+			[currentTable selectRow: row 
+			  byExtendingSelection: NO];
+		}
+	}
 }	
 - (void)showingSelected: (id)sender
 {
