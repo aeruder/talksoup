@@ -87,7 +87,7 @@
 	[splitView setDelegate: self];
 	
 	frame = [userScroll frame];
-	frame.size.width = 100;
+	frame.size.width = 120;
 	[userScroll setFrame: frame];
 	[self splitView: splitView resizeSubviewsWithOldSize:
 	  [splitView frame].size];

@@ -87,6 +87,8 @@ extern NSString *ContentConsoleName;
 
 - closeViewWithName: (NSString *)aName;
 
+- renameViewWithName: (NSString *)aName to: (NSString *)newName;
+
 - (NSString *)currentViewName;
 
 - setNickViewString: (NSString *)aNick;

@@ -193,6 +193,8 @@
 @protocol TalkSoupInFilterProtocol
 - newConnection: (id)connection sender: aPlugin;
 
+- lostConnection: (id)connection sender: aPlugin;
+
 - registeredWithServerOnConnection: (id)connection sender: aPlugin;
 
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection 

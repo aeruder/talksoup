@@ -177,6 +177,8 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 }
 - waitingForConnection: (NSString *)aIdent onConnectionController: (id)controller
 {
+	[pendingIdentToConnectionController removeObjectsForKeys: 
+	  [pendingIdentToConnectionController allKeysForObject: controller]]; 
 	[pendingIdentToConnectionController setObject: controller forKey: aIdent];
 	return self;
 }
@@ -217,6 +219,18 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	NSMapInsert(connectionToConnectionController, controller, connection);
 
 	[controller newConnection: connection sender: aPlugin];
+	
+	return self;
+}
+- lostConnection: (id)connection sender: aPlugin
+{
+	id control;
+	control = NSMapGet(connectionToConnectionController, connection);
+	
+	[control lostConnection: connection sender: aPlugin];
+	
+	NSMapRemove(connectionToConnectionController, connection);
+	NSMapRemove(connectionToConnectionController, control);
 	
 	return self;
 }

@@ -100,6 +100,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 	RELEASE(nameToPresentation);
 	RELEASE(nameToLabel);
 	RELEASE(nameToTabItem);
+	RELEASE(current);
 	
 	[super dealloc];
 }
@@ -367,6 +368,60 @@ NSString *ContentConsoleName = @"Content Console Name";
 - closeViewWithName: (NSString *)aName
 {
 	return self;
+}
+- renameViewWithName: (NSString *)aName to: (NSString *)newName
+{
+	id lowName = GNUstepOutputLowercase(aName);
+	id lowNewName = GNUstepOutputLowercase(newName);
+	
+	if (![nameToBoth objectForKey: lowName]) return self;
+	
+	if (GNUstepOutputCompare(lowName, lowNewName))
+	{
+		if (![[nameToPresentation objectForKey: lowName] 
+		  isEqualToString: newName])
+		{
+			[nameToPresentation setObject: newName forKey: lowNewName];
+		}
+		return self;
+	}
+	else
+	{
+		id object;
+		id which;
+		
+		[nameToPresentation setObject: newName forKey: lowNewName];
+		[nameToPresentation removeObjectForKey: lowName];
+		
+		object = [nameToBoth objectForKey: lowName];
+		which = ([object isKindOf: [QueryController class]]) ? 
+		  nameToQuery : nameToChannel;
+		
+		[nameToBoth setObject: object forKey: lowNewName];
+		[which setObject: object forKey: lowNewName];
+		
+		[nameToBoth removeObjectForKey: lowName];
+		[which removeObjectForKey: lowName];
+		NSMapInsert(bothToName, object, lowNewName);
+		
+		[nameToLabel setObject: [nameToLabel objectForKey:
+		  lowName] forKey: lowNewName];
+		[nameToLabel removeObjectForKey: lowName];
+		
+		object = [nameToTabItem objectForKey: lowName];
+		[nameToTabItem setObject: object forKey: lowNewName];
+		[nameToTabItem removeObjectForKey: lowName];
+		NSMapInsert(tabItemToName, object, lowNewName);
+		
+		if (GNUstepOutputCompare(current, lowName))
+		{
+			RELEASE(current);
+			current = RETAIN(lowNewName);
+		}
+		
+		return self;
+	}
+	return self;	
 }
 - (NSString *)currentViewName
 {

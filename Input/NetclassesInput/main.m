@@ -122,6 +122,7 @@
 {
 	waiting = NO;
 	[control removeConnection: self];
+	[_TS_ lostConnection: self sender: control];
 	[super connectionLost];
 }
 - connectionEstablished: (id)aTransport

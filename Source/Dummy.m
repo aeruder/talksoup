@@ -176,6 +176,8 @@
 
 - newConnection: (id)connection sender: aPlugin { return nil; }
 
+- lostConnection: (id)connection sender: aPlugin { return nil; }
+
 - registeredWithServerOnConnection: (id)connection sender: aPlugin 
    { return nil; }
 
