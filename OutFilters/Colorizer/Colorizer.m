@@ -248,8 +248,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		}
 	}
 	
-	return AUTORELEASE([[NSAttributedString alloc] initWithAttributedString:
-	  string]);
+	return string;
 }		
 
 @implementation Colorizer

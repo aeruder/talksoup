@@ -278,10 +278,15 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		if (![nowF isEqualToString: begF] && ![nowB isEqualToString: begB])
 		{
 			[aString appendString: @"\003"];
-			if ([nowB length] > 0)
+			if ([nowB length] > 0 && [nowF length] > 0)
 			{
 				[aString appendString: [NSString stringWithFormat: @"%@,%@",
 				 lookup_color(nowF), lookup_color(nowB)]];
+			}
+			else if ([nowB length] > 0)
+			{
+				[aString appendString: [NSString stringWithFormat: @"\003,%@",
+				  lookup_color(nowB)]];
 			}
 			else if ([nowF length] > 0)
 			{
@@ -316,8 +321,11 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		
 		so = b;
 	}
-
-	NSLog(@"aString: %@", aString);
+	id xy;
+	xy = [NSMutableString stringWithString: aString];
+	[xy replaceOccurrencesOfString: @"\003" withString: @"COLOR"
+	  options: 0 range: NSMakeRange(0, [xy length])];
+	
 	return AUTORELEASE(aString);
 }
 
