@@ -15,14 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "netclasses/DCCObject.h"
+#import "DCCObject.h"
 
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSValue.h>
-#include <Foundation/NSHost.h>
-#include <Foundation/NSTimer.h>
-#include <Foundation/NSData.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSValue.h>
+#import <Foundation/NSHost.h>
+#import <Foundation/NSTimer.h>
+#import <Foundation/NSData.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>

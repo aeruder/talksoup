@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Deunderline_PRINCIPAL_CLASS = Deunderline
 
-Deunderline_FRAMEWORKS = -lTalkSoupBundles
-
 Deunderline_OBJC_FILES = Deunderline.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Deunderline_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Deunderline_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

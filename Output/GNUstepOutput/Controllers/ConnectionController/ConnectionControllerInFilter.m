@@ -16,22 +16,22 @@
  ***************************************************************************/
 
 
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
-#include "Models/Channel.h"
-#include "Controllers/ChannelController.h"
-#include "Misc/NSAttributedStringAdditions.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "GNUstepOutput.h"
+#import "Models/Channel.h"
+#import "Controllers/ChannelController.h"
+#import "Misc/NSAttributedStringAdditions.h"
 
-#include <Foundation/NSEnumerator.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSNull.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSNibLoading.h>
-#include <AppKit/NSTableView.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSNull.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSTableView.h>
 
 #define MARK [NSNull null]
 
@@ -77,7 +77,7 @@
    sender: aPlugin
 {
 	id process;
-	if (![aObject isKindOf: [NSDictionary class]]) return self;
+	if (![aObject isKindOfClass: [NSDictionary class]]) return self;
 	
 	process = [aObject objectForKey: @"Process"];
 

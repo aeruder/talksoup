@@ -20,7 +20,7 @@
 #ifndef COLORIZER_H
 #define COLORIZER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

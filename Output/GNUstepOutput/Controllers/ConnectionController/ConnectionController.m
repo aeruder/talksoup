@@ -15,25 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ChannelController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/TopicInspectorController.h"
-#include "Controllers/InputController.h"
-#include "Views/ScrollingTextView.h"
-#include "Models/Channel.h"
-#include "Misc/NSColorAdditions.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ChannelController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/TopicInspectorController.h"
+#import "Controllers/InputController.h"
+#import "Views/ScrollingTextView.h"
+#import "Models/Channel.h"
+#import "Misc/NSColorAdditions.h"
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSHost.h>
-#include <AppKit/NSColor.h>
-#include <AppKit/NSNibLoading.h>
-#include <AppKit/NSTableView.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSFont.h>
+#import <TalkSoupBundles/TalkSoup.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSHost.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSTableView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSFont.h>
+#import <Foundation/NSEnumerator.h>
 
 @implementation ConnectionController
 - init

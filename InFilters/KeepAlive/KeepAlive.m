@@ -15,13 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "KeepAlive.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "KeepAlive.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSEnumerator.h>
-#include <Foundation/NSTimer.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSTimer.h>
+#import <Foundation/NSNull.h>
 
 @implementation KeepAlive
 - fireTimer: (NSTimer *)aTimer

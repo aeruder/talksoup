@@ -15,15 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Highlighting.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Highlighting.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSCharacterSet.h>
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSUserDefaults.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSInvocation.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSInvocation.h>
 
 static id get_pref(NSString *x)
 {

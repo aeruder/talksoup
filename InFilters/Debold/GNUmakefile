@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Debold_PRINCIPAL_CLASS = Debold
 
-Debold_FRAMEWORKS = -lTalkSoupBundles
-
 Debold_OBJC_FILES = Debold.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Debold_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Debold_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

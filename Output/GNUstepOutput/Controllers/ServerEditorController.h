@@ -20,7 +20,7 @@
 #ifndef SERVER_EDITOR_CONTROLLER_H
 #define SERVER_EDITOR_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSTextField, NSButton, NSWindow, NSTextView;
 

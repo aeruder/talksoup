@@ -20,7 +20,7 @@
 #ifndef BUNDLE_CONFIGURE_CONTROLLER_H
 #define BUNDLE_CONFIGURE_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSPopUpButton, NSTableView, NSTextView, NSWindow;
 @class NSTableColumn, NSButton;

@@ -15,34 +15,34 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ContentController.h"
+#import "Controllers/ContentController.h"
 
-#include "Controllers/QueryController.h"
-#include "Controllers/ChannelController.h"
-#include "Controllers/InputController.h"
-#include "Controllers/ConnectionController.h"
-#include "Views/AttributedTabViewItem.h"
-#include "Views/ScrollingTextView.h"
-#include "Misc/NSColorAdditions.h"
-#include "Misc/NSAttributedStringAdditions.h"
-#include <AppKit/NSColor.h>
-#include <AppKit/NSNibLoading.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTabView.h>
-#include <AppKit/NSAttributedString.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSTabViewItem.h>
-#include <AppKit/NSTextStorage.h>
-#include <AppKit/NSFont.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTableView.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSEnumerator.h>
+#import "Controllers/QueryController.h"
+#import "Controllers/ChannelController.h"
+#import "Controllers/InputController.h"
+#import "Controllers/ConnectionController.h"
+#import "Views/AttributedTabViewItem.h"
+#import "Views/ScrollingTextView.h"
+#import "Misc/NSColorAdditions.h"
+#import "Misc/NSAttributedStringAdditions.h"
+#import <AppKit/NSColor.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTabView.h>
+#import <AppKit/NSAttributedString.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSTabViewItem.h>
+#import <AppKit/NSTextStorage.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTableView.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSEnumerator.h>
 
-#include "GNUstepOutput.h"
+#import "GNUstepOutput.h"
 
 NSString *ContentConsoleName = @"Content Console Name";
 

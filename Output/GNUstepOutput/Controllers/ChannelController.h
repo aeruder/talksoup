@@ -22,7 +22,7 @@
 
 @class NSTableView, ScrollingTextView, NSSplitView, NSView;
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @interface ChannelController : NSObject
 	{

@@ -16,28 +16,28 @@
  ***************************************************************************/
 
 
-#include "Controllers/PreferencesController.h"
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/QueryController.h"
-#include "Misc/NSColorAdditions.h"
-#include "GNUstepOutput.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "Views/ScrollingTextView.h"
+#import "Controllers/PreferencesController.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/QueryController.h"
+#import "Misc/NSColorAdditions.h"
+#import "GNUstepOutput.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "Views/ScrollingTextView.h"
 
-#include <Foundation/NSNotification.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSEnumerator.h>
-#include <Foundation/NSArray.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSColorWell.h>
-#include <AppKit/NSButton.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSView.h>
-#include <AppKit/NSFontPanel.h>
-#include <AppKit/NSFontManager.h>
-#include <AppKit/NSFont.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSArray.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSColorWell.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSFontPanel.h>
+#import <AppKit/NSFontManager.h>
+#import <AppKit/NSFont.h>
 
 @implementation PreferencesController
 - (void)awakeFromNib

@@ -18,7 +18,7 @@
 #ifndef SERVER_LIST_CONNECTION_CONTROLLER_H
 #define SERVER_LIST_CONNECTION_CONTROLLER_H
 
-#include "Controllers/ConnectionController.h"
+#import "Controllers/ConnectionController.h"
 
 @class NSDictionary, NSNotification, NSMutableDictionary;
 

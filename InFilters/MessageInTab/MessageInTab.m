@@ -15,11 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "MessageInTab.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "MessageInTab.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
 
 @implementation MessageInTab
 - (NSAttributedString *)pluginDescription

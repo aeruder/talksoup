@@ -15,14 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Misc/NSColorAdditions.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Misc/NSColorAdditions.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSArchiver.h>
-#include <Foundation/NSData.h>
-#include <Foundation/NSScanner.h>
-#include <Foundation/NSDictionary.h>
-#include <AppKit/NSColor.h>
+#import <Foundation/NSArchiver.h>
+#import <Foundation/NSData.h>
+#import <Foundation/NSScanner.h>
+#import <Foundation/NSDictionary.h>
+#import <AppKit/NSColor.h>
 
 static NSColor *common_color = nil;
 

@@ -20,7 +20,7 @@
 #ifndef PREFERENCES_CONTROLLER_H
 #define PREFERENCES_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSColorWell, NSTextField, NSButton, NSWindow;
 

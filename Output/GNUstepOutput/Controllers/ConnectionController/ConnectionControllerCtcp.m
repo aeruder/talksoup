@@ -15,13 +15,13 @@
  *                                                                         *
  ***************************************************************************/
  
-#include "Controllers/ConnectionController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "Controllers/ContentController.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ConnectionController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "Controllers/ContentController.h"
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
 
 @implementation ConnectionController (CTCP)
 - CTCPRequestPING: (NSAttributedString *)argument from: (NSAttributedString *)aPerson

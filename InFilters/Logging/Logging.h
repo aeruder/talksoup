@@ -20,7 +20,7 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString, NSArray;
 

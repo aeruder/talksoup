@@ -15,17 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Logging.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Logging.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSMapTable.h>
-#include <Foundation/NSFileHandle.h>
-#include <Foundation/NSInvocation.h>
-#include <Foundation/NSFileManager.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSFileHandle.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSFileManager.h>
+#import <Foundation/NSNull.h>
 
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;

@@ -20,7 +20,7 @@
 #ifndef DEUNDERLINE_H
 #define DEUNDERLINE_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

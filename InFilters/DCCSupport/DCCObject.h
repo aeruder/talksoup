@@ -46,9 +46,9 @@ extern NSString *DCCInfoNick;     //NSString
 - DCCNeedsMoreData: aConnection;
 @end
 
-#include <Foundation/NSObject.h>
-#include "netclasses/NetBase.h"
-#include "netclasses/NetTCP.h"
+#import <Foundation/NSObject.h>
+#import <netclasses/NetBase.h>
+#import <netclasses/NetTCP.h>
 
 #include <stdint.h>
 

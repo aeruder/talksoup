@@ -20,7 +20,7 @@
 #ifndef KEY_TEXT_VIEW_H
 #define KEY_TEXT_VIEW_H
 
-#include <AppKit/NSTextView.h>
+#import <AppKit/NSTextView.h>
 
 @interface KeyTextView : NSTextView
 	{

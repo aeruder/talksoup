@@ -20,7 +20,7 @@
 #ifndef ATTRIBUTED_TAB_VIEW_ITEM_H
 #define ATTRIBUTED_TAB_VIEW_ITEM_H
 
-#include <AppKit/NSTabViewItem.h>
+#import <AppKit/NSTabViewItem.h>
 
 @class NSAttributedString, NSColor, NSMutableAttributedString;
 

@@ -20,7 +20,7 @@
 #ifndef NAME_PROMPT_CONTROLLER_H
 #define NAME_PROMPT_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSTextField, NSWindow;
 

@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "DCCSupport.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "netclasses/NetTCP.h"
-#include "netclasses/DCCObject.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import <netclasses/NetTCP.h>
+#import "DCCObject.h"
+#import "DCCSupport.h"
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSInvocation.h>

@@ -15,11 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController/ConnectionController.h"
-#include "Controllers/ConnectionController/ConnectionControllerCtcp.h"
-#include "Controllers/ConnectionController/ConnectionControllerDelegate.h"
-#include "Controllers/ConnectionController/ConnectionControllerInFilter.h"
-#include "Controllers/ConnectionController/ConnectionControllerNumericCommands.h"
-#include "Controllers/ConnectionController/ConnectionControllerOutFilter.h"
-#include "Controllers/ConnectionController/ConnectionControllerTabCompletion.h"
+#import "Controllers/ConnectionController/ConnectionController.h"
+#import "Controllers/ConnectionController/ConnectionControllerCtcp.h"
+#import "Controllers/ConnectionController/ConnectionControllerDelegate.h"
+#import "Controllers/ConnectionController/ConnectionControllerInFilter.h"
+#import "Controllers/ConnectionController/ConnectionControllerNumericCommands.h"
+#import "Controllers/ConnectionController/ConnectionControllerOutFilter.h"
+#import "Controllers/ConnectionController/ConnectionControllerTabCompletion.h"
 

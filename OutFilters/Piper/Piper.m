@@ -15,19 +15,19 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Piper.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Piper.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSCharacterSet.h>
-#include <Foundation/NSScanner.h>
-#include <Foundation/NSAutoreleasePool.h>
-#include <Foundation/NSUserDefaults.h>
-#include <Foundation/NSFileHandle.h>
-#include <Foundation/NSTask.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSInvocation.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSScanner.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSFileHandle.h>
+#import <Foundation/NSTask.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSInvocation.h>
 
 static NSAttributedString *pipeit(NSAttributedString *a)
 {

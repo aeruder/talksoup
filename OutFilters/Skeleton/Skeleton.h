@@ -20,7 +20,7 @@
 #ifndef SKELETON_H
 #define SKELETON_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

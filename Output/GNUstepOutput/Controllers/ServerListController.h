@@ -31,7 +31,7 @@ extern NSString *ServerListInfoAutoConnect;
 #ifndef SERVER_LIST_CONTROLLER_H
 #define SERVER_LIST_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView, NSArray;
 @class NSDictionary;

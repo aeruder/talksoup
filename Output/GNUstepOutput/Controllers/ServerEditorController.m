@@ -15,13 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ServerEditorController.h"
+#import "Controllers/ServerEditorController.h"
 
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSButton.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTextContainer.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTextContainer.h>
 
 @implementation ServerEditorController
 - (void)awakeFromNib

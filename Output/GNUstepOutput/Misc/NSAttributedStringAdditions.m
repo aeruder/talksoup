@@ -15,16 +15,17 @@
  *                                                                         *
  ***************************************************************************/
  
-#include "Misc/NSAttributedStringAdditions.h"
-#include "Misc/NSColorAdditions.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Misc/NSAttributedStringAdditions.h"
+#import "Misc/NSColorAdditions.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <AppKit/NSColor.h>
-#include <AppKit/NSAttributedString.h>
-#include <Foundation/NSValue.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSScanner.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSAttributedString.h>
+#import <AppKit/NSFont.h>
+#import <Foundation/NSValue.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSScanner.h>
 
 NSString *TypeOfColor = @"TypeOfColor";
 

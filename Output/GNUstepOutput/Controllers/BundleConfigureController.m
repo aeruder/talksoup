@@ -15,21 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/BundleConfigureController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
-#include "Misc/NSAttributedStringAdditions.h"
+#import "Controllers/BundleConfigureController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "GNUstepOutput.h"
+#import "Misc/NSAttributedStringAdditions.h"
 
-#include <AppKit/NSPopUpButton.h>
-#include <AppKit/NSTableView.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTableColumn.h>
-#include <AppKit/NSTextContainer.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSButton.h>
-#include <AppKit/NSImage.h>
-#include <AppKit/NSTextStorage.h>
-#include <AppKit/NSFont.h>
+#import <AppKit/NSPopUpButton.h>
+#import <AppKit/NSTableView.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTableColumn.h>
+#import <AppKit/NSTextContainer.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSImage.h>
+#import <AppKit/NSTextStorage.h>
+#import <AppKit/NSFont.h>
 
 @interface BundleDataSource : NSObject
 	{
@@ -215,6 +215,7 @@ static NSString *big_description = nil;
 
 	[showingPopUp selectItemAtIndex: 0];
 	[self showingSelected: showingPopUp];
+	[showingPopUp setEnabled: YES];
 
 	[window makeKeyAndOrderFront: nil];
 }	
@@ -298,7 +299,7 @@ static NSString *big_description = nil;
 
 	x = [loadData[currentShowing] bundleList];
 	
-	if (row == ([x count] - 1)) return;
+	if (row == (int)([x count] - 1)) return;
 
 	object = [x objectAtIndex: row];
 	[x removeObjectAtIndex: row];

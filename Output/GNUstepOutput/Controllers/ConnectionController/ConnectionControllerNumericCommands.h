@@ -18,7 +18,7 @@
 #ifndef CONNECTION_CONTROLLER_NUMERIC_COMMANDS_H
 #define CONNECTION_CONTROLLER_NUMERIC_COMMANDS_H
 
-#include "Controllers/ConnectionController/ConnectionController.h"
+#import "Controllers/ConnectionController/ConnectionController.h"
 
 @interface ConnectionController (NumericCommands)
 @end

@@ -15,25 +15,25 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ServerListController.h"
-#include "Controllers/GroupEditorController.h"
-#include "Controllers/ServerEditorController.h"
-#include "Controllers/ServerListConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ServerListController.h"
+#import "Controllers/GroupEditorController.h"
+#import "Controllers/ServerEditorController.h"
+#import "Controllers/ServerListConnectionController.h"
+#import "Controllers/ContentController.h"
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSNotification.h>
-#include <Foundation/NSEnumerator.h>
-#include <AppKit/NSButton.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTableColumn.h>
-#include <AppKit/NSScrollView.h>
-#include <AppKit/NSNibLoading.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSFont.h>
-#include <AppKit/NSBrowser.h>
-#include <AppKit/NSBrowserCell.h>
-#include <AppKit/NSTextView.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSEnumerator.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTableColumn.h>
+#import <AppKit/NSScrollView.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSBrowser.h>
+#import <AppKit/NSBrowserCell.h>
+#import <AppKit/NSTextView.h>
 
 NSString *ServerListInfoEncoding = @"Encoding";
 NSString *ServerListInfoWindowFrame = @"WindowFrame";
@@ -127,12 +127,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 	id tmp = [_GS_ defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	
-	if (group >= [tmp count] || group < 0) return nil;
+	if (group >= (int)[tmp count] || group < 0) return nil;
 	
 	tmp = [[tmp objectAtIndex: group] 
 	  objectForKey: ServerListInfoEntries];
 	
-	if (row >= [tmp count] || row < 0) return nil;
+	if (row >= (int)[tmp count] || row < 0) return nil;
 	
 	return [tmp objectAtIndex: row];
 }
@@ -141,12 +141,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 	id tmp = mutablized_prefs();
 	id array;
 	
-	if (group >= [tmp count] || group < 0) return;
+	if (group >= (int)[tmp count] || group < 0) return;
 	
 	array = [[tmp objectAtIndex: group]
 	  objectForKey: ServerListInfoEntries];
 	  
-	if (row >= [tmp count] || row < 0) return;
+	if (row >= (int)[tmp count] || row < 0) return;
 	
 	[array replaceObjectAtIndex: row withObject: x];
 
@@ -233,13 +233,13 @@ static int sort_server_dictionary(id first, id second, void *x)
 		return;
 	}
 	
-	if ([editor isKindOf: [GroupEditorController class]])
+	if ([editor isKindOfClass: [GroupEditorController class]])
 	{
 		NSMutableArray *x;
 		id newOne;
 		x = mutablized_prefs();
 		
-		if (wasEditing != -1 && wasEditing < [x count])
+		if (wasEditing != -1 && wasEditing < (int)[x count])
 		{
 			newOne = [x objectAtIndex: wasEditing];
 			[newOne setObject: string forKey: ServerListInfoName];
@@ -265,7 +265,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		[[editor window] close];
 		[window makeKeyAndOrderFront: nil];
 	}
-	else if ([editor isKindOf: [ServerEditorController class]])
+	else if ([editor isKindOfClass: [ServerEditorController class]])
 	{
 		id server = [[editor serverField] stringValue];
 		id commands = [[editor commandsText] string];
@@ -294,7 +294,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 			port = @"6667";
 		}
 		
-		if (first >= [prefs count] || first < 0)
+		if (first >= (int)[prefs count] || first < 0)
 		{			
 			return;
 		}
@@ -310,7 +310,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		array = [[prefs objectAtIndex: first] objectForKey: ServerListInfoEntries];
 				
-		if (wasEditing != -1 || wasEditing < [array count])
+		if (wasEditing != -1 || wasEditing < (int)[array count])
 		{
 			newOne = [array objectAtIndex: wasEditing];
 			[newOne setObject: server forKey: ServerListInfoServer];
@@ -401,7 +401,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	{
 		row = [browser selectedRowInColumn: 0];
 		
-		if (row >= [tmp count] || row < 0) return;
+		if (row >= (int)[tmp count] || row < 0) return;
 		
 		[self addGroupHit: nil];
 		
@@ -415,11 +415,11 @@ static int sort_server_dictionary(id first, id second, void *x)
 		int first = [browser selectedRowInColumn: 0];
 		row = [browser selectedRowInColumn: 1];
 		
-		if (first >= [tmp count] || first < 0) return;
+		if (first >= (int)[tmp count] || first < 0) return;
 		
 		o = [[tmp objectAtIndex: first] objectForKey: ServerListInfoEntries];
 		
-		if (row >= [o count] || row < 0) return;
+		if (row >= (int)[o count] || row < 0) return;
 		
 		[self addEntryHit: nil];
 
@@ -454,7 +454,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	{
 		row = [browser selectedRowInColumn: 0];
 		
-		if (row >= [prefs count]) return;
+		if (row >= (int)[prefs count]) return;
 		
 		[prefs removeObjectAtIndex: row];
 		
@@ -469,11 +469,11 @@ static int sort_server_dictionary(id first, id second, void *x)
 		int first = [browser selectedRowInColumn: 0];
 		row = [browser selectedRowInColumn: 1];
 		
-		if (first >= [prefs count]) return;
+		if (first >= (int)[prefs count]) return;
 		
 		x = [[prefs objectAtIndex: first] objectForKey: ServerListInfoEntries];
 		
-		if (row >= [x count]) return;
+		if (row >= (int)[x count]) return;
 		
 		[x removeObjectAtIndex: row];
 		
@@ -495,11 +495,11 @@ static int sort_server_dictionary(id first, id second, void *x)
 	first = [browser selectedRowInColumn: 0];
 	row = [browser selectedRowInColumn: 1];
 	
-	if (first >= [tmp count]) return;
+	if (first >= (int)[tmp count]) return;
 	
 	tmp = [[tmp objectAtIndex: first] objectForKey: ServerListInfoEntries];
 	
-	if (row >= [tmp count]) return;
+	if (row >= (int)[tmp count]) return;
 
 	AUTORELEASE(win = [[ServerListConnectionController alloc]
 	  initWithServerListDictionary: [tmp objectAtIndex: row]
@@ -569,7 +569,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		int col = [sender selectedRowInColumn: 0];
 		id group;
 		
-		if (col >= [serverList count])
+		if (col >= (int)[serverList count])
 		{
 			return 0;
 		}
@@ -608,7 +608,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	{
 		id tmp;
 		
-		if (row >= [serverList count]) return;
+		if (row >= (int)[serverList count]) return;
 		
 		tmp = [serverList objectAtIndex: row];
 		[cell setStringValue: [tmp objectForKey: ServerListInfoName]];
@@ -621,12 +621,12 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		first = [sender selectedRowInColumn: 0];
 		
-		if (first >= [serverList count]) return;
+		if (first >= (int)[serverList count]) return;
 		
 		tmp = [serverList objectAtIndex: first];
 		tmp = [tmp objectForKey: ServerListInfoEntries];
 		
-		if (row >= [tmp count]) return;
+		if (row >= (int)[tmp count]) return;
 		
 		tmp = [tmp objectAtIndex: row];
 		

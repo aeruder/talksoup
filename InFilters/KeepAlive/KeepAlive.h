@@ -20,7 +20,7 @@
 #ifndef KEEP_ALIVE_H
 #define KEEP_ALIVE_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString, NSTimer;
 

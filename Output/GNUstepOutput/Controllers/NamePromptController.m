@@ -15,15 +15,15 @@
  *                                                                         *
  ***************************************************************************/
  
-#include "Controllers/NamePromptController.h"
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Controllers/NamePromptController.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSString.h>
+#import <Foundation/NSString.h>
 
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextField.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextField.h>
 
 @implementation NamePromptController
 - (void)awakeFromNib

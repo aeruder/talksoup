@@ -20,7 +20,7 @@
 #ifndef MESSAGE_IN_TAB_H
 #define MESSAGE_IN_TAB_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

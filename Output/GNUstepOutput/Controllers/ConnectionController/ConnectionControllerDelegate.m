@@ -15,21 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/ChannelController.h"
-#include "Controllers/InputController.h"
-#include "Controllers/TopicInspectorController.h"
-#include "Models/Channel.h"
-#include "Views/KeyTextView.h"
+#import "Controllers/ConnectionController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "GNUstepOutput.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/ChannelController.h"
+#import "Controllers/InputController.h"
+#import "Controllers/TopicInspectorController.h"
+#import "Models/Channel.h"
+#import "Views/KeyTextView.h"
 
-#include <Foundation/NSNotification.h>
-#include <AppKit/NSTabView.h>
-#include <AppKit/NSTableView.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextField.h>
+#import <Foundation/NSNotification.h>
+#import <AppKit/NSTabView.h>
+#import <AppKit/NSTableView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextField.h>
 
 @implementation ConnectionController (TableViewTarget)
 - (void)doubleClickedUser: (NSTableView *)sender

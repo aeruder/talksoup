@@ -15,17 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/TopicInspectorController.h"
-#include "Controllers/ConnectionController.h"
-#include "GNUstepOutput.h"
-#include "Views/KeyTextView.h"
+#import "Controllers/TopicInspectorController.h"
+#import "Controllers/ConnectionController.h"
+#import "GNUstepOutput.h"
+#import "Views/KeyTextView.h"
 
-#include <AppKit/NSView.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTextContainer.h>
-#include <Foundation/NSString.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTextContainer.h>
+#import <Foundation/NSString.h>
 
 @implementation TopicInspectorController
 - (void)awakeFromNib

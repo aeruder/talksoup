@@ -15,23 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ChannelController.h"
-#include "Views/ScrollingTextView.h"
-#include "Misc/NSColorAdditions.h"
-#include "Models/Channel.h"
-#include "GNUstepOutput.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Controllers/ChannelController.h"
+#import "Views/ScrollingTextView.h"
+#import "Misc/NSColorAdditions.h"
+#import "Models/Channel.h"
+#import "GNUstepOutput.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSSplitView.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTableView.h>
-#include <AppKit/NSTextContainer.h>
-#include <AppKit/NSTableColumn.h>
-#include <AppKit/NSScrollView.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSFont.h>
-#include <AppKit/NSView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSSplitView.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTableView.h>
+#import <AppKit/NSTextContainer.h>
+#import <AppKit/NSTableColumn.h>
+#import <AppKit/NSScrollView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSView.h>
 
 @implementation ChannelController
 - (void)awakeFromNib
@@ -60,7 +60,7 @@
 	[userColumn setEditable: NO];
 	
 	frame = [tableView frame];
-	[splitView removeSubview: tableView];
+	[tableView removeFromSuperview];
 	AUTORELEASE(tableView);
 	
 	userScroll = AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]); 

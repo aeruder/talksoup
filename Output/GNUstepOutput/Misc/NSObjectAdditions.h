@@ -18,7 +18,9 @@
 #ifndef NSOBJECT_ADDITIONS_H
 #define NSOBJECT_ADDITIONS_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
+
+@class NSArray;
 
 @interface NSObject (Introspection)
 + (NSArray *)methodsDefinedForClass;

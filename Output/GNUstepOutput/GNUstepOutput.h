@@ -17,8 +17,8 @@
 
 @class GNUstepOutput, NSString, NSColor;
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSBundle.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSBundle.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString);
 NSString *GNUstepOutputIdentificationForController(id controller);
@@ -46,7 +46,7 @@ extern GNUstepOutput *_GS_;
 #ifndef GNUSTEP_OUTPUT_H
 #define GNUSTEP_OUTPUT_H
 
-#include <Foundation/NSMapTable.h>
+#import <Foundation/NSMapTable.h>
 #include "TalkSoupBundles/TalkSoup.h"
 
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;

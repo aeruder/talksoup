@@ -7,11 +7,15 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Highlighting_PRINCIPAL_CLASS = Highlighting
 
-Highlighting_FRAMEWORKS = -lTalkSoupBundles
-
 main = Highlighting.m
 
 Highlighting_OBJC_FILES = $(main)
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Highlighting_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Highlighting_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS =
 

@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Logging_PRINCIPAL_CLASS = Logging
 
-Logging_FRAMEWORKS = -lTalkSoupBundles
-
 Logging_OBJC_FILES = Logging.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Logging_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Logging_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

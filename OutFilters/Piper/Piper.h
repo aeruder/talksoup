@@ -20,7 +20,7 @@
 #ifndef PIPER_H
 #define PIPER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

@@ -15,24 +15,25 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "Controllers/InputController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/ChannelController.h"
-#include "GNUstepOutput.h"
-#include "Views/KeyTextView.h"
-#include "Views/ScrollingTextView.h"
-#include "Misc/NSObjectAdditions.h"
-#include "Models/Channel.h"
+#import "Controllers/ConnectionController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "Controllers/InputController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/ChannelController.h"
+#import "GNUstepOutput.h"
+#import "Views/KeyTextView.h"
+#import "Views/ScrollingTextView.h"
+#import "Misc/NSObjectAdditions.h"
+#import "Models/Channel.h"
 
-#include <Foundation/NSCharacterSet.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSSet.h>
-#include <AppKit/NSText.h>
-#include <AppKit/NSEvent.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSGraphics.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSSet.h>
+#import <Foundation/NSEnumerator.h>
+#import <AppKit/NSText.h>
+#import <AppKit/NSEvent.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSGraphics.h>
 
 @interface ConnectionController (TabCompletionPrivate)
 - (void)nonTabPressed: (id)sender;

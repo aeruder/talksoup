@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 KeepAlive_PRINCIPAL_CLASS = KeepAlive
 
-KeepAlive_FRAMEWORKS = -lTalkSoupBundles
-
 KeepAlive_OBJC_FILES = KeepAlive.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+KeepAlive_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+KeepAlive_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

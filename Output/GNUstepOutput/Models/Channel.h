@@ -20,8 +20,8 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSFormatter.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSFormatter.h>
 
 @class NSString, NSArray, NSMutableArray;
 

@@ -18,7 +18,7 @@
 #ifndef CONNECTION_CONTROLLER_IN_FILTER_H
 #define CONNECTION_CONTROLLER_IN_FILTER_H
 
-#include "Controllers/ConnectionController/ConnectionController.h"
+#import "Controllers/ConnectionController/ConnectionController.h"
 
 @class NSAttributedString;
 

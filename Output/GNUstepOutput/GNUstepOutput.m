@@ -15,37 +15,37 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "GNUstepOutput.h"
+#import "GNUstepOutput.h"
 
-#include "Controllers/ConnectionController.h"
-#include "Controllers/PreferencesController.h"
-#include "Controllers/ServerListController.h"
-#include "Controllers/NamePromptController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/TopicInspectorController.h"
-#include "Controllers/BundleConfigureController.h"
-#include "Misc/NSColorAdditions.h"
-#include "Views/KeyTextView.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/PreferencesController.h"
+#import "Controllers/ServerListController.h"
+#import "Controllers/NamePromptController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/TopicInspectorController.h"
+#import "Controllers/BundleConfigureController.h"
+#import "Misc/NSColorAdditions.h"
+#import "Views/KeyTextView.h"
 
-#include <AppKit/NSAttributedString.h>
-#include <AppKit/NSNibLoading.h>
-#include <AppKit/NSApplication.h>
-#include <AppKit/NSMenu.h>
-#include <AppKit/NSFont.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSColor.h>
-#include <AppKit/NSEvent.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSImage.h>
-#include <Foundation/NSInvocation.h>
-#include <Foundation/NSRunLoop.h>
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSHost.h>
-#include <Foundation/NSUserDefaults.h>
-#include <Foundation/NSNotification.h>
-#include <Foundation/NSEnumerator.h>
+#import <AppKit/NSAttributedString.h>
+#import <AppKit/NSNibLoading.h>
+#import <AppKit/NSApplication.h>
+#import <AppKit/NSMenu.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSEvent.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSImage.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSRunLoop.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSHost.h>
+#import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSEnumerator.h>
 
 NSString *GNUstepOutputLowercase(NSString *aString)
 {

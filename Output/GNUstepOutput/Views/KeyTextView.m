@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Views/KeyTextView.h"
+#import "Views/KeyTextView.h"
 
-#include <AppKit/NSEvent.h>
-#include <AppKit/NSTextStorage.h>
+#import <AppKit/NSEvent.h>
+#import <AppKit/NSTextStorage.h>
 
 @implementation KeyTextView
 - setKeyTarget: (id)aTarget

@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Skeleton_PRINCIPAL_CLASS = Skeleton
 
-Skeleton_FRAMEWORKS = -lTalkSoupBundles
-
 Skeleton_OBJC_FILES = Skeleton.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Skeleton_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Skeleton_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

@@ -15,14 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Colorizer.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Colorizer.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
-#include <Foundation/NSCharacterSet.h>
-#include <Foundation/NSScanner.h>
-#include <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSScanner.h>
+#import <Foundation/NSAutoreleasePool.h>
 
 static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 {

@@ -15,12 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/GroupEditorController.h"
+#import "Controllers/GroupEditorController.h"
 
-#include <Foundation/NSString.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSButton.h>
+#import <Foundation/NSString.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSButton.h>
 
 @implementation GroupEditorController
 - (void)awakeFromNib

@@ -20,7 +20,7 @@
 #ifndef GROUP_EDITOR_CONTROLLER_H
 #define GROUP_EDITOR_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSTextField, NSWindow, NSButton;
 

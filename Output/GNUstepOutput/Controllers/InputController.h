@@ -20,8 +20,8 @@
 #ifndef INPUT_CONTROLLER_H
 #define INPUT_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSMapTable.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
 
 @class ConnectionController, NSText;
 

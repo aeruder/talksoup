@@ -15,11 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Debold.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Debold.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
 
 static NSAttributedString *debold(id a)
 {

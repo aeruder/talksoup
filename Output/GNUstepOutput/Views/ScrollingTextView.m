@@ -15,13 +15,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Views/ScrollingTextView.h"
+#import "Views/ScrollingTextView.h"
 
-#include <AppKit/NSClipView.h>
-#include <AppKit/NSScrollView.h>
-#include <AppKit/NSTextStorage.h>
-#include <AppKit/NSView.h>
-#include <Foundation/NSGeometry.h>
+#import <AppKit/NSClipView.h>
+#import <AppKit/NSScrollView.h>
+#import <AppKit/NSTextStorage.h>
+#import <AppKit/NSView.h>
+#import <Foundation/NSGeometry.h>
 
 #include <math.h>
 

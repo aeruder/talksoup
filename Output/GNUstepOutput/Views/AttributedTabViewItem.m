@@ -15,10 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Views/AttributedTabViewItem.h"
+#import "Views/AttributedTabViewItem.h"
 
-#include <AppKit/NSAttributedString.h>
-#include <AppKit/NSColor.h>
+#import <AppKit/NSAttributedString.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSTabView.h>
+#import <Foundation/NSAttributedString.h>
 
 @implementation AttributedTabViewItem
 - (void)dealloc

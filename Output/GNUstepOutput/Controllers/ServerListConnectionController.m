@@ -15,23 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ServerListConnectionController.h"
-#include "Controllers/ServerListController.h"
-#include "Controllers/InputController.h"
-#include "Controllers/ContentController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ServerListConnectionController.h"
+#import "Controllers/ServerListController.h"
+#import "Controllers/InputController.h"
+#import "Controllers/ContentController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSEnumerator.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSNotification.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSGeometry.h>
-#include <Foundation/NSInvocation.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSNotification.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSGeometry.h>
+#import <Foundation/NSInvocation.h>
 
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSView.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSView.h>
 
 @implementation ServerListConnectionController
 - initWithServerListDictionary: (NSDictionary *)aInfo

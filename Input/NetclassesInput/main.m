@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "main.h"
-#include "Functions.h"
+#import "main.h"
+#import "Functions.h"
 
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSArray.h>

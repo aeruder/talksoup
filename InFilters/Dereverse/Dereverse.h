@@ -20,7 +20,7 @@
 #ifndef DEREVERSE_H
 #define DEREVERSE_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

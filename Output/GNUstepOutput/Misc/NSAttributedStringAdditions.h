@@ -18,7 +18,7 @@
 #ifndef OUTPUT_NS_ATTRIBUTED_STRING_ADDITIONS_H
 #define OUTPUT_NS_ATTRIBUTED_STRING_ADDITIONS_H
 
-#include <Foundation/NSAttributedString.h>
+#import <Foundation/NSAttributedString.h>
 
 extern NSString *TypeOfColor;
 

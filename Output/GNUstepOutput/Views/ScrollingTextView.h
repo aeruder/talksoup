@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Views/KeyTextView.h"
+#import "Views/KeyTextView.h"
 
 @interface ScrollingTextView : KeyTextView
 - (void)pageUp;

@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Dereverse_PRINCIPAL_CLASS = Dereverse
 
-Dereverse_FRAMEWORKS = -lTalkSoupBundles
-
 Dereverse_OBJC_FILES = Dereverse.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Dereverse_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Dereverse_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

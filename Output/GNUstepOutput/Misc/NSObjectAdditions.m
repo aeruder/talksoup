@@ -15,14 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Misc/NSObjectAdditions.h"
+#import "Misc/NSObjectAdditions.h"
 
-#include <Foundation/NSArray.h>
+#import <Foundation/NSArray.h>
+
+#ifdef __APPLE__
+#include <objc/objc-class.h>
+#endif
 
 @implementation NSObject (Introspection)
 + (NSArray *)methodsDefinedForClass
 {
-	MethodList *list;
+	struct objc_method_list *list;
+#ifdef __APPLE__
+	struct objc_method_list **out_list;
+#endif
 	Class class;
 	int z;
 	int y;
@@ -30,9 +37,15 @@
 	NSMutableArray *array = AUTORELEASE([NSMutableArray new]);
 	
 	class = [self class];
-	
+
+#ifdef __APPLE__	
+	for (out_list = class->methodLists; *out_list != 0; out_list++)
+	{
+		list = *out_list;
+#else
 	for (list = class->methods; list != NULL; list=list->method_next)
 	{
+#endif
 		y = list->method_count;
 		for (z = 0; z < y; z++)
 		{

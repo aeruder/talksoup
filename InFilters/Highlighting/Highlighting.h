@@ -20,7 +20,7 @@
 #ifndef HIGHLIGHTING_H
 #define HIGHLIGHTING_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

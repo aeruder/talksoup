@@ -22,8 +22,9 @@
 
 @class NSString, KeyTextView, InputController, ContentController, NSArray;
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
+@class NSDictionary;
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @interface ConnectionController : NSObject
 	{

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Dummy.h"
+#import "Dummy.h"
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSArray.h>

@@ -7,9 +7,13 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 Decolorizer_PRINCIPAL_CLASS = Decolorizer
 
-Decolorizer_FRAMEWORKS = -lTalkSoupBundles
-
 Decolorizer_OBJC_FILES = Decolorizer.m
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+Decolorizer_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+Decolorizer_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 

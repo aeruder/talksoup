@@ -20,7 +20,7 @@
 #ifndef QUERY_CONTROLLER_H
 #define QUERY_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSView, ScrollingTextView;
  

@@ -22,8 +22,8 @@ extern NSString *ContentConsoleName;
 #ifndef CONTENT_CONTROLLER_H
 #define CONTENT_CONTROLLER_H
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSMapTable.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
 
 @class NSTextField, NSTabView, NSWindow;
 @class NSMutableDictionary, NSString, NSAttributedString;

@@ -9,8 +9,6 @@ TalkSoup_LOCALIZED_RESOURCE_FILES = Localizable.strings
 
 TalkSoup_LANGUAGES = English
 
-TalkSoup_LIB_DIRS = -LTalkSoupBundles/TalkSoupBundles.framework/Version/Current
-
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 TalkSoup_GUI_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
 else

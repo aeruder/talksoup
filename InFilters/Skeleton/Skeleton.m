@@ -15,11 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Skeleton.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Skeleton.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
 
 @implementation Skeleton
 - (NSAttributedString *)pluginDescription

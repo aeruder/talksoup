@@ -18,7 +18,7 @@
 #ifndef CONNECTION_CONTROLLER_TAB_COMPLETION_H
 #define CONNECTION_CONTROLLER_TAB_COMPLETION_H
 
-#include "Controllers/ConnectionController/ConnectionController.h"
+#import "Controllers/ConnectionController/ConnectionController.h"
 
 @class NSEvent,  NSArray, NSString;
 

@@ -15,23 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TalkSoupBundles/TalkSoup.h"
-#include "Controllers/InputController.h"
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/QueryController.h"
-#include "Views/ScrollingTextView.h"
-#include "GNUstepOutput.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "Controllers/InputController.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/QueryController.h"
+#import "Views/ScrollingTextView.h"
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSBundle.h>
-#include <Foundation/NSInvocation.h>
-#include <Foundation/NSCharacterSet.h>
-#include <Foundation/NSArray.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSEnumerator.h>
-#include <AppKit/NSTextField.h>
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextStorage.h>
+#import <Foundation/NSBundle.h>
+#import <Foundation/NSInvocation.h>
+#import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSEnumerator.h>
+#import <AppKit/NSTextField.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextStorage.h>
 
 static void send_message(id command, id name, id connection)
 {
@@ -100,7 +100,7 @@ static void send_message(id command, id name, id connection)
 
 	[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
 	
-	if (modIndex < [modHistory count])
+	if (modIndex < (int)[modHistory count])
 	{
 		[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
 
@@ -120,7 +120,7 @@ static void send_message(id command, id name, id connection)
 {
 	int modIndex;
 	
-	if (historyIndex == [history count])
+	if (historyIndex == (int)[history count])
 	{
 		return;
 	}

@@ -22,7 +22,11 @@ GNUstepOutput_LANGUAGES = English
 
 GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
-GNUstepOutput_FRAMEWORKS = -lTalkSoupBundles
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+GNUstepOutput_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+GNUstepOutput_BUNDLE_LIBS = -lTalkSoupBundles $(GUI_LIBS)
+endif
 
 ConnectionController = Controllers/ConnectionController/ConnectionController.m \
 Controllers/ConnectionController/ConnectionControllerCtcp.m \
@@ -55,8 +59,7 @@ Models = Models/Channel.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
                            $(Models)
-BUNDLE_LIBS = $(GUI_LIBS)
-
+						   
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble

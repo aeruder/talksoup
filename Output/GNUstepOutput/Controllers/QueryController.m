@@ -15,15 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/QueryController.h"
-#include "Views/ScrollingTextView.h"
-#include "Misc/NSColorAdditions.h"
-#include "GNUstepOutput.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import "Controllers/QueryController.h"
+#import "Views/ScrollingTextView.h"
+#import "Misc/NSColorAdditions.h"
+#import "GNUstepOutput.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include <AppKit/NSWindow.h>
-#include <AppKit/NSTextView.h>
-#include <AppKit/NSTextContainer.h>
+#import <AppKit/NSWindow.h>
+#import <AppKit/NSTextView.h>
+#import <AppKit/NSTextContainer.h>
 
 @implementation QueryController
 - (void)awakeFromNib

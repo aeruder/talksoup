@@ -16,16 +16,16 @@
  ***************************************************************************/
 
  
-#include "Models/Channel.h"
-#include "GNUstepOutput.h"
+#import "Models/Channel.h"
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSEnumerator.h>
-#include <Foundation/NSArray.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSArray.h>
 
-#include <AppKit/NSTableView.h>
-#include <AppKit/NSTableColumn.h>
+#import <AppKit/NSTableView.h>
+#import <AppKit/NSTableColumn.h>
 
 @implementation ChannelUser
 - initWithModifiedName: (NSString *)aName
@@ -209,10 +209,9 @@
 
 	user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: aString]);
 	
-	x = [userList insertionPosition: user 
-	                  usingSelector: @selector(sortByName:)];
-		
-	[userList insertObject: user atIndex: x];
+	[userList addObject: user];
+	[userList sortUsingSelector: @selector(sortByName:)];
+
 	[lowercaseList insertObject: GNUstepOutputLowercase([user userName])
 	           atIndex: x];
 	

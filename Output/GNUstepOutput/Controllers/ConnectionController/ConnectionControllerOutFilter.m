@@ -15,14 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "Misc/NSAttributedStringAdditions.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "Misc/NSAttributedStringAdditions.h"
+#import "GNUstepOutput.h"
 
-#include <AppKit/NSAttributedString.h>
-#include <Foundation/NSNull.h>
+#import <AppKit/NSAttributedString.h>
+#import <Foundation/NSNull.h>
 
 #define MARK [NSNull null]
 

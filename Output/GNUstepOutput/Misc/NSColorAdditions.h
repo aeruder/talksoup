@@ -18,7 +18,7 @@
 #ifndef NS_COLOR_ADDITIONS_H
 #define NS_COLOR_ADDITIONS_H
 
-#include <AppKit/NSColor.h>
+#import <AppKit/NSColor.h>
 
 @interface NSColor (EncodingAdditions)
 + (NSString *)commonColorSpaceName;

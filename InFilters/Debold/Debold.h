@@ -20,7 +20,7 @@
 #ifndef DEBOLD_H
 #define DEBOLD_H
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class NSAttributedString;
 

@@ -15,19 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Controllers/ConnectionController.h"
-#include "Controllers/ContentController.h"
-#include "Controllers/ChannelController.h"
-#include "Models/Channel.h"
-#include "TalkSoupBundles/TalkSoup.h"
-#include "GNUstepOutput.h"
+#import "Controllers/ConnectionController.h"
+#import "Controllers/ContentController.h"
+#import "Controllers/ChannelController.h"
+#import "Models/Channel.h"
+#import <TalkSoupBundles/TalkSoup.h>
+#import "GNUstepOutput.h"
 
-#include <Foundation/NSArray.h>
-#include <Foundation/NSDictionary.h>
-#include <Foundation/NSString.h>
-#include <Foundation/NSAttributedString.h>
-#include <Foundation/NSNull.h>
-#include <AppKit/NSTableView.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSNull.h>
+#import <Foundation/NSDate.h>
+#import <Foundation/NSCalendarDate.h>
+#import <AppKit/NSTableView.h>
 
 @implementation ConnectionController (NumericCommands)
 // RPL_TOPIC

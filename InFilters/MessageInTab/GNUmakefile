@@ -7,11 +7,15 @@ BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/Talk
 
 MessageInTab_PRINCIPAL_CLASS = MessageInTab
 
-MessageInTab_FRAMEWORKS = -lTalkSoupBundles
-
 main = MessageInTab.m
 
 MessageInTab_OBJC_FILES = $(main)
+
+ifeq ($(OBJC_RUNTIME_LIB), apple)
+MessageInTab_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+MessageInTab_BUNDLE_LIBS = -lTalkSoupBundles
+endif
 
 GUI_LIBS = 
 
