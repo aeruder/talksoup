@@ -27,6 +27,7 @@ extern NSString *ContentConsoleName;
 
 @class InputController, NSTextField, NSTabView, NSWindow;
 @class NSMutableDictionary, NSString, NSAttributedString;
+@class NSTabViewItem;
 
 @interface ContentController : NSObject
 {
@@ -45,6 +46,19 @@ extern NSString *ContentConsoleName;
 	NSString *current;
 	InputController *inputController;
 }
+
+- (NSAttributedString *)labelForViewWithName: (NSString *)aChannel;
+
+- (NSString *)presentationNameForViewWithName: (NSString *)aChannel;
+
+- (id)controllerForViewWithName: (NSString *)aChannel;
+
+- (NSTabViewItem *)tabViewItemForViewWithName: (NSString *)aChannel;
+
+- (NSString *)viewNameForTabViewItem: (NSTabViewItem *)aItem;
+
+- (NSString *)viewNameForController: controller;
+
 - putMessage: (id)aString in: (id)aChannel;
 
 - putMessageInAll: (id)aString;
@@ -52,6 +66,8 @@ extern NSString *ContentConsoleName;
 - addQueryWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel;
 
 - addChannelWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel;
+
+- setLabel: (NSAttributedString *)aLabel forViewWithName: (NSString *)aName;
 
 - closeViewWithName: (NSString *)aName;
 

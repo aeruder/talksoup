@@ -15,12 +15,29 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <AppKit/AppKit.h>
 #include "ChannelController.h"
 
+#include <AppKit/NSSplitView.h>
+
 @implementation ChannelController
+- (void)awakeFromNib
+{
+	[splitView setVertical: YES];
+}
 - (id)chatView
 {
 	return chatView;
+}
+- (id)window
+{
+	return window;
+}
+- (id)splitView
+{
+	return splitView;
+}
+- (id)tableView
+{
+	return tableView;
 }
 @end

@@ -64,6 +64,13 @@
 
 	return self;
 }
+- (void)closeConnection: (id)connection
+{
+	if ([connections containsObject: connection])
+	{
+		[[NetApplication sharedInstance] disconnectObject: connection];
+	}
+}	
 - (NSArray *)connections
 {
 	return [NSArray arrayWithArray: connections];
@@ -105,16 +112,17 @@
 {
 	return [transport address];
 }
-- (void)closeConnection
-{
-	[[TCPSystem sharedInstance] disconnectObject: self];
-}
 - (void)connectionLost
 {
 	[control removeConnection: self];
 	[super connectionLost];
 }
-
+- connectionEstablished: (id)aTransport
+{
+	id x = [super connectionEstablished: aTransport];
+	[_TS_ newConnection: self sender: control];
+	return x;
+}
 #define S2AS(_x) AUTORELEASE([[NSAttributedString alloc] initWithString: (_x)])
 - registeredWithServer
 {
@@ -288,5 +296,72 @@
 
 	return self;
 }
+- writeRawString: (NSString *)aString
+{
+	[self writeString: @"%@", aString];
+	
+	return self;
+}
+- (BOOL)respondsToSelector: (SEL)aSel
+{
+	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: aSel])
+	{
+		return YES;
+	}
+	return [super respondsToSelector: aSel];
+}
+- methodSignatureForSelector: (SEL)aSel
+{
+	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: aSel])
+	{
+		return [_TSDummy_ methodSignatureForSelector: aSel];
+	}
 
+	return [super methodSignatureForSelector: aSel];
+}	
+- (void)forwardInvocation: (NSInvocation *)invocation
+{
+	NSInvocation *invoc;
+	SEL sel;
+	id selS;
+	char buffer[64];
+	int num;
+	int x;
+	
+	sel = [invocation selector];
+	selS = NSStringFromSelector(sel);
+	
+	if ([@protocol(TalkSoupOutFilterProtocol) respondsTo: sel]
+	    && [selS hasSuffix: @"nConnection:sender:"])
+	{
+		selS = [selS substringToIndex: [selS length] - 
+		  [@"onConnection:sender:" length]];
+		
+		sel = NSSelectorFromString(selS);
+
+		if (![self respondsToSelector: sel])
+		{
+			[super forwardInvocation: invocation];
+		}
+
+		num = [[selS componentsSeparatedByString: @":"] count] - 1;
+
+		invoc = [NSInvocation invocationWithMethodSignature: 
+		  [self methodSignatureForSelector: sel]];
+		
+		[invoc setSelector: sel];
+		
+		for (x = 2; x < (num + 2); x++)
+		{
+			[invocation getArgument: buffer atIndex: x];
+			[invoc setArgument: buffer atIndex: x];
+		}
+
+		[invoc invokeWithTarget: self];
+		
+		return;
+	}
+	
+	[super forwardInvocation: invocation];
+}
 @end

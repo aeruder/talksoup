@@ -19,20 +19,19 @@
 
 #include "Controllers/QueryController.h"
 #include "Controllers/ChannelController.h"
+#include "Controllers/InputController.h"
 #include "Views/AttributedTabViewItem.h"
 #include <AppKit/NSNibLoading.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTabView.h>
 #include <AppKit/NSAttributedString.h>
 #include <AppKit/NSTextField.h>
+#include <AppKit/NSTabViewItem.h>
 #include <Foundation/NSString.h>
 
-NSString *ContentConsoleName = @"Content Console Name";
+#include "GNUstepOutput.h"
 
-static NSString *make_lowercase(NSString *a)
-{
-	return [a lowercaseString];
-}
+NSString *ContentConsoleName = @"Content Console Name";
 
 @implementation ContentController
 - init
@@ -51,19 +50,17 @@ static NSString *make_lowercase(NSString *a)
 	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	
-	
 	return self;
 }	
 - (void)awakeFromNib
 {
-	NSLog(@"Hieeeee!");
 	while ([tabView numberOfTabViewItems] > 0)
 	{
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
 	}
 
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
-	  @"Unconnected"])];
+	  _l(@"Unconnected")])];
 
 	[window makeKeyAndOrderFront: nil];
 }
@@ -86,6 +83,42 @@ static NSString *make_lowercase(NSString *a)
 
 	[super dealloc];
 }
+- (NSAttributedString *)labelForViewWithName: (NSString *)aChannel
+{
+	return [nameToLabel objectForKey: GNUstepOutputLowercase(aChannel)];
+}
+- (NSString *)presentationNameForViewWithName: (NSString *)aChannel
+{
+	return [nameToPresentation objectForKey: GNUstepOutputLowercase(aChannel)];
+}
+- (id)controllerForViewWithName: (NSString *)aChannel
+{
+	return [nameToBoth objectForKey: GNUstepOutputLowercase(aChannel)];
+}
+- (NSTabViewItem *)tabViewItemForViewWithName: (NSString *)aChannel
+{
+	return [nameToTabItem objectForKey: GNUstepOutputLowercase(aChannel)];
+}
+- (NSString *)viewNameForController: controller
+{
+	id a = NSMapGet(bothToName, controller);
+	if (a)
+	{
+		return [nameToPresentation objectForKey: a];
+	}
+	
+	return nil;
+}
+- (NSString *)viewNameForTabViewItem: (NSTabViewItem *)aItem
+{
+	id a = NSMapGet(tabItemToName, aItem);
+	if (a)
+	{
+		return [nameToPresentation objectForKey: a];
+	}
+	
+	return nil;
+}
 - putMessage: (id)aString in: (id)aChannel
 {
 	id controller = nil;
@@ -97,12 +130,12 @@ static NSString *make_lowercase(NSString *a)
 	}
 	else if ([aChannel isKindOf: [NSString class]])
 	{
-		controller = [nameToBoth objectForKey: make_lowercase(aChannel)];
+		controller = [nameToBoth objectForKey: GNUstepOutputLowercase(aChannel)];
 	}
 	else if ([aChannel isKindOf: [NSAttributedString class]])
 	{
 		controller = [nameToBoth objectForKey: 
-		    make_lowercase([aChannel string])];
+		    GNUstepOutputLowercase([aChannel string])];
 	}
 	
 	if (controller == nil)
@@ -143,12 +176,11 @@ static NSString *make_lowercase(NSString *a)
 	id name;
 	id tabItem;
 
-	name = make_lowercase(aName);
+	name = GNUstepOutputLowercase(aName);
 	query = AUTORELEASE([QueryController new]);
 	
 	if (![NSBundle loadNibNamed: @"Query" owner: query])
 	{
-		NSLog(@":( No query found...");
 		return nil;
 	}
 
@@ -170,9 +202,7 @@ static NSString *make_lowercase(NSString *a)
 	[tabItem setView: [[query window] contentView]];
 
 	[tabView addTabViewItem: tabItem];
-	
-	[tabView setNeedsDisplay: YES];
-	
+
 	return self;
 }
 - addChannelWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
@@ -181,7 +211,7 @@ static NSString *make_lowercase(NSString *a)
 	id name;
 	id tabItem;
 
-	name = make_lowercase(aName);
+	name = GNUstepOutputLowercase(aName);
 	chan = AUTORELEASE([ChannelController new]);
 
 	if (![NSBundle loadNibNamed: @"Channel" owner: chan])
@@ -207,6 +237,21 @@ static NSString *make_lowercase(NSString *a)
 	[tabItem setView: [[chan window] contentView]];
 	
 	[tabView addTabViewItem: tabItem];
+	
+	return self;
+}
+- setLabel: (NSAttributedString *)aString forViewWithName: (NSString *)aName
+{
+	id tab;
+	
+	tab = [nameToTabItem objectForKey: GNUstepOutputLowercase(aName)];
+	
+	if (!(tab))
+	{
+		return nil;
+	}
+	
+	[tab setAttributedLabel: aString];
 	
 	return self;
 }

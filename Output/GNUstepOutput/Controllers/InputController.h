@@ -14,3 +14,25 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+@class InputController;
+
+#ifndef INPUT_CONTROLLER_H
+#define INPUT_CONTROLLER_H
+
+#include <Foundation/NSObject.h>
+
+@class ContentController;
+
+@interface InputController : NSObject
+	{
+		ContentController *content;
+		id output;
+	}
+
+- initWithContentController: (ContentController *)aContent;
+
+- (void)enterPressed: (id)sender;
+@end
+
+#endif

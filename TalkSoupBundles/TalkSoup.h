@@ -23,7 +23,7 @@
 #include <Foundation/NSObject.h>
 
 @class TalkSoup, NSInvocation, NSMutableArray, NSString, NSAttributedString;
-@class NSHost;
+@class NSHost, NSMutableDictionary;
 
 extern void BuildPluginList();
 extern NSArray *InputPluginList;
@@ -58,6 +58,8 @@ extern NSString *IRCColorLightGrey;
    withTimeout: (int)seconds withNickname: (NSString *)nickname 
    withUserName: (NSString *)user withRealName: (NSString *)realName 
    withPassword: (NSString *)password withIdentification: (NSString *)ident;
+
+- (void)closeConnection: (id)connection;
 
 - (NSArray *)connections;
 @end
@@ -181,12 +183,13 @@ extern NSString *IRCColorLightGrey;
 
 - sendPongWithArgument: (NSString *)aString onConnection: aConnection 
    sender: aPlugin;
+
+- writeRawString: (NSString *)aString onConnection: aConnection
+   sender: aPlugin;
 @end
 
 @protocol TalkSoupConnectionProtocol <TalkSoupOutFilterProtocol>
 - (NSString *)identification;
-
-- (void)closeConnection;
 
 - (BOOL)connected;
 
@@ -301,11 +304,12 @@ extern id _TSDummy_;
 		NSMutableArray *outFilters;
 		NSMutableArray *inFilters;
 		id output;
+		NSMutableDictionary *commandList;
 	}
 + (TalkSoup *)sharedInstance;
 
 - (NSDictionary *)commandList;
-- addCommand: (NSString *)aCommand withSelector: (SEL)aSel;
+- addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc;
 - removeCommand: (NSString *)aCommand;
 
 - (id)input;

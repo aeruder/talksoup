@@ -22,95 +22,169 @@
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
 #include <Foundation/NSRunLoop.h>
+#include <Foundation/NSAttributedString.h>
+#include <Foundation/NSString.h>
+#include <Foundation/NSDictionary.h>
+
+NSString *GNUstepOutputLowercase(NSString *aString)
+{
+	return [aString lowercaseString];
+}
+
+NSString *GNUstepOutputIdentificationForController(id controller)
+{
+	id string;
+	string = [NSString stringWithFormat: @"%p", controller];
+	return string;
+}
 
 @implementation GNUstepOutput
 - init
 {
 	if (!(self = [super init])) return nil;
+	
+	connectionToInformation = NSCreateMapTable(NSObjectMapKeyCallBacks,
+	  NSObjectMapValueCallBacks, 10);
 
 	connectionToContent = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
+	  
+	pendingIdentToContent = [NSMutableDictionary new];
+	
+	return self;
+}
+- (id)openNewContentWindow
+{
+	id content = AUTORELEASE([ContentController new]);
+	
+	if (![NSBundle loadNibNamed: @"Content" owner: content])
+	{
+		return nil;
+	}
+	
+	return content;
+}
+- makeConnectionForContentController: (id)controller
+{
+	[pendingIdentToContent setObject: controller forKey: 
+	  GNUstepOutputIdentificationForController(controller)];
+	
+	[[_TS_ input] initiateConnectionToHost: [NSHost hostWithAddress:
+	  @"127.0.0.1"] onPort: 6667 withTimeout: 30 withNickname: @"Andy"
+	  withUserName: @"Bill" withRealName: @"Blah Blah" withPassword: @"" 
+	  withIdentification: GNUstepOutputIdentificationForController(controller)];
+	  
+	return self;
+}
+- registeredWithServerOnConnection: (id)connection sender: aPlugin
+{
+	NSLog(@"It worked!!!!");
+	return self;
+}
+- newConnection: (id)connection sender: aPlugin
+{
+	NSLog(@"It worked?");
+	id ident = [connection identification];
+	id content;
+	
+	content = [pendingIdentToContent objectForKey: ident];
 
+	if (!(content))
+	{
+		NSLog(@"Connection came through but there is no related"
+		      @"content view... closing connection...");
+		[[_TS_ input] closeConnection: connection];
+	}
+	
+	[pendingIdentToContent removeObjectForKey: ident];
+	NSMapInsert(connectionToContent, connection, content);
+	NSMapInsert(connectionToContent, content, connection);
+	
+	[content putMessage: @"Connecting..." in: ContentConsoleName];
+	[content setLabel: AUTORELEASE([[NSAttributedString alloc] initWithString:
+	  @"Connecting..."]) forViewWithName: ContentConsoleName];
+	
 	return self;
 }
 #if 0
-- newConnection: (id)connection;
-
-- registeredWithServerOnConnection: (id)connection;
-
-- couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection;
+- couldNotRegister: (NSAttributedString *)reason onConnection: (id)connection 
+   sender: aPlugin;
 
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
    withArgument: (NSAttributedString *)argument 
-   from: (NSAttributedString *)aPerson onConnection: (id)connection;
+   from: (NSAttributedString *)aPerson onConnection: (id)connection 
+   sender: aPlugin;
 
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
-- errorReceived: (NSAttributedString *)anError onConnection: (id)connection;
+- errorReceived: (NSAttributedString *)anError onConnection: (id)connection 
+   sender: aPlugin;
 
 - wallopsReceived: (NSAttributedString *)message 
    from: (NSAttributedString *)sender 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
 - userKicked: (NSAttributedString *)aPerson 
    outOf: (NSAttributedString *)aChannel 
    for: (NSAttributedString *)reason from: (NSAttributedString *)kicker 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 		 
 - invitedTo: (NSAttributedString *)aChannel from: (NSAttributedString *)inviter 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
 - modeChanged: (NSAttributedString *)mode on: (NSAttributedString *)anObject 
    withParams: (NSArray *)paramList from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
    
 - numericCommandReceived: (NSAttributedString *)command 
    withParams: (NSArray *)paramList from: (NSAttributedString *)sender 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
 - nickChangedTo: (NSAttributedString *)newName 
    from: (NSAttributedString *)aPerson 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
 - channelJoined: (NSAttributedString *)channel 
    from: (NSAttributedString *)joiner 
-   onConnection: (id)connection;
+   onConnection: (id)connection sender: aPlugin;
 
 - channelParted: (NSAttributedString *)channel 
    withMessage: (NSAttributedString *)aMessage
-   from: (NSAttributedString *)parter onConnection: (id)connection;
+   from: (NSAttributedString *)parter onConnection: (id)connection 
+   sender: aPlugin;
 
 - quitIRCWithMessage: (NSAttributedString *)aMessage 
-   from: (NSAttributedString *)quitter onConnection: (id)connection;
+   from: (NSAttributedString *)quitter onConnection: (id)connection 
+   sender: aPlugin;
 
 - topicChangedTo: (NSAttributedString *)aTopic in: (NSAttributedString *)channel
-   from: (NSAttributedString *)aPerson onConnection: (id)connection;
+   from: (NSAttributedString *)aPerson onConnection: (id)connection 
+   sender: aPlugin;
 
 - messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection;
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
 - noticeReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection;
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
 - actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection;
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
 - pingReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection;
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
 - pongReceivedWithArgument: (NSAttributedString *)arg 
-   from: (NSAttributedString *)sender onConnection: (id)connection;
+   from: (NSAttributedString *)sender onConnection: (id)connection 
+   sender: aPlugin;
 
-- newNickNeededWhileRegisteringOnConnection: (id)connection;
-
-- consoleMessage: (NSAttributedString *)arg;
-
-- systemMessage: (NSAttributedString *)arg;
-
-- showMessage: (NSAttributedString *)arg;
+- newNickNeededWhileRegisteringOnConnection: (id)connection sender: aPlugin;
 #endif
 
 - (void)run
@@ -194,8 +268,8 @@
 }
 - (void)connectToServer: (NSNotification *)aNotification
 {
-	id content = AUTORELEASE([ContentController new]);
-	[NSBundle loadNibNamed: @"Content" owner: content];
+	id content = [self openNewContentWindow];
+	[self makeConnectionForContentController: content];
 }	
 @end
 

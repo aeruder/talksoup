@@ -58,6 +58,7 @@ id _TSDummy_;
 
 	outFilters = [NSMutableArray new];
 	inFilters = [NSMutableArray new];
+	commandList = [NSMutableDictionary new];
 
 	_TS_ = RETAIN(self);
 	
@@ -65,14 +66,16 @@ id _TSDummy_;
 }
 - (NSDictionary *)commandList
 {
-	return nil;
+	return [NSDictionary dictionaryWithDictionary: commandList];
 }
-- addCommand: (NSString *)aCommand withSelector: (SEL)aSel
+- addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc
 {
+	[commandList setObject: invoc forKey: [aCommand uppercaseString]];
 	return self;
 }
 - removeCommand: (NSString *)aCommand
 {
+	[commandList removeObjectForKey: [aCommand uppercaseString]];
 	return self;
 }
 - (BOOL)respondsToSelector: (SEL)aSel
@@ -136,6 +139,7 @@ id _TSDummy_;
 		if ([next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
+			return;
 		}
 		else
 		{
@@ -167,6 +171,7 @@ id _TSDummy_;
 		if ([next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
+			return;
 		}
 		else
 		{
@@ -335,6 +340,9 @@ id _TSDummy_;
    sender: aPlugin { return nil; }
 
 - sendPongWithArgument: (NSString *)aString onConnection: aConnection 
+   sender: aPlugin { return nil; }
+
+- writeRawString: (NSString *)aString onConnection: aConnection
    sender: aPlugin { return nil; }
 
 - (NSString *)identification { return nil; }

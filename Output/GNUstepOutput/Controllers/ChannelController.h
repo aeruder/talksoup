@@ -31,6 +31,12 @@
 	}
 
 - (id)chatView;
+
+- (id)window;
+
+- (id)splitView;
+
+- (id)tableView;
 @end
 
 #endif
