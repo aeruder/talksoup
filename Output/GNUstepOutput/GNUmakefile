@@ -25,7 +25,8 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 	      Controllers/NamePromptController.m \
 	      Controllers/ServerListController.m \
 		  Controllers/GroupEditorController.m \
-		  Controllers/ServerEditorController.m
+		  Controllers/ServerEditorController.m \
+		  Controllers/ServerListConnectionController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/KeyTextView.m

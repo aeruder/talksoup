@@ -18,6 +18,7 @@
 #include "Controllers/ServerListController.h"
 #include "Controllers/GroupEditorController.h"
 #include "Controllers/ServerEditorController.h"
+#include "Controllers/ServerListConnectionController.h"
 #include "GNUstepOutput.h"
 
 #include <Foundation/NSNotification.h>
@@ -29,6 +30,14 @@
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSBrowser.h>
 #include <AppKit/NSBrowserCell.h>
+
+NSString *ServerListInfoWindowFrame = @"WindowFrame";
+NSString *ServerListInfoCommands = @"Commands";
+NSString *ServerListInfoServer = @"Server";
+NSString *ServerListInfoPort = @"Port";
+NSString *ServerListInfoName = @"Name";
+NSString *ServerListInfoEntries = @"Entries";
+NSString *ServerListInfoAutoConnect = @"AutoConnect";
 
 static inline NSMutableArray *mutablized_prefs()
 {
@@ -47,7 +56,7 @@ static inline NSMutableArray *mutablized_prefs()
 	{
 		o1 = [NSMutableDictionary dictionaryWithDictionary: o1];
 		
-		t1 = [o1 objectForKey: @"Entries"];
+		t1 = [o1 objectForKey: ServerListInfoEntries];
 		if (!t1)
 		{
 			t2 = AUTORELEASE([NSMutableArray new]);
@@ -63,7 +72,7 @@ static inline NSMutableArray *mutablized_prefs()
 			}
 		}
 		
-		[o1 setObject: t2 forKey: @"Entries"];
+		[o1 setObject: t2 forKey: ServerListInfoEntries];
 		
 		[work addObject: o1];
 	}
@@ -72,6 +81,93 @@ static inline NSMutableArray *mutablized_prefs()
 }
 
 @implementation ServerListController
++ (void)startAutoconnectServers
+{
+	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+		  GNUstepOutputServerList];
+	NSEnumerator *iter;
+	NSEnumerator *iter2;
+	id o1, o2;
+	int g = 0, r; 
+	
+	iter = [tmp objectEnumerator];
+	while ((o1 = [iter nextObject]))
+	{
+		iter2 = [[o1 objectForKey: ServerListInfoEntries] objectEnumerator];
+		r = 0;
+		while ((o2 = [iter2 nextObject]))
+		{
+			if ([[o2 objectForKey: ServerListInfoAutoConnect]
+			  isEqualToString: @"YES"])
+			{
+				AUTORELEASE([[ServerListConnectionController alloc]
+				 initWithServerListDictionary: o2 inGroup: g atRow: r]);
+			}	
+			r++;
+		}
+		g++;
+	}
+}
++ (NSDictionary *)serverInGroup: (int)group row: (int)row
+{
+	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+		  GNUstepOutputServerList];
+	
+	if (group >= [tmp count] || group < 0) return nil;
+	
+	tmp = [[tmp objectAtIndex: group] 
+	  objectForKey: ServerListInfoEntries];
+	
+	if (row >= [tmp count] || row < 0) return nil;
+	
+	return [tmp objectAtIndex: row];
+}
++ (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row
+{
+	id tmp = mutablized_prefs();
+	id array;
+	
+	if (group >= [tmp count] || group < 0) return;
+	
+	array = [[tmp objectAtIndex: group]
+	  objectForKey: ServerListInfoEntries];
+	  
+	if (row >= [tmp count] || row < 0) return;
+	
+	[array replaceObjectAtIndex: row withObject: x];
+
+	[[_TS_ pluginForOutput] setDefaultsObject: tmp forKey: 
+	  GNUstepOutputServerList];
+}
++ (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row
+{
+	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+		  GNUstepOutputServerList];
+	NSEnumerator *iter;
+	NSEnumerator *iter2;
+	id o1, o2;
+	int g = 0, r;
+	
+	iter = [tmp objectEnumerator];
+	while ((o1 = [iter nextObject]))
+	{
+		iter2 = [[o1 objectForKey: ServerListInfoEntries] objectEnumerator];
+		r = 0;
+		while ((o2 = [iter2 nextObject]))
+		{
+			if ([o2 isEqual: x])
+			{
+				if (group) *group = g;
+				if (row) *row = r;
+				return YES;
+			}
+			r++;
+		}
+		g++;
+	}
+	
+	return NO;
+}
 - (void)awakeFromNib
 {
 	[browser setMaxVisibleColumns: 2];
@@ -114,7 +210,7 @@ static inline NSMutableArray *mutablized_prefs()
 	if ([string length] == 0)
 	{
 		[[editor extraField] setStringValue:
-		  @"Specify entry name"];
+		  _l(@"Specify entry name")];
 		[[editor window] makeFirstResponder: [editor entryField]]; 
 		return;
 	}
@@ -128,15 +224,15 @@ static inline NSMutableArray *mutablized_prefs()
 		if (wasEditing != -1 && wasEditing < [x count])
 		{
 			newOne = [x objectAtIndex: wasEditing];
-			[newOne setObject: string forKey: @"Name"];
+			[newOne setObject: string forKey: ServerListInfoName];
 			
 			[x replaceObjectAtIndex: wasEditing withObject: newOne];
 		}
 		else
 		{
 			newOne = [NSDictionary dictionaryWithObjectsAndKeys:
-			  string, @"Name",
-			  AUTORELEASE([NSArray new]), @"Entries",
+			  string, ServerListInfoName,
+			  AUTORELEASE([NSArray new]), ServerListInfoEntries,
 			  nil];
 
 			[x addObject: newOne]; 
@@ -159,6 +255,8 @@ static inline NSMutableArray *mutablized_prefs()
 		id password = [[editor passwordField] stringValue];
 		id port = [[editor portField] stringValue];
 		int first = [browser selectedRowInColumn: 0];
+		id autoconnect;
+		
 		id array;
 		id newOne;
 		id prefs = mutablized_prefs();
@@ -166,7 +264,7 @@ static inline NSMutableArray *mutablized_prefs()
 		if ([server length] == 0)
 		{
 			[[editor extraField] setStringValue: 
-			  @"Specify the server"];
+			  _l(@"Specify the server")];
 			[[editor window] makeFirstResponder: [editor serverField]];
 			return;
 		}
@@ -181,25 +279,44 @@ static inline NSMutableArray *mutablized_prefs()
 			return;
 		}
 		
-		array = [[prefs objectAtIndex: first] objectForKey: @"Entries"];
+		if ([[editor connectButton] state] == NSOnState)
+		{
+			autoconnect = @"YES";
+		}
+		else
+		{
+			autoconnect = @"NO";
+		}
 		
-		newOne = [NSDictionary dictionaryWithObjectsAndKeys:
-		  server, @"Server",
-		  commands, @"Commands",
-		  nick, IRCDefaultsNick,
-		  real, IRCDefaultsRealName,
-		  password, IRCDefaultsPassword,
-		  user, IRCDefaultsUserName,
-		  port, @"Port",
-		  string, @"Name",
-		  nil];
-		
+		array = [[prefs objectAtIndex: first] objectForKey: ServerListInfoEntries];
+				
 		if (wasEditing != -1 || wasEditing < [array count])
 		{
+			newOne = [array objectAtIndex: wasEditing];
+			[newOne setObject: server forKey: ServerListInfoServer];
+			[newOne setObject: commands forKey: ServerListInfoCommands];
+			[newOne setObject: nick forKey: IRCDefaultsNick];
+			[newOne setObject: real forKey: IRCDefaultsRealName];
+			[newOne setObject: password forKey: IRCDefaultsPassword];
+			[newOne setObject: user forKey: IRCDefaultsUserName];
+			[newOne setObject: port forKey: ServerListInfoPort];
+			[newOne setObject: string forKey: ServerListInfoName];
+			[newOne setObject: autoconnect forKey: ServerListInfoAutoConnect];
 			[array replaceObjectAtIndex: wasEditing withObject: newOne];
 		}
 		else
 		{
+			newOne = [NSDictionary dictionaryWithObjectsAndKeys:
+			 server, ServerListInfoServer,
+			 commands, ServerListInfoCommands,
+			 nick, IRCDefaultsNick,
+			 real, IRCDefaultsRealName,
+			 password, IRCDefaultsPassword,
+			 user, IRCDefaultsUserName,
+			 port, ServerListInfoPort,
+			 string, ServerListInfoName,
+			 autoconnect, ServerListInfoAutoConnect,
+			 nil];
 			[array addObject: newOne];
 		}
 	
@@ -267,7 +384,7 @@ static inline NSMutableArray *mutablized_prefs()
 		[self addGroupHit: nil];
 		
 		o = [tmp objectAtIndex: row];
-		[[editor entryField] setStringValue: [o objectForKey: @"Name"]];
+		[[editor entryField] setStringValue: [o objectForKey: ServerListInfoName]];
 		
 		wasEditing = row;
 	}
@@ -278,7 +395,7 @@ static inline NSMutableArray *mutablized_prefs()
 		
 		if (first >= [tmp count] || first < 0) return;
 		
-		o = [[tmp objectAtIndex: first] objectForKey: @"Entries"];
+		o = [[tmp objectAtIndex: first] objectForKey: ServerListInfoEntries];
 		
 		if (row >= [o count] || row < 0) return;
 		
@@ -286,14 +403,22 @@ static inline NSMutableArray *mutablized_prefs()
 
 		o = [o objectAtIndex: row];
 		
-		[[editor entryField] setStringValue: [o objectForKey: @"Name"]]; 
+		[[editor entryField] setStringValue: [o objectForKey: ServerListInfoName]]; 
 		[[editor nickField] setStringValue: [o objectForKey: IRCDefaultsNick]]; 
 		[[editor realField] setStringValue: [o objectForKey: IRCDefaultsRealName]]; 
 		[[editor passwordField] setStringValue: [o objectForKey: IRCDefaultsPassword]]; 
 		[[editor userField] setStringValue: [o objectForKey: IRCDefaultsUserName]]; 
-		[[editor serverField] setStringValue: [o objectForKey: @"Server"]]; 
-		[[editor portField] setStringValue: [o objectForKey: @"Port"]];
-		[[editor commandsField] setStringValue: [o objectForKey: @"Commands"]];
+		[[editor serverField] setStringValue: [o objectForKey: ServerListInfoServer]]; 
+		[[editor portField] setStringValue: [o objectForKey: ServerListInfoPort]];
+		[[editor commandsField] setStringValue: [o objectForKey: ServerListInfoCommands]];
+		if ([[o objectForKey: ServerListInfoAutoConnect] isEqualToString: @"YES"])
+		{
+			[[editor connectButton] setState: NSOnState];
+		}
+		else
+		{
+			[[editor connectButton] setState: NSOffState];
+		}
 		
 		wasEditing = row;
 	}
@@ -324,7 +449,7 @@ static inline NSMutableArray *mutablized_prefs()
 		
 		if (first >= [prefs count]) return;
 		
-		x = [[prefs objectAtIndex: first] objectForKey: @"Entries"];
+		x = [[prefs objectAtIndex: first] objectForKey: ServerListInfoEntries];
 		
 		if (row >= [x count]) return;
 		
@@ -338,7 +463,27 @@ static inline NSMutableArray *mutablized_prefs()
 }
 - (void)connectHit: (NSButton *)sender
 {
-	NSLog(@"Connect button hit!");
+	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
+	  GNUstepOutputServerList];
+	
+	int first, row;
+	if ([browser selectedColumn] != 1) return;
+	
+	first = [browser selectedRowInColumn: 0];
+	row = [browser selectedRowInColumn: 1];
+	
+	if (first >= [tmp count]) return;
+	
+	tmp = [[tmp objectAtIndex: first] objectForKey: ServerListInfoEntries];
+	
+	if (row >= [tmp count]) return;
+	
+	[[editor window] close];
+	[window close];
+	
+	AUTORELEASE([[ServerListConnectionController alloc]
+	  initWithServerListDictionary: [tmp objectAtIndex: row]
+	  inGroup: first atRow: row]);
 }
 - (NSBrowser *)browser
 {
@@ -402,7 +547,7 @@ static inline NSMutableArray *mutablized_prefs()
 		
 		group = [serverList objectAtIndex: col];
 		
-		group = [group objectForKey: @"Entries"];
+		group = [group objectForKey: ServerListInfoEntries];
 		
 		return [group count];
 	}
@@ -413,14 +558,14 @@ static inline NSMutableArray *mutablized_prefs()
 {
 	if (column == 0)
 	{
-		return @"Groups";
+		return _l(@"Groups");
 	}
 	if (column == 1)
 	{
-		return @"Entries";
+		return _l(@"Entries");
 	}
 	
-	return @"Unknown";
+	return @"";
 }
 - (void)browser: (NSBrowser *)sender willDisplayCell: (id)cell
   atRow: (int)row column: (int)column
@@ -437,7 +582,7 @@ static inline NSMutableArray *mutablized_prefs()
 		if (row >= [serverList count]) return;
 		
 		tmp = [serverList objectAtIndex: row];
-		[cell setStringValue: [tmp objectForKey: @"Name"]];
+		[cell setStringValue: [tmp objectForKey: ServerListInfoName]];
 		[cell setLeaf: NO];
 	}
 	else if (column == 1)
@@ -450,13 +595,13 @@ static inline NSMutableArray *mutablized_prefs()
 		if (first >= [serverList count]) return;
 		
 		tmp = [serverList objectAtIndex: first];
-		tmp = [tmp objectForKey: @"Entries"];
+		tmp = [tmp objectForKey: ServerListInfoEntries];
 		
 		if (row >= [tmp count]) return;
 		
 		tmp = [tmp objectAtIndex: row];
 		
-		[cell setStringValue: [tmp objectForKey: @"Name"]];
+		[cell setStringValue: [tmp objectForKey: ServerListInfoName]];
 		[cell setLeaf: YES];
 	}
 }

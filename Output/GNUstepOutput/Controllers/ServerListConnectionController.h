@@ -1,7 +1,7 @@
 /***************************************************************************
-                                InputController.h
+                                ServerListConnectionController.h
                           -------------------
-    begin                : Thu Mar 13 13:18:48 CST 2003
+    begin                : Wed May  7 03:31:51 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -15,23 +15,24 @@
  *                                                                         *
  ***************************************************************************/
 
-@class InputController;
+#ifndef SERVER_LIST_CONNECTION_CONTROLLER_H
+#define SERVER_LIST_CONNECTION_CONTROLLER_H
 
-#ifndef INPUT_CONTROLLER_H
-#define INPUT_CONTROLLER_H
+#include "Controllers/ConnectionController.h"
 
-#include <Foundation/NSObject.h>
+@class NSDictionary, NSNotification;
 
-@class ConnectionController;
-
-@interface InputController : NSObject
+@interface ServerListConnectionController : ConnectionController
 	{
-		ConnectionController *controller;
+		int serverRow;
+		int serverGroup;
+		NSDictionary *serverInfo;
 	}
 
-- initWithConnectionController: (ConnectionController *)aController;
-- (void)lineTyped: (NSString *)command;
-- (void)enterPressed: (id)sender;
+- initWithServerListDictionary: (NSDictionary *)info
+ inGroup: (int)group atRow: (int)row;
+
+- (void)saveWindowStats: (NSNotification *)aNotification;
 @end
 
 #endif

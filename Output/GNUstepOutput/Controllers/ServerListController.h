@@ -17,12 +17,22 @@
 
 @class ServerListController;
 
+@class NSString;
+
+extern NSString *ServerListInfoWindowFrame;
+extern NSString *ServerListInfoServer;
+extern NSString *ServerListInfoPort;
+extern NSString *ServerListInfoName;
+extern NSString *ServerListInfoEntries;
+extern NSString *ServerListInfoCommands;
+extern NSString *ServerListInfoAutoConnect;
+
 #ifndef SERVER_LIST_CONTROLLER_H
 #define SERVER_LIST_CONTROLLER_H
 
 #include <Foundation/NSObject.h>
 
-@class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView;
+@class NSButton, NSBrowser, NSWindow, NSTableColumn, NSScrollView, NSArray;
 
 @interface ServerListController : NSObject
 	{
@@ -38,6 +48,12 @@
 		id editor;
 		int wasEditing;
 	}
+
++ (void)startAutoconnectServers;
++ (NSDictionary *)serverInGroup: (int)group row: (int)row;
++ (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row;
++ (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row;
+
 - (void)editHit: (NSButton *)sender;
 - (void)addEntryHit: (NSButton *)sender;
 - (void)removeHit: (NSButton *)sender;

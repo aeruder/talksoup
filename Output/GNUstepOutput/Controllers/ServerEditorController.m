@@ -103,7 +103,6 @@
 }
 - (void)setConnect: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setCommands: (id)sender
 {

@@ -60,14 +60,11 @@ id _output_ = nil;
 	RELEASE(controller);
 	[super dealloc];
 }
-- (void)enterPressed: (id)sender
+- (void)lineTyped: (NSString *)command
 {
-	id command;
 	NSArray *lines;
 	NSEnumerator *iter;
 	id object;
-	
-	command = AUTORELEASE(RETAIN([sender stringValue]));
 
 	if ([lines = [command componentsSeparatedByString: @"\r\n"] count] > 1)
 	{
@@ -94,7 +91,10 @@ id _output_ = nil;
 			[self singleLineTyped: object];
 		}
 	}	
-	
+}
+- (void)enterPressed: (id)sender
+{
+	[self lineTyped: AUTORELEASE(RETAIN([sender stringValue]))];
 	[sender setStringValue: @""];
 	[[[controller contentController] window] makeFirstResponder: sender];
 }

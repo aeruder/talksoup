@@ -409,10 +409,11 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 }
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
+	[ServerListController startAutoconnectServers];
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {
-	[ConnectionController new];
+	AUTORELEASE([ConnectionController new]);
 }
 - (void)openServerList: (NSNotification *)aNotification
 {
