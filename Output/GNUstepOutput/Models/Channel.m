@@ -205,15 +205,14 @@
 - addUser: (NSString *)aString
 {
 	id user;
-	int x;
 
 	user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: aString]);
 	
 	[userList addObject: user];
-	[userList sortUsingSelector: @selector(sortByName:)];
-
 	[lowercaseList insertObject: GNUstepOutputLowercase([user userName])
-	           atIndex: x];
+	           atIndex: 0];
+	
+	[userList sortUsingSelector: @selector(sortByName:)];
 	
 	return self;
 }
