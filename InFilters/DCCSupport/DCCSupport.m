@@ -594,8 +594,15 @@ static NSString *unique_path(NSString *path)
 		[attr appendAttributedString: S2AS(@"\n")];
 	}
 	
-	[attr appendAttributedString: 
-	  S2AS(_l(@"End of list (See /dcc help for more information)."))];
+	if ([attr length] == 0)
+	{
+		[attr appendAttributedString: 
+		  S2AS(_l(@"End of list (See /dcc help for more information)."))];
+	}
+	else
+	{
+		[attr appendAttributedString: S2AS(_l(@"End of list."))];
+	}
 
 	return attr;
 }
