@@ -249,13 +249,15 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 {
 	const NSStringEncoding *curr;
 	
+	NSLog(@"Building encodings list...");
 	encodings = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 20);
 	
-	for (curr = [NSString availableStringEncodings]; curr != 0; curr++)
+	for (curr = [NSString availableStringEncodings]; *curr != 0; curr++)
 	{
 		NSMapInsert(encodings, (const void *)[NSString localizedNameOfStringEncoding: *curr], 
 		  (const void *)*curr);
 	}
+	
 }
 - (void)refreshPluginList
 {
@@ -1299,6 +1301,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	ADD_COMMAND(@selector(commandKick:connection:), @"kick");
 	ADD_COMMAND(@selector(commandRaw:connection:), @"raw");
 	ADD_COMMAND(@selector(commandMode:connection:), @"mode");
+	ADD_COMMAND(@selector(commandEncoding:connection:), @"encoding");
 	
 #undef ADD_COMMAND
 }
