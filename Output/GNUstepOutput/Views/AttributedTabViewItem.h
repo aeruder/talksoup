@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ColoredTabViewItem.h
+                                AttributedTabViewItem.h
                           -------------------
     begin                : Thu Dec  5 00:25:40 CST 2002
     copyright            : (C) 2003 by Andy Ruder

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ColoredTabViewItem.m
+                              AttributedTabViewItem.m
                           -------------------
     begin                : Thu Dec  5 00:25:40 CST 2002
     copyright            : (C) 2003 by Andy Ruder
@@ -18,6 +18,7 @@
 #import "Views/AttributedTabViewItem.h"
 
 #import <AppKit/NSAttributedString.h>
+#import <AppKit/NSStringDrawing.h>
 #import <AppKit/NSColor.h>
 #import <AppKit/NSTabView.h>
 #import <Foundation/NSAttributedString.h>

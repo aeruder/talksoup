@@ -171,7 +171,7 @@
 	
 	start = range.location + range.length;
 	
-	if (start == [typed length]) return;
+	if (start == (int)[typed length]) return;
 	
 	word = [typed substringFromIndex: start];
 	
