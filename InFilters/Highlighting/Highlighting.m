@@ -18,6 +18,11 @@
 #import "Highlighting.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
+#ifdef USE_APPKIT
+#import "HighlightingPreferencesController.h"
+#endif
+
+#import <Foundation/NSDictionary.h>
 #import <Foundation/NSCharacterSet.h>
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSString.h>
@@ -343,11 +348,28 @@ static NSInvocation *invoc = nil;
 }
 - pluginActivated
 {
+#ifdef USE_APPKIT
+	id controller;
+
+	controller = AUTORELEASE([HighlightingPreferencesController new]);
+	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"Process", @"AddBundlePreferencesController",
+	  @"Name", _l(@"Highlighting"),
+	  @"Controller", controller,
+	  nil] onConnection: nil withNickname: nil sender: self];
+#endif
+
 	[_TS_ addCommand: @"highlighting" withInvocation: invoc];
 	return self;
 }
 - pluginDeactivated
 {
+#ifdef USE_APPKIT
+	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"Process", @"RemoveBundlePreferencesController",
+	  @"Name", _l(@"Highlighting"), nil]
+	  onConnection: nil withNickname: nil sender: self];
+#endif
 	[_TS_ removeCommand: @"highlighting"];
 	return self;
 }

@@ -3,12 +3,24 @@ include $(GNUSTEP_MAKEFILES)/common.make
 PACKAGE_NAME=TalkSoup
 VERSION=0.82pre8
 
-ifeq ($(USE_APPKIT),)
-USE_APPKIT = y
-else
-USE_APPKIT = n
+ifneq ($(USE_DMALLOC),)
+ADDITIONAL_OBJCFLAGS += -include stdlib.h -include dmalloc.h
+ADDITIONAL_LDFLAGS += -ldmalloc
 endif
 
+ifeq ($(USE_APPKIT),)
+USE_APPKIT = yes
+endif
+
+ifeq ($(USE_APPKIT),yes)
+USE_APPKIT = yes
+ADDITIONAL_OBJCFLAGS += -DUSE_APPKIT
+else
+USE_APPKIT = no
+endif
+
+export ADDITIONAL_LDFLAGS
+export ADDITIONAL_OBJCFLAGS
 export USE_APPKIT
 
 SUBPROJECTS = TalkSoupBundles Source Input Output InFilters OutFilters

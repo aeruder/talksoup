@@ -50,7 +50,7 @@
 	 	  name, @"TabName",
 		  S2AS(name), @"TabLabel", nil] onConnection: connection
 		  withNickname: aNick
-		  sender: aPlugin];
+		  sender: self];
 	}
 
 	[_TS_ messageReceived: aMessage to: to from: sender onConnection: connection
@@ -73,7 +73,7 @@
 		  @"OpenTab", @"Process",
 	 	  name, @"TabName",
 		  S2AS(name), @"TabName", nil]
-		  onConnection: connection withNickname: aNick sender: aPlugin];
+		  onConnection: connection withNickname: aNick sender: self];
 	}
 
 	[_TS_ actionReceived: anAction to: to from: sender onConnection: connection
