@@ -1,43 +1,52 @@
+/* DCCObject.h */
+
+
+/* DCCObject.m */
+
+
+/* DCCSupport.h */
+
+
 /* DCCSupport.m */
-"Transfer of %@ to %@ initiated." = "Transfer of %@ to %@ initiated."
-"Transfer of %@ to %@ completed successfully! (%@ cps)" = "Transfer of %@ to %@ completed successfully! (%@ cps)"
-"Transfer of %@ to %@ timed out." = "Transfer of %@ to %@ timed out."
-"Transfer of %@ to %@ aborted." = "Transfer of %@ to %@ aborted."
-"There was an error sending %@ to %@." = "There was an error sending %@ to %@."
-"Transfer of %@ from %@ initiated." = "Transfer of %@ from %@ initiated."
-"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)" = "Transfer of %@ to %@ from %@ completed successfully! (%@ cps)"
-"Transfer of %@ from %@ timed out." = "Transfer of %@ from %@ timed out."
-"Transfer of %@ from %@ aborted." = "Transfer of %@ from %@ aborted."
-"There was an error receiving %@ from %@." = "There was an error receiving %@ from %@."
-"Usage: /dcc abort <#>\nAborts the connection in slot <#>.  See /dcc list." = "Usage: /dcc abort <#>\nAborts the connection in slot <#>.  See /dcc list."
-"Offer of the file %@ from %@ removed." = "Offer of the file %@ from %@ removed."
-"Usage: /dcc gettimeout <seconds>\nSets the timeout in seconds on receiving files.\nCurrent timeout: " = "Usage: /dcc gettimeout <seconds>\nSets the timeout in seconds on receiving files.\nCurrent timeout: "
-"Ok." = "Ok."
-"Usage: /dcc sendtimeout <seconds>\nSets the timeout in seconds on sending files.\nCurrent timeout: " = "Usage: /dcc sendtimeout <seconds>\nSets the timeout in seconds on sending files.\nCurrent timeout: "
-"Ok." = "Ok."
-"Usage: /dcc send <user> <file>\nRequests <user> to receive file named <file>" = "Usage: /dcc send <user> <file>\nRequests <user> to receive file named <file>"
-"That file does not exist." = "That file does not exist."
-"Offering %@ to %@." = "Offering %@ to %@."
-"%@. %@ %@ has requested to send %@ (%@ bytes)" = "%@. %@ %@ has requested to send %@ (%@ bytes)"
-"REQUEST" = "REQUEST"
-"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)" = "%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)"
-"RECEIVING" = "RECEIVING"
-"%@. %@ You have offered to send %@ to %@" = "%@. %@ You have offered to send %@ to %@"
-"OFFERED" = "OFFERED"
-"%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)" = "%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)"
-"SENDING" = "SENDING"
-"End of list." = "End of list."
-"Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender." = "Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender."
-"The specified index is invalid. Please see /dcc list." = "The specified index is invalid. Please see /dcc list."
-"Could not find a unique file name." = "Could not find a unique file name."
-"Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: " = "Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: "
-"File exists at path." = "File exists at path."
-"Could not create directory." = "Could not create directory."
-"Ok." = "Ok."
-"Directory does not exist. Try the -f flag." = "Directory does not exist. Try the -f flag."
-"Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)" = "Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)"
-"Author: " = "Author: "
-"Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder" = "Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder"
-"%@ (%@:%@) has requested to send %@ (%@ bytes)" = "%@ (%@:%@) has requested to send %@ (%@ bytes)"
+"Transfer of %@ to %@ initiated." = "Transfer of %@ to %@ initiated.";
+"Transfer of %@ to %@ completed successfully! (%@ cps)" = "Transfer of %@ to %@ completed successfully! (%@ cps)";
+"Transfer of %@ to %@ timed out." = "Transfer of %@ to %@ timed out.";
+"Transfer of %@ to %@ aborted." = "Transfer of %@ to %@ aborted.";
+"There was an error sending %@ to %@." = "There was an error sending %@ to %@.";
+"Transfer of %@ from %@ initiated." = "Transfer of %@ from %@ initiated.";
+"Transfer of %@ to %@ from %@ completed successfully! (%@ cps)" = "Transfer of %@ to %@ from %@ completed successfully! (%@ cps)";
+"Transfer of %@ from %@ timed out." = "Transfer of %@ from %@ timed out.";
+"Transfer of %@ from %@ aborted." = "Transfer of %@ from %@ aborted.";
+"There was an error receiving %@ from %@." = "There was an error receiving %@ from %@.";
+"Usage: /dcc abort <#>\nAborts the connection in slot <#>.  See /dcc list." = "Usage: /dcc abort <#>\nAborts the connection in slot <#>.  See /dcc list.";
+"Offer of the file %@ from %@ removed." = "Offer of the file %@ from %@ removed.";
+"Usage: /dcc gettimeout <seconds>\nSets the timeout in seconds on receiving files.\nCurrent timeout: " = "Usage: /dcc gettimeout <seconds>\nSets the timeout in seconds on receiving files.\nCurrent timeout: ";
+"Ok." = "Ok.";
+"Usage: /dcc sendtimeout <seconds>\nSets the timeout in seconds on sending files.\nCurrent timeout: " = "Usage: /dcc sendtimeout <seconds>\nSets the timeout in seconds on sending files.\nCurrent timeout: ";
+"Ok." = "Ok.";
+"Usage: /dcc send <user> <file>\nRequests <user> to receive file named <file>" = "Usage: /dcc send <user> <file>\nRequests <user> to receive file named <file>";
+"That file does not exist." = "That file does not exist.";
+"Offering %@ to %@." = "Offering %@ to %@.";
+"%@. %@ %@ has requested to send %@ (%@ bytes)" = "%@. %@ %@ has requested to send %@ (%@ bytes)";
+"REQUEST" = "REQUEST";
+"%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)" = "%@. %@ %@ is sending %@ (%@ of %@ bytes @ %@ cps)";
+"RECEIVING" = "RECEIVING";
+"%@. %@ You have offered to send %@ to %@" = "%@. %@ You have offered to send %@ to %@";
+"OFFERED" = "OFFERED";
+"%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)" = "%@. %@ You are sending %@ to %@ (%@ of %@ bytes @ %@ cps)";
+"SENDING" = "SENDING";
+"End of list." = "End of list.";
+"Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender." = "Usage: /dcc get <#> [-c] [filename]\nReceives the file at <#> position (see /dcc list).If [filename] isn't specified, it will be put into the default directory (see /dcc setdir) with the filename specified by the sender.";
+"The specified index is invalid. Please see /dcc list." = "The specified index is invalid. Please see /dcc list.";
+"Could not find a unique file name." = "Could not find a unique file name.";
+"Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: " = "Usage: /dcc setdir [-f] <directory>\nSets the default download directory to <directory>, if -f is specified the directory will be created if it doesn't already exist.\nCurrently: ";
+"File exists at path." = "File exists at path.";
+"Could not create directory." = "Could not create directory.";
+"Ok." = "Ok.";
+"Directory does not exist. Try the -f flag." = "Directory does not exist. Try the -f flag.";
+"Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)" = "Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)";
+"Author: " = "Author: ";
+"Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder" = "Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder";
+"%@ (%@:%@) has requested to send %@ (%@ bytes)" = "%@ (%@:%@) has requested to send %@ (%@ bytes)";
 
 

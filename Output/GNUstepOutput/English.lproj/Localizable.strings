@@ -1,38 +1,41 @@
+/* GNUstepOutput.h */
+
+
 /* GNUstepOutput.m */
-"Error: " = "Error: "
-"Info" = "Info"
-"About TalkSoup" = "About TalkSoup"
-"Preferences..." = "Preferences..."
-"Bundle Setup..." = "Bundle Setup..."
-"Connection" = "Connection"
-"Open Server List..." = "Open Server List..."
-"Connected Window..." = "Connected Window..."
-"Unconnected Window" = "Unconnected Window"
-"Tab" = "Tab"
-"Next Tab" = "Next Tab"
-"Previous Tab" = "Previous Tab"
-"Close Tab" = "Close Tab"
-"Tools" = "Tools"
-"Topic Inspector" = "Topic Inspector"
-"Edit" = "Edit"
-"Cut" = "Cut"
-"Copy" = "Copy"
-"Paste" = "Paste"
-"Delete" = "Delete"
-"Select All" = "Select All"
-"Windows" = "Windows"
-"Services" = "Services"
-"Hide" = "Hide"
-"Quit" = "Quit"
-"ServerList" = "ServerList"
-"NamePrompt" = "NamePrompt"
+"Error: " = "Error: ";
+"Info" = "Info";
+"About TalkSoup" = "About TalkSoup";
+"Preferences..." = "Preferences...";
+"Bundle Setup..." = "Bundle Setup...";
+"Connection" = "Connection";
+"Open Server List..." = "Open Server List...";
+"Connected Window..." = "Connected Window...";
+"Unconnected Window" = "Unconnected Window";
+"Tab" = "Tab";
+"Next Tab" = "Next Tab";
+"Previous Tab" = "Previous Tab";
+"Close Tab" = "Close Tab";
+"Tools" = "Tools";
+"Topic Inspector" = "Topic Inspector";
+"Edit" = "Edit";
+"Cut" = "Cut";
+"Copy" = "Copy";
+"Paste" = "Paste";
+"Delete" = "Delete";
+"Select All" = "Select All";
+"Windows" = "Windows";
+"Services" = "Services";
+"Hide" = "Hide";
+"Quit" = "Quit";
+"ServerList" = "ServerList";
+"NamePrompt" = "NamePrompt";
 
 
 /* Controllers/BundleConfigureController.h */
 
 
 /* Controllers/BundleConfigureController.m */
-"Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area." = "Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area."
+"Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area." = "Welcome to the TalkSoup Bundle Configuration Interface.\n\nTalkSoup is a highly-modular IRC client, and parts of it can be loaded and unloaded while it is running.  These optional parts are called bundles.  There are two sets of bundles.  The first set, the input bundles, affect data coming into the IRC client. The second set, the output bundles, affect the data leaving the IRC client.  The pop up button located at the top is used to change which of these sets are being configured.\n\nAbove are two tables of bundles.  On the left, there is a table showing the loaded bundles and the order they are loaded in.  The arrows on the left can be used to move the selected bundle up and down throughout the list of loaded bundles.  On the right is the bundles which can be loaded but currently are not.  Use the arrow in the center to move bundles between the two tables.\n\nClicking on any bundle will show information about that bundle in this text area.";
 
 
 /* Controllers/ChannelController.h */
@@ -48,7 +51,7 @@
 
 
 /* Controllers/ContentController.m */
-"Unconnected" = "Unconnected"
+"Unconnected" = "Unconnected";
 
 
 /* Controllers/GroupEditorController.h */
@@ -61,14 +64,14 @@
 
 
 /* Controllers/InputController.m */
-"Usage: /server <server> [port]" = "Usage: /server <server> [port]"
-"Usage: /nick <newnick>" = "Usage: /nick <newnick>"
-"Usage: /me <action>" = "Usage: /me <action>"
-"Usage: /query <name>" = "Usage: /query <name>"
-"Usage: /close <tab label>" = "Usage: /close <tab label>"
-"Usage: /part <channel> [message]" = "Usage: /part <channel> [message]"
-"Usage: /scrollback <characters>" = "Usage: /scrollback <characters>"
-"Current value is: " = "Current value is: "
+"Usage: /server <server> [port]" = "Usage: /server <server> [port]";
+"Usage: /nick <newnick>" = "Usage: /nick <newnick>";
+"Usage: /me <action>" = "Usage: /me <action>";
+"Usage: /query <name>" = "Usage: /query <name>";
+"Usage: /close <tab label>" = "Usage: /close <tab label>";
+"Usage: /part <channel> [message]" = "Usage: /part <channel> [message]";
+"Usage: /scrollback <characters>" = "Usage: /scrollback <characters>";
+"Current value is: " = "Current value is: ";
 
 
 /* Controllers/NamePromptController.h */
@@ -105,10 +108,10 @@
 
 
 /* Controllers/ServerListController.m */
-"Specify entry name" = "Specify entry name"
-"Specify the server" = "Specify the server"
-"Groups" = "Groups"
-"Servers" = "Servers"
+"Specify entry name" = "Specify entry name";
+"Specify the server" = "Specify the server";
+"Groups" = "Groups";
+"Servers" = "Servers";
 
 
 /* Controllers/TopicInspectorController.h */
@@ -163,18 +166,18 @@
 
 
 /* Controllers/ConnectionController/ConnectionController.m */
-"Unconnected" = "Unconnected"
-"Unconnected" = "Unconnected"
-"Host not found: " = "Host not found: "
-"Connecting" = "Connecting"
-"Connecting to %@" = "Connecting to %@"
+"Unconnected" = "Unconnected";
+"Unconnected" = "Unconnected";
+"Host not found: " = "Host not found: ";
+"Connecting" = "Connecting";
+"Connecting to %@" = "Connecting to %@";
 
 
 /* Controllers/ConnectionController/ConnectionControllerCtcp.h */
 
 
 /* Controllers/ConnectionController/ConnectionControllerCtcp.m */
-"TalkSoup can be obtained from: " = "TalkSoup can be obtained from: "
+"TalkSoup can be obtained from: " = "TalkSoup can be obtained from: ";
 
 
 /* Controllers/ConnectionController/ConnectionControllerDelegate.h */
@@ -187,29 +190,29 @@
 
 
 /* Controllers/ConnectionController/ConnectionControllerInFilter.m */
-"Disconnected" = "Disconnected"
-"Unconnected" = "Unconnected"
-"Unconnected" = "Unconnected"
-"Received a CTCP '%@ %@' from %@" = "Received a CTCP '%@ %@' from %@"
-"Received a CTCP %@ from %@" = "Received a CTCP %@ from %@"
-"Error: %@" = "Error: %@"
-"Wallops(%@): %@" = "Wallops(%@): %@"
-"%@ was kicked from %@ by %@ (%@)" = "%@ was kicked from %@ by %@ (%@)"
-"You have been invited to %@ by %@" = "You have been invited to %@ by %@"
-"%@ sets mode %@ %@%@" = "%@ sets mode %@ %@%@"
-"%@ is now known as %@" = "%@ is now known as %@"
-"%@ (%@) has joined %@" = "%@ (%@) has joined %@"
-"%@ has left %@ (%@)" = "%@ has left %@ (%@)"
-"%@ has quit IRC (%@)" = "%@ has quit IRC (%@)"
-"%@ changed the topic in %@ to '%@'" = "%@ changed the topic in %@ to '%@'"
+"Disconnected" = "Disconnected";
+"Unconnected" = "Unconnected";
+"Unconnected" = "Unconnected";
+"Received a CTCP '%@ %@' from %@" = "Received a CTCP '%@ %@' from %@";
+"Received a CTCP %@ from %@" = "Received a CTCP %@ from %@";
+"Error: %@" = "Error: %@";
+"Wallops(%@): %@" = "Wallops(%@): %@";
+"%@ was kicked from %@ by %@ (%@)" = "%@ was kicked from %@ by %@ (%@)";
+"You have been invited to %@ by %@" = "You have been invited to %@ by %@";
+"%@ sets mode %@ %@%@" = "%@ sets mode %@ %@%@";
+"%@ is now known as %@" = "%@ is now known as %@";
+"%@ (%@) has joined %@" = "%@ (%@) has joined %@";
+"%@ has left %@ (%@)" = "%@ has left %@ (%@)";
+"%@ has quit IRC (%@)" = "%@ has quit IRC (%@)";
+"%@ changed the topic in %@ to '%@'" = "%@ changed the topic in %@ to '%@'";
 
 
 /* Controllers/ConnectionController/ConnectionControllerNumericCommands.h */
 
 
 /* Controllers/ConnectionController/ConnectionControllerNumericCommands.m */
-"Topic for %@ is \"%@\"" = "Topic for %@ is \"%@\""
-"Topic for %@ set by %@ at %@" = "Topic for %@ set by %@ at %@"
+"Topic for %@ is \"%@\"" = "Topic for %@ is \"%@\"";
+"Topic for %@ set by %@ at %@" = "Topic for %@ set by %@ at %@";
 
 
 /* Controllers/ConnectionController/ConnectionControllerOutFilter.h */
