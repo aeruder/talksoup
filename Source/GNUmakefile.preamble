@@ -1,6 +1,8 @@
-ADDITIONAL_OBJCFLAGS += -Wall
+ADDITIONAL_OBJCFLAGS += -Wall -I../
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 ADDITIONAL_OBJCFLAGS += -include GNUstep.h $(ADDITIONAL_FRAMEWORK_DIRS)
+else
+ADDITIONAL_LDFLAGS += -L../TalkSoupBundles/TalkSoupBundles.framework/Versions/Current
 endif
 

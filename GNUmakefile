@@ -3,7 +3,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 PACKAGE_NAME=TalkSoup
 VERSION=0.82pre8
 
-SUBPROJECTS = Source Input Output InFilters OutFilters
+SUBPROJECTS = TalkSoupBundles Source Input Output InFilters OutFilters
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/aggregate.make
