@@ -93,7 +93,6 @@ static NSInvocation *invoc = nil;
 }
 - pluginActivated
 {
-	NSLog(@"%@", invoc);
 	[_TS_ addCommand: @"logging" withInvocation: invoc];
 	return self;
 }
