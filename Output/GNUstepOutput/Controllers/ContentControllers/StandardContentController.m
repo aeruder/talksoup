@@ -81,9 +81,6 @@
 
 	lowercase = IRCLowercase;
 
-	chatFont = RETAIN([FontPreferencesController
-	  getFontFromPreferences: GNUstepOutputChatFont]);
-	
 	channelClass = [[self class] channelClass];
 	queryClass = [[self class] queryClass];
 	[[NSNotificationCenter defaultCenter] addObserver: self
@@ -358,9 +355,8 @@
 	
 	if (hasEnd)
 	{
-		[controller appendAttributedString: AUTORELEASE(([[NSAttributedString alloc]
-		  initWithString: @"\n" attributes: [NSDictionary dictionaryWithObjectsAndKeys:
-		  chatFont, NSFontAttributeName, nil]]))];
+		[controller appendAttributedString: [NSMutableAttributedString
+		  attributedStringWithGNUstepOutputPreferences: @"\n"]];
 	}
 	
 	//clear_scrollback(controller);

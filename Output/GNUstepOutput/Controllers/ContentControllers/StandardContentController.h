@@ -26,7 +26,7 @@
 #import <Foundation/NSMapTable.h>
 
 @class NSMutableArray, NSMutableDictionary, NSArray, NSString, NSAttributedString;
-@class NSFont, NSText, ConnectionController;
+@class NSText, ConnectionController;
 
 @interface StandardContentController : NSObject < ContentController >
 	{
@@ -45,7 +45,6 @@
 		Class channelClass;
 		Class queryClass;
 		ConnectionController *connectionController;
-		NSFont *chatFont;
 		id <ContentControllerQueryController>lastSelected;
 	}
 + (Class)masterClass;
