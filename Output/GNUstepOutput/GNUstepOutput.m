@@ -70,9 +70,15 @@ NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
 NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
 NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputFontSize = @"GNUstepOutputFontSize";
-NSString *GNUstepOutputFontName = @"GNUstepOutputFontName";
+NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
+NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
+NSString *GNUstepOutputUserListFontName = @"GNUstepOutputUserListFontName";
+NSString *GNUstepOutputUserListFontSize = @"GNUstepOutputUserListFontSize";
+NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
+NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
 NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
+NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
+NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 GNUstepOutput *_GS_ = nil;
 
