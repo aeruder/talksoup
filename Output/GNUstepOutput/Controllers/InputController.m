@@ -216,28 +216,26 @@ id _output_ = nil;
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
 		  @"command%@:", [substring capitalizedString]]);
 		
+		if (commandSelector && [self respondsToSelector: commandSelector])
+		{
+				[self performSelector: commandSelector withObject: arguments];
+				return;
+		}
+		
 		if ((invoc = [_TS_ invocationForCommand: substring]))
 		{
 			[invoc setArgument: &arguments atIndex: 2];
 			[invoc setArgument: &connection atIndex: 3]; 
 			[invoc invoke];
 			[invoc getReturnValue: &substring];
+			arguments = nil;
+			[invoc setArgument: &arguments atIndex: 2];
+			[invoc setArgument: &arguments atIndex: 3];
 			[controller showMessage: substring onConnection: nil];
 			return;
 		}
-		
-		if (commandSelector != 0)
-		{
-			if ([self respondsToSelector: commandSelector])
-			{
-				[self performSelector: commandSelector withObject: arguments];
-			}
-			else
-			{
-				commandSelector = 0;
-			}
-		}
-		if (commandSelector == 0 && connection)
+
+		if (connection)
 		{
 			[_TS_ writeRawString: 
 			S2AS(([NSString stringWithFormat: @"%@ %@", 

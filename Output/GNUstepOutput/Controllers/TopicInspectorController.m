@@ -45,6 +45,7 @@
 	  NSMakeSize([topicText frame].size.width, 1e7)];
 	[[topicText textContainer] setWidthTracksTextView: YES];
 	[topicText setTextContainerInset: NSMakeSize(2, 0)];
+	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
 - setTopic: (NSString *)aTopic inChannel: (NSString *)aChannel
    setBy: (NSString *)author onDate: (NSString *)date

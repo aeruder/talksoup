@@ -45,6 +45,7 @@
 	  NSMakeSize([commandsText frame].size.width, 1e7)];
 	[[commandsText textContainer] setWidthTracksTextView: YES];
 	[commandsText setTextContainerInset: NSMakeSize(2, 0)];
+	[commandsText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 }
 - (void)dealloc
 {
@@ -97,7 +98,6 @@
 }
 - (NSButton *)okButton
 {
-	NSLog(@"%@", okButton);
 	return okButton;
 }
 - (NSTextField *)entryField

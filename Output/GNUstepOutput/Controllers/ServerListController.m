@@ -80,6 +80,11 @@ static inline NSMutableArray *mutablized_prefs()
 	
 	return work;
 }
+static int sort_server_dictionary(id first, id second, void *x)
+{
+	return [[first objectForKey: ServerListInfoName] caseInsensitiveCompare:
+	  [second objectForKey: ServerListInfoName]];
+}
 
 @implementation ServerListController
 + (void)startAutoconnectServers
@@ -241,6 +246,7 @@ static inline NSMutableArray *mutablized_prefs()
 			[x addObject: newOne]; 
 		}
 	
+		[x sortUsingFunction: sort_server_dictionary context: 0]; 
 		[[_TS_ pluginForOutput] setDefaultsObject: x
 		 forKey: GNUstepOutputServerList];
 	
@@ -324,6 +330,7 @@ static inline NSMutableArray *mutablized_prefs()
 			[array addObject: newOne];
 		}
 	
+		[array sortUsingFunction: sort_server_dictionary context: 0];
 		[[_TS_ pluginForOutput] setDefaultsObject: prefs
 		 forKey: GNUstepOutputServerList];
 	
