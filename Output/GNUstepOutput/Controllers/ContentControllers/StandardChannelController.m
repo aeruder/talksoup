@@ -40,6 +40,19 @@
 {
 	return @"StandardChannel";
 }
+- init
+{
+	if (!(self = [super init])) return self;
+
+	if (!([NSBundle loadNibNamed: [StandardChannelController standardNib] owner: self]))
+	{
+		NSLog(@"Failed to load StandardChannelController UI");
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
+}
 - (void)awakeFromNib
 {
 	id x;

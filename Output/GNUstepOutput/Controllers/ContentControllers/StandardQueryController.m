@@ -33,6 +33,19 @@
 {
 	return @"StandardQuery";
 }
+- init
+{
+	if (!(self = [super init])) return self;
+
+	if (!([NSBundle loadNibNamed: [StandardQueryController standardNib] owner: self]))
+	{
+		NSLog(@"Failed to load StandardQueryController UI");
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
+}
 - (void)awakeFromNib
 {	
 	id x;

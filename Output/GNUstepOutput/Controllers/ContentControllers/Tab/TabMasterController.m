@@ -25,6 +25,7 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSValue.h>
+#import <AppKit/NSNibLoading.h>
 
 @implementation TabMasterController
 - init
@@ -35,6 +36,16 @@
 	viewToContent = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	tabToView = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	contentControllers = [NSMutableArray new];
+
+	if (!([NSBundle loadNibNamed: @"TabContent" owner: self]))
+	{
+		NSLog(@"Failed to load TabContent UI");
+		[self dealloc];
+		return nil;
+	}
+
+	NSLog(@"TabMasterController created!");
+	return self;
 }
 - (void)dealloc
 {

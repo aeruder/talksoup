@@ -89,7 +89,7 @@
 - (NSString *)nickname;
 - setNickname: (NSString *)aNickname;
 
-- setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
+- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 @end
 
 #endif

@@ -27,6 +27,7 @@
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Misc/NSColorAdditions.h"
 #import "Views/KeyTextView.h"
@@ -454,10 +455,13 @@ PreferencesController *_PREFS_ = nil;
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
+	id blah = [StandardContentController new];
 }
 - (void)openTopicInspector: (NSNotification *)aNotification
 {
-		[[topic window] makeKeyAndOrderFront: nil];
+	id blah = [TabMasterController new];
+	NSLog(@"%@", [blah window]);
+	[[blah window] makeKeyAndOrderFront: nil];
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {

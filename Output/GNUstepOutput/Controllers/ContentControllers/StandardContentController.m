@@ -429,6 +429,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 		  chatFont, NSFontAttributeName, nil]]))];
 	}
 	
+	return self;
 	//clear_scrollback(controller);
 	// FIXME: the controllers should handle the removing of extra LINES (need to get rid of this byte nonsense)
 }
@@ -687,7 +688,7 @@ static NSString *TypeOfColor = @"TypeOfColor";
 
 	return self;
 }
-- setLowercasingFunction: (NSString * (*)(NSString *))aFunction
+- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
 {
 	lowercase = aFunction;
 }
