@@ -52,10 +52,6 @@
 	RELEASE(nothingView);
 	RELEASE(contentView);
 	RELEASE(window);
-	RELEASE(dateField);
-	RELEASE(authorField);
-	RELEASE(channelField);
-	RELEASE(topicText);
 	RELEASE(connection);
 
 	[super dealloc];

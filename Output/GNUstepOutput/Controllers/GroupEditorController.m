@@ -31,10 +31,7 @@
 - (void)dealloc
 {
 	[entryField setDelegate: nil];
-	DESTROY(extraField);
-	DESTROY(okButton);
 	DESTROY(window);
-	DESTROY(entryField);
 	
 	[super dealloc];
 }

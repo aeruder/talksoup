@@ -50,18 +50,7 @@
 }
 - (void)dealloc
 {
-	DESTROY(connectButton);
-	DESTROY(commandsText);
-	DESTROY(portField);
-	DESTROY(serverField);
-	DESTROY(userField);
-	DESTROY(realField);
-	DESTROY(passwordField);
-	DESTROY(extraField);
-	DESTROY(okButton);
-	DESTROY(entryField);
 	DESTROY(window);
-	DESTROY(nickField);
 	
 	[super dealloc];
 }

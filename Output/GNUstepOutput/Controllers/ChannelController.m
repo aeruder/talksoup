@@ -60,12 +60,12 @@
 	[userColumn setEditable: NO];
 	
 	frame = [tableView frame];
+	AUTORELEASE(RETAIN(tableView));
 	[tableView removeFromSuperview];
-	AUTORELEASE(tableView);
 	
 	userScroll = AUTORELEASE([[NSScrollView alloc] initWithFrame: frame]); 
-	tableView = [[NSTableView alloc] initWithFrame: 
-	  NSMakeRect(0, 0, frame.size.width, frame.size.height)];
+	tableView = AUTORELEASE([[NSTableView alloc] initWithFrame: 
+	  NSMakeRect(0, 0, frame.size.width, frame.size.height)]);
 
 	[tableView setCornerView: nil];
 	[tableView setHeaderView: nil];
@@ -110,9 +110,6 @@
 - (void)dealloc
 {
 	RELEASE(window);
-	RELEASE(chatView);
-	RELEASE(splitView);
-	RELEASE(tableView);
 	[super dealloc];
 }
 - (ScrollingTextView *)chatView

@@ -1,3 +1,9 @@
+2003-12-13 Andy Ruder <aeruder at ksu dot edu>
+ * I am a retard.  I did not realize that outlets do not have an automatic
+   retain when assigned to the instance variable.  Therefore I should be
+   releasing those things either!  The only reason it worked was due to a
+   GNUstep mem-leak.  I am a retard!
+
 2003-12-07 Andy Ruder <aeruder at ksu dot edu>
  * Made the serverlist reuse unconnected windows (with an option to force a
    new window)

@@ -37,7 +37,6 @@
 {
 	[window setDelegate: nil];
 	DESTROY(window);
-	DESTROY(typeView);
 	
 	[super dealloc];
 }
@@ -82,7 +81,6 @@
 - (void)windowWillClose: (NSNotification *)aNotification
 {
 	[window setDelegate: nil];
-	DESTROY(window);
 	RELEASE(self);
 }
 @end

@@ -118,8 +118,8 @@ static void clear_scrollback(NSMutableAttributedString *back)
 		
 	[self setChatFont: font];
 	
-	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
-	  _l(@"Unconnected")])];
+	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE( 
+	  S2AS(_l(@"Unconnected")))];
 	
 	[tabView selectTabViewItemAtIndex: 0];
 	
@@ -142,9 +142,6 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	[tabView setDelegate: nil];
 	[typeView setTarget: nil];
 	RELEASE(highlightedTabs);
-	RELEASE(typeView);
-	RELEASE(nickView);
-	RELEASE(tabView);
 	RELEASE(window);
 	RELEASE(nameToChannel);
 	RELEASE(nameToQuery);

@@ -203,18 +203,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)dealloc
 {
-/* FIXME	[browser setDelegate: nil]; */
-	[browser setDoubleAction: 0];
-	[browser setTarget: nil];
-	RELEASE(browser);
-	RELEASE(scrollView);
-	RELEASE(addGroupButton);
-	RELEASE(removeButton);
-	RELEASE(addEntryButton);
-	RELEASE(editButton);
-	RELEASE(serverColumn);
-	RELEASE(connectButton);
-	RELEASE(forceButton);
+	RELEASE(window);
 	[[editor window] close];
 	
 	[super dealloc];
@@ -552,7 +541,6 @@ static int sort_server_dictionary(id first, id second, void *x)
 		[window setDelegate: nil];
 		/* FIXME [browser setDelegate: nil]; */
 		[browser setTarget: nil];
-		DESTROY(window);
 		[_GS_ removeServerList: self];
 	}
 	else if ([aNotification object] == [editor window])

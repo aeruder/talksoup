@@ -251,13 +251,6 @@ static NSString *big_description = nil;
 	RELEASE(availCol);
 	RELEASE(loadCol);
 	RELEASE(window);
-	RELEASE(availableTable);
-	RELEASE(loadedTable);
-	RELEASE(descriptionText);
-	RELEASE(showingPopUp);
-	RELEASE(middleButton);
-	RELEASE(upButton);
-	RELEASE(downButton);
 
 	[super dealloc];
 }

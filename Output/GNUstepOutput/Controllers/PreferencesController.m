@@ -64,18 +64,7 @@
 	[window setDelegate: nil];
 	[setFontButton setTarget: nil];
 	[resetButton setTarget: nil];
-	RELEASE(personalBracketColor);
-	RELEASE(backgroundColor);
-	RELEASE(otherBracketColor);
-	RELEASE(textColor);
-	RELEASE(nick);
-	RELEASE(realName);
-	RELEASE(userName);
-	RELEASE(password);
-	RELEASE(resetButton);
 	RELEASE(window);
-	RELEASE(fontField);
-	RELEASE(setFontButton);
 	[super dealloc];
 }
 - (void)loadCurrentDefaults

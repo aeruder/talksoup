@@ -53,7 +53,6 @@
 }
 - (void)dealloc
 {
-	DESTROY(chatView);
 	DESTROY(window);
 	[super dealloc];
 }

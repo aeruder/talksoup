@@ -94,8 +94,6 @@ GNUstepOutput *_GS_ = nil;
 		return nil;
 	}
 
-	x = [menu itemWithTitle: @"Quit"];
-
 	[NSApp setMainMenu: menu];
 
 	connectionToConnectionController = NSCreateMapTable(NSObjectMapKeyCallBacks,
@@ -144,7 +142,6 @@ GNUstepOutput *_GS_ = nil;
 - (void)dealloc
 {
 	[[topic topicText] setKeyTarget: nil];
-	RELEASE(menu);
 	RELEASE(topic);
 	RELEASE(defaultDefaults);
 	RELEASE(connectionControllers);
