@@ -49,7 +49,7 @@ extern NSString *ServerListInfoAutoConnect;
 		int wasEditing;
 	}
 
-+ (void)startAutoconnectServers;
++ (BOOL)startAutoconnectServers;
 + (NSDictionary *)serverInGroup: (int)group row: (int)row;
 + (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row;
 + (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row;

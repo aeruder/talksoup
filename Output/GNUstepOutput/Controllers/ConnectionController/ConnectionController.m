@@ -327,4 +327,8 @@
 
 	return self;
 }
+- (KeyTextView *)fieldEditor
+{
+	return fieldEditor;
+}
 @end

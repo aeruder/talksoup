@@ -19,6 +19,7 @@
 #include "Controllers/GroupEditorController.h"
 #include "Controllers/ServerEditorController.h"
 #include "Controllers/ServerListConnectionController.h"
+#include "Controllers/ContentController.h"
 #include "GNUstepOutput.h"
 
 #include <Foundation/NSNotification.h>
@@ -87,12 +88,13 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 
 @implementation ServerListController
-+ (void)startAutoconnectServers
++ (BOOL)startAutoconnectServers
 {
 	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
 		  GNUstepOutputServerList];
 	NSEnumerator *iter;
 	NSEnumerator *iter2;
+	BOOL hadOne = NO;
 	id o1, o2;
 	int g = 0, r; 
 	
@@ -108,11 +110,14 @@ static int sort_server_dictionary(id first, id second, void *x)
 			{
 				AUTORELEASE([[ServerListConnectionController alloc]
 				 initWithServerListDictionary: o2 inGroup: g atRow: r]);
+				hadOne = YES;
 			}	
 			r++;
 		}
 		g++;
 	}
+
+	return hadOne;
 }
 + (NSDictionary *)serverInGroup: (int)group row: (int)row
 {
@@ -187,6 +192,8 @@ static int sort_server_dictionary(id first, id second, void *x)
 	[window setDelegate: self];
 	RETAIN(self);
 	[window makeKeyAndOrderFront: nil];
+	
+	[_GS_ addServerList: self];
 	
 	wasEditing = -1;
 }
@@ -477,6 +484,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	id tmp = [[_TS_ pluginForOutput] defaultsObjectForKey:
 	  GNUstepOutputServerList];
+	id win;
 	
 	int first, row;
 	if ([browser selectedColumn] != 1) return;
@@ -489,13 +497,17 @@ static int sort_server_dictionary(id first, id second, void *x)
 	tmp = [[tmp objectAtIndex: first] objectForKey: ServerListInfoEntries];
 	
 	if (row >= [tmp count]) return;
+
+	AUTORELEASE(win = [[ServerListConnectionController alloc]
+	  initWithServerListDictionary: [tmp objectAtIndex: row]
+	  inGroup: first atRow: row]);
+
+	win = [[win contentController] window];
 	
 	[[editor window] close];
 	[window close];
-	
-	AUTORELEASE([[ServerListConnectionController alloc]
-	  initWithServerListDictionary: [tmp objectAtIndex: row]
-	  inGroup: first atRow: row]);
+
+	[win makeKeyAndOrderFront: nil];	
 }
 - (NSBrowser *)browser
 {
@@ -515,6 +527,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if ([aNotification object] == window)
 	{
+		[_GS_ removeServerList: self];
 		[window setDelegate: nil];
 		DESTROY(window);
 		RELEASE(self);

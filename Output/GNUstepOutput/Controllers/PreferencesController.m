@@ -183,8 +183,11 @@
 	id object;
 	id color = GNUstepOutputColor([sender color]);
 
-	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
+	color = [color encodeToData];		
+	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
 	  GNUstepOutputPersonalBracketColor];
+	
+	color = [NSColor colorFromEncodedData: color];
 		
 	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
@@ -203,8 +206,11 @@
 	id object2;
 	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
+	color = [color encodeToData];		
+	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
 	  GNUstepOutputBackgroundColor];
+	
+	color = [NSColor colorFromEncodedData: color];
 			
 	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
@@ -216,6 +222,8 @@
 		{
 			[[object2 chatView] setBackgroundColor: color];
 		}
+/*		[[object fieldEditor] setBackgroundColor: color];
+		[[[object contentController] typeView] setBackgroundColor: color];*/
 	}
 
 	return self;
@@ -225,9 +233,12 @@
 	NSEnumerator *iter;
 	id object;
 	id color = GNUstepOutputColor([sender color]);
-	
-	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
+
+	color = [color encodeToData];	
+	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
 	  GNUstepOutputOtherBracketColor];
+	
+	color = [NSColor colorFromEncodedData: color];
 		
 	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
@@ -244,14 +255,19 @@
 	id object;
 	id color = GNUstepOutputColor([sender color]);
 	
-	[[_TS_ pluginForOutput] setDefaultsObject: [color encodeToData] forKey:
+	color = [color encodeToData];
+	[[_TS_ pluginForOutput] setDefaultsObject: color forKey:
 	  GNUstepOutputTextColor];
+	
+	color = [NSColor colorFromEncodedData: color];
 	
 	iter = [[[_TS_ pluginForOutput] connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
 		[[object contentController] setTextColor: color];
+/*		[[[object contentController] typeView] setTextColor: color];
+		[[object fieldEditor] setTextColor: color];*/
 	}
 
 	return self;

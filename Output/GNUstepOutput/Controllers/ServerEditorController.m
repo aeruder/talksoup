@@ -46,6 +46,7 @@
 	[[commandsText textContainer] setWidthTracksTextView: YES];
 	[commandsText setTextContainerInset: NSMakeSize(2, 0)];
 	[commandsText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	
 }
 - (void)dealloc
 {

@@ -49,16 +49,18 @@ extern GNUstepOutput *_GS_;
 
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
 @class NSDictionary, ConnectionController, PreferencesController;
-@class TopicInspectorController;
+@class TopicInspectorController, ServerListController;
 
 @interface GNUstepOutput : NSObject
 	{
 		NSMutableDictionary *pendingIdentToConnectionController;
 		NSMapTable *connectionToConnectionController;
 		NSMutableArray *connectionControllers;
+		NSMutableArray *serverLists;		
 		NSDictionary *defaultDefaults;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
+		BOOL terminating;
 	}
 - setDefaultsObject: aObject forKey: aKey;
 
@@ -73,6 +75,9 @@ extern GNUstepOutput *_GS_;
 - addConnectionController: (ConnectionController *)aCont;
 - removeConnectionController: (ConnectionController *)aCont;
 - (NSArray *)connectionControllers;
+
+- addServerList: (ServerListController *)aServer;
+- removeServerList: (ServerListController *)aServer;
 
 - (TopicInspectorController *)topicInspectorController;
 - (void)run;

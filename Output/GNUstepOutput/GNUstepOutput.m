@@ -84,6 +84,7 @@ GNUstepOutput *_GS_ = nil;
 	  NSObjectMapValueCallBacks, 10);
 	
 	connectionControllers = [NSMutableArray new];
+	serverLists = [NSMutableArray new];
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
 	
@@ -220,8 +221,32 @@ GNUstepOutput *_GS_ = nil;
 - removeConnectionController: (ConnectionController *)aCont
 {
 	[connectionControllers removeObject: aCont];
+	if ([connectionControllers count] == 0 && [serverLists count] == 0)
+	{
+		if (!terminating)
+		{
+			[NSApp terminate: nil];
+		}
+	}
 	return self;
 }
+- addServerList: (ServerListController *)aCont
+{
+	[serverLists addObject: aCont];
+	return self;
+}
+- removeServerList: (ServerListController *)aCont
+{
+	[serverLists removeObject: aCont];
+	if ([connectionControllers count] == 0 && [serverLists count] == 0)
+	{
+		if (!terminating)
+		{
+			[NSApp terminate: nil];
+		}
+	}
+	return self;
+}		
 - (NSArray *)connectionControllers
 {
 	return [NSArray arrayWithArray: connectionControllers];
@@ -484,13 +509,18 @@ GNUstepOutput *_GS_ = nil;
 	[[topic topicText] setKeyTarget: self];
 	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)]; 
 
-	[ServerListController startAutoconnectServers];
+	if (![ServerListController startAutoconnectServers])
+	{
+		AUTORELEASE([ConnectionController new]);
+	}
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {
 	NSArray *x;
 	NSEnumerator *iter;
 	id object;
+	
+	terminating = YES;
 	
 	[[prefs window] close];
 	x = [NSArray arrayWithArray: connectionControllers];

@@ -83,6 +83,8 @@
 - setPersonalColor: (NSColor *)aColor;
 
 - leaveChannel: (NSString *)channel;
+
+- (KeyTextView *)fieldEditor;
 @end
 
 #endif

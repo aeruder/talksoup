@@ -85,6 +85,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
 	}
 	
+	[nickView setFont: [NSFont userFontOfSize: 12.0]];
 	[tabView setFont: [NSFont fontWithName: @"Helvetica" size: 12.0]];
 	[tabView setDelegate: self];
 	

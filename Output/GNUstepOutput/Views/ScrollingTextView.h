@@ -18,4 +18,6 @@
 #include "Views/KeyTextView.h"
 
 @interface ScrollingTextView : KeyTextView
+- (void)pageUp;
+- (void)pageDown;
 @end

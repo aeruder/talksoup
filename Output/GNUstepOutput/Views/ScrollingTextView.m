@@ -26,6 +26,31 @@
 #include <math.h>
 
 @implementation ScrollingTextView
+- (void)pageUp
+{
+	NSRect vis = [[[self enclosingScrollView] contentView] 
+	  documentVisibleRect];
+	unsigned int y;
+
+	y = NSMinY(vis);
+
+	y = (y < vis.size.height) ? 0 : y - vis.size.height;
+	
+	[self scrollPoint: NSMakePoint(0, y)];
+}
+- (void)pageDown
+{
+	NSRect vis = [[[self enclosingScrollView] contentView] 
+	  documentVisibleRect];
+	unsigned int max = NSMaxY([self frame]);
+	unsigned int y;
+	
+	y = NSMinY(vis);
+
+	y = ((y + vis.size.height) > max) ? max : y + vis.size.height;
+	
+	[self scrollPoint: NSMakePoint(0, y)];
+}
 - (void)setFrame: (NSRect)frameRect
 {
 	BOOL scroll = NO;

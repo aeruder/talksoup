@@ -171,7 +171,11 @@ static void send_message(id command, id name, id connection)
 {
 	id string = AUTORELEASE(RETAIN([sender stringValue]));
 	
-	if ([string length] == 0) return;
+	if ([string length] == 0)
+	{
+		[[[controller contentController] window] makeFirstResponder: sender];
+		return;
+	}
 	
 	[self lineTyped: string];
 	

@@ -19,8 +19,10 @@
 #include "TalkSoupBundles/TalkSoup.h"
 #include "Controllers/InputController.h"
 #include "Controllers/ContentController.h"
+#include "Controllers/ChannelController.h"
 #include "GNUstepOutput.h"
 #include "Views/KeyTextView.h"
+#include "Views/ScrollingTextView.h"
 #include "Misc/NSObjectAdditions.h"
 #include "Models/Channel.h"
 
@@ -86,6 +88,18 @@
 	if (character == NSDownArrowFunctionKey)
 	{
 		[inputController nextHistoryItem: sender];
+		return NO;
+	}
+	if (character == NSPageUpFunctionKey)
+	{
+		id x = [content controllerForViewWithName: [content currentViewName]];
+		[[x chatView] pageUp];
+		return NO;
+	}
+	if (character == NSPageDownFunctionKey)
+	{
+		id x = [content controllerForViewWithName: [content currentViewName]];
+		[[x chatView] pageDown];
 		return NO;
 	}
 	
