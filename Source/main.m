@@ -183,6 +183,7 @@ id GetSetting(NSString *key)
 	return obj;
 }
 
+
 int main(void)
 {
 	NSDictionary *defaultPlugins;

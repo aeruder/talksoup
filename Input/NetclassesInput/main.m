@@ -120,7 +120,6 @@
 }
 - (void)connectionLost
 {
-	waiting = NO;
 	[control removeConnection: self];
 	[_TS_ lostConnection: self sender: control];
 	[super connectionLost];
@@ -225,13 +224,7 @@
 	return self;
 }
 - nickChangedTo: (NSString *)newName from: (NSString *)aPerson
-{
-	if ([ExtractIRCNick([aPerson lowercaseString]) isEqualToString:
-	  [nick lowercaseString]])
-	{
-		[self setNickname: newName];
-	}
-	
+{	
 	[_TS_ nickChangedTo: S2AS(newName) from: S2AS(aPerson) onConnection: self
 	  sender: control];
 
@@ -307,8 +300,6 @@
 }
 - newNickNeededWhileRegistering
 {
-	waiting = YES;
-	
 	[_TS_ newNickNeededWhileRegisteringOnConnection: self sender: control];
 	
 	return self;
@@ -316,14 +307,7 @@
 - changeNick: (NSAttributedString *)aNick onConnection: aConnection 
    sender: aPlugin
 {
-	if (!connected && waiting)
-	{
-		[self setNickname: AS2S(aNick)];
-	}
-			
 	[super changeNick: AS2S(aNick)];
-	
-	waiting = NO;
 	return self;
 }	
 - quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection

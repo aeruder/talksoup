@@ -38,7 +38,6 @@
 		NSString *identification;
 		int port;
 		id control;
-		BOOL waiting;
 	}
 - initWithNickname: (NSString *)aNick withUserName: (NSString *)user
    withRealName: (NSString *)real withPassword: (NSString *)aPass

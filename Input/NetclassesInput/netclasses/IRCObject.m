@@ -30,6 +30,7 @@
 #include <Foundation/NSProcessInfo.h>
 #include <Foundation/NSValue.h>
 #include <Foundation/NSTimer.h>
+#include <Foundation/NSScanner.h>
 
 #include <string.h>
 #include <netinet/in.h>
@@ -47,53 +48,36 @@ static NSData *IRC_new_line = nil;
 // Because in IRC {}|^ are lowercase of []\~
 - (NSString *)uppercaseIRCString
 {
-	static char lowMap[4] = {'{', '}', '|', '^'};
-	static char hiMap[4] = {'[', ']', '\\', '~'};
+	NSMutableString *aString = [NSString stringWithString: [self uppercaseString]];
+	NSRange aRange = {0, [aString length]};
 
-	char *location;
-	int iter;
+	[aString replaceOccurrencesOfString: @"{" withString: @"[" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"}" withString: @"]" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"|" withString: @"\\" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"^" withString: @"~" options: 0
+	  range: aRange];
 	
-	char aString[[self cStringLength] + 1];
-	
-	strcpy(aString, [self cString]);
-
-	for (iter = 0; iter < 4; iter++)
-	{
-		location = aString;
-
-		while((location = strchr(location, lowMap[iter])))
-		{
-			*location = hiMap[iter];
-			location++;
-		}
-	}
-	
-	return [[NSString stringWithCString: aString] uppercaseString];
+	return [aString uppercaseString];
 }
 - (NSString *)lowercaseIRCString
 {
-	static char lowMap[4] = {'{', '}', '|', '^'};
-	static char hiMap[4] = {'[', ']', '\\', '~'};
+	NSMutableString *aString = [NSMutableString 
+	  stringWithString: [self lowercaseString]];
+	NSRange aRange = {0, [aString length]};
 
-	char *location;
-	int iter;
+	[aString replaceOccurrencesOfString: @"[" withString: @"{" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"]" withString: @"}" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"\\" withString: @"|" options: 0
+	  range: aRange];
+	[aString replaceOccurrencesOfString: @"~" withString: @"^" options: 0
+	  range: aRange];
 	
-	char aString[[self cStringLength] + 1];
-	
-	strcpy(aString, [self cString]);
-
-	for (iter = 0; iter < 4; iter++)
-	{
-		location = aString;
-
-		while((location = strchr(location, hiMap[iter])))
-		{
-			*location = lowMap[iter];
-			location++;
-		}
-	}
-	
-	return [[NSString stringWithCString: aString] lowercaseString];
+	return [aString lowercaseString];
 }
 - (NSComparisonResult)caseInsensitiveIRCCompare: (NSString *)aString
 {
@@ -105,175 +89,197 @@ static NSData *IRC_new_line = nil;
 @interface IRCObject (InternalIRCObject)
 - setErrorString: (NSString *)anError;
 @end
-
-#define REMOVE_SPACES(__buffer, __bufferEnd)\
-while (*__buffer == ' ') {\
-	__buffer++;\
-	if (__buffer == __bufferEnd) {\
-		*offset = -1;\
-		return nil;\
-	}\
+	
+#define NEXT_SPACE(__y, __z, __string)\
+{\
+	__z = [(__string) rangeOfCharacterFromSet:\
+	[NSCharacterSet whitespaceCharacterSet] options: 0\
+	range: NSMakeRange((__y), [(__string) length] - (__y))].location;\
+	if (__z == NSNotFound) __z = [(__string) length];\
+}
+	
+#define NEXT_NON_SPACE(__y, __z, __string)\
+{\
+	int __len = [(__string) length];\
+	id set = [NSCharacterSet whitespaceCharacterSet];\
+	__z = (__y);\
+	while ([set characterIsMember: [(__string) characterAtIndex: __z]]\
+	     && __z < __len) __z++;\
 }
 
-static inline NSString *get_IRC_prefix(NSData *data, int *offset)
+static inline NSString *get_IRC_prefix(NSString *line, NSString **prefix)
 {
-	const char *memBegin = [data bytes];
-	const char *mem = memBegin;
-	const char *memEnd = mem + [data length];
-	const char *temp;
+	int beg;
+	int end;
+	int len = [line length];
 	
-	REMOVE_SPACES(mem, memEnd);
-
-	if (*mem != ':')
+	if (len == 0)
 	{
-		return nil;
+		*prefix = nil;
+		return @"";
 	}
-	mem++;
+	NEXT_NON_SPACE(0, beg, line);
 	
-	temp = memchr(mem, ' ', memEnd - mem);
-
-	if (temp == 0)
+	if (beg == len)
 	{
-		*offset = -1;
-		return nil;
+		*prefix = nil;
+		return @"";
 	}
 	
-	*offset = temp - memBegin;
-	return [NSString stringWithCString: mem length: temp - mem];
+	NEXT_SPACE(beg, end, line);
+		
+	if ([line characterAtIndex: beg] != ':')
+	{
+		*prefix = nil;
+		return line;
+	}
+	else
+	{
+		beg++;
+		if (beg == end)
+		{
+			*prefix = @"";
+			if (beg == len)
+			{
+				return @"";
+			}
+			else
+			{
+				return [line substringFromIndex: beg];
+			}
+		}
+	}
+	
+	*prefix = [line substringWithRange: NSMakeRange(beg, end - beg)];
+	
+	if (end != len)
+	{
+		return [line substringFromIndex: end];
+	}
+	
+	return @"";
 }
 	
-static inline NSString *get_next_IRC_word(NSData *data, int *offset)
+static inline NSString *get_next_IRC_word(NSString *line, NSString **prefix)
 {
-	const char *memBegin = [data bytes];
-	const char *mem = memBegin;
-	const char *memEnd = mem + [data length];
-	const char *temp;
+	int beg;
+	int end;
+	int len = [line length];
 	
-	mem += *offset;
-
-	REMOVE_SPACES(mem, memEnd);
-
-	if (*mem == ':')
+	if (len == 0)
 	{
-		*offset = -1;
-		mem++;
-		return [NSString stringWithCString: mem length: memEnd - mem];
+		*prefix = nil;
+		return @"";
 	}
-
-	temp = memchr(mem, ' ', memEnd - mem);
+	NEXT_NON_SPACE(0, beg, line);
 	
-	if (!temp)
+	if (beg == len)
 	{
-		*offset = -1;
-		return [NSString stringWithCString: mem length: memEnd - mem];
+		*prefix = nil;
+		return @"";
 	}
-
-	*offset = temp - memBegin;
-	return [NSString stringWithCString: mem length: temp - mem];
+	if ([line characterAtIndex: beg] == ':')
+	{
+		beg++;
+		if (beg == len)
+		{
+			*prefix = @"";
+		}
+		else
+		{
+			*prefix = [line substringFromIndex: beg];
+		}
+		
+		return @"";
+	}
+	
+   NEXT_SPACE(beg, end, line);
+	
+	*prefix = [line substringWithRange: NSMakeRange(beg, end - beg)];
+	
+	if (end != len)
+	{
+		return [line substringFromIndex: end];
+	}
+	
+	return @"";
 }
 
-#undef REMOVE_SPACES
+#undef NEXT_NON_SPACE
+#undef NEXT_SPACE
 
 static inline BOOL is_numeric_command(NSString *aString)
 {
-	char *marker;
+	static NSCharacterSet *set = nil;
+	unichar test[3];
+	
+	if (!set)
+	{
+		set = RETAIN([NSCharacterSet 
+		  characterSetWithCharactersInString: @"0123456789"]);
+	}
 	
 	if ([aString length] != 3)
 	{
 		return NO;
 	}
 	
-	strtol([aString cString], &marker, 0);
-
-	return (*marker == '\0') ? YES : NO;
+	[aString getCharacters: test];
+	if ([set characterIsMember: test[0]] && [set characterIsMember: test[1]] &&
+	    [set characterIsMember: test[2]])
+	{
+		return YES;
+	}
+	
+	return NO;
 }
 
 static inline BOOL contains_a_space(NSString *aString)
 {
-	return (strchr([aString cString], ' ')) ? YES : NO;
+	return ([aString rangeOfCharacterFromSet: 
+	  [NSCharacterSet whitespaceCharacterSet]].location == NSNotFound) ?
+	  NO : YES;
 }	
 
-static inline NSString *string_to_character(NSString *aString, int c)
+static inline NSString *string_to_string(NSString *aString, NSString *delim)
 {
-	const char *temp = [aString cString];
-	const char *test;
+	NSRange a = [aString rangeOfString: delim];
+	
+	if (a.location == NSNotFound) return [NSString stringWithString: aString];
+	
+	return [aString substringToIndex: a.location];
+}
 
-	if (!aString)
+static inline NSString *string_from_string(NSString *aString, NSString *delim)
+{
+	NSRange a = [aString rangeOfString: delim];
+	
+	if (a.location == NSNotFound) return nil;
+	
+	a.location += a.length;
+	
+	if (a.location == [aString length])
 	{
-		return nil;
-	}
-
-	test = strchr(temp, c);
-
-	if (!test)
-	{
-		return aString;
+		return @"";
 	}
 	
-	return [NSString stringWithCString: temp length: test - temp];
+	return [aString substringFromIndex: a.location];
 }
 
 inline NSString *ExtractIRCNick(NSString *prefix)
 {	
-	const char *temp = [prefix cString];
-	const char *test;
-
-	if (!prefix)
-	{
-		return nil;
-	}
-
-	test = strchr(temp, '!');
-
-	if (!test)
-	{
-		return prefix;
-	}
-
-	return [NSString stringWithCString: temp length: test - temp];
+	return string_to_string(prefix, @"!");
 }
 
 inline NSString *ExtractIRCHost(NSString *prefix)
 {
-	const char *temp = [prefix cString];
-	const char *test;
-
-	if (!prefix)
-	{
-		return nil;
-	}
-
-	test = strchr(temp, '!');
-
-	if (!test)
-	{
-		return nil;
-	}
-
-	return [NSString stringWithCString: test + 1];
+	return string_from_string(prefix, @"!");
 }
 
 inline NSArray *SeparateIRCNickAndHost(NSString *prefix)
 {
-	const char *temp = [prefix cString];
-	const char *test;
-
-	if (!prefix)
-	{
-		return nil;
-	}
-
-	test = strchr(temp, '!');
-
-	if (!test)
-	{
-		return [NSArray arrayWithObject: prefix];
-	}
-
-	return [NSArray arrayWithObjects: 
-	 [NSString stringWithCString: temp length: test - temp],
-	 [NSString stringWithCString: temp + 1],
-	 nil];
+	return [NSArray arrayWithObjects: string_to_string(prefix, @"!"),
+	  string_from_string(prefix, @"!"), nil];
 }
 
 static void rec_caction(IRCObject *client, NSString *prefix,
@@ -285,6 +291,7 @@ static void rec_caction(IRCObject *client, NSString *prefix,
 	}
 	[client actionReceived: rest to: to from: prefix];
 }
+
 static void rec_ccustom(IRCObject *client, NSString *prefix, 
                         NSString *command, NSString *rest, NSString *to,
                         NSString *ctcp)
@@ -300,6 +307,7 @@ static void rec_ccustom(IRCObject *client, NSString *prefix,
 		  from: prefix];
 	}
 }
+
 static void rec_cdcc(IRCObject *client, NSString *prefix,
                        NSString *command, NSString *rest, NSString *to)
 {
@@ -315,22 +323,39 @@ static void rec_cdcc(IRCObject *client, NSString *prefix,
 		id fileSize;
 		id port;
 		id address;
+		long long aLong;
 		
 		if ([list count] >= 5)
 		{
-			fileSize = [NSNumber numberWithUnsignedLong: 
-			 strtoul([[list objectAtIndex: 4] cString], 0, 10)];
+			if (![[NSScanner scannerWithString: [list objectAtIndex: 4]]
+			  scanLongLong: &aLong])
+			{
+				aLong = 0;
+			}
+			
+			fileSize = [NSNumber numberWithLongLong: aLong];
 		}
 		else
 		{
 			fileSize = [NSNumber numberWithInt: -1];
 		}
 
-		port = [NSNumber numberWithUnsignedShort: 
-		 strtoul([[list objectAtIndex: 3] cString], 0, 10)];
+		if (![[NSScanner scannerWithString: [list objectAtIndex: 3]]
+		  scanLongLong: &aLong])
+		{
+			aLong = 0;
+		}
+
+		port = [NSNumber numberWithLongLong: aLong];
+
+		if (![[NSScanner scannerWithString: [list objectAtIndex: 2]]
+		  scanLongLong: &aLong])
+		{
+			aLong = 0;
+		}
 
 		address = [[TCPSystem sharedInstance] hostFromInt:
-		 ntohl(strtoul([[list objectAtIndex: 2] cString], 0, 10))];
+		 ntohl(aLong)];
 		
 		fileName = [list objectAtIndex: 1];
 		
@@ -357,6 +382,10 @@ static void rec_nick(IRCObject *client, NSString *command,
 		return;
 	}
 	
+	if ([[client nickname] isEqualToString: ExtractIRCNick(prefix)])
+	{
+		[client setNickname: [paramList objectAtIndex: 0]];
+	}
 	[client nickChangedTo: [paramList objectAtIndex: 0] from: prefix];
 }
 
@@ -443,7 +472,7 @@ static void rec_privmsg(IRCObject *client, NSString *command,
 	{
 		void (*func)(IRCObject *, NSString *, NSString *, NSString *, 
 		              NSString *);
-		id ctcp = string_to_character(message, ' ');
+		id ctcp = string_to_string(message, @" ");
 		id rest;
 		
 		if ([ctcp isEqualToString: message])
@@ -695,7 +724,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	if (aNickname == nick) return self;
 	
-	aNickname = string_to_character(aNickname, ' ');
+	aNickname = string_to_string(aNickname, @" ");
 	if ([aNickname length] == 0)
 	{
 		[self setErrorString: @"No usable nickname provided"];
@@ -726,7 +755,7 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 			user = @"netclasses";
 		}
 	}
-	if ([(user = string_to_character(user, ' ')) length] == 0)
+	if ([(user = string_to_string(user, @" ")) length] == 0)
 	{
 		user = @"netclasses";
 	}
@@ -760,9 +789,9 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	if ([aPass length])
 	{
-		if (contains_a_space(aPass))
+		if ([(aPass = string_to_string(aPass, @" ")) length] == 0) 
 		{
-			[self setErrorString: @"Password contains a space"];
+			[self setErrorString: @"Unusable password"];
 			return nil;
 		}
 	}
@@ -812,11 +841,15 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 {
 	if ([aNick length] > 0)
 	{
-		if (contains_a_space(aNick))
+		if ([(aNick = string_to_string(aNick, @" ")) length] == 0)
 		{
 			[NSException raise: IRCException
-			 format: @"[IRCObject changeNick: '%@'] Nickname contains a space",
+			 format: @"[IRCObject changeNick: '%@'] Unusable nickname given",
 			  aNick];
+		}
+		if (!connected && transport)
+		{
+			[self setNickname: aNick];
 		}
 					
 		[self writeString: @"NICK %@", aNick];
@@ -842,10 +875,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 	
-	if (contains_a_space(channel))
+	if ([(channel = string_to_string(channel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject partChannel: '%@' ...] Channel contains a space",
+		 format: @"[IRCObject partChannel: '%@' ...] Unusable channel given",
 		  channel];
 	}
 	
@@ -867,10 +900,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 
-	if (contains_a_space(channel))
+	if ([(channel = string_to_string(channel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject joinChannel: '%@' ...] Channel contains a space",
+		 format: @"[IRCObject joinChannel: '%@' ...] Unusable channel",
 		  channel];
 	}
 
@@ -880,10 +913,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 
-	if (contains_a_space(aPassword))
+	if ([(aPassword = string_to_string(aPassword, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject joinChannel: withPassword: '%@'] Password contains a space.",
+		 format: @"[IRCObject joinChannel: withPassword: '%@'] Unusable password",
 		  aPassword];
 	}
 
@@ -898,10 +931,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		  @"[IRCObject sendCTCPReply: '%@'withArgument: '%@' to: '%@'] Person contains a space",
+		  @"[IRCObject sendCTCPReply: '%@'withArgument: '%@' to: '%@'] Unusable receiver",
 		    aCTCP, args, aPerson];
 	}
 	if (!aCTCP)
@@ -917,7 +950,6 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"NOTICE %@ :\001%@\001", aPerson, aCTCP];
 	}
 		
-	
 	return self;
 }
 - sendCTCPRequest: (NSString *)aCTCP withArgument: (NSString *)args
@@ -927,10 +959,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		  @"[IRCObject sendCTCPRequest: '%@'withArgument: '%@' to: '%@'] Person contains a space",
+		  @"[IRCObject sendCTCPRequest: '%@'withArgument: '%@' to: '%@'] Unusable receiver",
 		    aCTCP, args, aPerson];
 	}
 	if (!aCTCP)
@@ -946,7 +978,6 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"PRIVMSG %@ :\001%@\001", aPerson, aCTCP];
 	}
 		
-	
 	return self;
 }
 - sendMessage: (NSString *)message to: (NSString *)receiver
@@ -959,10 +990,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(receiver))
+	if ([(receiver = string_to_string(receiver, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject sendMessage: '%@' to: '%@'] The receiver contains a space.",
+		 format: @"[IRCObject sendMessage: '%@' to: '%@'] Unusable receiver",
 		  message, receiver];
 	}
 	
@@ -980,10 +1011,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(receiver))
+	if ([(receiver = string_to_string(receiver, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject sendNotice: '%@' to: '%@'] The receiver contains a space.",
+		 format: @"[IRCObject sendNotice: '%@' to: '%@'] Unusable receiver",
 		  message, receiver];
 	}
 	
@@ -1001,10 +1032,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(receiver))
+	if ([(receiver = string_to_string(receiver, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject sendAction: '%@' to: '%@'] The receiver contsins a space.",
+		 format: @"[IRCObject sendAction: '%@' to: '%@'] Unusable receiver",
 		   anAction, receiver];
 	}
 
@@ -1018,16 +1049,16 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(pass))
+	if ([(pass = string_to_string(pass, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject becomeOperatorWithName: %@ withPassword: %@] The password contains a space.",
+		 format: @"[IRCObject becomeOperatorWithName: %@ withPassword: %@] Unusable password",
 		  aName, pass];
 	}
-	if (contains_a_space(aName))
+	if ([(aName = string_to_string(aName, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject becomeOperatorWithName: %@ withPassword: %@] The name contains a space.",
+		 format: @"[IRCObject becomeOperatorWithName: %@ withPassword: %@] Unusable name",
 		  aName, pass];
 	}
 	
@@ -1043,11 +1074,11 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 	
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
 		 format: 
-		  @"[IRCObject requestNamesOnChannel: %@ fromServer: %@] The channel contains a space.",
+		  @"[IRCObject requestNamesOnChannel: %@ fromServer: %@] Unusable channel",
 		   aChannel, aServer];
 	}
 			
@@ -1057,10 +1088,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		return self;
 	}
 
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject requestNamesOnChannel: %@ fromServer: %@] The server contains a space.",
+		 format: @"[IRCObject requestNamesOnChannel: %@ fromServer: %@] Unusable server",
 		   aChannel, aServer];
 	}
 		
@@ -1074,10 +1105,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"MOTD"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format: 
-		  @"[IRCObject requestMOTDOnServer:'%@'] Server contains a space",
+		  @"[IRCObject requestMOTDOnServer:'%@'] Unusable server",
 		  aServer];
 	}
 
@@ -1092,10 +1123,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LUSERS"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestSizeInformationFromServer: '%@' andForwardTo: '%@'] First argument contains a space", 
+		 @"[IRCObject requestSizeInformationFromServer: '%@' andForwardTo: '%@'] Unusable first server", 
 		  aServer, anotherServer];
 	}
 	if ([anotherServer length] == 0)
@@ -1103,10 +1134,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LUSERS %@", aServer];
 		return self;
 	}
-	if (contains_a_space(anotherServer))
+	if ([(anotherServer = string_to_string(anotherServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestSizeInformationFromServer: '%@' andForwardTo: '%@'] Second argument contains a space",
+		 @"[IRCObject requestSizeInformationFromServer: '%@' andForwardTo: '%@'] Unusable second server",
 		 aServer, anotherServer];
 	}
 
@@ -1120,10 +1151,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"VERSION"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestVersionOfServer: '%@'] Server contains a space",
+		 @"[IRCObject requestVersionOfServer: '%@'] Unusable server",
 		  aServer];
 	}
 
@@ -1137,10 +1168,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"STATS"];
 		return self;
 	}
-	if (contains_a_space(query))
+	if ([(query = string_to_string(query, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerStats: '%@' for: '%@'] Query contains a space",
+		 @"[IRCObject requestServerStats: '%@' for: '%@'] Unusable query",
 		  aServer, query];
 	}
 	if ([aServer length] == 0)
@@ -1148,10 +1179,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"STATS %@", query];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerStats: '%@' for: '%@'] Server contains a space",
+		 @"[IRCObject requestServerStats: '%@' for: '%@'] Unusable server",
 		  aServer, query];
 	}
 	
@@ -1165,10 +1196,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LINKS"];
 		return self;
 	}
-	if (contains_a_space(aLink))
+	if ([(aLink = string_to_string(aLink, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerLink: '%@' from: '%@'] Link contains a space",
+		 @"[IRCObject requestServerLink: '%@' from: '%@'] Unusable link",
 		  aLink, aServer];
 	}
 	if ([aServer length] == 0)
@@ -1176,10 +1207,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LINKS %@", aLink];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerLink: '%@' from: '%@'] Server contains a space", 
+		 @"[IRCObject requestServerLink: '%@' from: '%@'] Unusable server", 
 		  aLink, aServer];
 	}
 
@@ -1193,10 +1224,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"TIME"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestTimeOnServer: '%@'] Server contains a space",
+		 @"[IRCObject requestTimeOnServer: '%@'] Unusable server",
 		  aServer];
 	}
 
@@ -1210,20 +1241,20 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(connectServer))
+	if ([(connectServer = string_to_string(connectServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Server to connect to contains a space",
+		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Unusable second server",
 		  aServer, connectServer, aPort];
 	}
 	if ([aPort length] == 0)
 	{
 		return self;
 	}
-	if (contains_a_space(aPort))
+	if ([(aPort = string_to_string(aPort, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Port contains a space",
+		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Unusable port",
 		  aServer, connectServer, aPort];
 	}
 	if ([aServer length] == 0)
@@ -1231,10 +1262,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"CONNECT %@ %@", connectServer, aPort];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format: 
-		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Server contains a space",
+		 @"[IRCObject requestServerToConnect: '%@' to: '%@' onPort: '%@'] Unusable first server",
 		  aServer, connectServer, aPort];
 	}
 	
@@ -1248,10 +1279,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"TRACE"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format: 
-		 @"[IRCObject requestTraceOnServer: '%@'] Server contains a space",
+		 @"[IRCObject requestTraceOnServer: '%@'] Unusable server",
 		  aServer];
 	}
 	
@@ -1265,10 +1296,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"ADMIN"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestAdministratorOnServer: '%@'] Server contains a space", 
+		 @"[IRCObject requestAdministratorOnServer: '%@'] Unusable server", 
 		  aServer];
 	}
 
@@ -1282,10 +1313,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"INFO"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestInfoOnServer: '%@'] Server contains a space",
+		 @"[IRCObject requestInfoOnServer: '%@'] Unusable server",
 		  aServer];
 	}
 
@@ -1299,10 +1330,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"SERVLIST"];
 		return self;
 	}
-	if (contains_a_space(aMask))
+	if ([(aMask = string_to_string(aMask, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServiceListWithMask: '%@' ofType: '%@'] Mask contains a space",
+		 @"[IRCObject requestServiceListWithMask: '%@' ofType: '%@'] Unusable mask",
 		  aMask, type];
 	}
 	if ([type length] == 0)
@@ -1310,10 +1341,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"SERVLIST %@", aMask];
 		return self;
 	}
-	if (contains_a_space(type))
+	if ([(type = string_to_string(type, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestServiceListWithMask: '%@' ofType: '%@'] Type contains a space",
+		 @"[IRCObject requestServiceListWithMask: '%@' ofType: '%@'] Unusable type",
 		  aMask, type];
 	}
 
@@ -1342,10 +1373,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"USERS"];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject requestUserInfoOnServer: '%@'] Server contains a space",
+		 @"[IRCObject requestUserInfoOnServer: '%@'] Unusable server",
 		  aServer];
 	}
 
@@ -1378,10 +1409,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aService))
+	if ([(aService = string_to_string(aService, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject queryService: '%@' withMessage: '%@'] Service contains a space",
+		 @"[IRCObject queryService: '%@' withMessage: '%@'] Unusable service",
 		  aService, aMessage];
 	}
 	if ([aMessage length] == 0)
@@ -1399,10 +1430,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"WHO"];
 		return self;
 	}
-	if (contains_a_space(aMask))
+	if ([(aMask = string_to_string(aMask, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject listWho: '%@' onlyOperators: %d] Mask contains a space",
+		 @"[IRCObject listWho: '%@' onlyOperators: %d] Unusable mask",
 		 aMask, operators];
 	}
 	
@@ -1423,10 +1454,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject whois: '%@' onServer: '%@'] Person contains a space",
+		 @"[IRCObject whois: '%@' onServer: '%@'] Unusable person",
 		 aPerson, aServer];
 	}
 	if ([aServer length] == 0)
@@ -1434,10 +1465,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"WHOIS %@", aPerson];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject whois: '%@' onServer: '%@'] Server contains a space",
+		 @"[IRCObject whois: '%@' onServer: '%@'] Unusable server",
 		  aPerson, aServer];
 	}
 
@@ -1451,10 +1482,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Person contains a space",
+		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Unusable person",
 		  aPerson, aServer, aNumber];
 	}
 	if ([aNumber length] == 0)
@@ -1462,10 +1493,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"WHOWAS %@", aPerson];
 		return self;
 	}
-	if (contains_a_space(aNumber))
+	if ([(aNumber = string_to_string(aNumber, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Number of entries contains a space", 
+		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Unusable number of entries", 
 		  aPerson, aServer, aNumber];
 	}
 	if ([aServer length] == 0)
@@ -1473,10 +1504,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"WHOWAS %@ %@", aPerson, aNumber];
 		return self;
 	}
-	if (contains_a_space(aServer))
+	if ([(aServer = string_to_string(aServer, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Server contains a space",
+		 @"[IRCObject whowas: '%@' onServer: '%@' withNumberEntries: '%@'] Unusable server",
 		  aPerson, aServer, aNumber];
 	}
 
@@ -1489,10 +1520,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject kill: '%@' withComment: '%@'] Person contains a space",
+		 @"[IRCObject kill: '%@' withComment: '%@'] Unusable person",
 		 aPerson, aComment];
 	}
 	if ([aComment length] == 0)
@@ -1509,10 +1540,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException
-		 format: @"[IRCObject setTopicForChannel: %@ to: %@] The channel contains a space.",
+		 format: @"[IRCObject setTopicForChannel: %@ to: %@] Unusable channel",
 		   aChannel, aTopic];
 	}
 
@@ -1538,10 +1569,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(anObject))
+	if ([(anObject = string_to_string(anObject, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		  @"[IRCObject setMode:'%@' on:'%@' withParams:'%@'] Object contains a space", 
+		  @"[IRCObject setMode:'%@' on:'%@' withParams:'%@'] Unusable object", 
 		    aMode, anObject, list];
 	}
 	if ([aMode length] == 0)
@@ -1549,10 +1580,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"MODE %@", anObject];
 		return self;
 	}
-	if (contains_a_space(aMode))
+	if ([(aMode = string_to_string(aMode, @" ")) length] == 0)
 	{		
 		[NSException raise: IRCException format:
-		  @"[IRCObject setMode:'%@' on:'%@' withParams:'%@'] Mode contains a space", 
+		  @"[IRCObject setMode:'%@' on:'%@' withParams:'%@'] Unusable mode", 
 		    aMode, anObject, list];
 	}
 	if (!list)
@@ -1583,10 +1614,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LIST"];
 		return self;
 	}
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject listChannel:'%@' onServer:'%@'] Channel contains a space",
+		 @"[IRCObject listChannel:'%@' onServer:'%@'] Unusable channel",
 		  aChannel, aServer];
 	}
 	if ([aServer length] == 0)
@@ -1594,10 +1625,10 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 		[self writeString: @"LIST %@", aChannel];
 		return self;
 	}
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject listChannel:'%@' onServer:'%@'] Server contains a space",
+		 @"[IRCObject listChannel:'%@' onServer:'%@'] Unusable server",
 		  aChannel, aServer];
 	}
 	
@@ -1614,16 +1645,16 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject invite:'%@' to:'%@'] Person contains a space",
+		 @"[IRCObject invite:'%@' to:'%@'] Unusable person",
 		  aPerson, aChannel];
 	}
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject invite:'%@' to:'%@'] Channel contains a space",
+		 @"[IRCObject invite:'%@' to:'%@'] Unusable channel",
 		  aPerson, aChannel];
 	}
 	
@@ -1640,16 +1671,16 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	{
 		return self;
 	}
-	if (contains_a_space(aPerson))
+	if ([(aPerson = string_to_string(aPerson, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject kick:'%@' offOf:'%@' for:'%@'] Person contains a space",
+		 @"[IRCObject kick:'%@' offOf:'%@' for:'%@'] Unusable person",
 		  aPerson, aChannel, reason];
 	}
-	if (contains_a_space(aChannel))
+	if ([(aChannel = string_to_string(aChannel, @" ")) length] == 0)
 	{
 		[NSException raise: IRCException format:
-		 @"[IRCObject kick:'%@' offOf:'%@' for:'%@'] Channel contains a space",
+		 @"[IRCObject kick:'%@' offOf:'%@' for:'%@'] Unusable channel",
 		  aPerson, aChannel, reason];
 	}
 	if ([reason length] == 0)
@@ -1796,35 +1827,40 @@ static void rec_error(IRCObject *client, NSString *command, NSString *prefix,
 	NSString *prefix = nil;
 	NSString *command = nil;
 	NSMutableArray *paramList = nil;
-	int offset = 0;
 	id object;
 	void (*function)(IRCObject *, NSString *, NSString *, NSArray *);
+	NSString *line, *orig;
+	
+	orig = line = AUTORELEASE([[NSString alloc] initWithData: aLine
+	  encoding: NSISOLatin1StringEncoding]);
 
-	if ([aLine length] == 0)
+	if ([line length] == 0)
 	{
 		return self;
 	}
+	
 	paramList = AUTORELEASE([NSMutableArray new]);
 	
-	prefix = get_IRC_prefix(aLine, &offset);
-	if (offset == -1)
+	line = get_IRC_prefix(line, &prefix); 
+	
+	if ([line length] == 0)
 	{
 		[NSException raise: IRCException
 		 format: @"[IRCObject lineReceived: '@'] Line ended prematurely.",
-		 [NSString stringWithCString: [aLine bytes] length: [aLine length]]];
+		 orig];
 	}
 
-	command = get_next_IRC_word(aLine, &offset);
+	line = get_next_IRC_word(line, &command);
 	if (command == nil)
 	{
 		[NSException raise: IRCException
 		 format: @"[IRCObject lineReceived: '@'] Line ended prematurely.",
-		 [NSString stringWithCString: [aLine bytes] length: [aLine length]]];
+		 orig];
 	}
 
-	while (offset != -1)
+	while (1)
 	{
-		object = get_next_IRC_word(aLine, &offset);
+		line = get_next_IRC_word(line, &object);
 		if (!object)
 		{
 			break;
