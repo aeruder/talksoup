@@ -10,30 +10,51 @@ endif
 
 BUNDLE_EXTENSION =
 
+Pref_Nibs = Preferences.nib \
+FontPreferences.nib \
+GeneralPreferences.nib \
+ColorPreferences.nib \
+BundlePreferences.nib
+
+All_Localized_Nibs = $(Pref_Nibs) \
+ServerEditor.nib \
+ServerList.nib \
+NamePrompt.nib \
+GroupEditor.nib \
+ServerEditor.nib \
+TopicInspector.nib \
+GNUstepOutput.nib
+
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.nib \
-                                         ServerEditor.nib ServerList.nib \
-                                         NamePrompt.nib GroupEditor.nib \
-                                         ServerEditor.nib TopicInspector.nib \
-                                         BundleConfigure.nib GNUstepOutput.nib
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings \
+$(All_Localized_Nibs)
 else
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings Preferences.gorm \
-                                         ServerEditor.gorm ServerList.gorm \
-                                         NamePrompt.gorm GroupEditor.gorm \
-                                         ServerEditor.gorm TopicInspector.gorm \
-                                         BundleConfigure.gorm GNUstepOutput.gorm
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings \
+$(shell \
+echo "$(All_Localized_Nibs)" | \
+sed -e 's/\.nib/\.gorm/g')
 endif
+
+Pref_Images = Images/bundle_prefs.tiff \
+Images/color_prefs.tiff \
+Images/font_prefs.tiff \
+Images/general_prefs.tiff
 
 GNUstepOutput_RESOURCE_FILES = Images/common_ret.tiff Images/common_retH.tiff \
- AllLanguages/Defaults.plist
+ AllLanguages/Defaults.plist $(Pref_Images)
+
+All_NonLocalized_Nibs = AllLanguages/Channel.nib AllLanguages/Query.nib \
+AllLanguages/Content.nib
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-GNUstepOutput_RESOURCE_FILES += AllLanguages/Channel.nib AllLanguages/Query.nib \
-                                AllLanguages/Content.nib
+Extra_Resources = $(All_NonLocalized_Nibs)
 else
-GNUstepOutput_RESOURCE_FILES += AllLanguages/Channel.gorm AllLanguages/Query.gorm \
-                                AllLanguages/Content.gorm
+Extra_Resources = $(shell \
+  echo "$(All_NonLocalized_Nibs)" | \
+  sed -e 's/\.nib/\.gorm/g')
 endif
+
+GNUstepOutput_RESOURCE_FILES += $(Extra_Resources)
 	
 GNUstepOutput_LANGUAGES = English
 
@@ -58,6 +79,12 @@ Controllers/ContentControllers/ContentController.m \
 Controllers/ContentControllers/Tab/TabContentController.m \
 Controllers/ContentControllers/Tab/TabMasterController.m
 
+Preferences = Controllers/Preferences/GeneralPreferencesController.m \
+Controllers/Preferences/BundlePreferencesController.m \
+Controllers/Preferences/ColorPreferencesController.m \
+Controllers/Preferences/FontPreferencesController.m \
+Controllers/Preferences/PreferencesController.m
+
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/InputController.m\
               Controllers/PreferencesController.m \
@@ -67,7 +94,7 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ServerEditorController.m \
               Controllers/ServerListConnectionController.m \
               Controllers/TopicInspectorController.m \
-              Controllers/BundleConfigureController.m \
+			  $(Preferences) \
               $(ConnectionController) \
 			  $(ContentController)
 

@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ChannelController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
@@ -92,9 +94,9 @@
 	[userColumn setDataCell: x];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [_GS_ defaultsObjectForKey: GNUstepOutputTextColor]]];
+	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
 	 
 	[splitView addSubview: userScroll];
 	[splitView setDelegate: self];

@@ -17,13 +17,17 @@
 
 #import "GNUstepOutput.h"
 
+#import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/BundlePreferencesController.h"
+
 #import "Controllers/ConnectionController.h"
-#import "Controllers/PreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
-#import "Controllers/BundleConfigureController.h"
 #import "Misc/NSColorAdditions.h"
 #import "Views/KeyTextView.h"
 
@@ -112,7 +116,6 @@ GNUstepOutput *_GS_ = nil;
 	serverLists = [NSMutableArray new];
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
-	bundlePreferences = [NSMutableDictionary new];
 	
 	x = [NSFont userFontOfSize: 0.0];
 	
@@ -125,16 +128,6 @@ GNUstepOutput *_GS_ = nil;
 	if (!fontName) fontName = @"Helvetica";
 	if ([fontSize intValue] < 0 || !fontSize) fontSize = @"12";	
 	
-	defaultPreferences = [[NSMutableDictionary alloc] initWithContentsOfFile: 
-	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
-	  pathForResource: @"Defaults"
-	  ofType: @"plist"]];
-
-	[defaultPreferences setObject: fontName
-	  forKey: [GNUstepOutputFontName substringFromIndex: 13]];
-	[defaultPreferences setObject: fontSize
-	  forKey: [GNUstepOutputFontSize substringFromIndex: 13]];
-	
 	RELEASE(_GS_);
 	_GS_ = RETAIN(self);
 	
@@ -144,99 +137,12 @@ GNUstepOutput *_GS_ = nil;
 {
 	[[topic topicText] setKeyTarget: nil];
 	RELEASE(topic);
-	RELEASE(defaultPreferences);
 	RELEASE(connectionControllers);
 	RELEASE(pendingIdentToConnectionController);
 	NSFreeMapTable(connectionToConnectionController);
 	
 	[super dealloc];
 }
-- setPreference: (id)aPreference forKey: (NSString *)aKey
-{
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		NSMutableDictionary *aDict = AUTORELEASE([NSMutableDictionary new]);
-		id newKey = [aKey substringFromIndex: 13];
-		id y;
-		
-		if ((y = [[NSUserDefaults standardUserDefaults] 
-			  objectForKey: @"GNUstepOutput"]))
-		{
-			[aDict addEntriesFromDictionary: y];
-		}
-		
-		if (aObject)
-		{
-			[aDict setObject: aObject forKey: newKey];
-		}
-		else
-		{
-			[aDict removeObjectForKey: newKey];
-		}
-		
-		[[NSUserDefaults standardUserDefaults]
-		   setObject: aDict forKey: @"GNUstepOutput"];
-	}
-	else
-	{
-		if (aObject)
-		{
-			[[NSUserDefaults standardUserDefaults]
-			  setObject: aObject forKey: aKey];
-		}
-		else
-		{
-			[[NSUserDefaults standardUserDefaults]
-			  removeObjectForKey: aKey];
-		}
-	}
-	
-	return self;
-}		
-- (id)preferenceForKey: (NSString *)aKey
-{
-	id z;
-	
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		id y;
-		id newKey = [aKey substringFromIndex: 13];
-		
-		y = [[NSUserDefaults standardUserDefaults] 
-		   objectForKey: @"GNUstepOutput"];
-		
-		if ((z = [y objectForKey: newKey]))
-		{
-			return z;
-		}
-		
-		z = [defaultPreferences objectForKey: newKey];
-		
-		[self setDefaultsObject: z forKey: aKey];
-		
-		return z;
-	}
-	
-	if ((z = [[NSUserDefaults standardUserDefaults]
-	     objectForKey: aKey]))
-	{
-		return z;
-	}
-	
-	z = [defaultPreferences objectForKey: aKey];
-	
-	[self setDefaultsObject: z forKey: aKey];
-	
-	return z;
-}
-- (id)defaultPreferenceForKey: (NSString *)aKey
-{
-	if ([aKey hasPrefix: @"GNUstepOutput"])
-	{
-		aKey = [aKey substringFromIndex: 13];
-	}
-	return [defaultPreferences objectForKey: aKey];
-}	  
 - (id)connectionToConnectionController: (id)aObject
 {
 	return NSMapGet(connectionToConnectionController, aObject);
@@ -288,16 +194,6 @@ GNUstepOutput *_GS_ = nil;
 {
 	[serverLists removeObject: aCont];
 	return self;
-}
-- setPreferencesController: (PreferencesController *)aPrefs
-{
-	ASSIGN(prefs, aPrefs);
-	
-	return self;
-}		
-- controllerForBundlePreferences: (NSString *)aString
-{
-	return [bundlePreferences objectForKey: aString];
 }
 - (NSArray *)connectionControllers
 {
@@ -394,26 +290,7 @@ GNUstepOutput *_GS_ = nil;
 	id process;
 	process = [aControl objectForKey: @"Process"];
 	
-	if ([process isEqualToString: @"AddBundlePreferencesController"])
-	{
-		id name, controller;
-		name = [aControl objectForKey: @"Name"];
-		controller = [aControl objectForKey: @"Controller"];
-
-		if (!controller || !name) return self;
-
-		[bundlePreferences setObject: controller forKey: name];
-	}
-	else if ([process isEqualToString: @"RemoveBundlePreferencesController"])
-	{
-		id name;
-		name = [aControl objectForKey: @"Name"];
-
-		if (!name) return self;
-
-		[bundlePreferences removeObjectForKey: name];
-	}
-	else if (aConnection)
+	if (aConnection)
 	{
 		id object;
 
@@ -450,8 +327,6 @@ GNUstepOutput *_GS_ = nil;
 	if ([selS hasSuffix: @"nConnection:withNickname:sender:"] && 
 	    [ConnectionController instancesRespondToSelector: aSel]) return YES;
 	
-	if ([prefs respondsToSelector: aSel]) return YES;
-	
 	return [super respondsToSelector: aSel];
 }
 - (NSMethodSignature *)methodSignatureForSelector: (SEL)aSel
@@ -477,11 +352,6 @@ GNUstepOutput *_GS_ = nil;
 	}
 
 	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
-	{
-		return x;
-	}
-	
-	if ((x = [prefs methodSignatureForSelector: aSel]))
 	{
 		return x;
 	}
@@ -530,10 +400,6 @@ GNUstepOutput *_GS_ = nil;
 		{
 			[aInvoc invokeWithTarget: object]; }
 	}
-	else if (sel && [prefs respondsToSelector: sel])
-	{
-		[aInvoc invokeWithTarget: prefs];
-	}
 }
 - (TopicInspectorController *)topicInspectorController
 {
@@ -555,12 +421,18 @@ GNUstepOutput *_GS_ = nil;
 	topic = [TopicInspectorController new];
 	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
 	[[topic topicText] setKeyTarget: self];
-	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)]; 
+	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)];
 
 	if (![ServerListController startAutoconnectServers])
 	{
 		AUTORELEASE([ConnectionController new]);
 	}
+
+	_PREFS_ = [PreferencesController new];
+	AUTORELEASE([GeneralPreferencesController new]);
+	AUTORELEASE([ColorPreferencesController new]);
+	AUTORELEASE([FontPreferencesController new]);
+	AUTORELEASE([BundlePreferencesController new]);
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {
@@ -570,7 +442,6 @@ GNUstepOutput *_GS_ = nil;
 	
 	terminating = YES;
 	
-	[[prefs window] close];
 	x = [NSArray arrayWithArray: connectionControllers];
 	
 	iter = [x objectEnumerator];
@@ -579,8 +450,6 @@ GNUstepOutput *_GS_ = nil;
 	{
 		[[[object contentController] window] close];
 	}
-	
-	[[prefs window] close]; 
 }
 - (void)doApplicationTerminate: (id)sender
 {
@@ -614,29 +483,7 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)loadPreferencesPanel: (NSNotification *)aNotification
 {
-	if (!prefs)
-	{
-		prefs = [PreferencesController new];
-		[NSBundle loadNibNamed: @"Preferences" owner: prefs];
-		[prefs loadCurrentDefaults];
-	}
-	else
-	{
-		[[prefs window] makeKeyAndOrderFront: nil];
-	}
-}
-- (void)loadBundleConfigurator: (NSNotification *)aNotification
-{
-	if (!bundle)
-	{
-		bundle = [BundleConfigureController new];
-		[NSBundle loadNibNamed: @"BundleConfigure" owner: bundle];
-		[[bundle window] setDelegate: self];
-	}
-	else
-	{
-		[[bundle window] makeKeyAndOrderFront: nil];
-	}
+	[[_PREFS_ window] makeKeyAndOrderFront: nil];
 }
 @end
 
@@ -651,11 +498,6 @@ GNUstepOutput *_GS_ = nil;
 		[[topic topicText] setKeyTarget: nil];
 		AUTORELEASE(topic);
 		topic = nil;
-	}
-	if ([aNotification object] == [bundle window])
-	{
-		AUTORELEASE(bundle);
-		bundle = nil;
 	}
 }
 - (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender

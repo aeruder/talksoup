@@ -62,14 +62,11 @@ extern PreferencesController *_PREFS_;
 		NSMapTable *connectionToConnectionController;
 		NSMutableArray *connectionControllers;
 		NSMutableArray *serverLists;		
-		NSMutableDictionary *bundlePreferences;
-		PreferencesController *prefs;
 		TopicInspectorController *topic;
 		BundleConfigureController *bundle;
 		BOOL terminating;
 		NSMenu *menu;
 	}
-- (PreferencesController *)preferences;
 
 - (id)connectionToConnectionController: (id)aObject;
 
@@ -85,7 +82,6 @@ extern PreferencesController *_PREFS_;
 - removeServerList: (ServerListController *)aServer;
 
 - (TopicInspectorController *)topicInspectorController;
-- (PreferencesController *)preferencesController;
 - (void)run;
 @end
 

@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/QueryController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
@@ -46,9 +48,9 @@
 	[chatView setRichText: NO];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]]];
+	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [_GS_ defaultsObjectForKey: GNUstepOutputTextColor]]];
+	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
 		  
 	x = RETAIN([(NSWindow *)window contentView]);
 	[window close];
