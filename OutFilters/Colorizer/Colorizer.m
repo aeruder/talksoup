@@ -47,6 +47,8 @@ static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 	scan = [NSScanner scannerWithString: two];
 	[scan setCharactersToBeSkipped: [NSCharacterSet 
 	  characterSetWithCharactersInString: @""]];
+	
+	if (!isdigit([two characterAtIndex: 0])) return NO;
 	if (![scan scanInt: &y]) return NO;
 
 	[beg setScanLocation: sub.location + [scan scanLocation]];
