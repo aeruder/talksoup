@@ -88,8 +88,6 @@ GNUstepOutput *_GS_ = nil;
 
 	pendingIdentToConnectionController = [NSMutableDictionary new];
 	
-	x = [NSFont userFontOfSize: 0.0];
-	
 	defaultDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
 	  @"TalkSoup", IRCDefaultsNick,
 	  @"", IRCDefaultsRealName,
@@ -104,8 +102,8 @@ GNUstepOutput *_GS_ = nil;
 	  [[NSColor colorWithCalibratedRed: 0.0 green: 0.0
 	    blue: 1.0 alpha: 1.0] encodeToData], GNUstepOutputOtherBracketColor,
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
-	  [x fontName], GNUstepOutputFontName,
-	  [NSString stringWithFormat: @"%d", (int)[x pointSize]], GNUstepOutputFontSize,
+	  @"Helvetica", GNUstepOutputFontName,
+	  @"12", GNUstepOutputFontSize,
 	  @"75000", GNUstepOutputScrollBack,
 	  nil];
 	
