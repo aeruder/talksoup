@@ -159,6 +159,9 @@ id _output_ = nil;
 - (void)enterPressed: (id)sender
 {
 	id string = AUTORELEASE(RETAIN([sender stringValue]));
+	
+	if ([string length] == 0) return;
+	
 	[self lineTyped: string];
 	
 	[modHistory removeAllObjects];
