@@ -200,7 +200,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 }
 - (void)dealloc
 {
-	[browser setDelegate: nil];
+/* FIXME	[browser setDelegate: nil]; */
 	[browser setDoubleAction: 0];
 	[browser setTarget: nil];
 	RELEASE(browser);
@@ -529,7 +529,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	if ([aNotification object] == window)
 	{
 		[window setDelegate: nil];
-		[browser setDelegate: nil];
+		/* FIXME [browser setDelegate: nil]; */
 		[browser setTarget: nil];
 		DESTROY(window);
 		[_GS_ removeServerList: self];
