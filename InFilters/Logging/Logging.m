@@ -25,6 +25,7 @@
 #include <Foundation/NSFileHandle.h>
 #include <Foundation/NSInvocation.h>
 #include <Foundation/NSFileManager.h>
+#include <Foundation/NSNull.h>
 
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;
@@ -102,6 +103,19 @@ static NSInvocation *invoc = nil;
 	  allowLossyConversion: YES]];
 	
 	return S2AS(@"Logging turned on.");
+}
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"This command can handle logging to a file. "
+	 @"To use it, simply type /logging <file> on any connection to "
+	 @"log that connection.  To set up persistent logging, please "
+	 @"see the FAQ distributed with TalkSoup."
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
 }
 - pluginActivated
 {

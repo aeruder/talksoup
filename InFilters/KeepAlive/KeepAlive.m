@@ -21,6 +21,7 @@
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSEnumerator.h>
 #include <Foundation/NSTimer.h>
+#include <Foundation/NSNull.h>
 
 @implementation KeepAlive
 - fireTimer: (NSTimer *)aTimer
@@ -38,6 +39,18 @@
 	}
 
 	return self;
+}
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"A simple bundle that will send a ping to "
+	 @"all connected servers every 3 minutes.  This can be used "
+	 @"to stay connected on flaky connections."
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
 }
 - pluginActivated
 {

@@ -269,6 +269,24 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 }		
 
 @implementation Colorizer
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"Adds color into outgoing messages. "
+	 @"The syntax is %C#[,#] for colors.  The first # specifies "
+	 @"the foreground color and the second # specifies the "
+	 @"optional second color.  The colors are in the range of "
+	 @"0-15\n",
+	 @"Bold is %B, underline is %U, and %R is reverse.  Repeating "
+	 @"any one of these a second time will result in the turning "
+	 @"off of that attribute.  Use %O to clear all colors and "
+	 @"attributes."
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
+}
 - quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin

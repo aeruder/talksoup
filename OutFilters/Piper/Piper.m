@@ -127,6 +127,19 @@ NSInvocation *invoc = nil;
 	
 	return S2AS(@"Ok.");
 }
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"Piper can pipe outgoing messages through "
+	 @"an arbitrary shell program.  The syntax is simply "
+	 @"/piper <program>.  To pipe through multiple programs, separate "
+	 @"them with a ^ character."
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
+}
 - pluginActivated
 {
 	[_TS_ addCommand: @"piper" withInvocation: invoc];

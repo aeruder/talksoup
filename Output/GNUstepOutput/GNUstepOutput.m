@@ -452,7 +452,7 @@ GNUstepOutput *_GS_ = nil;
 	  action: @selector(loadPreferencesPanel:)
 	  keyEquivalent: @"P"];
 	
-	[tempMenu addItemWithTitle: _l(@"Configure Bundles...")
+	[tempMenu addItemWithTitle: _l(@"Bundle Setup...")
 	  action: @selector(loadBundleConfigurator:)
 	  keyEquivalent: @"B"];
 

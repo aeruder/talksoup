@@ -8,14 +8,18 @@
 	    "downHit:",
 	    "leftHit:",
 	    "rightHit:",
-	    "showingSelected:"
+	    "showingSelected:",
+	    "middleHit:"
 	);
 	Outlets = (
 	    showingPopUp,
 	    loadedTable,
 	    availableTable,
 	    descriptionText,
-	    window
+	    window,
+	    middleButton,
+	    downButton,
+	    upButton
 	);
 	Super = NSObject;
     };
@@ -166,7 +170,8 @@
 	    "downHit:",
 	    "leftHit:",
 	    "rightHit:",
-	    "showingSelected:"
+	    "showingSelected:",
+	    "middleHit:"
 	);
 	Super = NSObject;
     };

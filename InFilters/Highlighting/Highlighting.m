@@ -325,6 +325,20 @@ static NSInvocation *invoc = nil;
 
 	return S2AS(@"Ok.");
 }
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"This bundle will highlight the names of people "
+	 @"who say your name in the channel.  It will also handle the "
+	 @"highlighting of the tabs.  The highlighting colors as well as "
+	 @"other words to highlight can be setup through the /highlight "
+	 @"command when this bundle is loaded"
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
+}
 - pluginActivated
 {
 	[_TS_ addCommand: @"highlighting" withInvocation: invoc];

@@ -19,7 +19,16 @@
 #include "TalkSoupBundles/TalkSoup.h"
 
 #include <Foundation/NSAttributedString.h>
+#include <Foundation/NSNull.h>
 
 @implementation Skeleton
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Somebody\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"None",
+	 nil);
+}
 @end
 

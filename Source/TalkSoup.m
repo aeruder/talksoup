@@ -318,6 +318,17 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	inNames = inNames2;
 	outNames = outNames2;
 }
+- (void)savePluginList
+{	
+	id dict = [NSDictionary dictionaryWithObjectsAndKeys:
+	  activatedInput, @"Input",
+	  activatedOutput, @"Output",
+	  [self activatedOutFilters], @"OutFilters",
+	  [self activatedInFilters], @"InFilters",
+	  nil];
+	
+	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
+}
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand
 {
 	return [commandList objectForKey: [aCommand uppercaseString]];
@@ -746,15 +757,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 - (NSAttributedString *)commandSaveLoaded: (NSString *)args 
    connection: (id)connection
 {
-	id dict = [NSDictionary dictionaryWithObjectsAndKeys:
-	  activatedInput, @"Input",
-	  activatedOutput, @"Output",
-	  [self activatedOutFilters], @"OutFilters",
-	  [self activatedInFilters], @"InFilters",
-	  nil];
-	
-	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
-	
+	[self savePluginList];
+
 	return S2AS(_(@"The loaded bundles will now load automagically on TalkSoup startup."));
 }
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection

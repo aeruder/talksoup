@@ -19,6 +19,7 @@
 #include "TalkSoupBundles/TalkSoup.h"
 
 #include <Foundation/NSAttributedString.h>
+#include <Foundation/NSNull.h>
 
 static NSAttributedString *deul(id a)
 {
@@ -29,6 +30,16 @@ static NSAttributedString *deul(id a)
 }
 
 @implementation Deunderline
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description:", @"Removes underline from incoming messages.",
+	 @"\n\n",
+	 @"Copyright (C) 2003 by Andrew Ruder",
+	 nil);
+}
 - CTCPReplyReceived: (NSAttributedString *)aCTCP
    withArgument: (NSAttributedString *)argument 
    to: (NSAttributedString *)receiver

@@ -1090,6 +1090,16 @@ static NSInvocation *invoc = nil;
 	[_TS_ removeCommand: @"dcc"];
 	return self;
 }
+- (NSAttributedString *)pluginDescription
+{
+	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
+	 @"Author: ", @"Andrew Ruder\n\n",
+	 [NSNull null], IRCBold, IRCBoldValue,
+	 @"Description: ", @"Provides a interface to DCC file transfer "
+	 @"through the /dcc command.  Type /dcc when this bundle is loaded "
+	 @"for more information.\n\n"
+	 @"Copyright (C) 2003 by Andrew Ruder", nil);
+}
 - DCCSendRequestReceived: (NSDictionary *)aInfo onConnection: aConnection
 {
 	id connections;

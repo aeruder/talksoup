@@ -102,6 +102,7 @@ extern id _TSDummy_;
 
 - (void)refreshPluginList;
 - (void)buildEncodingsList;
+- (void)savePluginList;
 
 - (NSInvocation *)invocationForCommand: (NSString *)aCommand;
 - addCommand: (NSString *)aCommand withInvocation: (NSInvocation *)invoc;

@@ -18,6 +18,7 @@
 #include "Controllers/BundleConfigureController.h"
 #include "TalkSoupBundles/TalkSoup.h"
 #include "GNUstepOutput.h"
+#include "Misc/NSAttributedStringAdditions.h"
 
 #include <AppKit/NSPopUpButton.h>
 #include <AppKit/NSTableView.h>
@@ -25,6 +26,9 @@
 #include <AppKit/NSTableColumn.h>
 #include <AppKit/NSTextContainer.h>
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSButton.h>
+#include <AppKit/NSImage.h>
+#include <AppKit/NSTextStorage.h>
 
 @interface BundleDataSource : NSObject
 	{
@@ -36,6 +40,8 @@
 
 @interface BundleConfigureController (PrivateStuff)
 - (void)refreshList: (int)aList;
+- (void)updateButtons;
+- (NSAttributedString *)descriptionForSelected: (int)row;
 @end
 
 @implementation BundleConfigureController (PrivateStuff)
@@ -68,10 +74,104 @@
 
 		[availData[1] setBundleList: y];
 	}
+
+	[availableTable reloadData];
+	[loadedTable reloadData];
 }	
+- (void)updateButtons
+{
+	if (currentTable == loadedTable)
+	{
+		[middleButton setImage: [NSImage imageNamed: @"RightArrow.tiff"]];
+		[middleButton setEnabled: YES];
+		[middleButton setBordered: YES];
+		[upButton setEnabled: YES];
+		[upButton setBordered: YES];
+		[downButton setEnabled: YES];
+		[downButton setBordered: YES];
+	}
+	else if (currentTable == availableTable)
+	{
+		[middleButton setImage: [NSImage imageNamed: @"LeftArrow.tiff"]];
+		[middleButton setEnabled: YES];
+		[middleButton setBordered: YES];
+		[upButton setEnabled: NO];
+		[upButton setBordered: NO];
+		[downButton setEnabled: NO];
+		[downButton setBordered: NO];
+	}
+	else
+	{
+		[middleButton setEnabled: NO];
+		[middleButton setBordered: NO];
+		[upButton setEnabled: NO];
+		[upButton setBordered: NO];
+		[downButton setEnabled: NO];
+		[downButton setBordered: NO];
+	}
+}
+- (NSAttributedString *)descriptionForSelected: (int)row
+{
+	id object = nil;
+
+	if (currentTable == loadedTable)
+	{
+		object = [[loadData[currentShowing] bundleList] 
+		  objectAtIndex: row];
+	}
+	else if (currentTable == availableTable)
+	{
+		object = [[availData[currentShowing] bundleList]
+		 objectAtIndex: row];
+	}
+	
+	if (object && currentShowing == 0)
+	{
+		object = [_TS_ pluginForInFilter: object];
+	}
+	else
+	{
+		object = [_TS_ pluginForOutFilter: object];
+	}
+		
+	if ([object respondsToSelector: @selector(pluginDescription)] && 
+	    (object = [object pluginDescription]))
+	{
+		return  [object substituteColorCodesIntoAttributedStringWithFont:
+		  [NSFont systemFontOfSize: 0.0]];
+	}
+	
+	return S2AS(@"No description available.");
+}
 @end
 
+static NSString *big_description = nil;
+
 @implementation BundleConfigureController
++ (void)initialize
+{
+	 big_description = 
+	 @"Welcome to the TalkSoup Bundle Configuration Interface.\n\n"
+	 @"TalkSoup is a highly-modular IRC client, and parts of it "
+	 @"can be loaded and unloaded while it is running.  These "
+	 @"optional parts are called bundles.  There are two sets "
+	 @"of bundles.  The first set, the input bundles, affect "
+	 @"data coming into the IRC client. The second set, the output "
+	 @"bundles, affect the data leaving the IRC client.  The pop up "
+	 @"button located at the top is used to change which of these "
+	 @"sets are being configured.\n\n"
+	 
+	 @"Above are two tables of bundles.  On the left, there is a "
+	 @"table showing the loaded bundles and the order they are loaded "
+	 @"in.  The arrows on the left can be used to move the selected "
+	 @"bundle up and down throughout the list of loaded bundles.  On "
+	 @"the right is the bundles which can be loaded but currently are "
+	 @"not.  Use the arrow in the center to move bundles between "
+	 @"the two tables.\n\n"
+
+	 @"Clicking on any bundle will show information about "
+	 @"that bundle in this text area.";
+}
 - (void)awakeFromNib
 {
 	NSFont *aFont;
@@ -112,28 +212,6 @@
 	[descriptionText setTextContainerInset: NSMakeSize(2, 0)];
 	[descriptionText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 
-	[descriptionText setText:
-	 @"Welcome to the TalkSoup Bundle Configuration Interface.\n\n"
-	 @"TalkSoup is a highly-modular IRC client, and parts of it "
-	 @"can be loaded and unloaded while it is running.  These "
-	 @"optional parts are called bundles.  There are two sets "
-	 @"of bundles.  The first set, the input bundles, affect "
-	 @"data coming into the IRC client. The second set, the output "
-	 @"bundles, affect the data leaving the IRC client.  The pop up "
-	 @"button located at the top is used to change which of these "
-	 @"sets are being configured.\n\n"
-	 
-	 @"Above are two tables of bundles.  On the left, there is a "
-	 @"table showing the loaded bundles and the order they are loaded "
-	 @"in.  The arrows on the left can be used to move the selected "
-	 @"bundle up and down throughout the list of loaded bundles.  On "
-	 @"the right is the bundles which can be loaded but currently are "
-	 @"not.  Use the arrows in the center to move bundles between "
-	 @"the two tables.\n\n"
-
-	 @"Double-clicking on any bundle will show information about "
-	 @"that bundle in this text area."];
-
 	[showingPopUp selectItemAtIndex: 0];
 	[self showingSelected: showingPopUp];
 
@@ -141,6 +219,11 @@
 }	
 - (void)dealloc
 {
+	[availableTable setDataSource: nil];
+	[loadedTable setDataSource: nil];
+	[availableTable setDelegate: nil];
+	[loadedTable setDelegate: nil];
+	
 	RELEASE(availData[0]);
 	RELEASE(loadData[0]);
 	RELEASE(availData[1]);
@@ -152,6 +235,9 @@
 	RELEASE(loadedTable);
 	RELEASE(descriptionText);
 	RELEASE(showingPopUp);
+	RELEASE(middleButton);
+	RELEASE(upButton);
+	RELEASE(downButton);
 
 	[super dealloc];
 }
@@ -161,26 +247,100 @@
 }
 - (void)upHit: (id)sender
 {
+	int row;
+	NSMutableArray *x;
+	id object;
 	
+	if (currentTable != loadedTable) return;
+
+	row = [currentTable selectedRow];
+
+	if (row == 0) return;
+
+	x = [loadData[currentShowing] bundleList];
+
+	object = [x objectAtIndex: row];
+	[x removeObjectAtIndex: row];
+	[x insertObject: object atIndex: row - 1];
+	
+	[loadedTable reloadData];
+
+	[loadedTable selectRow: row - 1 byExtendingSelection: NO];
 }
 - (void)refreshHit: (id)sender
 {
+	[_TS_ refreshPluginList];
+	[self refreshList: currentShowing];
+	[self showingSelected: showingPopUp];
 }
 - (void)cancelHit: (id)sender
 {
+	[window close];
 }
 - (void)okHit: (id)sender
 {
+	[_TS_ setActivatedInFilters: [loadData[0] bundleList]];
+	[_TS_ setActivatedOutFilters: [loadData[1] bundleList]];
+	[_TS_ savePluginList];
+
+	[window close];
 }
 - (void)downHit: (id)sender
-{
+{	
+	int row;
+	NSMutableArray *x;
+	id object;
+	
+	if (currentTable != loadedTable) return;
+
+	row = [currentTable selectedRow];
+
+	x = [loadData[currentShowing] bundleList];
+	
+	if (row == ([x count] - 1)) return;
+
+	object = [x objectAtIndex: row];
+	[x removeObjectAtIndex: row];
+	[x insertObject: object atIndex: row + 1];
+	
+	[loadedTable reloadData];
+
+	[loadedTable selectRow: row + 1 byExtendingSelection: NO];
 }
-- (void)leftHit: (id)sender
+- (void)middleHit: (id)sender
 {
-}
-- (void)rightHit: (id)sender
-{
-}
+	id from = [currentTable dataSource];
+	id to = [otherTable dataSource];
+	int row = [currentTable selectedRow];
+	int rows;
+	id object;
+
+	object = [[from bundleList] objectAtIndex: row];
+	[[from bundleList] removeObjectAtIndex: row];
+
+	[[to bundleList] addObject: object];
+
+	[loadedTable reloadData];
+	[availableTable reloadData];
+
+	rows = [[from bundleList] count];
+
+	if (rows == 0)
+	{
+		[loadedTable deselectAll: nil];
+		[availableTable deselectAll: nil];
+		[availableTable setNeedsDisplay: YES];
+		[loadedTable setNeedsDisplay: YES];
+		currentTable = nil;
+		[self updateButtons];
+	}
+	else
+	{
+		if (row == rows) row--;
+		[currentTable selectRow: row 
+		  byExtendingSelection: NO];
+	}	
+}	
 - (void)showingSelected: (id)sender
 {
 	int index = [sender indexOfSelectedItem];
@@ -192,6 +352,44 @@
 	  availData[index]];
 	[loadedTable setDataSource: 
 	  loadData[index]];
+	
+	currentShowing = index;
+	currentTable = nil;
+	
+	[availableTable deselectAll: nil];
+	[loadedTable deselectAll: nil];
+	[availableTable setNeedsDisplay: YES];
+	[loadedTable setNeedsDisplay: YES];
+
+	[[descriptionText textStorage] setAttributedString: 
+	  S2AS(big_description)];
+	[descriptionText scrollPoint: NSMakePoint(0, 0)];
+	
+	[self updateButtons];
+}
+- (BOOL)tableView: (NSTableView *)aTableView shouldSelectRow: (int)aRow
+{
+	currentTable = aTableView;
+
+	if (currentTable == availableTable)
+	{
+		otherTable = loadedTable;
+	}
+	else
+	{
+		otherTable = availableTable;
+	}
+
+	[self updateButtons];
+	[otherTable deselectAll: nil];
+	[otherTable setNeedsDisplay: YES];
+	[currentTable setNeedsDisplay: YES];
+
+	[[descriptionText textStorage] setAttributedString: 
+	  [self descriptionForSelected: aRow]];
+	[descriptionText scrollPoint: NSMakePoint(0, 0)];
+
+	return YES;
 }
 @end
 

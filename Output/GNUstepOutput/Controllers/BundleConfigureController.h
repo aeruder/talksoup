@@ -23,10 +23,13 @@
 #include <Foundation/NSObject.h>
 
 @class NSPopUpButton, NSTableView, NSTextView, NSWindow;
-@class NSTableColumn;
+@class NSTableColumn, NSButton;
 
 @interface BundleConfigureController : NSObject
 	{
+		NSButton *middleButton;
+		NSButton *upButton;
+		NSButton *downButton;
 		NSPopUpButton *showingPopUp;
 		NSTableView *loadedTable;
 		NSTableView *availableTable;
@@ -36,6 +39,9 @@
 		NSTableColumn *loadCol;
 		id loadData[2];
 		id availData[2];
+		int currentShowing;
+		id currentTable;
+		id otherTable;
 	}
 
 - (NSWindow *)window;
@@ -45,8 +51,7 @@
 - (void)cancelHit: (id)sender;
 - (void)okHit: (id)sender;
 - (void)downHit: (id)sender;
-- (void)leftHit: (id)sender;
-- (void)rightHit: (id)sender;
+- (void)middleHit: (id)sender;
 - (void)showingSelected: (id)sender;
 
 @end
