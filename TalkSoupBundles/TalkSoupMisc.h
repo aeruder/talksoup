@@ -30,6 +30,8 @@
    withRange: (NSRange)aRange;
 - (void)replaceAttribute: (NSString *)name withValue: (id)aVal
    withValue: (id)newVal withRange: (NSRange)aRange;
+- (void)replaceAttribute: (NSString *)name withExactValue: (id)aVal
+   withValue: (id)newVal withRange: (NSRange)aRange;
 @end
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...);

@@ -172,8 +172,46 @@ static NSArray *get_first_word(NSString *arg)
 	
 	[self endEditing];
 }
+- (void)replaceAttribute: (NSString *)name withExactValue: (id)aVal
+   withValue: (id)newVal withRange: (NSRange)aRange
+{
+	NSRange effect;
+	NSDictionary *aDict;
+	NSMutableDictionary *aDict2;
+	
+	[self beginEditing];
+	
+	aDict = [self attributesAtIndex: aRange.location effectiveRange: &effect];
+	
+	while (1)
+	{
+		if ([aDict objectForKey: name] == aVal)
+		{
+			if (effect.location + effect.length > aRange.location + aRange.length)
+			{
+				effect.length = aRange.location + aRange.length - effect.location;
+			}
+				
+			aDict2 = [NSMutableDictionary dictionaryWithDictionary: aDict];
+			[aDict2 setObject: newVal forKey: name];
+			[self setAttributes: aDict2 range: effect];
+		}
+			
+		effect.location = effect.location + effect.length;
+		if (effect.location < aRange.length + aRange.location)
+		{
+			aDict = [self attributesAtIndex: effect.location 
+			  effectiveRange: &effect];
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	[self endEditing];
+}
 @end
-
 
 NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 {

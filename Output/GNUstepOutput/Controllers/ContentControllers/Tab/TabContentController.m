@@ -142,24 +142,23 @@ NSString *ContentConsoleName = @"Content Console Name";
 }
 - setTextColor: (NSColor *)aColor
 {
-	if (![aColor isEqual: textColor])
-	{
-		NSEnumerator *iter;
-		id object;
+	NSEnumerator *iter;
+	id object;
 
-		iter = [[nameToBoth allValues] objectEnumerator];
-		while ((object = [iter nextObject]))
-		{
-			object = [[object chatView] textStorage];
-			[object replaceAttribute: NSForegroundColorAttributeName 
-			  withValue: textColor withValue: aColor withRange:
-			  NSMakeRange(0, [object length])];
-		}
-		
-		RELEASE(textColor);
-		textColor = RETAIN(aColor);
+	if ([aColor isEqual: textColor]) return self;
 	
+	iter = [[nameToBoth allValues] objectEnumerator];
+	
+	while ((object = [iter nextObject]))
+	{
+		object = [[object chatView] textStorage];
+		[object replaceAttribute: NSForegroundColorAttributeName 
+		  withExactValue: textColor withValue: aColor withRange:
+		  NSMakeRange(0, [object length])];
 	}
+		
+	RELEASE(textColor);
+	textColor = RETAIN(aColor);
 	return self;
 }
 - (NSArray *)allViews
