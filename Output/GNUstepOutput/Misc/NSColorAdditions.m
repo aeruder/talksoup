@@ -22,6 +22,7 @@
 #include <Foundation/NSData.h>
 #include <Foundation/NSScanner.h>
 #include <Foundation/NSDictionary.h>
+#include <AppKit/NSColor.h>
 
 static NSColor *common_color = nil;
 

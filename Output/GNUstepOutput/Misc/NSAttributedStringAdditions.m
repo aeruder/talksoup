@@ -38,6 +38,8 @@ NSString *TypeOfColor = @"TypeOfColor";
 	int len = [self length];
 	NSMutableDictionary *dict;
 	id obj;
+	id fg;
+	id bg;
 	
 	all.length = len;
 	
@@ -46,27 +48,37 @@ NSString *TypeOfColor = @"TypeOfColor";
 		dict = [NSMutableDictionary dictionaryWithDictionary: 
 		 [self attributesAtIndex: all.location longestEffectiveRange: &work
 		 inRange: all]];
+		
+		fg = NSForegroundColorAttributeName;
+		bg = NSBackgroundColorAttributeName;
+		
+		if ([dict objectForKey: IRCReverse])
+		{
+			fg = NSBackgroundColorAttributeName;
+			bg = NSForegroundColorAttributeName;
+		}
+		
 		if ((obj = [dict objectForKey: IRCColor]))
 		{
-			if (![dict objectForKey: NSForegroundColorAttributeName])
+			if (![dict objectForKey: fg])
 			{
 				id temp;
 				temp = [NSColor colorFromIRCString: obj];
 				if (temp)
 				{
-					[dict setObject: temp forKey: NSForegroundColorAttributeName];
+					[dict setObject: temp forKey: fg];
 				}
 			}
 		}
 		if ((obj = [dict objectForKey: IRCBackgroundColor]))
 		{
-			if (![dict objectForKey: NSBackgroundColorAttributeName])
+			if (![dict objectForKey: bg])
 			{
 				id temp;
 				temp = [NSColor colorFromIRCString: obj];
 				if (temp)
 				{
-					[dict setObject: temp forKey: NSBackgroundColorAttributeName];
+					[dict setObject: temp forKey: bg];
 				}
 			}
 		}
@@ -93,6 +105,55 @@ NSString *TypeOfColor = @"TypeOfColor";
 	}
 	
 	return a;
+}
+@end
+
+@implementation NSMutableAttributedString (OutputAdditions2)	  
+- fixInverseWithBackgroundColor: (NSColor *)bg withOldBackgroundColor: (NSColor *)obg
+   withForegroundColor: (NSColor *)fg withOldForegroundColor: (NSColor *)ofg
+{
+	NSMutableAttributedString *a = AUTORELEASE([NSMutableAttributedString new]);
+	NSRange all =  { 0 };
+	NSRange work =  { 0 };
+	int len = [self length];
+	NSMutableDictionary *dict;
+	
+	all.length = len;
+	
+	while (all.length > 0)
+	{
+		dict = [NSMutableDictionary dictionaryWithDictionary: 
+		 [self attributesAtIndex: all.location longestEffectiveRange: &work
+		 inRange: all]];
+		
+		if ([dict objectForKey: IRCReverse])
+		{
+			if (![dict objectForKey: IRCColor])
+			{
+				if ([[dict objectForKey: NSBackgroundColorAttributeName]
+				  isEqual: obg])
+				{
+					[dict setObject: bg forKey: NSBackgroundColorAttributeName];
+				}
+			}
+			if (![dict objectForKey: IRCBackgroundColor])
+			{
+				if ([[dict objectForKey: NSForegroundColorAttributeName]
+				  isEqual: ofg])
+				{
+					[dict setObject: fg forKey: NSForegroundColorAttributeName];
+				}
+			}
+		}
+		
+		[a appendAttributedString: AUTORELEASE([[NSAttributedString alloc]
+		  initWithString: [[self string] substringWithRange: work] attributes: dict])];
+		all.location = work.location + work.length;
+		all.length = len - all.location;
+	}
+	
+	[self setAttributedString: a];
+	return self;
 }
 @end
 

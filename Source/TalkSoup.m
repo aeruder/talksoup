@@ -56,6 +56,7 @@ NSString *IRCColorLightGrey = @"IRCColorLightGrey";
 NSString *IRCColorCustom = @"IRCColorCustom";
 NSString *IRCBold = @"IRCBold";
 NSString *IRCUnderline = @"IRCUnderline";
+NSString *IRCReverse = @"IRCReverse";
 
 id _TS_;
 id _TSDummy_;
@@ -741,11 +742,11 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
 {
 	return BuildAttributedString(_(@"Currently loaded bundles:\n"),
-	  MARK, IRCBold, MARK, _(@"Output: "), activatedOutput, @"\n",
-	  MARK, IRCBold, MARK, _(@"Input: "), activatedInput, @"\n",
-	  MARK, IRCBold, MARK, _(@"Output Filters: "), [[self activatedOutFilters]
+	  MARK, IRCBold, @"bold", _(@"Output: "), activatedOutput, @"\n",
+	  MARK, IRCBold, @"bold", _(@"Input: "), activatedInput, @"\n",
+	  MARK, IRCBold, @"bold", _(@"Output Filters: "), [[self activatedOutFilters]
 	    componentsJoinedByString: @", "], @"\n",
-	  MARK, IRCBold, MARK, _(@"Input Filters: "), [[self activatedInFilters]
+	  MARK, IRCBold, @"bold", _(@"Input Filters: "), [[self activatedInFilters]
 	    componentsJoinedByString: @", "], nil);
 }
 - (NSAttributedString *)commandLoad: (NSString *)args connection: (id)connection
@@ -784,7 +785,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /load <in/out> <filter>"), @"\n",
-		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
+		  MARK, IRCBold, @"bold", _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	
@@ -833,7 +834,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	{
 		return BuildAttributedString(
 		  _(@"Usage: /unload <in/out> <filter>"), @"\n", 
-		  MARK, IRCBold, MARK, _(@"Possible filters: "), 
+		  MARK, IRCBold, @"bold", _(@"Possible filters: "), 
 		  [array componentsJoinedByString: @", "], nil);
 	}
 	

@@ -22,11 +22,16 @@
 
 extern NSString *TypeOfColor;
 
-@class NSFont;
+@class NSFont, NSColor;
  
 @interface NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont:
   (NSFont *)aFont;
+@end
+
+@interface NSMutableAttributedString (OutputAdditions2)	  
+- fixInverseWithBackgroundColor: (NSColor *)bg withOldBackgroundColor: (NSColor *)obg
+   withForegroundColor: (NSColor *)fg withOldForegroundColor: (NSColor *)ofg;
 @end
 
 #endif
