@@ -101,20 +101,7 @@
 	
 	if ([tmp = [serverInfo objectForKey: ServerListInfoCommands] length] > 0)
 	{
-		NSEnumerator *iter;
-		NSArray *x;
-		id object;
-		id input;
-		
-		x = [tmp componentsSeparatedByString: @";"];
-		
-		iter = [x objectEnumerator];
-		input = [self inputController];
-		
-		while ((object = [iter nextObject]))
-		{
-			[input lineTyped: object];
-		}
+		[[self inputController] lineTyped: tmp];
 	}
 
 	return [super registeredWithServerOnConnection: aConnection sender: aPlugin];

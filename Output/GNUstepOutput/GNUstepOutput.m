@@ -359,7 +359,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	tempMenu = AUTORELEASE([NSMenu new]);
 	[menu setSubmenu: tempMenu forItem: item];
 	
-	[tempMenu addItemWithTitle: _l(@"Open Connection...") 
+	[tempMenu addItemWithTitle: _l(@"Open Server List...") 
 	  action: @selector(openServerList:)
 	  keyEquivalent: @"o"];
 	

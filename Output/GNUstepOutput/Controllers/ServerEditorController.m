@@ -20,6 +20,8 @@
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSButton.h>
+#include <AppKit/NSTextView.h>
+#include <AppKit/NSTextContainer.h>
 
 @implementation ServerEditorController
 - (void)awakeFromNib
@@ -32,13 +34,21 @@
 	[passwordField setNextKeyView: userField];
 	[userField setNextKeyView: serverField];
 	[serverField setNextKeyView: portField];
-	[portField setNextKeyView: commandsField];
-	[commandsField setNextKeyView: entryField];
+	[portField setNextKeyView: commandsText];
+	[commandsText setNextKeyView: entryField];
+
+	[commandsText setHorizontallyResizable: NO];
+	[commandsText setVerticallyResizable: YES];
+	[commandsText setMinSize: NSMakeSize(0, 0)];
+	[commandsText setMaxSize: NSMakeSize(1e7, 1e7)];
+	[[commandsText textContainer] setContainerSize:
+	  NSMakeSize([commandsText frame].size.width, 1e7)];
+	[commandsText setTextContainerInset: NSMakeSize(2, 0)];
 }
 - (void)dealloc
 {
 	DESTROY(connectButton);
-	DESTROY(commandsField);
+	DESTROY(commandsText);
 	DESTROY(portField);
 	DESTROY(serverField);
 	DESTROY(userField);
@@ -56,9 +66,9 @@
 {
 	return connectButton;
 }
-- (NSTextField *)commandsField
+- (NSTextView *)commandsText
 {
-	return commandsField;
+	return commandsText;
 }
 - (NSTextField *)portField
 {

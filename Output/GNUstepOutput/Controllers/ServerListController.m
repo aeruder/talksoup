@@ -30,6 +30,7 @@
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSBrowser.h>
 #include <AppKit/NSBrowserCell.h>
+#include <AppKit/NSTextView.h>
 
 NSString *ServerListInfoWindowFrame = @"WindowFrame";
 NSString *ServerListInfoCommands = @"Commands";
@@ -250,7 +251,7 @@ static inline NSMutableArray *mutablized_prefs()
 	else if ([editor isKindOf: [ServerEditorController class]])
 	{
 		id server = [[editor serverField] stringValue];
-		id commands = [[editor commandsField] stringValue];
+		id commands = [[editor commandsText] string];
 		id nick = [[editor nickField] stringValue];
 		id user = [[editor userField] stringValue];
 		id real = [[editor realField] stringValue];
@@ -412,7 +413,7 @@ static inline NSMutableArray *mutablized_prefs()
 		[[editor userField] setStringValue: [o objectForKey: IRCDefaultsUserName]]; 
 		[[editor serverField] setStringValue: [o objectForKey: ServerListInfoServer]]; 
 		[[editor portField] setStringValue: [o objectForKey: ServerListInfoPort]];
-		[[editor commandsField] setStringValue: [o objectForKey: ServerListInfoCommands]];
+		[[editor commandsText] setString: [o objectForKey: ServerListInfoCommands]];
 		if ([[o objectForKey: ServerListInfoAutoConnect] isEqualToString: @"YES"])
 		{
 			[[editor connectButton] setState: NSOnState];
@@ -607,4 +608,5 @@ static inline NSMutableArray *mutablized_prefs()
 		[cell setLeaf: YES];
 	}
 }
+
 @end

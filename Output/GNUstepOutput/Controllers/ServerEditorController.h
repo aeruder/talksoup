@@ -22,12 +22,12 @@
 
 #include <Foundation/NSObject.h>
 
-@class NSTextField, NSButton, NSWindow;
+@class NSTextField, NSButton, NSWindow, NSTextView;
 
 @interface ServerEditorController : NSObject
 	{
 		NSButton *connectButton;
-		NSTextField *commandsField;
+		NSTextView *commandsText;
 		NSTextField *portField;
 		NSTextField *serverField;
 		NSTextField *userField;
@@ -41,7 +41,7 @@
 	}
 
 - (NSButton *)connectButton;
-- (NSTextField *)commandsField;
+- (NSTextView *)commandsText;
 - (NSTextField *)portField;
 - (NSTextField *)serverField;
 - (NSTextField *)userField;

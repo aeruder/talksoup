@@ -166,7 +166,8 @@
 	    okButton,
 	    entryField,
 	    window,
-	    nickField
+	    nickField,
+	    commandsText
 	);
 	Super = NSObject;
     };
