@@ -253,7 +253,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	for (curr = [NSString availableStringEncodings]; curr != 0; curr++)
 	{
-		NSMapInsert(encodings, [NSString localizedNameForEncoding: *curr], *curr);
+		NSMapInsert(encodings, (const void *)[NSString localizedNameOfStringEncoding: *curr], 
+		  (const void *)*curr);
 	}
 }
 - (void)refreshPluginList
@@ -1254,7 +1255,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		arg = [array objectAtIndex: 0];
 	}
 	
-	if (arg) enc = NSMapGet(encodings, arg);
+	if (arg) enc = (NSStringEncoding)NSMapGet(encodings, arg);
 	
 	if (!enc)
 	{
@@ -1263,9 +1264,9 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		  _(@"Available encodings: "), [temp componentsJoinedByString: @", "], nil);
 	}
 	
-	[connection setEncoding: encoding];
+	[connection setEncoding: enc];
 	
-	return _(@"Ok.");
+	return S2AS(_(@"Ok."));
 }
 - (void)setupCommandList
 {
