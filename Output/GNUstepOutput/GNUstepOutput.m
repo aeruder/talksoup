@@ -81,6 +81,8 @@ GNUstepOutput *_GS_ = nil;
 	id fontSize = nil;
 	
 	if (!(self = [super init])) return nil;
+	
+	[NSApplication sharedApplication]; // Make sure NSApp is allocated..
 
 	connectionToConnectionController = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
