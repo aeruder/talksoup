@@ -119,7 +119,7 @@ static inline NSArray *get_directories_with_talksoup()
 	NSEnumerator *iter;
 	BOOL isDir;
 
-	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, 
+	x = NSSearchPathForDirectoriesInDomains(NSUserDirectory, 
 	  NSAllDomainsMask, YES);
 
 	fm = [NSFileManager defaultManager];
@@ -130,7 +130,8 @@ static inline NSArray *get_directories_with_talksoup()
 	NSLog(@"%@", x);
 	while ((object = [iter nextObject]))
 	{
-		object = [object stringByAppendingString: @"/TalkSoup"];
+		object = [object stringByAppendingString: 
+		  @"/ApplicationSupport/TalkSoup"];
 		
 		if ([fm fileExistsAtPath: object isDirectory: &isDir] && isDir)
 		{

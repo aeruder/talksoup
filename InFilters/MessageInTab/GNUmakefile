@@ -3,7 +3,7 @@ BUNDLE_NAME = MessageInTab
 
 BUNDLE_EXTENSION = .bundle
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/InFilters
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/ApplicationSupport/TalkSoup/InFilters
 
 MessageInTab_PRINCIPAL_CLASS = MessageInTab
 

@@ -3,7 +3,7 @@ BUNDLE_NAME = NetclassesInput
 
 BUNDLE_EXTENSION = .bundle
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/TalkSoup/Input
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/ApplicationSupport/TalkSoup/Input
 
 NetclassesInput_PRINCIPAL_CLASS = NetclassesInput
 
