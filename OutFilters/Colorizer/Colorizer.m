@@ -62,6 +62,7 @@ static NSCharacterSet *color_control = nil;
 static NSCharacterSet *bold_control = nil;
 static NSCharacterSet *underline_control = nil;
 static NSCharacterSet *clear_control = nil;
+static NSCharacterSet *reverse_control = nil;
 static NSString *colors[16] = { 0 };
 	
 static void initialize_stuff(void)
@@ -77,6 +78,8 @@ static void initialize_stuff(void)
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"U"]);
 	clear_control =
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"O"]);
+	reverse_control = 
+	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"R"]);	
 	control =
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: 
 	   @"%"]);
@@ -183,7 +186,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		{
 			if (![dict objectForKey: IRCBold])
 			{
-				[dict setObject: [NSNull null]
+				[dict setObject: @"bold"
 				  forKey: IRCBold];
 			}
 			else
@@ -195,7 +198,7 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
-				[dict setObject: [NSNull null]
+				[dict setObject: @"ul"
 				  forKey: IRCUnderline];
 			}
 			else
@@ -206,6 +209,18 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 		else if (scan_one_char_from_set(scan, clear_control, 0))
 		{
 			[dict removeAllObjects];
+		}
+		else if (scan_one_char_from_set(scan, reverse_control, 0))
+		{
+			if (![dict objectForKey: IRCReverse])
+			{
+				[dict setObject: @"reverse"
+				  forKey: IRCReverse];
+			}
+			else
+			{
+				[dict removeObjectForKey: IRCReverse];
+			}
 		}
 		else if (scan_one_char_from_set(scan, color_control, 0))
 		{

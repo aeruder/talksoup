@@ -54,7 +54,7 @@ NSAttributedString *SubstituteColorCodesIntoAttributedString(NSAttributedString 
 }
 - initWithConnectionController: (ConnectionController *)connect;
 
-- updatedColor: (NSString *)aKey;
+- updatedColor: (NSString *)aKey old: (NSString *)oldValue;
 - (NSColor *)colorForKey: (NSString *)aKey;
 
 - highlightTabWithName: (NSString *)aName withColor: (NSString *)aColor

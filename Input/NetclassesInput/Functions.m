@@ -94,6 +94,8 @@ static void initialize_stuff(void)
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"\037"]);
 	clear_control =
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"\017"]);
+	reverse_control =
+	  RETAIN([NSCharacterSet characterSetWithCharactersInString: @"\026"]);
 	control =
 	  RETAIN([NSCharacterSet characterSetWithCharactersInString: 
 	   @"\003\002\037\017"]);
@@ -156,7 +158,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		{
 			if (![dict objectForKey: IRCBold])
 			{
-				[dict setObject: [NSNull null]
+				[dict setObject: @"bold"
 				  forKey: IRCBold];
 			}
 			else
@@ -168,7 +170,7 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		{
 			if (![dict objectForKey: IRCUnderline])
 			{
-				[dict setObject: [NSNull null]
+				[dict setObject: @"ul"
 				  forKey: IRCUnderline];
 			}
 			else
@@ -179,6 +181,18 @@ inline NSAttributedString *NetClasses_AttributedStringFromString(NSString *str)
 		else if (scan_one_char_from_set(scan, clear_control, 0))
 		{
 			[dict removeAllObjects];
+		}
+		else if (scan_one_char_from_set(scan, reverse_control, 0))
+		{
+			if (![dict objectForKey: IRCReverse])
+			{
+				[dict setObject: @"reverse"
+				  forKey: IRCReverse];
+			}
+			else
+			{
+				[dict removeObjectForKey: IRCReverse];
+			}
 		}
 		else if (scan_one_char_from_set(scan, color_control, 0))
 		{
@@ -265,6 +279,12 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		if ((!begB || !begF) && (begF || begB))
 		{
 			[aString appendString: @"\037"];
+		}
+		begB = [b objectForKey: IRCReverse];
+		begF = [so objectForKey: IRCReverse];
+		if ((!begB || !begF) && (begF || begB))
+		{
+			[aString appendString: @"\026"];
 		}
 		
 		begF = nowF;

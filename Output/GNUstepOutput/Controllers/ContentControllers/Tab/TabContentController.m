@@ -139,7 +139,7 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	[super dealloc];
 }
-- updatedColor: (NSString *)aKey
+- updatedColor: (NSString *)aKey old: (NSString *)old
 {
 	NSEnumerator *iter;
 	id object;
@@ -151,12 +151,29 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	
 	while ((object = [iter nextObject]))
 	{
-		object = [[object chatView] textStorage];
-		[object setAttribute: NSForegroundColorAttributeName
+		object = [object chatView];
+		[[object textStorage] 
+		 setAttribute: NSForegroundColorAttributeName
 		  toValue: color
 		 inRangesWithAttribute: TypeOfColor
 		  matchingValue: aKey
 		 withRange: NSMakeRange(0, [object length])];
+		if ([aKey isEqualToString: GNUstepOutputBackgroundColor])
+		{
+			[object setBackgroundColor: color];
+			[[object textStorage] fixInverseWithBackgroundColor: color withOldBackgroundColor: 
+			  [NSColor colorFromEncodedData: old] withForegroundColor: 
+			  [self colorForKey: GNUstepOutputTextColor] withOldForegroundColor: 
+			  [self colorForKey: GNUstepOutputTextColor]];
+		}
+		else if ([aKey isEqualToString: GNUstepOutputTextColor])
+		{
+			[[object textStorage] fixInverseWithBackgroundColor: 
+			  [self colorForKey: GNUstepOutputBackgroundColor] 
+			  withOldBackgroundColor: [self colorForKey: GNUstepOutputBackgroundColor]			  
+			  withForegroundColor: color withOldForegroundColor:
+			  [NSColor colorFromEncodedData: old]];
+		}
 	}
 
 	return self;
@@ -337,11 +354,26 @@ static void clear_scrollback(NSMutableAttributedString *back)
 	{
 		controller = [nameToBoth objectForKey: current];
 	}
+
+	controller = [[controller chatView] textStorage];	
 	
 	if ([aString isKindOf: [NSAttributedString class]])
 	{
 		aRange = NSMakeRange(0, [aString length]);
 		string = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
+		[string setAttribute: IRCReverse toValue: @"reverse"
+		  inRangesWithAttribute: IRCReverse notMatchingValue: nil 
+		  withRange: aRange];
+		[string setAttribute: NSForegroundColorAttributeName toValue:
+		  [self colorForKey: GNUstepOutputBackgroundColor]
+		  inRangesWithAttributes: [NSArray arrayWithObjects: NSForegroundColorAttributeName,
+		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
+		    @"reverse", nil] withRange: aRange];
+		[string setAttribute: NSBackgroundColorAttributeName toValue:
+		  [self colorForKey: GNUstepOutputTextColor]
+		  inRangesWithAttributes: [NSArray arrayWithObjects: NSBackgroundColorAttributeName,
+		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
+		    @"reverse", nil] withRange: aRange];		
 		[string setAttribute: TypeOfColor toValue: GNUstepOutputTextColor
 		  inRangesWithAttributes: 
 		    [NSArray arrayWithObjects: NSForegroundColorAttributeName,
@@ -376,8 +408,6 @@ static void clear_scrollback(NSMutableAttributedString *back)
 			 [self colorForKey: GNUstepOutputTextColor], NSForegroundColorAttributeName,
 		     nil]]));
 	}
-	
-	controller = [[controller chatView] textStorage];
 	
 	[controller appendAttributedString: string];
 	
@@ -677,6 +707,10 @@ static void clear_scrollback(NSMutableAttributedString *back)
 		[object replaceAttribute: NSFontAttributeName 
 		  withValue: chatFont withValue: aFont withRange:
 		  NSMakeRange(0, [object length])];
+		[object replaceAttribute: NSFontAttributeName
+		  withValue: [NSFont boldSystemFontOfSize: [chatFont pointSize]]
+		  withValue: [NSFont boldSystemFontOfSize: [aFont pointSize]]
+		  withRange: NSMakeRange(0, [object length])];
 	}
 
 	RELEASE(chatFont);

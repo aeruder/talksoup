@@ -194,19 +194,18 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = [sender color];
+	id old;
 
-	color = [color encodeToData];		
-	[_GS_ setDefaultsObject: color forKey:
+	old = [_GS_ defaultsObjectForKey: GNUstepOutputPersonalBracketColor];		
+	[_GS_ setDefaultsObject: [[sender color] encodeToData] forKey:
 	  GNUstepOutputPersonalBracketColor];
 	
-	color = [NSColor colorFromEncodedData: color];
-		
 	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[[object contentController] updatedColor: GNUstepOutputPersonalBracketColor];
+		[[object contentController] updatedColor: GNUstepOutputPersonalBracketColor
+		  old: old];
 	}
 	
 	return self;
@@ -215,28 +214,18 @@
 {
 	NSEnumerator *iter;
 	id object;
-	NSEnumerator *iter2;
-	id object2;
-	id color = [sender color];
+	id old;
 	
-	color = [color encodeToData];		
-	[_GS_ setDefaultsObject: color forKey:
+	old = [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]; 		
+	[_GS_ setDefaultsObject: [[sender color] encodeToData] forKey:
 	  GNUstepOutputBackgroundColor];
 	
-	color = [NSColor colorFromEncodedData: color];
-			
 	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		iter2 = [[[object contentController] allViews] objectEnumerator];
-		
-		while ((object2 = [iter2 nextObject]))
-		{
-			[[object2 chatView] setBackgroundColor: color];
-		}
-/*		[[object fieldEditor] setBackgroundColor: color];
-		[[[object contentController] typeView] setBackgroundColor: color];*/
+		[[object contentController] updatedColor: GNUstepOutputBackgroundColor
+		 old: old];
 	}
 
 	return self;
@@ -245,19 +234,18 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = [sender color];
+	id old;
 
-	color = [color encodeToData];	
-	[_GS_ setDefaultsObject: color forKey:
+	old = [_GS_ defaultsObjectForKey: GNUstepOutputOtherBracketColor];
+	[_GS_ setDefaultsObject: [[sender color] encodeToData] forKey:
 	  GNUstepOutputOtherBracketColor];
 	
-	color = [NSColor colorFromEncodedData: color];
-		
 	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[[object contentController] updatedColor: GNUstepOutputOtherBracketColor];
+		[[object contentController] updatedColor: GNUstepOutputOtherBracketColor
+		  old: old];
 	}
 	
 	return self;
@@ -266,16 +254,18 @@
 {
 	NSEnumerator *iter;
 	id object;
-	id color = [sender color];
+	id old;
 	
-	[_GS_ setDefaultsObject: [color encodeToData] 
+	old = [_GS_ defaultsObjectForKey: GNUstepOutputTextColor];
+	[_GS_ setDefaultsObject: [[sender color] encodeToData] 
 	  forKey: GNUstepOutputTextColor];
 	
 	iter = [[_GS_ connectionControllers] objectEnumerator];
 	
 	while ((object = [iter nextObject]))
 	{
-		[[object contentController] updatedColor: GNUstepOutputTextColor];
+		[[object contentController] updatedColor: GNUstepOutputTextColor
+		 old: old];
 	}
 
 	return self;
