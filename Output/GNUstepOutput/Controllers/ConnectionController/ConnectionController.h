@@ -81,6 +81,8 @@
 - setOtherColor: (NSColor *)aColor;
 - (NSColor *)personalColor;
 - setPersonalColor: (NSColor *)aColor;
+
+- leaveChannel: (NSString *)channel;
 @end
 
 #endif

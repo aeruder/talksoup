@@ -50,13 +50,11 @@
 	NSEnumerator *iter;
 	id object;
 
-	iter = [nameToChannelData keyEnumerator];
+	iter = [[NSArray arrayWithArray: [nameToChannelData allKeys]] objectEnumerator];
 
 	while ((object = [iter nextObject]))
 	{
-		[self channelParted: S2AS(object) withMessage: S2AS(@"")
-		  from: S2AS([connection nick]) onConnection: connection
-		  sender: nil];
+		[self leaveChannel: object];
 	}
 	
 	[self systemMessage: S2AS(_l(@"Disconnected")) onConnection: aConnection];
@@ -138,6 +136,7 @@
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)aConnection 
    sender: aPlugin
 {
+	NSLog(@"Couldn't register: %@", [reason string]);
 	return self;
 }
 - CTCPRequestReceived: (NSAttributedString *)aCTCP 
@@ -229,6 +228,19 @@
    onConnection: (id)aConnection sender: aPlugin
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
+	id lowChan = GNUstepOutputLowercase([aChannel string]);
+	id view = [content controllerForViewWithName: lowChan];
+
+	if (GNUstepOutputCompare([aPerson string], [connection nick]))
+	{
+		[self leaveChannel: lowChan];
+	}
+	else
+	{
+		[[nameToChannelData objectForKey: lowChan] removeUser: [aPerson string]];
+		[[view tableView] reloadData];
+	}
+	
 	[content putMessage: 
 	  BuildAttributedFormat(_l(@"%@ was kicked from %@ by %@ (%@)"), aPerson,
 	  aChannel, name, reason) 
@@ -456,26 +468,18 @@
 	id name = [IRCUserComponents(parter) objectAtIndex: 0];
 	id lowChan = GNUstepOutputLowercase([channel string]);
 	id view = [content controllerForViewWithName: lowChan];
-	BOOL isMe = NO;
 
 	if (GNUstepOutputCompare([name string], [connection nick]))
 	{
-		id object = [view tableView];
-		
-		[object setDataSource: nil];
-		[object setTarget: nil];
-		
-		[nameToChannelData removeObjectForKey: lowChan];
-		[content setLabel: BuildAttributedString(@"(", channel, @")", nil)
-		  forViewWithName: lowChan];
-		
-		isMe = YES;
+		[self leaveChannel: lowChan];
+	}
+	else
+	{
+		[[nameToChannelData objectForKey: lowChan] removeUser: [name string]];
+		[[view tableView] reloadData];
 	}
 	
-	[[nameToChannelData objectForKey: lowChan] removeUser: [name string]];
-	[[[content controllerForViewWithName: lowChan] tableView] reloadData]; 
-	
-	if (!isMe || view)
+	if (view)
 	{
 		[content putMessage: BuildAttributedFormat(_l(@"%@ has left %@ (%@)"), 
 		  name, channel, aMessage) in: lowChan];

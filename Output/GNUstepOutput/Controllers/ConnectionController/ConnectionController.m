@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "Controllers/ConnectionController.h"
-#include "Controllers/QueryController.h"
+#include "Controllers/ChannelController.h"
 #include "Controllers/ContentController.h"
 #include "Controllers/TopicInspectorController.h"
 #include "Controllers/InputController.h"
@@ -30,6 +30,7 @@
 #include <Foundation/NSHost.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSNibLoading.h>
+#include <AppKit/NSTableView.h>
 #include <AppKit/NSWindow.h>
 #include <AppKit/NSTextField.h>
 
@@ -308,6 +309,20 @@
 		
 	RELEASE(personalColor);
 	personalColor = RETAIN(aColor);
+	return self;
+}
+- leaveChannel: (NSString *)channel
+{
+	id view = [content controllerForViewWithName: channel];
+	id object = [view tableView];
+		
+	[object setDataSource: nil];
+	[object setTarget: nil];
+		
+	[nameToChannelData removeObjectForKey: channel];
+	[content setLabel: BuildAttributedString(@"(", channel, @")", nil)
+	  forViewWithName: channel];
+
 	return self;
 }
 @end

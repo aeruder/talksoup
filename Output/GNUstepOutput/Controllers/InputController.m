@@ -367,7 +367,7 @@ id _output_ = nil;
 		     isEqualToString: ContentConsoleName])
 		{			
 			[controller showMessage:
-			  S2AS(_l(@"Usage: /close <name>")) 
+			  S2AS(_l(@"Usage: /close <tab label>")) 
 			  onConnection: nil];
 			return self;
 		}
@@ -379,8 +379,7 @@ id _output_ = nil;
 
 	if ([controller dataForChannelWithName: o])
 	{
-		[controller channelParted: S2AS(o) withMessage: S2AS(@"") from: 
-		  S2AS([[controller connection] nick]) onConnection: nil sender: nil];
+		[controller leaveChannel: o];
 		[_TS_ partChannel: S2AS(o) withMessage: S2AS(@"")
 		  onConnection: [controller connection] sender: _output_];
 	}
