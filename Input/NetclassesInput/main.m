@@ -314,12 +314,15 @@
 - changeNick: (NSAttributedString *)aNick onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ changeNick: aNick onConnection: self sender: control];
 	[super changeNick: AS2S(aNick)];
 	return self;
 }	
 - quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection
    sender: aPlugin
 {
+	[_TS_ quitWithMessage: aMessage onConnection: self
+	  sender: control];
 	[super quitWithMessage: AS2S(aMessage)];
 	return self;
 }
@@ -327,6 +330,8 @@
    withMessage: (NSAttributedString *)aMessage 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ partChannel: channel withMessage: aMessage
+	  onConnection: self sender: control];
 	[super partChannel: AS2S(channel) withMessage: AS2S(aMessage)];
 	return self;
 }
@@ -334,6 +339,8 @@
    withPassword: (NSAttributedString *)aPassword 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ joinChannel: channel withPassword: aPassword onConnection: self
+	  sender: control];
 	[super joinChannel: AS2S(channel) withPassword: AS2S(aPassword)];
 	return self;
 }
@@ -341,8 +348,8 @@
    withArgument: (NSAttributedString *)args
    to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
 {
-	[_TS_ CTCPReplyReceived: aCTCP withArgument: args
-	  from: S2AS(nick) onConnection: aConnection sender: control];
+	[_TS_ sendCTCPReply: aCTCP withArgument: args to: aPerson
+	  onConnection: self sender: control];
 	[super sendCTCPReply: AS2S(aCTCP) withArgument: AS2S(args)
 	  to: AS2S(aPerson)];
 	return self;
@@ -351,8 +358,8 @@
    withArgument: (NSAttributedString *)args
    to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
 {
-	[_TS_ CTCPRequestReceived: aCTCP withArgument: args
-	  from: S2AS(nick) onConnection: aConnection sender: control];
+	[_TS_ sendCTCPRequest: aCTCP withArgument: args
+	  to: aPerson onConnection: self sender: control];
 	[super sendCTCPRequest: AS2S(aCTCP) withArgument: AS2S(args)
 	  to: AS2S(aPerson)];
 	return self;
@@ -360,24 +367,24 @@
 - sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
-	[_TS_ messageReceived: message to: receiver from: S2AS(nick)
-	  onConnection: aConnection sender: control];
+	[_TS_ sendMessage: message to: receiver onConnection: self
+	  sender: control];
 	[super sendMessage: AS2S(message) to: AS2S(receiver)];
 	return self;
 }
 - sendNotice: (NSAttributedString *)message to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
-	[_TS_ noticeReceived: message to: receiver from: S2AS(nick)
-	  onConnection: aConnection sender: control];
+	[_TS_ sendNotice: message to: receiver onConnection: self
+	  sender: control];
 	[super sendNotice: AS2S(message) to: AS2S(receiver)];
 	return self;
 }
 - sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
    onConnection: aConnection sender: aPlugin
 {
-	[_TS_ actionReceived: anAction to: receiver from: S2AS(nick)
-	  onConnection: aConnection sender: control];
+	[_TS_ sendAction: anAction to: receiver
+	  onConnection: self sender: control];
 	[super sendAction: AS2S(anAction) to: AS2S(receiver)];
 	return self;
 }
@@ -385,6 +392,8 @@
    withPassword: (NSAttributedString *)pass 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ becomeOperatorWithName: aName withPassword: pass
+	  onConnection: self sender: control];
 	[super becomeOperatorWithName: AS2S(aName) withPassword: AS2S(pass)];
 	return self;
 }
@@ -392,6 +401,8 @@
    fromServer: (NSAttributedString *)aServer 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestNamesOnChannel: aChannel
+	  fromServer: aServer onConnection: self sender: control];
 	[super requestNamesOnChannel: AS2S(aChannel)
 	  fromServer: AS2S(aServer)];
 	return self;
@@ -399,6 +410,8 @@
 - requestMOTDOnServer: (NSAttributedString *)aServer onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestMOTDOnServer: aServer onConnection: self
+	  sender: control];
 	[super requestMOTDOnServer: AS2S(aServer)];
 	return self;
 }
@@ -406,6 +419,9 @@
    andForwardTo: (NSAttributedString *)anotherServer onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestSizeInformationFromServer: aServer
+	  andForwardTo: anotherServer onConnection: self
+	  sender: control];
 	[super requestSizeInformationFromServer: AS2S(aServer)
 	  andForwardTo: AS2S(anotherServer)];
 	return self;
@@ -414,6 +430,8 @@
    onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestVersionOfServer: aServer
+	  onConnection: self sender: control];
 	[super requestVersionOfServer: AS2S(aServer)];
 	return self;
 }
@@ -421,6 +439,8 @@
    for: (NSAttributedString *)query 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServerStats: aServer for: query
+	  onConnection: self sender: control];
 	[super requestServerStats: AS2S(aServer) for: AS2S(query)];
 	return self;
 }
@@ -428,12 +448,16 @@
    from: (NSAttributedString *)aServer 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServerLink: aLink
+	 from: aServer onConnection: self sender: control];
 	[super requestServerLink: AS2S(aLink) from: AS2S(aServer)];
 	return self;
 }
 - requestTimeOnServer: (NSAttributedString *)aServer onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestTimeOnServer: aServer onConnection: self 
+	 sender: control];
 	[super requestTimeOnServer: AS2S(aServer)];
 	return self;
 }
@@ -442,6 +466,8 @@
    onPort: (NSAttributedString *)aPort onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestServerToConnect: aServer to: connectServer
+	  onPort: aPort onConnection: self sender: control];
 	[super requestServerToConnect: AS2S(aServer) to: AS2S(connectServer)
 	  onPort: AS2S(aPort)];	
 	return self;
@@ -449,6 +475,8 @@
 - requestTraceOnServer: (NSAttributedString *)aServer onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestTraceOnServer: aServer onConnection: self
+	  sender: control];
 	[super requestTraceOnServer: AS2S(aServer)];
 	return self;
 }
@@ -456,12 +484,15 @@
    onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestAdministratorOnServer: aServer onConnection: self
+	  sender: control];
 	[super requestAdministratorOnServer: AS2S(aServer)];
 	return self;
 }
 - requestInfoOnServer: (NSAttributedString *)aServer onConnection: aConnection
    sender: aPlugin
 {
+	[_TS_ requestInfoOnServer: aServer onConnection: self sender: control];
 	[super requestInfoOnServer: AS2S(aServer)];
 	return self;
 }
@@ -469,22 +500,27 @@
    ofType: (NSAttributedString *)type 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServiceListWithMask: aMask ofType: type
+	  onConnection: self sender: control];
 	[super requestServiceListWithMask: AS2S(aMask)
 	  ofType: AS2S(type)];
 	return self;
 }
 - requestServerRehashOnConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServerRehashOnConnection: self sender: control];
 	[super requestServerRehash];
 	return self;
 }
-- requestServerShutdown
+- requestServerShutdownOnConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServerShutdownOnConnection: self sender: control];
 	[super requestServerShutdown];
 	return self;
 }
 - requestServerRestartOnConnection: aConnection sender: aPlugin
 {
+	[_TS_ requestServerRestartOnConnection: self sender: control];
 	[super requestServerRestart];
 	return self;
 }
@@ -492,18 +528,23 @@
    onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ requestUserInfoOnServer: aServer onConnection: self
+	  sender: control];
 	[super requestUserInfoOnServer: AS2S(aServer)];
 	return self;
 }
 - areUsersOn: (NSAttributedString *)userList onConnection: aConnection
   sender: aPlugin
 {
+	[_TS_ areUsersOn: userList onConnection: self sender: control];
 	[super areUsersOn: AS2S(userList)];
 	return self;
 }
 - sendWallops: (NSAttributedString *)message onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ sendWallops: message onConnection: self
+	  sender: control];
 	[super sendWallops: AS2S(message)];
 	return self;
 }
@@ -511,6 +552,8 @@
    withMessage: (NSAttributedString *)aMessage 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ queryService: aService withMessage: aMessage
+	  onConnection: self sender: control];
 	[super queryService: AS2S(aService)
 	  withMessage: AS2S(aMessage)];
 	return self;
@@ -518,12 +561,16 @@
 - listWho: (NSAttributedString *)aMask onlyOperators: (BOOL)operators 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ listWho: aMask onlyOperators: operators onConnection: self
+	  sender: control];
 	[super listWho: AS2S(aMask) onlyOperators: operators];
 	return self;
 }
 - whois: (NSAttributedString *)aPerson onServer: (NSAttributedString *)aServer 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ whois: aPerson onServer: aServer onConnection: self
+	  sender: control];
 	[super whois: AS2S(aPerson) onServer: AS2S(aServer)];
 	return self;
 }
@@ -531,6 +578,8 @@
    withNumberEntries: (NSAttributedString *)aNumber onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ whowas: aPerson onServer: aServer withNumberEntries: aNumber
+	  onConnection: self sender: control];
 	[super whowas: AS2S(aPerson) onServer: AS2S(aServer)
 	  withNumberEntries: AS2S(aNumber)];
 	return self;
@@ -539,6 +588,8 @@
    withComment: (NSAttributedString *)aComment 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ kill: aPerson withComment: aComment onConnection: self
+	  sender: control];
 	[super kill: AS2S(aPerson) withComment: AS2S(aComment)];
 	return self;
 }
@@ -546,6 +597,8 @@
    to: (NSAttributedString *)aTopic 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ setTopicForChannel: aChannel
+	  to: aTopic onConnection: self sender: control];
 	[super setTopicForChannel: AS2S(aChannel) to: AS2S(aTopic)];
 	return self;
 }
@@ -556,6 +609,8 @@
 	NSEnumerator *iter;
 	id object;
 	
+	[_TS_ setMode: aMode on: anObject withParams: list
+	  onConnection: self sender: control];
 	a = AUTORELEASE([NSMutableArray new]);
 	iter = [list objectEnumerator];
 	while ((object = [iter nextObject]))
@@ -572,12 +627,15 @@
    onServer: (NSAttributedString *)aServer 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ listChannel: aChannel onServer: aServer
+	  onConnection: self sender: control];
 	[super listChannel: AS2S(aChannel) onServer: AS2S(aServer)];
 	return self;
 }
 - invite: (NSAttributedString *)aPerson to: (NSAttributedString *)aChannel 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ invite: aPerson to: aChannel onConnection: self sender: control];
 	[super invite: AS2S(aPerson) to: AS2S(aChannel)];
 	return self;
 }
@@ -585,30 +643,36 @@
    for: (NSAttributedString *)reason 
    onConnection: aConnection sender: aPlugin
 {
+	[_TS_ kick: aPerson offOf: aChannel for: reason onConnection: self
+	  sender: control];
 	[super kick: AS2S(aPerson) offOf: AS2S(aChannel) for: AS2S(reason)];
 	return self;
 }
 - setAwayWithMessage: (NSAttributedString *)message onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ setAwayWithMessage: message onConnection: self sender: control];
 	[super setAwayWithMessage: AS2S(message)];
 	return self;
 }
 - sendPingWithArgument: (NSAttributedString *)aString onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ sendPingWithArgument: aString onConnection: self sender: control];
 	[super sendPingWithArgument: AS2S(aString)];
 	return self;
 }
 - sendPongWithArgument: (NSAttributedString *)aString onConnection: aConnection 
    sender: aPlugin
 {
+	[_TS_ sendPongWithArgument: aString onConnection: self sender: control];
 	[super sendPongWithArgument: AS2S(aString)];
 	return self;
 }
 - writeRawString: (NSAttributedString *)aString onConnection: aConnection
    sender: aPlugin
 {
+	[_TS_ writeRawString: aString onConnection: self sender: control];
 	[super writeString: @"%@", AS2S(aString)];
 	return self;
 }

@@ -195,7 +195,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 
 static NSInvocation *invoc = nil;
 
-#define COLOR_MSG @"The color is any color listed by typing /colors"
+#define COLOR_MSG @"The color is any color listed by typing /colors."
 							  
 @implementation Highlighting
 + (void)initialize
@@ -337,18 +337,14 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if (![[[from string] lowercaseString] isEqualToString: 
-	  [[connection nick] lowercaseString]])
+	if ([words isKindOf: [NSArray class]])
 	{
-		if ([words isKindOf: [NSArray class]])
-		{
-			[x addObjectsFromArray: words];
-		}
-		sender = do_highlighting(self, [aMessage string], sender, x, 
-		  where, connection);
- 
- 	}
+		[x addObjectsFromArray: words];
+	}
 	
+	sender = do_highlighting(self, [aMessage string], sender, x, 
+	  where, connection);
+ 
 	[_TS_ messageReceived: aMessage to: to from: sender 
 	  onConnection: connection sender: self];	
 	return self;
@@ -362,17 +358,12 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if (![[[from string] lowercaseString] isEqualToString: 
-	  [[connection nick] lowercaseString]])
+	if ([words isKindOf: [NSArray class]])
 	{
-		if ([words isKindOf: [NSArray class]])
-		{
-			[x addObjectsFromArray: words];
-		}
-		sender = do_highlighting(self, [aMessage string], sender, x, 
-		  where, connection);
- 
- 	}
+		[x addObjectsFromArray: words];
+	}
+	sender = do_highlighting(self, [aMessage string], sender, x, 
+	  where, connection);
 	
 	[_TS_ noticeReceived: aMessage to: to from: sender 
 	  onConnection: connection sender: self];
@@ -387,16 +378,12 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(@"HighlightingExtraWords");
 	NSMutableArray *x = [NSMutableArray arrayWithObject: [connection nick]];
 
-	if (![[[from string] lowercaseString] isEqualToString: 
-	  [[connection nick] lowercaseString]])
+	if ([words isKindOf: [NSArray class]])
 	{
-		if ([words isKindOf: [NSArray class]])
-		{
-			[x addObjectsFromArray: words];
-		}
-		sender = do_highlighting(self, [aMessage string], sender, x, 
-		  where, connection); 
- 	}
+		[x addObjectsFromArray: words];
+	}
+	sender = do_highlighting(self, [aMessage string], sender, x, 
+	  where, connection); 
 	
 	[_TS_ actionReceived: aMessage to: to from: sender 
 	  onConnection: connection sender: self];

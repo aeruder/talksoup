@@ -29,7 +29,7 @@
 - controlObject: (id)aObject onConnection: aConnection sender: aPlugin;
 @end
 
-@protocol TalkSoupInputPluginProtocol 
+@protocol TalkSoupInputPluginProtocol < TalkSoupPluginProtocol > 
 - initiateConnectionToHost: (NSHost *)aHost onPort: (int)aPort
    withTimeout: (int)seconds withNickname: (NSString *)nickname 
    withUserName: (NSString *)user withRealName: (NSString *)realName 
