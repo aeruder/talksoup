@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ConnectionController.h
+                                ConnectionControllerCtcp.m
                           -------------------
-    begin                : Tue May 20 19:04:51 CDT 2003
+    begin                : Tue May 20 18:38:20 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,12 +14,3 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-#include "Controllers/ConnectionController/ConnectionController.h"
-#include "Controllers/ConnectionController/ConnectionControllerCtcp.h"
-#include "Controllers/ConnectionController/ConnectionControllerDelegate.h"
-#include "Controllers/ConnectionController/ConnectionControllerInFilter.h"
-#include "Controllers/ConnectionController/ConnectionControllerNumericCommands.h"
-#include "Controllers/ConnectionController/ConnectionControllerOutFilter.h"
-#include "Controllers/ConnectionController/ConnectionControllerTabCompletion.h"
-

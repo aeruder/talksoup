@@ -18,16 +18,25 @@ GNUstepOutput_PRINCIPAL_CLASS = GNUstepOutput
 
 GNUstepOutput_FRAMEWORKS = -lTalkSoupBundles
 
+ConnectionController = Controllers/ConnectionController/ConnectionController.m \
+Controllers/ConnectionController/ConnectionControllerCtcp.m \
+Controllers/ConnectionController/ConnectionControllerDelegate.m \
+Controllers/ConnectionController/ConnectionControllerInFilter.m \
+Controllers/ConnectionController/ConnectionControllerNumericCommands.m \
+Controllers/ConnectionController/ConnectionControllerOutFilter.m \
+Controllers/ConnectionController/ConnectionControllerTabCompletion.m
+
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ContentController.m Controllers/InputController.m\
-              Controllers/ConnectionController.m \
               Controllers/PreferencesController.m \
               Controllers/NamePromptController.m \
               Controllers/ServerListController.m \
               Controllers/GroupEditorController.m \
               Controllers/ServerEditorController.m \
               Controllers/ServerListConnectionController.m \
-              Controllers/TopicInspectorController.m
+              Controllers/TopicInspectorController.m \
+			  $(ConnectionController)
+
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
         Views/KeyTextView.m
