@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#import <Foundation/NSObject.h>
+#import <netclasses/IRCObject.h>
+#import <TalkSoupBundles/TalkSoup.h>
 
-#include "IRCObject.h"
-#include "TalkSoupBundles/TalkSoup.h"
+#import <Foundation/NSObject.h>
 
 @interface NetclassesInput : NSObject
 	{

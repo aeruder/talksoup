@@ -15,11 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
+#import <TalkSoupBundles/TalkSoup.h>
+
 #import <Foundation/NSScanner.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSAutoreleasePool.h>
-#include "TalkSoupBundles/TalkSoup.h"
+#import <Foundation/NSCharacterSet.h>
+
+#include <ctype.h>
 
 static inline BOOL scan_two_char_int(NSScanner *beg, int *aInt)
 {
@@ -340,7 +344,7 @@ inline NSString *NetClasses_StringFromAttributedString(NSAttributedString *atr)
 		[aString appendString: [[atr string] substringWithRange: work]];
 		cur.location = work.location + work.length;
 		
-		if (len <= cur.location) break;	
+		if (len <= (int)cur.location) break;	
 		cur.length = len - cur.location; 
 		
 		so = b;

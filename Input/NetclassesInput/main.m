@@ -16,12 +16,13 @@
  ***************************************************************************/
 
 #include "main.h"
+#include "Functions.h"
 
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSString.h>
-#include "Functions.h"
+#import <Foundation/NSEnumerator.h>
 
 #ifdef S2AS
 	#undef S2AS
