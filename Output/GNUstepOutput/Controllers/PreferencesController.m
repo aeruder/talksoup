@@ -23,13 +23,15 @@
 #import "Controllers/QueryController.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
-#import <TalkSoupBundles/TalkSoup.h>
 #import "Views/ScrollingTextView.h"
+
+#import <TalkSoupBundles/TalkSoup.h>
 
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSArray.h>
+#import <AppKit/NSScrollView.h>
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSColorWell.h>
 #import <AppKit/NSButton.h>
@@ -39,6 +41,8 @@
 #import <AppKit/NSFontPanel.h>
 #import <AppKit/NSFontManager.h>
 #import <AppKit/NSFont.h>
+#import <AppKit/NSMatrix.h>
+#import <AppKit/NSNibLoading.h>
 
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
@@ -56,7 +60,7 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 @implementation PreferencesController
-- (void)init
+- init
 {
 	if (!(self = [super init])) return self;
 
@@ -77,17 +81,21 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 	 * so nicely? 
 	 */
 
-	prefsList = [[NSMatrix alloc] initWithFrame: 
-	  NSMakeRect(0, 0, 64*30, 64)];
+	prefsList = AUTORELEASE([[NSMatrix alloc] initWithFrame: 
+	  NSMakeRect(0, 0, 64*30, 64)]);
 	[prefsList setCellClass: [NSButtonCell class]];
 	[prefsList setCellSize: NSMakeSize(64, 64)];
 	[prefsList setMode: NSRadioModeMatrix];
 	[prefsList setIntercellSpacing: NSZeroSize];
 	
-	[scrollView setDocumentView: iconList];
+	[scrollView setDocumentView: prefsList];
 	[scrollView setHasHorizontalScroller: YES];
 	[scrollView setHasVerticalScroller: NO];
 	[scrollView setBorderType: NSBezelBorder];
+
+	[moduleScrollView setHasHorizontalScroller: YES];
+	[moduleScrollView setHasVerticalScroller: YES];
+	[moduleScrollView setBorderType: NSBezelBorder];
 }
 - (void)dealloc
 {
@@ -96,7 +104,11 @@ NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 	[super dealloc];
 }
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
+- (NSWindow *)window 
+{
+	return window;
+}
+- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule>) aPrefsModule
 {
 	// FIXME
 }

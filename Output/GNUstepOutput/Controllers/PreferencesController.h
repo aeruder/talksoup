@@ -17,7 +17,7 @@
  *                                                                         *
  ***************************************************************************/
 
-@class PreferencesController;
+@class PreferencesController, NSString;
 
 extern NSString *GNUstepOutputPersonalBracketColor;
 extern NSString *GNUstepOutputOtherBracketColor;
@@ -33,7 +33,7 @@ extern NSString *GNUstepOutputScrollBack;
 
 #import <Foundation/NSObject.h>
 
-@class NSScrollView, NSWindow, NSMatrix;
+@class NSScrollView, NSWindow, NSMatrix, NSMutableArray;
 
 @protocol GNUstepOutputPrefsModule
 @end
@@ -47,7 +47,9 @@ extern NSString *GNUstepOutputScrollBack;
 		int currentPrefs;
 		NSMutableArray *prefsModules;
 	}
-- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
+- (NSWindow *)window;
+
+- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule>) aPrefsModule;
 - (void)refreshCurrentPanel;
 
 - (void)refreshAvailablePreferences;

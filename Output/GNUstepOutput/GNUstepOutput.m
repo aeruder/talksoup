@@ -130,10 +130,12 @@ GNUstepOutput *_GS_ = nil;
 	  pathForResource: @"Defaults"
 	  ofType: @"plist"]];
 
+	/*
 	[defaultPreferences setObject: fontName
 	  forKey: [GNUstepOutputFontName substringFromIndex: 13]];
 	[defaultPreferences setObject: fontSize
 	  forKey: [GNUstepOutputFontSize substringFromIndex: 13]];
+	  */
 	
 	RELEASE(_GS_);
 	_GS_ = RETAIN(self);
@@ -165,9 +167,9 @@ GNUstepOutput *_GS_ = nil;
 			[aDict addEntriesFromDictionary: y];
 		}
 		
-		if (aObject)
+		if (aPreference)
 		{
-			[aDict setObject: aObject forKey: newKey];
+			[aDict setObject: aPreference forKey: newKey];
 		}
 		else
 		{
@@ -179,10 +181,10 @@ GNUstepOutput *_GS_ = nil;
 	}
 	else
 	{
-		if (aObject)
+		if (aPreference)
 		{
 			[[NSUserDefaults standardUserDefaults]
-			  setObject: aObject forKey: aKey];
+			  setObject: aPreference forKey: aKey];
 		}
 		else
 		{
@@ -212,7 +214,7 @@ GNUstepOutput *_GS_ = nil;
 		
 		z = [defaultPreferences objectForKey: newKey];
 		
-		[self setDefaultsObject: z forKey: aKey];
+		[self setPreference: z forKey: aKey];
 		
 		return z;
 	}
@@ -225,7 +227,7 @@ GNUstepOutput *_GS_ = nil;
 	
 	z = [defaultPreferences objectForKey: aKey];
 	
-	[self setDefaultsObject: z forKey: aKey];
+	[self setPreference: z forKey: aKey];
 	
 	return z;
 }
@@ -303,6 +305,7 @@ GNUstepOutput *_GS_ = nil;
 {
 	return [NSArray arrayWithArray: connectionControllers];
 }
+/*
 - newConnection: (id)connection withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
@@ -330,8 +333,8 @@ GNUstepOutput *_GS_ = nil;
 	  sender: aPlugin];
 	
 	return self;
-}
-- lostConnection: (id)connection withNickname: (NSAttributedString *)aNick
+}*/
+/*- lostConnection: (id)connection withNickname: (NSAttributedString *)aNick
    sender: aPlugin
 {
 	id control;
@@ -357,7 +360,7 @@ GNUstepOutput *_GS_ = nil;
 	}
 	
 	return self;
-}
+}*/
 - consoleMessage: (NSAttributedString *)arg onConnection: (id)aConnection
 {
 	id controller = NSMapGet(connectionToConnectionController, aConnection);
@@ -447,9 +450,6 @@ GNUstepOutput *_GS_ = nil;
 		}
 	}
 		
-	if ([selS hasSuffix: @"nConnection:withNickname:sender:"] && 
-	    [ConnectionController instancesRespondToSelector: aSel]) return YES;
-	
 	if ([prefs respondsToSelector: aSel]) return YES;
 	
 	return [super respondsToSelector: aSel];
@@ -476,11 +476,6 @@ GNUstepOutput *_GS_ = nil;
 		}
 	}
 
-	if ((x = [ConnectionController instanceMethodSignatureForSelector: aSel]))
-	{
-		return x;
-	}
-	
 	if ((x = [prefs methodSignatureForSelector: aSel]))
 	{
 		return x;
@@ -552,43 +547,16 @@ GNUstepOutput *_GS_ = nil;
 @implementation GNUstepOutput (NSApplicationDelegate)
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
-	topic = [TopicInspectorController new];
-	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
-	[[topic topicText] setKeyTarget: self];
-	[[topic topicText] setKeyAction: @selector(topicKeyHit:sender:)]; 
-
-	if (![ServerListController startAutoconnectServers])
-	{
-		AUTORELEASE([ConnectionController new]);
-	}
+		prefs = [PreferencesController new];
 }
 - (void)applicationWillTerminate: (NSNotification *)aNotification
 {
-	NSArray *x;
-	NSEnumerator *iter;
-	id object;
-	
-	terminating = YES;
-	
-	[[prefs window] close];
-	x = [NSArray arrayWithArray: connectionControllers];
-	
-	iter = [x objectEnumerator];
-	
-	while ((object = [iter nextObject]))
-	{
-		[[[object contentController] window] close];
-	}
-	
-	[[prefs window] close]; 
 }
 - (void)doApplicationTerminate: (id)sender
 {
-	[NSApp terminate: sender];
 }
 - (void)doApplicationHide: (id)sender
 {
-	[NSApp hide: sender];
 }
 - (void)doApplicationOrderFrontStandardAboutPanel: (id)sender
 {
@@ -596,17 +564,12 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)openEmptyWindow: (NSNotification *)aNotification
 {
-	AUTORELEASE([ConnectionController new]);
 }
 - (void)openServerList: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: _l(@"ServerList") owner: 
-	  AUTORELEASE([ServerListController new])];
 }
 - (void)openNamePrompt: (NSNotification *)aNotification
 {
-	[NSBundle loadNibNamed: _l(@"NamePrompt") owner:
-	  AUTORELEASE([NamePromptController new])];
 }
 - (void)openTopicInspector: (NSNotification *)aNotification
 {
@@ -616,80 +579,17 @@ GNUstepOutput *_GS_ = nil;
 {
 	if (!prefs)
 	{
-		prefs = [PreferencesController new];
-		[NSBundle loadNibNamed: @"Preferences" owner: prefs];
-		[prefs loadCurrentDefaults];
 	}
 	else
 	{
 		[[prefs window] makeKeyAndOrderFront: nil];
 	}
 }
-- (void)loadBundleConfigurator: (NSNotification *)aNotification
-{
-	if (!bundle)
-	{
-		bundle = [BundleConfigureController new];
-		[NSBundle loadNibNamed: @"BundleConfigure" owner: bundle];
-		[[bundle window] setDelegate: self];
-	}
-	else
-	{
-		[[bundle window] makeKeyAndOrderFront: nil];
-	}
-}
 @end
 
-@interface GNUstepOutput (Delegate)
-@end
-
-@implementation GNUstepOutput (Delegate)
-- (void)windowWillClose: (NSNotification *)aNotification
-{
-	if ([aNotification object] == [topic window])
-	{
-		[[topic topicText] setKeyTarget: nil];
-		AUTORELEASE(topic);
-		topic = nil;
-	}
-	if ([aNotification object] == [bundle window])
-	{
-		AUTORELEASE(bundle);
-		bundle = nil;
-	}
+int main() {
+	id apr = [NSAutoreleasePool new];
+	id gnustepoutput = [GNUstepOutput new];
+	[gnustepoutput run];
+	return 0;
 }
-- (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender
-{
-	id connection;
-	id channel;
-	NSString *characters = [aEvent characters];
-	unichar character = 0;
-	
-	if ([characters length] == 0)
-	{
-		return YES;
-	}
-
-   character = [characters characterAtIndex: 0];
-	
-	if (character != NSCarriageReturnCharacter) return YES;
-	
-	connection = [topic connectionController];
-	channel = [[topic channelField] stringValue];
-	
-	if (connection)
-	{
-		connection = [connection connection];
-		[_TS_ setTopicForChannel: S2AS(channel) to: 
-		 S2AS([sender string]) onConnection: connection
-		 withNickname: S2AS([connection nick])
-		 sender: self];
-		[_TS_ setTopicForChannel: S2AS(channel) to:
-		 nil onConnection: connection
-		 withNickname: S2AS([connection nick])
-		 sender: self];
-	}
-	
-	return NO;
-}
-@end

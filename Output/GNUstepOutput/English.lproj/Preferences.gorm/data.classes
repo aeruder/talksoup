@@ -10,7 +10,6 @@
 	    "cancel:",
 	    "capitalizeWord:",
 	    "changeColor:",
-	    "changeFont:",
 	    "checkSpelling:",
 	    "close:",
 	    "complete:",
@@ -62,12 +61,12 @@
 	    "moveWordForwardAndModifySelection:",
 	    "newDocument:",
 	    "ok:",
+	    "open:",
 	    "openDocument:",
 	    "orderBack:",
 	    "orderFront:",
 	    "orderFrontColorPanel:",
 	    "orderFrontDataLinkPanel:",
-	    "orderFrontFontPanel:",
 	    "orderFrontHelpPanel:",
 	    "orderFrontStandardAboutPanel:",
 	    "orderFrontStandardInfoPanel:",
@@ -101,7 +100,6 @@
 	    "selectNextKeyView:",
 	    "selectParagraph:",
 	    "selectPreviousKeyView:",
-	    "selectText:",
 	    "selectText:",
 	    "selectToMark:",
 	    "selectWord:",
@@ -144,30 +142,11 @@
     };
     PreferencesController = {
 	Actions = (
-	    "nickSet:",
-	    "realNameSet:",
-	    "passwordSet:",
-	    "userNameSet:",
-	    "personalBracketColorSet:",
-	    "backgroundColorSet:",
-	    "otherBracketColorSet:",
-	    "textColorSet:",
-	    "resetColors:",
-	    "fontSet:"
 	);
 	Outlets = (
-	    personalBracketColor,
-	    backgroundColor,
-	    otherBracketColor,
-	    textColor,
-	    nick,
-	    realName,
-	    userName,
-	    password,
-	    resetButton,
+	    scrollView,
 	    window,
-	    fontField,
-	    setFontButton
+	    moduleScrollView
 	);
 	Super = NSObject;
     };
