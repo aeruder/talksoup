@@ -68,14 +68,14 @@ static BOOL has_name(NSString *str, NSString *name)
 		
 		is = YES;
 		
-		if (cur.location + a.location > 0)
+		if (cur.location > 0)
 		{
-			x = [str characterAtIndex: cur.location + a.location - 1];
+			x = [str characterAtIndex: cur.location - 1];
 			is = [set characterIsMember: x];
 		}
-		if (cur.location + a.location + cur.length < len)
+		if (cur.location + cur.length < len)
 		{
-			x = [str characterAtIndex: cur.location + a.location + cur.length];
+			x = [str characterAtIndex: cur.location + cur.length];
 			is &= [set characterIsMember: x];
 		}
 		
