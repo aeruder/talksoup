@@ -38,14 +38,28 @@ id GetSetting(NSString *key)
 	ud = [NSUserDefaults standardUserDefaults];
 	if (!(obj = [ud objectForKey: key]))
 	{
-		obj = [[NSDictionary dictionaryWithContentsOfFile: 
-		  [[NSBundle mainBundle] pathForResource: @"Defaults" 
-		  ofType: @"plist"]] objectForKey: key];
+		obj = [NSDictionary dictionaryWithContentsOfFile:
+		  [[NSBundle mainBundle] pathForResource: @"Defaults"
+		  ofType: @"plist"]];
+		if ([key isEqualToString: @"Plugins"])
+		{
+			NSEnumerator *iter;
+			id object;
+			
+			iter = [obj keyEnumerator];
+			while ((object = [iter nextObject]))
+			{
+				[ud setObject: [obj objectForKey: object] forKey: object];
+			}
+		}
+		
+		obj = [obj objectForKey: key];
 		
 		if (obj)
 		{
 			[ud setObject: obj forKey: key];
 		}
+	
 	}
 	return obj;
 }
