@@ -76,12 +76,6 @@ NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 
 GNUstepOutput *_GS_ = nil;
 
-@protocol GNUstepOutputDefineSelectors
-@end
-
-@interface GNUstepOutputBundle : NSBundle
-@end
-
 @implementation GNUstepOutput
 - init
 {
@@ -487,7 +481,6 @@ GNUstepOutput *_GS_ = nil;
 }
 - (void)run
 {
-	[GNUstepOutputBundle poseAsClass: [NSBundle class]];
 	[NSApp setDelegate: self];
 	[NSApp run];
 }
@@ -636,48 +629,5 @@ GNUstepOutput *_GS_ = nil;
 	}
 	
 	return NO;
-}
-@end
-
-@implementation GNUstepOutputBundle
-- (NSString *)pathForImageResource: (NSString *)name
-{
-	id obj;
-	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
-	
-	if (!(obj = [super pathForImageResource: name]) && bundle != self)
-	{
-		return [bundle pathForImageResource: name];
-	}
-
-	return obj;
-}
-- (NSString *)pathForResource: (NSString *)name 
-   ofType: (NSString *)extension
-{
-	id obj;
-	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
-
-	if (!(obj = [super pathForResource: name ofType: extension]) && bundle != self)
-	{
-		return [bundle pathForResource: name ofType: extension];
-	}
-
-	return obj;
-}
-- (NSString *)pathForResource: (NSString *)name ofType: (NSString *)ext
-  inDirectory: (NSString *)bundlePath
-{
-	id obj;
-	id bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
-
-	if (!(obj = [super pathForResource: name ofType: ext
-	  inDirectory: bundlePath]) && bundle != self)
-	{
-		return [bundle pathForResource: name ofType: ext 
-		  inDirectory: bundlePath];
-	}
-
-	return obj;
 }
 @end
