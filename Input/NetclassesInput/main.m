@@ -143,12 +143,11 @@
 }
 - (NSHost *)remoteHost
 {
-	return [transport address];
+	return [transport remoteHost];
 }
 - (NSHost *)localHost
 {
-	return [[TCPSystem sharedInstance]
-	  hostForTransport: transport];
+	return [transport localHost];
 }
 - (void)connectionLost
 {

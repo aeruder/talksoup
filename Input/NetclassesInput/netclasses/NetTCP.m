@@ -32,13 +32,17 @@
 #include <Foundation/NSException.h>
 #include <Foundation/NSHost.h>
 
-#ifdef IDENT
-	#undef IDENT
-#endif
-
-#define IDENT
-
 static TCPSystem *default_system = nil;
+
+@interface TCPSystem (InternalTCPSystem)
+- (int)openPort: (uint16_t)portNumber;
+- (int)openPort: (uint16_t)portNumber onHost: (NSHost *)aHost;
+
+- (int)connectToHost: (NSHost *)aHost onPort: (uint16_t)portNumber
+         withTimeout: (int)timeout inBackground: (BOOL)background;
+
+- setErrorString: (NSString *)anError withErrno: (int)aErrno;
+@end
 
 @interface TCPConnecting (InternalTCPConnecting)
 - initWithNetObject: (id)netObject withTimeout: (int)aTimeout;
@@ -51,13 +55,14 @@ static TCPSystem *default_system = nil;
 	{
 		BOOL connected;
 		int desc;
-		NSHost *address;
+		NSHost *remoteHost;
+		NSHost *localHost;
 		NSMutableData *writeBuffer;
 		TCPConnecting *owner;	
 	}
 - (NSMutableData *)writeBuffer;
 
-- initWithDesc: (int)aDesc atAddress: (NSHost *)theAddress
+- initWithDesc: (int)aDesc withRemoteHost: (NSHost *)theAddress
      withOwner: (TCPConnecting *)anObject;
 	 
 - (void)close;
@@ -66,7 +71,8 @@ static TCPSystem *default_system = nil;
 - (BOOL)isDoneWriting;
 - writeData: (NSData *)data;
 
-- (NSHost *)address;
+- (NSHost *)remoteHost;
+- (NSHost *)localHost;
 - (int)desc;
 @end
 
@@ -75,18 +81,33 @@ static TCPSystem *default_system = nil;
 {
 	return writeBuffer;
 }
-- initWithDesc: (int)aDesc atAddress: (NSHost *)theAddress 
+- initWithDesc: (int)aDesc withRemoteHost: (NSHost *)theAddress 
      withOwner: (TCPConnecting *)anObject
 {
+	struct sockaddr_in x;
+	socklen_t address_length = sizeof(x);
+	
 	if (!(self = [super init])) return nil;
 	
 	desc = aDesc;
 
 	writeBuffer = [NSMutableData new];
-	address = RETAIN(theAddress);
+	remoteHost = RETAIN(theAddress);
 		
 	owner = anObject;
 	connected = YES;
+	
+	if (getsockname(desc, (struct sockaddr *)&x, &address_length) != 0) 
+	{
+		[[TCPSystem sharedInstance]
+		  setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
+		[self dealloc];
+		return nil;
+	}
+	
+	localHost = RETAIN([[TCPSystem sharedInstance] 
+	  hostFromNetworkOrderInteger: x.sin_addr.s_addr]);
 	
 	[[NetApplication sharedInstance] transportNeedsToWrite: self];
 
@@ -94,8 +115,11 @@ static TCPSystem *default_system = nil;
 }
 - (void)dealloc
 {
+	[self close];
+	
 	RELEASE(writeBuffer);
-	RELEASE(address);
+	RELEASE(remoteHost);
+	RELEASE(localHost);
 
 	[super dealloc];
 }
@@ -107,10 +131,6 @@ static TCPSystem *default_system = nil;
 {
 	return YES;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPConnectingTransport writeData: %@] " _x, data
-
 - writeData: (NSData *)data
 {
 	char buffer[1];
@@ -124,8 +144,8 @@ static TCPSystem *default_system = nil;
 	{
 		if (errno != EAGAIN)
 		{
-			[owner connectingFailed: [NSString stringWithFormat:
-			 IDENT(@"recv() failed: %s"), strerror(errno)]];
+			[owner connectingFailed: [NSString stringWithFormat: @"%s", 
+			  strerror(errno)]];
 			return self;
 		}
 	}
@@ -133,9 +153,13 @@ static TCPSystem *default_system = nil;
 	[owner connectingSucceeded];
 	return self;
 }
-- (NSHost *)address
+- (NSHost *)remoteHost
 {
-	return address;
+	return remoteHost;
+}
+- (NSHost *)localHost
+{
+	return localHost;
 }
 - (int)desc
 {
@@ -182,8 +206,8 @@ static TCPSystem *default_system = nil;
 - connectingSucceeded
 {
 	id newTrans = AUTORELEASE([[TCPTransport alloc] initWithDesc:
-	    [transport desc]
-	  atAddress: [transport address]]);
+	    dup([transport desc])
+	  withRemoteHost: [transport remoteHost]]);
 	id buffer = RETAIN([transport writeBuffer]);
 	
 	[timeout invalidate];
@@ -248,47 +272,17 @@ static TCPSystem *default_system = nil;
 }
 @end
 
-@interface TCPSystem (InternalTCPSystem)
-- (int)openPort: (int)portNumber;
-- (int)openPort: (int)portNumber onHost: (NSHost *)aHost;
-- (int)openPort: (int)portNumber onHost: (NSHost *)aHost
-    withInfo: (struct sockaddr_in *)info;
-
-- (int)connectToHost: (NSHost *)aHost onPort: (int)portNumber
-         withTimeout: (int)timeout;
-
-- (int)connectToHostInBackground: (NSHost *)aHost onPort: (int)portNumber;
-
-- setErrorString: (NSString *)anError;
-@end
-
 @implementation TCPSystem (InternalTCPSystem)
-- (int)openPort: (int)portNumber
+- (int)openPort: (uint16_t)portNumber
 {
-	return [self openPort: portNumber onHost: nil withInfo: 0];
+	return [self openPort: portNumber onHost: nil];
 }
-- (int)openPort: (int)portNumber onHost: (NSHost *)aHost
-{
-	return [self openPort: portNumber onHost: aHost withInfo: 0];
-}
-
-#undef IDENT
-#define IDENT(_x) @"[TCPSystem openPort: %d onHost: %@] " _x, portNumber, aHost
-
-- (int)openPort: (int)portNumber onHost: (NSHost *)aHost
-    withInfo: (struct sockaddr_in *)info
+- (int)openPort: (uint16_t)portNumber onHost: (NSHost *)aHost
 {
 	struct sockaddr_in sin;
 	int temp;
 	int myDesc;
 	
-	if (portNumber < 0)
-	{
-		[self setErrorString: 
-		 [NSString stringWithFormat: 
-		 IDENT(@"%d is not a valid port number"), portNumber]];
-		return -1;
-	} 
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 	
 	if (!aHost)
@@ -299,9 +293,8 @@ static TCPSystem *default_system = nil;
 	{
 		if (inet_aton([[aHost address] cString], &(sin.sin_addr)) == 0)
 		{
-			[self setErrorString:
-			  [NSString stringWithFormat:
-				IDENT(@"Invalid address")]]; 
+			[self setErrorString: @"Invalid address" withErrno: 0];
+			return -1;
 		}	      
 	}
 	
@@ -310,15 +303,15 @@ static TCPSystem *default_system = nil;
 	
 	if ((myDesc = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"socket(): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s", 
+		  strerror(errno)] withErrno: errno];
 		return -1;
 	}
 	if (bind(myDesc, (struct sockaddr *) &sin, sizeof(struct sockaddr)) < 0)
 	{
 		close(myDesc);
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"bind(): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		return -1;
 	}
 	temp = 1;
@@ -326,8 +319,8 @@ static TCPSystem *default_system = nil;
 	               &temp, sizeof(temp)) == -1)
 	{
 		close(myDesc);
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"setsockopt(KEEPALIVE): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		return -1;
 	}
 	temp = 1;
@@ -335,49 +328,36 @@ static TCPSystem *default_system = nil;
 	               &temp, sizeof(temp)) == -1)
 	{
 		close(myDesc);
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"setsockopt(REUSEADDR): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		return -1;
 	}
 	if (listen(myDesc, 5) == -1)
 	{
 		close(myDesc);
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"listen(): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		return -1;
-	}
-	
-	if (info)
-	{
-		socklen_t len = sizeof(struct sockaddr_in);
-		memcpy(info, &sin, sizeof(struct sockaddr_in));
-		getsockname(myDesc, (struct sockaddr *)info, &len);
 	}
 
 	return myDesc;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPSystem connectToHost: %@ onPort: %@ " \
-                  @"withTimeout: %d ]" _x,  host, portNumber, timeout
-
-- (int)connectToHost: (NSHost *)host onPort: (int)portNumber 
-       withTimeout: (int)timeout
+- (int)connectToHost: (NSHost *)host onPort: (uint16_t)portNumber 
+       withTimeout: (int)timeout inBackground: (BOOL)bck
 {
 	int myDesc;
 	struct sockaddr_in destAddr;
 
 	if (!host)
 	{
-		[self setErrorString: [NSString stringWithFormat: 
-		 IDENT(@"Host cannot be nil")]];
+		[self setErrorString: @"Host cannot be nil" withErrno: 0];
 		return -1;
 	}
 	
 	if ((myDesc = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"socket(): %s"), strerror(errno)]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		return -1;
 	}
 
@@ -385,19 +365,19 @@ static TCPSystem *default_system = nil;
 	destAddr.sin_port = htons(portNumber);
 	if (!(inet_aton([[host address] cString], &destAddr.sin_addr)))
 	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"Invalid address")]];
+		[self setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
 		close(myDesc);
 		return -1;
 	}
 	memset(&(destAddr.sin_zero), 0, sizeof(destAddr.sin_zero));
 
-	if (timeout > 0)
+	if (timeout > 0 || bck)
 	{
 		if (fcntl(myDesc, F_SETFL, O_NONBLOCK) == -1)
 		{
-			[self setErrorString: [NSString stringWithFormat:
-			 IDENT(@"fcntl(O_NONBLOCK): %s"), strerror(errno)]];
+			[self setErrorString: [NSString stringWithFormat: @"%s",
+			  strerror(errno)] withErrno: errno];
 			close(myDesc);
 			return -1;
 		}
@@ -410,6 +390,11 @@ static TCPSystem *default_system = nil;
 			struct timeval selectTime;
 			int selectReturn;
 
+			if (bck)
+			{
+				return myDesc;
+			}
+			
 			FD_ZERO(&fdset);
 			FD_SET(myDesc, &fdset);
 
@@ -420,8 +405,8 @@ static TCPSystem *default_system = nil;
 
 			if (selectReturn == -1)
 			{
-				[self setErrorString: [NSString stringWithFormat:
-				 IDENT(@"select(): %s"), strerror(errno)]];
+				[self setErrorString: [NSString stringWithFormat: @"%s",
+				  strerror(errno)] withErrno: errno];
 				close(myDesc);
 				return -1;
 			}
@@ -432,8 +417,8 @@ static TCPSystem *default_system = nil;
 				{
 					if (errno != EAGAIN)
 					{
-						[self setErrorString: [NSString stringWithFormat:
-						 IDENT(@"recv(): %s"), strerror(errno)]];
+						[self setErrorString: [NSString stringWithFormat: @"%s",
+						  strerror(errno)] withErrno: errno];
 						close(myDesc);
 						return -1;
 					}
@@ -441,84 +426,26 @@ static TCPSystem *default_system = nil;
 			}
 			else
 			{
-				[self setErrorString: [NSString stringWithFormat:
-				 IDENT(@"Connection timeout")]];
+				[self setErrorString: @"Connection timed out"
+				  withErrno: 0];
 				close(myDesc);
 				return -1;
 			}
 		}
 		else // connect failed with something other than EINPROGRESS
 		{
-			[self setErrorString: [NSString stringWithFormat:
-			 IDENT(@"connect(): %s"), strerror(errno)]];
+			[self setErrorString: [NSString stringWithFormat: @"%s",
+			  strerror(errno)] withErrno: errno];
 			close(myDesc);
 			return -1;
 		}
 	}
 	return myDesc;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPSystem connectToHostInBackground: %@ " \
-                  @"onPort: %d] " _x, host, portNumber
-                  
-- (int)connectToHostInBackground: (NSHost *)host onPort: (int)portNumber
+- setErrorString: (NSString *)anError withErrno: (int)aErrno
 {
-	int myDesc;
-	struct sockaddr_in destAddr;
-
-	if (!host)
-	{
-		[self setErrorString: [NSString stringWithFormat: 
-		 IDENT(@"Host cannot be nil")]];
-		return -1;
-	}
+	errorNumber = aErrno;
 	
-	if ((myDesc = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"socket(): %s"), strerror(errno)]];
-		return -1;
-	}
-
-	destAddr.sin_family = AF_INET;
-	destAddr.sin_port = htons(portNumber);
-	if (!(inet_aton([[host address] cString], &destAddr.sin_addr)))
-	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"Invalid address")]];
-		close(myDesc);
-		return -1;
-	}
-	memset(&(destAddr.sin_zero), 0, sizeof(destAddr.sin_zero));
-
-	if (fcntl(myDesc, F_SETFL, O_NONBLOCK) == -1)
-	{
-		[self setErrorString: [NSString stringWithFormat:
-		 IDENT(@"fcntl(O_NONBLOCK): %s"), strerror(errno)]];
-		close(myDesc);
-		return -1;
-	}
-	
-	if (connect(myDesc, (struct sockaddr *)&destAddr, sizeof(destAddr)) == -1)
-	{
-		if (errno == EINPROGRESS)
-		{
-			return myDesc;
-		}
-		else // connect failed with something other than EINPROGRESS
-		{
-			[self setErrorString: [NSString stringWithFormat:
-			 IDENT(@"connect(): %s"), strerror(errno)]];
-			close(myDesc);
-			return -1;
-		}
-	}
-	
-	return myDesc;
-}
-- setErrorString: (NSString *)anError
-{
 	if (anError == errorString) return self;
 
 	RELEASE(errorString);
@@ -550,24 +477,30 @@ static TCPSystem *default_system = nil;
 {
 	return errorString;
 }
+- (int)errorNumber
+{
+	return errorNumber;
+}
 - (id)connectNetObject: (id)netObject toHost: (NSHost *)host
-                onPort: (int)aPort withTimeout: (int)timeout
+                onPort: (uint16_t)aPort withTimeout: (int)timeout
 {
 	int desc;
 	id transport;
 
 	host = [NSHost hostWithAddress: [host address]];
 	
-	desc = [self connectToHost: host onPort: aPort withTimeout: timeout];
+	desc = [self connectToHost: host onPort: aPort withTimeout: timeout 
+	  inBackground: NO];
 	if (desc < 0)
 	{
 		return nil;
 	}
 	transport = AUTORELEASE([[TCPTransport alloc] initWithDesc: desc 
-	              atAddress: host]);
+	 withRemoteHost: host]);
 	
 	if (!(transport))
 	{
+		close(desc);
 		return nil;
 	}
 
@@ -576,7 +509,7 @@ static TCPSystem *default_system = nil;
 	return netObject;
 }
 - (TCPConnecting *)connectNetObjectInBackground: (id)netObject 
-    toHost: (NSHost *)host onPort: (int)aPort withTimeout: (int)timeout
+    toHost: (NSHost *)host onPort: (uint16_t)aPort withTimeout: (int)timeout
 {
 	int desc;
 	id transport;
@@ -584,7 +517,9 @@ static TCPSystem *default_system = nil;
 
 	host = [NSHost hostWithAddress: [host address]];
 
-	desc = [self connectToHostInBackground: host onPort: aPort];
+	desc = [self connectToHost: host onPort: aPort
+	  withTimeout: 0 inBackground: YES];
+	  
 	if (desc < 0)
 	{
 		return nil;
@@ -593,10 +528,11 @@ static TCPSystem *default_system = nil;
 	object = AUTORELEASE([[TCPConnecting alloc] initWithNetObject: netObject
 	   withTimeout: timeout]);
 	transport = AUTORELEASE([[TCPConnectingTransport alloc] initWithDesc: desc 
-	              atAddress: host withOwner: object]);
+	  withRemoteHost: host withOwner: object]);
 	
 	if (!transport)
 	{
+		close(desc);
 		return nil;
 	}
 	
@@ -604,7 +540,7 @@ static TCPSystem *default_system = nil;
 	
 	return object;
 }
-- (NSHost *)hostFromInt: (unsigned long int)ip
+- (NSHost *)hostFromNetworkOrderInteger: (uint32_t)ip
 {
 	struct in_addr addr;
 	char *temp;
@@ -619,61 +555,63 @@ static TCPSystem *default_system = nil;
 
 	return nil;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPSystem localIpForTransport: %@] "
-
-- (NSHost *)hostForTransport: (TCPTransport *)aTransport
+- (NSHost *)hostFromHostOrderInteger: (uint32_t)ip
 {
-	struct sockaddr_in x;
-	socklen_t address_length = sizeof(x);
+	struct in_addr addr;
+	char *temp;
 	
-	if (
-	 getsockname([aTransport desc], (struct sockaddr *)&x, &address_length) 
-	  != 0)
+	addr.s_addr = htonl(ip);
+
+	temp = inet_ntoa(addr);
+	if (temp)
 	{
-		[self setErrorString: [NSString stringWithFormat: 
-		 IDENT(@"getsockname() failed: %s"), strerror(errno)]];
-		return nil;
+		return [NSHost hostWithAddress: [NSString stringWithCString: temp]];
 	}
 
-	return [NSString stringWithCString: inet_ntoa(x.sin_addr)];
+	return nil;
 }	
 @end
 
 
 @implementation TCPPort
-- initOnHost: (NSHost *)aHost onPort: (int)aPort
+- initOnHost: (NSHost *)aHost onPort: (uint16_t)aPort
 {
+	struct sockaddr_in x;
+	socklen_t address_length = sizeof(x);
+	
 	if (!(self = [super init])) return nil;
 	
-	desc = [[TCPSystem sharedInstance] openPort: aPort onHost: aHost
-	  withInfo: &socketInfo];
+	desc = [[TCPSystem sharedInstance] openPort: aPort onHost: aHost];
 
 	if (desc < 0)
 	{
 		[self dealloc];
 		return nil;
 	}
+	if (getsockname(desc, (struct sockaddr *)&x, &address_length) != 0)
+	{
+		[[TCPSystem sharedInstance] setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
+		close(desc);
+		[self dealloc];
+		return nil;
+	}
+	
+	port = ntohs(x.sin_port);
 
 	[[NetApplication sharedInstance] connectObject: self];
 	return self;
 }
-- initOnPort: (int)aPort
+- initOnPort: (uint16_t)aPort
 {
 	return [self initOnHost: nil onPort: aPort];
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPPort setNetObject: (Class)%@] " _x, \
-                  NSStringFromClass(aClass)
-
 - setNetObject: (Class)aClass
 {
 	if (![aClass conformsToProtocol: @protocol(NetObject)])
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"%@ does not conform to < NetObject >"),
+		  format: @"%@ does not conform to < NetObject >",
 		    NSStringFromClass(aClass)];
 	}
 	
@@ -688,10 +626,6 @@ static TCPSystem *default_system = nil;
 {
 	close(desc);
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPPort newConnection] " _x
-
 - newConnection
 {
 	int newDesc;
@@ -706,26 +640,29 @@ static TCPSystem *default_system = nil;
 	    &temp)) == -1)
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"accept(): %s"), strerror(errno)];
+		  format: @"%s", strerror(errno)];
 	}
 	
-	newAddress = [[TCPSystem sharedInstance] hostFromInt: sin.sin_addr.s_addr];	
+	newAddress = [[TCPSystem sharedInstance] 
+	  hostFromNetworkOrderInteger: sin.sin_addr.s_addr];	
 
 	transport = AUTORELEASE([[TCPTransport alloc] 
 	  initWithDesc: newDesc
-	     atAddress: [[TCPSystem sharedInstance] hostFromInt: 
-	       sin.sin_addr.s_addr]]);
+	  withRemoteHost: newAddress]);
 	
 	if (!transport)
+	{
+		close(newDesc);
 		return self;
+	}
 	
 	[AUTORELEASE([netObjectClass new]) connectionEstablished: transport];
 	
 	return self;
 }
-- (struct sockaddr_in *)socketInfo
+- (uint16_t)port
 {
-	return &socketInfo;
+	return port;
 }
 @end
 
@@ -736,14 +673,29 @@ static NetApplication *net_app = nil;
 {
 	net_app = RETAIN([NetApplication sharedInstance]);
 }
-- initWithDesc: (int)aDesc atAddress:(NSHost *)theAddress
+- initWithDesc: (int)aDesc withRemoteHost: (NSHost *)theAddress
 {
+	struct sockaddr_in x;
+	socklen_t address_length = sizeof(x);
+
 	if (!(self = [super init])) return nil;
 	
 	desc = aDesc;
 	
 	writeBuffer = RETAIN([NSMutableData dataWithCapacity: 2000]);
-	address = RETAIN(theAddress);
+	remoteHost = RETAIN(theAddress);
+	
+	if (getsockname(desc, (struct sockaddr *)&x, &address_length) != 0) 
+	{
+		[[TCPSystem sharedInstance]
+		  setErrorString: [NSString stringWithFormat: @"%s",
+		  strerror(errno)] withErrno: errno];
+		[self dealloc];
+		return nil;
+	}
+	
+	localHost = RETAIN([[TCPSystem sharedInstance] 
+	  hostFromNetworkOrderInteger: x.sin_addr.s_addr]);
 	
 	connected = YES;
 	
@@ -751,15 +703,13 @@ static NetApplication *net_app = nil;
 }
 - (void)dealloc
 {
+	[self close];
 	RELEASE(writeBuffer);
-	RELEASE(address);
+	RELEASE(localHost);
+	RELEASE(remoteHost);
 
 	[super dealloc];
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPTransport readData: %d] " _x, maxDataSize
-
 - (NSData *)readData: (int)maxDataSize
 {
 	char *buffer;
@@ -769,7 +719,7 @@ static NetApplication *net_app = nil;
 	if (!connected)
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"Not connected")];
+		  format: @"Not connected"];
 	}
 	
 	if (maxDataSize == 0)
@@ -780,7 +730,7 @@ static NetApplication *net_app = nil;
 	if (maxDataSize < 0)
 	{
 		[NSException raise: FatalNetException
-		 format: IDENT(@"invalid number of bytes specified")];
+		 format: @"Invalid number of bytes specified"];
 	}
 	
 	buffer = malloc(maxDataSize + 1);
@@ -790,14 +740,14 @@ static NetApplication *net_app = nil;
 	{
 		free(buffer);
 		[NSException raise: NetException
-		 format: IDENT(@"socket closed")];
+		 format: @"Socket closed"];
 	}
 	
 	if (readReturn == -1)
 	{
 		free(buffer);
 		[NSException raise: FatalNetException
-		 format: IDENT(@"read(): %s"), strerror(errno)];
+		 format: @"%s", strerror(errno)];
 	}
 	
 	data = [NSData dataWithBytes: buffer length: readReturn];
@@ -805,23 +755,15 @@ static NetApplication *net_app = nil;
 	
 	return data;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPTransport isDoneWriting] " _x
-
 - (BOOL)isDoneWriting
 {
 	if (!connected)
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"Not connected")];
+		  format: @"Not connected"];
 	}
 	return ([writeBuffer length]) ? NO : YES;
 }
-
-#undef IDENT
-#define IDENT(_x) @"[TCPTransport writeData:] " _x
-
 - writeData: (NSData *)data
 {
 	int writeReturn;
@@ -840,7 +782,7 @@ static NetApplication *net_app = nil;
 	if (!connected)
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"Not connected")];
+		  format: @"Not connected"];
 	}
 	
 	if ([writeBuffer length] == 0)
@@ -854,7 +796,7 @@ static NetApplication *net_app = nil;
 	if (writeReturn == -1)
 	{
 		[NSException raise: FatalNetException
-		  format: IDENT(@"write(): %s"), strerror(errno)];
+		  format: @"%s", strerror(errno)];
 	}
 	if (writeReturn == 0)
 	{
@@ -869,9 +811,13 @@ static NetApplication *net_app = nil;
 	
 	return self;
 }
-- (NSHost *)address
+- (NSHost *)localHost
 {
-	return address;	
+	return localHost;	
+}
+- (NSHost *)remoteHost
+{
+	return remoteHost;
 }
 - (int)desc
 {
@@ -887,6 +833,4 @@ static NetApplication *net_app = nil;
 	close(desc);
 }
 @end	
-
-#undef IDENT
 

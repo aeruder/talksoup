@@ -45,7 +45,8 @@
 @end
 
 @protocol NetTransport
-- (id)address;
+- (id)localHost;
+- (id)remoteHost;
 - writeData: (NSData *)data;
 - (BOOL)isDoneWriting;
 - (NSData *)readData: (int)maxReadSize;
@@ -61,9 +62,6 @@ extern NSString *FatalNetException;
 		NSMutableArray *portArray;
 		NSMutableArray *netObjectArray;
 		NSMutableArray *badDescs;
-		fd_set readSet;
-		fd_set writeSet;
-		fd_set exceptionSet;
 		NSMapTable *descTable;
 	}
 + sharedInstance;

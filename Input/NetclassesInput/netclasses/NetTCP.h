@@ -24,6 +24,7 @@
 #include <Foundation/NSObject.h>
 
 #include <netinet/in.h>
+#include <stdint.h>
 
 @class NSString, NSNumber, NSString, NSData, NSMutableData, TCPConnecting;
 @class TCPTransport, TCPSystem, NSHost;
@@ -31,20 +32,21 @@
 @interface TCPSystem : NSObject
 	{
 		NSString *errorString;
+		int errorNumber;
 	}
 + sharedInstance;
 
 - (NSString *)errorString;
+- (int)errorNumber;
 
 - (id)connectNetObject: (id)netObject toHost: (NSHost *)host 
-                onPort: (int)aPort withTimeout: (int)timeout;
+                onPort: (uint16_t)aPort withTimeout: (int)timeout;
 
 - (TCPConnecting *)connectNetObjectInBackground: (id)netObject
-    toHost: (NSHost *)host onPort: (int)aPort withTimeout: (int)timeout;
+    toHost: (NSHost *)host onPort: (uint16_t)aPort withTimeout: (int)timeout;
 
-- (NSHost *)hostFromInt: (unsigned long int)ip;
-
-- (NSHost *)hostForTransport: (TCPTransport *)aTransport;
+- (NSHost *)hostFromHostOrderInteger: (uint32_t)ip;
+- (NSHost *)hostFromNetworkOrderInteger: (uint32_t)ip;
 @end
 
 @protocol TCPConnecting
@@ -71,15 +73,16 @@
     {
 		int desc;
 		Class netObjectClass;
-		struct sockaddr_in socketInfo;
+		uint16_t port;
 	}
-- initOnHost: (NSHost *)aHost onPort: (int)aPort;
-- initOnPort: (int)aPort;
+- initOnPort: (uint16_t)aPort;
+- initOnHost: (NSHost *)aHost onPort: (uint16_t)aPort;
+
+- (uint16_t)port;
 - setNetObject: (Class)aClass;
 - (int)desc;
 - (void)connectionLost;
 - newConnection;
-- (struct sockaddr_in *)socketInfo;
 @end
 
 @interface TCPTransport : NSObject < NetTransport >
@@ -87,13 +90,15 @@
 		int desc;
 		BOOL connected;
 		NSMutableData *writeBuffer;
-		NSHost *address;
+		NSHost *remoteHost;
+		NSHost *localHost;
 	}
-- initWithDesc: (int)aDesc atAddress: (NSHost *)theAddress;
+- initWithDesc: (int)aDesc withRemoteHost: (NSHost *)theAddress;
 - (NSData *)readData: (int)maxDataSize;
 - (BOOL)isDoneWriting;
 - writeData: (NSData *)data;
-- (NSHost *)address;
+- (NSHost *)localHost;
+- (NSHost *)remoteHost;
 - (int)desc;
 - (void)close;
 @end
