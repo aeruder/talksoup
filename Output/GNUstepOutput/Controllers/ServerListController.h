@@ -48,16 +48,19 @@ extern NSString *ServerListInfoAutoConnect;
 		NSScrollView *scrollView;
 		NSWindow *window;
 		NSTableColumn *serverColumn;
+		NSMutableArray *cached;
 		id editor;
 		int wasEditing;
 	}
 + (BOOL)saveServerListPreferences: (NSArray *)aPrefs;
 + (NSMutableArray *)serverListPreferences;
-
 + (BOOL)startAutoconnectServers;
-+ (NSDictionary *)serverInGroup: (int)group row: (int)row;
-+ (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row;
-+ (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row;
+
+- (BOOL)saveServerListPreferences: (NSArray *)aPrefs;
+- (NSMutableArray *)serverListPreferences;
+- (NSDictionary *)serverInGroup: (int)group row: (int)row;
+- (void)setServer: (NSDictionary *)x inGroup: (int)group row: (int)row;
+- (BOOL)serverFound: (NSDictionary *)x inGroup: (int *)group row: (int *)row;
 
 - (void)editHit: (NSButton *)sender;
 - (void)addEntryHit: (NSButton *)sender;
