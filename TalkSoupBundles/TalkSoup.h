@@ -17,6 +17,16 @@
 
 @class TalkSoup, TalkSoupDummyProtocolClass, NSString, NSArray;
 
+/* object: the preference string 
+ *
+ * dictionary:
+ *   @"Bundle" the bundle object 
+ *   @"Old" the old value
+ *   @"New" the new value
+ *   @"Owner" the owner of the preference change
+ */
+extern NSString *DefaultsChangedNotification;
+
 // Defaults stuff
 extern NSString *IRCDefaultsNick;
 extern NSString *IRCDefaultsRealName;

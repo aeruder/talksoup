@@ -30,6 +30,8 @@
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSNull.h>
 
+NSString *DefaultsChangedNotification = @"DefaultsChangedNotification";
+
 NSString *IRCDefaultsNick =  @"Nick";
 NSString *IRCDefaultsRealName = @"RealName";
 NSString *IRCDefaultsUserName = @"UserName";
