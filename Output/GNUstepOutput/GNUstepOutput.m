@@ -69,6 +69,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 NSString *GNUstepOutputFontSize = @"GNUstepOutputFontSize";
 NSString *GNUstepOutputFontName = @"GNUstepOutputFontName";
+NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 
 GNUstepOutput *_GS_ = nil;
 
@@ -101,6 +102,7 @@ GNUstepOutput *_GS_ = nil;
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  @"Helvetica", GNUstepOutputFontName,
 	  @"12", GNUstepOutputFontSize,
+	  @"5000", GNUstepOutputScrollBack,
 	  nil];
 	
 	RELEASE(_GS_);

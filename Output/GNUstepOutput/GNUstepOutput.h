@@ -31,6 +31,7 @@ extern NSString *GNUstepOutputBackgroundColor;
 extern NSString *GNUstepOutputServerList;
 extern NSString *GNUstepOutputFontName;
 extern NSString *GNUstepOutputFontSize;
+extern NSString *GNUstepOutputScrollBack;
 
 extern GNUstepOutput *_GS_;
 

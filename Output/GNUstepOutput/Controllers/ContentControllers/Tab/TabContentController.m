@@ -44,6 +44,25 @@
 
 NSString *ContentConsoleName = @"Content Console Name";
 
+static void clear_scrollback(NSMutableAttributedString *back)
+{
+	int length = [[_GS_ defaultsObjectForKey: GNUstepOutputScrollBack] intValue];
+	int max = [back length];
+	int beginning;
+	NSRange aRange;
+	
+	NSLog(@"max: %d", max);
+	if ((beginning = max - length) < 0) return;
+	
+	aRange = [[back string] rangeOfString: @"\n" options: 0 range: 
+	  NSMakeRange(beginning, max - beginning)];
+	
+	if (aRange.location == NSNotFound) return;
+	
+	[[back mutableString] deleteCharactersInRange: 
+	  NSMakeRange(0, (aRange.location + aRange.length))];	
+}
+
 @interface ContentController (TextViewDelegate)
 - (BOOL)tabsTextViewPressedKey: (NSEvent *)aEvent sender: textView;
 @end
@@ -359,12 +378,16 @@ NSString *ContentConsoleName = @"Content Console Name";
 		     nil]]));
 	}
 	
-	[[[controller chatView] textStorage] appendAttributedString: string];
+	controller = [[controller chatView] textStorage];
+	
+	[controller appendAttributedString: string];
 	
 	if (aBool)
 	{
-		[[[controller chatView] textStorage] appendAttributedString: S2AS(@"\n")];
+		[controller appendAttributedString: S2AS(@"\n")];
 	}
+	
+	clear_scrollback(controller);
 
 	return self;
 }

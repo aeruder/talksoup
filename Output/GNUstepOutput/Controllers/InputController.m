@@ -455,5 +455,29 @@ static void send_message(id command, id name, id connection)
 	[[x chatView] setString: @""]; 
 	
 	return self;
-}	  
+}	
+- commandScrollback: (NSString *)command
+{
+	id x = [command separateIntoNumberOfArguments: 2];
+	int length;
+	
+	if ([x count] == 0)
+	{
+		[controller showMessage:
+		  BuildAttributedString(_l(@"Usage: /scrollback <characters>"),
+		    @"\n", _l(@"Current value is: "), 
+			 [_GS_ defaultsObjectForKey: GNUstepOutputScrollBack], nil) 
+		  onConnection: nil];
+		return self;
+	}
+	
+	length = [[x objectAtIndex: 0] intValue];
+	
+	if (length < 512) length = 512;
+	
+	[_GS_ setDefaultsObject: [NSString stringWithFormat: @"%d", length]
+	  forKey: GNUstepOutputScrollBack];
+	
+	return self;
+}
 @end
