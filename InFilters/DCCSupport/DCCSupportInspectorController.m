@@ -1,7 +1,7 @@
 /***************************************************************************
-                                DCCSupportPreferencesController.h
+                                DCCSupportInspectorController.m
                           -------------------
-    begin                : Wed Jan  7 20:54:25 CST 2004
+    begin                : Sat Jan 10 10:11:41 CST 2004
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,39 +14,3 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-@class DCCSupportPreferencesController;
-
-#ifndef DCC_SUPPORT_PREFERENCES_CONTROLLER
-#define DCC_SUPPORT_PREFERENCES_CONTROLLER
-
-#import <Foundation/NSObject.h>
-
-@class NSWindow, NSTextField, NSButton;
-
-@interface DCCSupportPreferencesController : NSObject
-	{
-		NSTextField *blockSizeField;
-		NSTextField *portRangeField;
-		NSTextField *changeCompletedField;
-		NSTextField *changeDownloadField;
-		NSTextField *changeCompletedButton;
-		NSTextField *changeDownloadButton;
-		NSWindow *window;
-	}
-
-- (void)reloadData;
-
-#ifdef USE_APPKIT
-- (void)shouldDisplay;
-- (void)shouldHide;
-
-- (void)changeCompletedHit: (NSButton *)sender;
-- (void)changeDownloadHit: (NSButton *)sender;
-- (void)blockSizeHit: (NSTextField *)sender;
-- (void)portRangeHit: (NSTextField *)sender;
-#endif
-
-@end
-
-#endif

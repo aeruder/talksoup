@@ -40,95 +40,23 @@
 #include <string.h>
 #include <stdlib.h>
 
-static NSString *dcc_default = @"DCCSupport";
-static NSString *dcc_dir = @"DCCSupportDirectory";
-static NSString *dcc_gettimeout = @"DCCSupportGetTimeout";
-static NSString *dcc_sendtimeout = @"DCCSupportSendTimeout";
+NSString *DCCDownloadDirectory = @"DCCSupportDownloadedDirectory";
+NSString *DCCCompletedDirectory = @"DCCSupportCompletedDirectory";
+NSString *DCCPortRange = @"DCCSupportPortRange";
+NSString *DCCGetTimeout = @"DCCSupportGetTimeout";
+NSString *DCCSendTimeout = @"DCCSupportSendTimeout";
+NSString *DCCDefault = @"DCCSupport";
 
-static id get_default_default(NSString *key)
-{
-	static NSDictionary *dict = nil;
-	
-	if (!dict)
-	{
-		dict = [[NSDictionary alloc] initWithObjectsAndKeys: 
-		  @"~/", dcc_dir,
-		  @"30", dcc_gettimeout,
-		  @"300", dcc_sendtimeout,
-		  nil];
-	}
-	
-	return [dict objectForKey: key];
-}
+static NSInvocation *invoc = nil;
+static NSDictionary *default_dict = nil;
 
-static void set_default(NSString *key, id value)
-{
-	if ([key hasPrefix: dcc_default] && ![key isEqualToString: dcc_default]) 
-	{
-		id dict;
-		key = [key substringFromIndex: [dcc_default length]];
-		
-		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
-		if (dict && [dict isKindOfClass: [NSDictionary class]])
-		{
-			dict = [NSMutableDictionary dictionaryWithDictionary: dict];
-		}
-		else
-		{
-			dict = AUTORELEASE([NSMutableDictionary new]);
-		}
-		
-		if (!value)
-		{
-			[dict removeObjectForKey: key];
-		}
-		else
-		{
-			[dict setObject: value forKey: key];
-		}
-		
-		[[NSUserDefaults standardUserDefaults] setObject: dict forKey: dcc_default];
-		return;
-	}
-	
-	if (!value)
-	{
-		[[NSUserDefaults standardUserDefaults] removeObjectForKey: key];
-	}
-	else
-	{
-		[[NSUserDefaults standardUserDefaults] setObject: value forKey: key];
-	}	
-}
-
-static id get_default(NSString *key)
-{
-	if ([key hasPrefix: dcc_default] && ![key isEqualToString: dcc_default]) 
-	{
-		id dict;
-		id sub;
-		sub = [key substringFromIndex: [dcc_default length]];
-		
-		dict = [[NSUserDefaults standardUserDefaults] objectForKey: dcc_default];
-		if (!dict || ![dict isKindOfClass: [NSDictionary class]])
-		{
-			[[NSUserDefaults standardUserDefaults] setObject: 
-			  dict = AUTORELEASE([NSDictionary new]) forKey: dcc_default];
-		}
-		
-		if (!(sub = [dict objectForKey: sub]))
-		{
-			set_default(key, sub = get_default_default(key));
-		}
-		
-		return sub;
-	}
-	
-	return [[NSUserDefaults standardUserDefaults] objectForKey: key];
-}
+#define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
+#define set_default(_x, _y) \
+{	[DCCSupport setDefaultsObject: _y forKey: _x];\
+	[controller reloadData];}
 
 #define GET_DEFAULT_INT(_x) [get_default(_x) intValue]
-#define SET_DEFAULT_INT(_x, _y) set_default(_x, [NSString stringWithFormat: @"%d", _y])
+#define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
 
 static NSString *fix_file_name(NSString *name)
 {
@@ -166,8 +94,6 @@ static NSString *unique_path(NSString *path)
 	
 	return nil;
 }
-
-static NSInvocation *invoc = nil;
 
 @interface DCCSupport (PrivateSupport)
 - (void)startedReceive: dcc onConnection: aConnection;
@@ -282,8 +208,6 @@ static NSInvocation *invoc = nil;
 @end
 
 
-
-
 @implementation DCCSupport
 + (void)initialize
 {
@@ -291,6 +215,70 @@ static NSInvocation *invoc = nil;
 	  [self instanceMethodSignatureForSelector: @selector(commandDCC:connection:)]]);
 	[invoc retainArguments];
 	[invoc setSelector: @selector(commandDCC:connection:)];
+
+	default_dict = [[NSDictionary alloc] initWithContentsOfFile:
+	  [[NSBundle bundleForClass: [DCCSupport class]]
+	  pathForResource: @"Defaults" ofType: @"plist"]];
+}
++ (NSDictionary *)defaultSettings
+{
+	return default_dict;
+}	
++ (void)setDefaultsObject: aObject forKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
+	{
+		NSMutableDictionary *y;
+		id tmp;
+		
+		aKey = [aKey substringFromIndex: [DCCDefault length]];
+		tmp = [object objectForKey: DCCDefault];
+		
+		if (!tmp)
+		{
+			y = AUTORELEASE([NSMutableDictionary new]);
+		}
+		else
+		{
+			y = [NSMutableDictionary dictionaryWithDictionary: tmp];
+		}
+		
+		if (aObject)
+		{
+			[y setObject: aObject forKey: aKey];
+		}
+		else
+		{
+			[y removeObjectForKey: aKey];
+		}
+		
+		[object setObject: y forKey: DCCDefault];
+	}
+}
++ (id)defaultsObjectForKey: aKey
+{
+	id object = [NSUserDefaults standardUserDefaults];
+	
+	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
+	{
+		aKey = [aKey substringFromIndex: [DCCDefault length]];
+		object = [object objectForKey: DCCDefault];
+		if (!(object))
+		{
+			[[NSUserDefaults standardUserDefaults] setObject:
+			  object = default_dict forKey: DCCDefault];
+		}
+		return (object = [object objectForKey: aKey]) ? object : 
+		  [default_dict objectForKey: aKey];
+	}
+	
+	return [object objectForKey: aKey];
+}
++ (id)defaultDefaultsForKey: aKey
+{
+	return [default_dict objectForKey: aKey];
 }
 - (NSAttributedString *)commandDCCABORT: (NSString *)command connection: (id)connection
 {
@@ -342,14 +330,14 @@ static NSInvocation *invoc = nil;
 	{
 		return BuildAttributedString(_l(@"Usage: /dcc gettimeout <seconds>" @"\n"
 		  @"Sets the timeout in seconds on receiving files." @"\n"
-		  @"Current timeout: "), get_default(dcc_gettimeout), nil);
+		  @"Current timeout: "), get_default(DCCGetTimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
 	
 	if (val < 0) val = 0 - val;
 	
-	SET_DEFAULT_INT(dcc_gettimeout, val);
+	SET_DEFAULT_INT(DCCGetTimeout, val);
 	
 	return S2AS(_l(@"Ok."));
 }
@@ -364,14 +352,14 @@ static NSInvocation *invoc = nil;
 	{
 		return BuildAttributedString(_l(@"Usage: /dcc sendtimeout <seconds>" @"\n"
 		  @"Sets the timeout in seconds on sending files." @"\n"
-		  @"Current timeout: "), get_default(dcc_sendtimeout), nil);
+		  @"Current timeout: "), get_default(DCCSendTimeout), nil);
 	}
 	
 	val = [[x objectAtIndex: 0] intValue];
 	
 	if (val < 0) val = 0 - val;
 	
-	SET_DEFAULT_INT(dcc_sendtimeout, val);
+	SET_DEFAULT_INT(DCCSendTimeout, val);
 	
 	return S2AS(_l(@"Ok."));
 }
@@ -544,7 +532,7 @@ static NSInvocation *invoc = nil;
 	if ([path length] == 0)
 	{
 		path = [dict objectForKey: DCCInfoFileName];
-		x = get_default(dcc_dir);
+		x = get_default(DCCDownloadDirectory);
 		if (![dfm fileExistsAtPath: x isDirectory: &isDir] || !isDir)
 		{
 			return S2AS(_l(@"Invalid download directory, see /dcc setdir."));
@@ -608,7 +596,7 @@ static NSInvocation *invoc = nil;
 		return BuildAttributedString(_l(@"Usage: /dcc setdir [-f] <directory>" @"\n"
 		  @"Sets the default download directory to <directory>, if -f is specified "
 		  @"the directory will be created if it doesn't already exist." @"\n"
-		  @"Currently: "), [get_default(dcc_dir) stringByExpandingTildeInPath], nil);
+		  @"Currently: "), [get_default(DCCDownloadDirectory) stringByExpandingTildeInPath], nil);
 	}
 	
 	dfm = [NSFileManager defaultManager];	
@@ -665,7 +653,7 @@ static NSInvocation *invoc = nil;
 	
 	if (couldCreate)
 	{
-		set_default(dcc_dir, dir);
+		set_default(DCCDownloadDirectory, dir);
 		return S2AS(_l(@"Ok."));
 	}
 
@@ -686,7 +674,7 @@ static NSInvocation *invoc = nil;
 - (NSAttributedString *)commandDCC: (NSString *)command connection: (id)connection
 {
 	id x = [command separateIntoNumberOfArguments: 2];
-	id arg;
+	id arg = @"";
 	int count;
 	SEL sel;
 	
