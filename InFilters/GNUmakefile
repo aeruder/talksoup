@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECTS = Highlighting MessageInTab KeepAlive Debold \
-              Decolorizer Deunderline Dereverse
+              Decolorizer Deunderline Dereverse Logging
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/aggregate.make
