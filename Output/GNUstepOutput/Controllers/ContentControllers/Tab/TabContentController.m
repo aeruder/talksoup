@@ -85,6 +85,7 @@ NSString *ContentConsoleName = @"Content Console Name";
 		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
 	}
 	
+	[tabView setFont: [NSFont userFontOfSize: -1.0]];
 	[tabView setDelegate: self];
 	
 	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 

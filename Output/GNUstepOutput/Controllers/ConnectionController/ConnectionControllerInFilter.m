@@ -554,15 +554,25 @@
 	id who = [IRCUserComponents(sender) objectAtIndex: 0];
 	id whos = [who string];
 	id where;
-	NSString *left = @"<";
-	NSString *right = @">";
+	id string;
+	id privstring;
+	id pubstring;
+	
+	privstring = BuildAttributedString(MARK, FCAN, otherColor, @"*",
+	  MARK, FCAN, otherColor, who, MARK, FCAN, otherColor, @"*",
+	  @" ", aMessage, nil);
+	pubstring = BuildAttributedString(MARK, FCAN, otherColor, @"<",
+	  who, MARK, FCAN, otherColor, @">",
+	  @" ", aMessage, nil);
+	
+	string = pubstring;
 	
 	if (GNUstepOutputCompare([to string], [connection nick]))
 	{
 		if (![content controllerForViewWithName: where = whos])
 		{
 			where = nil;
-			right = left = @"*";
+			string = privstring;
 		}
 	}
 	else
@@ -570,14 +580,11 @@
 		if (![content controllerForViewWithName: where = [to string]])
 		{
 			where = nil;
-			left = right = @"*";
+			string = privstring;
 		}
 	}
 	
-	[content putMessage: BuildAttributedString(
-	  MARK, FCAN, otherColor, left, 
-	  who, MARK, FCAN, otherColor, right, 
-	  @" ", aMessage, nil) in: where];
+	[content putMessage: string in: where];
 	
 	return self;
 }

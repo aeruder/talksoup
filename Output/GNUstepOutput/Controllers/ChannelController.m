@@ -37,6 +37,7 @@
 	id x;
 	id userColumn;
 	id userScroll;
+	id font;
 	NSRect frame;
 	
 	[splitView setVertical: YES];
@@ -66,7 +67,9 @@
 
 	[tableView setCornerView: nil];
 	[tableView setHeaderView: nil];
-	[tableView setRowHeight: 17.0];
+	font = [NSFont userFontOfSize: -1.0];
+	[tableView setFont: font]; 
+	[tableView setRowHeight: [font pointSize] + 5.0];
 	[tableView addTableColumn: userColumn];
 	[tableView setDrawsGrid: NO];
 	
