@@ -83,7 +83,7 @@
 {
 	if (currentTable == loadedTable)
 	{
-		[middleButton setImage: [NSImage imageNamed: @"RightArrow.tiff"]];
+		[middleButton setImage: rightImage];
 		[middleButton setEnabled: YES];
 		[middleButton setBordered: YES];
 		[upButton setEnabled: YES];
@@ -93,7 +93,7 @@
 	}
 	else if (currentTable == availableTable)
 	{
-		[middleButton setImage: [NSImage imageNamed: @"LeftArrow.tiff"]];
+		[middleButton setImage: leftImage];
 		[middleButton setEnabled: YES];
 		[middleButton setBordered: YES];
 		[upButton setEnabled: NO];
@@ -177,7 +177,21 @@ static NSString *big_description = nil;
 {
 	NSFont *aFont;
 	NSCell *x;
+	id bundle;
 	
+	bundle = [NSBundle bundleForClass: [GNUstepOutput class]];
+
+	rightImage = [[NSImage alloc] initWithContentsOfFile: 
+	  [bundle pathForImageResource: @"RightArrow.tiff"]];
+	leftImage = [[NSImage alloc] initWithContentsOfFile: 
+	  [bundle pathForImageResource: @"LeftArrow"]];
+	upImage = [[NSImage alloc] initWithContentsOfFile: 
+	  [bundle pathForImageResource: @"UpArrow"]];
+	downImage = [[NSImage alloc] initWithContentsOfFile: 
+	  [bundle pathForImageResource: @"DownArrow"]];
+	[upButton setImage: upImage];
+	[downButton setImage: downImage];
+
 	[availableTable setDelegate: self];
 	[loadedTable setDelegate: self];
 	
@@ -226,6 +240,10 @@ static NSString *big_description = nil;
 	[availableTable setDelegate: nil];
 	[loadedTable setDelegate: nil];
 	
+	RELEASE(upImage);
+	RELEASE(downImage);
+	RELEASE(leftImage);
+	RELEASE(rightImage);
 	RELEASE(availData[0]);
 	RELEASE(loadData[0]);
 	RELEASE(availData[1]);

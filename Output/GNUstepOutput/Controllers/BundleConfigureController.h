@@ -23,7 +23,7 @@
 #import <Foundation/NSObject.h>
 
 @class NSPopUpButton, NSTableView, NSTextView, NSWindow;
-@class NSTableColumn, NSButton;
+@class NSTableColumn, NSButton, NSImage;
 
 @interface BundleConfigureController : NSObject
 	{
@@ -42,6 +42,10 @@
 		int currentShowing;
 		id currentTable;
 		id otherTable;
+		NSImage *upImage;
+		NSImage *downImage;
+		NSImage *leftImage;
+		NSImage *rightImage;
 	}
 
 - (NSWindow *)window;
