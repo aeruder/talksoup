@@ -26,9 +26,11 @@
 - (void)awakeFromNib
 {
 	[window makeKeyAndOrderFront: nil];
+	[window makeFirstResponder: entryField];
 }
 - (void)dealloc
 {
+	[entryField setDelegate: nil];
 	DESTROY(extraField);
 	DESTROY(okButton);
 	DESTROY(window);
@@ -56,5 +58,6 @@
 {
 	[okButton performClick: nil];
 }
+
 @end
  

@@ -24,6 +24,15 @@
 - (void)awakeFromNib
 {
 	[window makeKeyAndOrderFront: nil];
+	[window makeFirstResponder: entryField];
+	[entryField setNextKeyView: nickField];
+	[nickField setNextKeyView: realField];
+	[realField setNextKeyView: passwordField];
+	[passwordField setNextKeyView: userField];
+	[userField setNextKeyView: serverField];
+	[serverField setNextKeyView: portField];
+	[portField setNextKeyView: commandsField];
+	[commandsField setNextKeyView: entryField];
 }
 - (void)dealloc
 {

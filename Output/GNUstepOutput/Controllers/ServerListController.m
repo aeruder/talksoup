@@ -167,7 +167,7 @@ static inline NSMutableArray *mutablized_prefs()
 		{
 			[[editor extraField] setStringValue: 
 			  @"Specify the server"];
-			[[editor window] makeFirstResponder: [editor extraField]];
+			[[editor window] makeFirstResponder: [editor serverField]];
 			return;
 		}
 		
