@@ -66,6 +66,9 @@
 	  forViewWithName: ContentConsoleName];
 	[[content window] setTitle: _l(@"Unconnected")];
 	
+	RELEASE(preNick);
+	preNick = RETAIN([aConnection nick]);
+	
 	DESTROY(connection);	
 	return self;
 }
@@ -138,6 +141,7 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
+	[content setNickViewString: [aConnection nick]];
 	return self;
 }
 - couldNotRegister: (NSAttributedString *)reason onConnection: (id)aConnection 
