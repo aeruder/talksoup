@@ -18,6 +18,7 @@
 #import "Controllers/ServerListConnectionController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/InputController.h"
+#import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/ContentControllers/ContentController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "GNUstepOutput.h"
@@ -42,22 +43,22 @@
 	tmp = [NSMutableDictionary dictionaryWithDictionary: aInfo];
 	if ([[tmp objectForKey: IRCDefaultsNick] length] == 0)
 	{
-		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsNick]
+		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsNick]
 		  forKey: IRCDefaultsNick];
 	}
 	if ([[tmp objectForKey: IRCDefaultsUserName] length] == 0)
 	{
-		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsUserName]
+		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsUserName]
 		  forKey: IRCDefaultsUserName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsRealName] length] == 0)
 	{
-		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsRealName]
+		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsRealName]
 		  forKey: IRCDefaultsRealName];
 	}
 	if ([[tmp objectForKey: IRCDefaultsPassword] length] == 0)
 	{
-		[tmp setObject: [_GS_ defaultsObjectForKey: IRCDefaultsPassword]
+		[tmp setObject: [_PREFS_ preferenceForKey: IRCDefaultsPassword]
 		  forKey: IRCDefaultsPassword];
 	}
 	
