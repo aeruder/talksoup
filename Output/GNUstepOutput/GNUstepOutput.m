@@ -102,7 +102,7 @@ GNUstepOutput *_GS_ = nil;
 	  [NSArray arrayWithObjects: nil], GNUstepOutputServerList,
 	  @"Helvetica", GNUstepOutputFontName,
 	  @"12", GNUstepOutputFontSize,
-	  @"5000", GNUstepOutputScrollBack,
+	  @"75000", GNUstepOutputScrollBack,
 	  nil];
 	
 	RELEASE(_GS_);
