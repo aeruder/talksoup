@@ -11,6 +11,8 @@ KeepAlive_FRAMEWORKS = -lTalkSoupBundles
 
 KeepAlive_OBJC_FILES = KeepAlive.m
 
+GUI_LIBS = 
+
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble

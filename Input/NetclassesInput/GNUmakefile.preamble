@@ -2,5 +2,3 @@ ADDITIONAL_INCLUDE_DIRS = -I. -Inetclasses -I../../../Source
 
 ADDITIONAL_OBJCFLAGS = -Wall -Wno-protocol
 
-GUI_LIBS = 
-

@@ -13,6 +13,8 @@ main = MessageInTab.m
 
 MessageInTab_OBJC_FILES = $(main)
 
+GUI_LIBS = 
+
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble

@@ -11,6 +11,8 @@ Skeleton_FRAMEWORKS = -lTalkSoupBundles
 
 Skeleton_OBJC_FILES =
 
+GUI_LIBS = 
+
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
 -include GNUmakefile.postamble
