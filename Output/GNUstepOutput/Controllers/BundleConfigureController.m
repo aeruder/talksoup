@@ -345,7 +345,6 @@ static NSString *big_description = nil;
 	  owner: nil];
 	[pboard setPropertyList: theData forType: bundlePboardType];
 
-	NSLog(@"Copying...");
 	RELEASE(theData);
 
 	return YES;
@@ -358,10 +357,8 @@ static NSString *big_description = nil;
 	if ([info draggingSourceOperationMask] & 
 	  (NSDragOperationGeneric | NSDragOperationCopy)) 
 	{
-		NSLog(@"Validating good...");
 		return NSDragOperationGeneric;
 	}
-	NSLog(@"Validating bad...");
 
 	return NSDragOperationNone;
 }
@@ -383,8 +380,6 @@ static NSString *big_description = nil;
 	
 	if ((data == origData) && (data == availData)) return NO;
 
-	NSLog(@"Accepting...");
-	
 	where = [origData indexOfObject: object];
 	if (row >= [data count])
 	{
