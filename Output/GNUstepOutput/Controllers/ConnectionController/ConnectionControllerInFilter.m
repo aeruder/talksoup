@@ -24,6 +24,7 @@
 #import "Models/Channel.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Misc/NSAttributedStringAdditions.h"
+#import "Misc/NSColorAdditions.h"
 
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSString.h>
@@ -78,7 +79,6 @@
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	/* This stuff needs a big fat FIXME
 	id process;
 	if (![aObject isKindOfClass: [NSDictionary class]]) return self;
 	
@@ -89,15 +89,38 @@
 	if ([process isEqualToString: @"HighlightTab"])
 	{
 		id col, name, prior;
+		id curlabel, attribs;
+		id selected, master, controller;
 
 		name = [aObject objectForKey: @"TabName"];
 		col = [aObject objectForKey: @"TabColor"];
+		col = [NSColor colorFromEncodedData: col];
 		prior = [aObject objectForKey: @"TabPriority"];
 
-		if (!name || !col) return self;
+		master = [content masterControllerForName: name];
+		selected = [master selectedViewController];
+		controller = [content viewControllerForName: name];
 
-		[content highlightTabWithName: name withColor: col withPriority: 
-		  (prior) ? YES : NO];
+		curlabel = AUTORELEASE([[NSMutableAttributedString alloc] 
+		  initWithAttributedString: [content labelForName: name]]);
+		if (!name || !col || !curlabel || ![curlabel length] ||
+		  !controller || (controller == selected)) 
+			return self;
+
+		attribs = [curlabel attributesAtIndex: 0 
+		  effectiveRange: NULL];
+		if (![attribs objectForKey: @"TabPriority"] || prior)
+		{
+			/* This will fail gracefully if prior is nil
+			 */
+			[curlabel setAttributes: 
+			 [NSDictionary dictionaryWithObjectsAndKeys:
+			   col, NSForegroundColorAttributeName,
+			   prior, @"TabPriority",
+			   nil]
+			 range: NSMakeRange(0, [curlabel length])];
+			[content setLabel: curlabel forName: name];
+		}
 	}
 	else if ([process isEqualToString: @"LabelTab"])
 	{
@@ -108,7 +131,7 @@
 
 		if (!name || !label) return self;
 		
-		[content setLabel: label forViewWithName: name];
+		[content setLabel: label forName: name];
 	}
 	else if ([process isEqualToString: @"OpenTab"])
 	{
@@ -119,26 +142,15 @@
 
 		if (!name || !label) return self;
 
-		if (![content isQueryName: name])
+		if (![content viewControllerForName: name])
 		{
-			[content addQueryWithName: name withLabel: label];
-		}
-	}
-	else if ([process isEqualToString: @"CloseTab"])
-	{
-		id name;
-
-		name = [aObject objectForKey: @"TabName"];
-
-		if (!name) return self;
-
-		if ([content isQueryName: name])
-		{
-			[content closeViewWithName: name];
+			[content addViewControllerOfType: ContentControllerQueryType
+			  withName: name 
+			  withLabel: label
+			  inMasterController: nil];
 		}
 	}
 	
-	*/
 	return self;
 }
 - registeredWithServerOnConnection: (id)aConnection 

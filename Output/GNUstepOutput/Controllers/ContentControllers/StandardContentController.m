@@ -711,6 +711,16 @@
 }
 - (void)viewSelected: (NSNotification *)aNotification
 {
+	id name;
+	id label;
+	
 	lastSelected = [[aNotification userInfo] objectForKey: @"View"];
+
+	name = NSMapGet(bothToName, lastSelected);
+	if (!name) return;
+
+	label = AUTORELEASE([[NSMutableAttributedString alloc] 
+	  initWithString: [[nameToLabel objectForKey: name] string]]);
+	[self setLabel: label forName: name];
 }
 @end

@@ -113,9 +113,11 @@ extern NSString *ContentConsoleName;
 - (void)setPrimaryMasterController: (id <MasterController>)aController;
 
 - (NSString *)nameForViewController: (id <ContentControllerQueryController>)aController;
+- (id <MasterController>)masterControllerForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;
 - (id <ContentControllerQueryController>)viewControllerForName: (NSString *)aName;
 - (NSString *)typeForName: (NSString *)aName;
+
 - (NSArray *)allChatViews;
 - (NSArray *)allControllers;
 - (NSArray *)allNames;

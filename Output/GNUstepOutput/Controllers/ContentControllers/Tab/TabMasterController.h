@@ -57,6 +57,7 @@
 
 - (void)selectViewController: (id <ContentControllerQueryController>)aController;
 - (void)selectViewControllerAtIndex: (unsigned)aIndex;
+- (id <ContentControllerQueryController>)selectedViewController;
 
 - (void)removeViewController: (id <ContentControllerQueryController>)aController;
 - (void)removeViewControllerAtIndex: (unsigned)aIndex;
