@@ -1100,10 +1100,10 @@ static NSInvocation *invoc = nil;
 	return BuildAttributedString([NSNull null], IRCBold, IRCBoldValue,
 	 _l(@"Author: "), @"Andrew Ruder\n\n",
 	 [NSNull null], IRCBold, IRCBoldValue,
-	 _l(@"Description: " @"Provides a interface to DCC file transfer "
+	 _l(@"Description: "), _l(@"Provides a interface to DCC file transfer "
 	 @"through the /dcc command.  Type /dcc when this bundle is loaded "
-	 @"for more information.\n\n"
-	 @"Copyright (C) 2003 by Andrew Ruder"), nil);
+	 @"for more information."), @"\n\n",
+	 _l(@"Copyright (C) 2003 by Andrew Ruder"), nil);
 }
 - DCCSendRequestReceived: (NSDictionary *)aInfo onConnection: aConnection
 {

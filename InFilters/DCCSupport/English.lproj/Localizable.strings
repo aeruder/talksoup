@@ -1,12 +1,3 @@
-/* DCCObject.h */
-
-
-/* DCCObject.m */
-
-
-/* DCCSupport.h */
-
-
 /* DCCSupport.m */
 "Transfer of %@ to %@ initiated." = "Transfer of %@ to %@ initiated.";
 "Transfer of %@ to %@ completed successfully! (%@ cps)" = "Transfer of %@ to %@ completed successfully! (%@ cps)";
@@ -46,7 +37,9 @@
 "Directory does not exist. Try the -f flag." = "Directory does not exist. Try the -f flag.";
 "Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)" = "Usage:\n/dcc list (lists current connections and requests)\n/dcc get (receives a file)\n/dcc setdir (sets default download directory)\n/dcc send (sends a file)\n/dcc gettimeout (sets timeout on receiving files)\n/dcc sendtimeout (sets timeout on sending files)\n/dcc abort (aborts a connection)";
 "Author: " = "Author: ";
-"Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder" = "Description: Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.\n\nCopyright (C) 2003 by Andrew Ruder";
+"Description: " = "Description: ";
+"Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information." = "Provides a interface to DCC file transfer through the /dcc command.  Type /dcc when this bundle is loaded for more information.";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
 "%@ (%@:%@) has requested to send %@ (%@ bytes)" = "%@ (%@:%@) has requested to send %@ (%@ bytes)";
 
 
