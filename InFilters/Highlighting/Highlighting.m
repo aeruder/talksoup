@@ -301,7 +301,10 @@ static NSInvocation *invoc = nil;
 		
 		val = [[x objectAtIndex: 1] componentsSeparatedByString: @"^"];
 		
-		if ([[x objectAtIndex: 1] caseInsensitiveCompare: @"^"] == NSOrderedSame)
+		val = [NSMutableArray arrayWithArray: val];
+		[val removeObject: @""];
+		
+		if ([val count] == 0)
 		{
 			val = nil;
 		}
@@ -320,7 +323,7 @@ static NSInvocation *invoc = nil;
 		  nil);
 	}
 
-	return nil;
+	return S2AS(@"Ok.");
 }
 - pluginActivated
 {

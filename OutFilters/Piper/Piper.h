@@ -1,5 +1,5 @@
 /***************************************************************************
-                             Colorizer.h
+                             Piper.h
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,16 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
-@class Colorizer;
+@class Piper;
 
-#ifndef COLORIZER_H
-#define COLORIZER_H
+#ifndef PIPER_H
+#define PIPER_H
 
 #include <Foundation/NSObject.h>
 
 @class NSAttributedString;
 
-@interface Colorizer : NSObject
+@interface Piper : NSObject
 - quitWithMessage: (NSAttributedString *)aMessage onConnection: aConnection
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin;

@@ -378,22 +378,6 @@ static inline NSAttributedString *as2cas(NSAttributedString *astr)
 	  withNickname: aNick sender: self];
 	return self;
 }
-- sendPingWithArgument: (NSAttributedString *)aString onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[_TS_ sendPingWithArgument: as2cas(aString) onConnection: aConnection
-	 withNickname: aNick sender: self];
-	return self;
-}
-- sendPongWithArgument: (NSAttributedString *)aString onConnection: aConnection 
-   withNickname: (NSAttributedString *)aNick 
-   sender: aPlugin
-{
-	[_TS_ sendPongWithArgument: as2cas(aString) onConnection: aConnection
-	 withNickname: aNick sender: self];
-	return self;
-}
 @end
 
 
