@@ -25,12 +25,7 @@ Comments are welcome.
 
 Installation Instructions:
 
-1. First you must install the TalkSoupBundles framework
- andy ~/TalkSoup $ cd TalkSoupBundles
- andy ~/TalkSoup/TalkSoupBundles $ make
- andy ~/TalkSoup/TalkSoupBundles $ su -c 'make install'
-
-2. Now you must install TalkSoup, go back to the head source directory.
+1. Compile and install TalkSoup
  andy ~/TalkSoup $ make
  andy ~/TalkSoup $ su -c 'make install'
 	

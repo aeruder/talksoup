@@ -206,8 +206,6 @@ Notes about GNUstepOutput (default):
   
 	* Double clicking a person in the user list in a channel will
 	  open a query tab for them.
-	* To switch tabs you hit command-left and command-right to move
-	  to the left and right, respectively.
 	
 ===============================================================================
 Please read the INSTALL file for the details on installing TalkSoup.
