@@ -36,6 +36,7 @@ extern NSString *ContentConsoleName;
 + (NSString *)standardNib;
 - (NSTextView *)chatView;
 - (NSView *)contentView;
+- (void)appendAttributedString: (NSAttributedString *)aString;
 @end
 
 //@protocol ContentControllerChannelName < ContentControllerChannelName >

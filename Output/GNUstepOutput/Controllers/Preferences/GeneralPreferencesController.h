@@ -16,13 +16,15 @@
  ***************************************************************************/
 
 @class GeneralPreferencesController;
+@class NSString;
+extern NSString *GNUstepOutputBufferLines;
 
 #ifndef GENERAL_PREFERENCES_CONTROLLER_H
 #define GENERAL_PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 
-@class NSString, NSImage;
+@class NSImage;
 @class NSView, NSImage;
 @class NSTextField, PreferencesController;
 

@@ -18,6 +18,7 @@
 #import "Controllers/Preferences/ColorPreferencesController.h"
 #import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
@@ -45,6 +46,7 @@
 - (void)userListFontChanged: (NSNotification *)aNotification;
 - (void)chatFontChanged: (NSNotification *)aNotification;
 - (void)wrapIndentChanged: (NSNotification *)aNotification;
+- (void)scrollLinesChanged: (NSNotification *)aNotification;
 @end
 
 @interface StandardChannelController (DelegateMethods)
@@ -190,6 +192,15 @@
 	  selector: @selector(wrapIndentChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputWrapIndent];
+
+	scrollLines = [[_PREFS_ preferenceForKey: GNUstepOutputBufferLines]
+	  intValue];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(scrollLinesChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputBufferLines];
+
 }
 - (void)dealloc
 {
@@ -227,6 +238,18 @@
 - (NSView *)contentView
 {
 	return window;
+}
+- (void)appendAttributedString: (NSAttributedString *)aString
+{
+	id textStorage;
+
+	textStorage = [chatView textStorage];
+	[textStorage appendAttributedString: aString];
+	numLines += [[[aString string] 
+	  componentsSeparatedByString: @"\n"] count] - 1;
+
+	if (numLines > scrollLines)
+		[textStorage chopNumberOfLines: numLines - scrollLines];
 }
 @end
 
@@ -276,6 +299,11 @@
 	[[chatView textStorage]
 	  updateAttributedStringForGNUstepOutputPreferences: 
 	  [aNotification object]];
+}
+- (void)scrollLinesChanged: (NSNotification *)aNotification
+{
+	scrollLines = [[_PREFS_ preferenceForKey: GNUstepOutputBufferLines]
+	  intValue];
 }
 @end
 

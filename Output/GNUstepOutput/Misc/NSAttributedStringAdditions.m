@@ -283,5 +283,26 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	}
 }
 #undef COLOR_FOR_KEY
+- (void)chopNumberOfLines: (int)numLines
+{
+	NSRange aRange;
+	NSString *text;
+	int start, len;
+
+	text = [self string];
+	len = [text length];
+	start = 0;
+	while (numLines > 0)
+	{
+		aRange = [text rangeOfString: @"\n"
+		  options: 0 range: NSMakeRange(start, len - start)];
+		if (aRange.location == NSNotFound) 
+			return;
+		start = aRange.location + aRange.length;
+		numLines--;
+	}
+
+	[self deleteCharactersInRange: NSMakeRange(0, start)];
+}
 @end
 

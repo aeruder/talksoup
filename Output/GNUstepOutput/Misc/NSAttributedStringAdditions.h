@@ -34,6 +34,7 @@ extern NSString *InverseTypeBackground;
 @interface NSMutableAttributedString (OutputAdditions2)	  
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString;
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey;
+- (void)chopNumberOfLines: (int)numLines;
 @end
 
 #endif

@@ -317,7 +317,7 @@
 - (void)putMessage: aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd
 {
-	id controller = nil;
+	id <ContentControllerQueryController> controller = nil;
 	id string;
 	
 	if (!aMessage) return;
@@ -353,8 +353,6 @@
 		controller = lastSelected;
 	}
 
-	controller = [[controller chatView] textStorage];	
-	
 	string = [NSMutableAttributedString 
 	  attributedStringWithGNUstepOutputPreferences: aMessage];
 
@@ -365,9 +363,6 @@
 		[controller appendAttributedString: [NSMutableAttributedString
 		  attributedStringWithGNUstepOutputPreferences: @"\n"]];
 	}
-	
-	//clear_scrollback(controller);
-	// FIXME: the controllers should handle the removing of extra LINES (need to get rid of this byte nonsense)
 }
 - (void)putMessageInAll: aMessage
 {

@@ -29,10 +29,13 @@
 	{
 		id window;
 		id chatView;
+		int numLines;
+		int scrollLines;
 	}
 + (NSString *)standardNib;
 - (NSView *)contentView;
 - (NSTextView *)chatView;
+- (void)appendAttributedString: (NSAttributedString *)aString;
 @end
 
 #endif

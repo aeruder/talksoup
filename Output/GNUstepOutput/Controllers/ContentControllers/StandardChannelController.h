@@ -34,6 +34,8 @@
 		NSSplitView *splitView;
 		id window;
 		Channel *channelSource;
+		int scrollLines;
+		int numLines;
 	}
 
 - (Channel *)channelSource;
@@ -43,6 +45,7 @@
 - (NSTextView *)chatView; 
 
 - (NSView *)contentView;
+- (void)appendAttributedString: (NSAttributedString *)aString;
 @end
 
 #endif

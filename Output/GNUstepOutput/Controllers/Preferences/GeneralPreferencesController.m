@@ -29,6 +29,8 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
 
+NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
+
 @interface GeneralPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;
 - (void)refreshFromPreferences;
