@@ -21,7 +21,7 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
 	      Controllers/ServerListController.m
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \
-        Views/TabTextView.m
+        Views/KeyTextView.m
 
 Misc = Misc/NSColorAdditions.m Misc/NSObjectAdditions.m\
        Misc/NSAttributedStringAdditions.m

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                TabTextView.m
+                                KeyTextView.m
                           -------------------
     begin                : Fri Apr 11 14:14:45 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,52 +15,38 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Views/TabTextView.h"
+#include "Views/KeyTextView.h"
 
 #include <AppKit/NSEvent.h>
 #include <AppKit/NSTextStorage.h>
 
-@implementation TabTextView
-- setTabTarget: (id)aTarget
+@implementation KeyTextView
+- setKeyTarget: (id)aTarget
 {
-	tabTarget = aTarget;
+	keyTarget = aTarget;
 	return self;
 };
-- setTabAction: (SEL)aSel
+- setKeyAction: (SEL)aSel
 {
-	tabAction = aSel;
-	return self;
-}
-- setNonTabAction: (SEL)aSel
-{
-	nonTabAction = aSel;
+	keyAction = aSel;
 	return self;
 }
 - (void)keyDown: (NSEvent *)theEvent
 {
-	NSString *characters = [theEvent characters];
-	unichar character = 0;
+	BOOL (*function)(NSEvent *, id);
 	
-	if (!tabTarget)
+	if (!keyTarget || !keyAction)
 	{
 		[super keyDown: theEvent];
 		return;
 	}
 	
-	if ([characters length] > 0)
-	{
-		character = [characters characterAtIndex: 0];
-	}
+	function = (BOOL (*)(NSEvent *, id))[keyTarget methodForSelector: keyAction];
 	
-	if (character != NSTabCharacter && character && nonTabAction)
+	if (function)
 	{
-		NSLog(@"Non-tab pressed...");
-		[tabTarget performSelector: nonTabAction withObject: self];
-	}
-	
-	if (character == NSTabCharacter && tabAction)
-	{
-		[tabTarget performSelector: tabAction withObject: self];
+		if ((function(theEvent, self)))
+			[super keyDown: theEvent];
 	}
 	else
 	{

@@ -1,5 +1,5 @@
 /***************************************************************************
-                                TabTextView.h
+                                KeyTextView.h
                           -------------------
     begin                : Fri Apr 11 14:14:45 CDT 2003
     copyright            : (C) 2003 by Andy Ruder
@@ -15,24 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 
-@class TabTextView;
+@class KeyTextView;
 
-#ifndef TAB_TEXT_VIEW_H
-#define TAB_TEXT_VIEW_H
+#ifndef KEY_TEXT_VIEW_H
+#define KEY_TEXT_VIEW_H
 
 #include <AppKit/NSTextView.h>
 
-@interface TabTextView : NSTextView
+@interface KeyTextView : NSTextView
 	{
-		id tabTarget;
-		
-		SEL tabAction;
-		SEL nonTabAction;
+		id keyTarget;	
+		SEL keyAction;
 	}
-
-- setTabTarget: (id)aTarget;
-- setTabAction: (SEL)aSel;
-- setNonTabAction: (SEL)aSel;
+- setKeyTarget: (id)aTarget;
+- setKeyAction: (SEL)aSel;
 
 - (void)setStringValue: (NSString *)aValue; 
 @end

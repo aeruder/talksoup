@@ -21,7 +21,7 @@
 #define CONNECTION_CONTROLLER_H
 
 @class NSString, NSAttributedString, NSDictionary, InputController, ContentController;
-@class NSColor, NSMutableDictionary, TabTextView, Channel;
+@class NSColor, NSMutableDictionary, KeyTextView, Channel;
 
 #include <Foundation/NSObject.h>
 
@@ -35,7 +35,7 @@
 		NSString *password;
 		NSString *realName;
 		
-		TabTextView *fieldEditor;
+		KeyTextView *fieldEditor;
 		InputController *inputController;
 		id connection;
 		ContentController *content;
