@@ -41,6 +41,9 @@
 	[chatView setTextContainerInset: NSMakeSize(2, 2)];
 	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[chatView setFrameSize: [[chatView enclosingScrollView] contentSize]];
+	[chatView setEditable: NO];
+	[chatView setSelectable: YES];
+	[chatView setRichText: NO];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
 	  [_GS_ defaultsObjectForKey: GNUstepOutputBackgroundColor]]];

@@ -49,6 +49,9 @@
 	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[topicText setFrameSize: [[topicText enclosingScrollView] contentSize]];
 	[topicText setBackgroundColor: [NSColor whiteColor]];
+	[topicText setEditable: YES];
+	[topicText setSelectable: YES];
+	[topicText setRichText: NO];
 }
 - (void)dealloc
 {
