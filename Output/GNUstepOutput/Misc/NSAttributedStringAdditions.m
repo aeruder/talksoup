@@ -84,7 +84,7 @@ NSString *TypeOfColor = @"TypeOfColor";
 		}
 		if ([dict objectForKey: IRCUnderline])
 		{
-			[dict setObject: [NSNumber numberWithInt: 1] 
+			[dict setObject: [NSNumber numberWithInt: NSSingleUnderlineStyle] 
 			  forKey: NSUnderlineStyleAttributeName];
 		}
 		if ([dict objectForKey: IRCBold])
