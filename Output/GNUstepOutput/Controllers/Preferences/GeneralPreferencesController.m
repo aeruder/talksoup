@@ -165,8 +165,6 @@
 - (void)deactivate
 {
 	activated = NO;
-	NSLog(@"Deactivated!");
-	// FIXME
 }
 @end
 
@@ -194,6 +192,11 @@
 	  IRCDefaultsPassword];
 	rn = [_PREFS_ preferenceForKey:
 	  IRCDefaultsRealName];
+
+	if (!nick) nick = @"";
+	if (!user) user = @"";
+	if (!pass) pass = @"";
+	if (!rn) rn = @"";
 
 	[nickView setStringValue: nick];
 	[userView setStringValue: user];
