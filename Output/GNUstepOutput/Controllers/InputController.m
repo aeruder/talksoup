@@ -19,6 +19,8 @@
 #include "Controllers/InputController.h"
 #include "Controllers/ConnectionController.h"
 #include "Controllers/ContentController.h"
+#include "Controllers/QueryController.h"
+#include "Views/ScrollingTextView.h"
 #include "GNUstepOutput.h"
 
 #include <Foundation/NSBundle.h>
@@ -28,6 +30,7 @@
 #include <Foundation/NSString.h>
 #include <AppKit/NSTextField.h>
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSTextStorage.h>
 
 id _output_ = nil; 
 
@@ -420,4 +423,13 @@ id _output_ = nil;
 	
 	return self;
 }
+- commandClear: (NSString *)command
+{
+	id x = [[controller contentController] controllerForViewWithName: 
+	  [[controller contentController] currentViewName]];
+	[[[x chatView] textStorage] setAttributedString: 
+	  AUTORELEASE([[NSAttributedString alloc] initWithString: @""])];
+	
+	return self;
+}	  
 @end

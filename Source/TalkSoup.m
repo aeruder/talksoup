@@ -949,6 +949,121 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	  @"where [red], [green], [blue] are the red, green, and blue "
 	  @"components of the color on a scale of 0 to 1000."), nil);
 }  		  
+- (NSAttributedString *)commandCtcp: (NSString *)command connection: connection
+{
+	id array;
+	id ctcp;
+	id args;
+	id who;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 3];
+	
+	if ([array count] <= 2)
+	{
+		return S2AS(_(@"Usage: /ctcp <nick> <ctcp> [args]")); 
+	}
+
+	args = ([array count] == 3) ? [array objectAtIndex: 2] : nil;
+	
+	ctcp = [[array objectAtIndex: 1] uppercaseString];
+	who = [array objectAtIndex: 0];
+
+	[_TS_ sendCTCPRequest: S2AS(ctcp) withArgument: S2AS(args)
+	  to: S2AS(who) onConnection: connection sender: output];
+	
+	return nil;
+}	
+- (NSAttributedString *)commandVersion: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	
+	array = [command separateIntoNumberOfArguments: 2];
+
+	if (!connection) return NO_CONNECT;
+	
+	if ([array count] == 0)
+	{
+		return S2AS(_(@"Usage: /version <nick>"));
+	}
+
+	who = [array objectAtIndex: 0];
+	
+	[_TS_ sendCTCPRequest: S2AS(@"VERSION") withArgument: nil
+	  to: S2AS(who) onConnection: connection sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandClientinfo: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 2];
+
+	if ([array count] == 0)
+	{
+		return S2AS(_(@"Usage: /clientinfo <nick>"));
+	}
+
+	who = [array objectAtIndex: 0];
+	
+	[_TS_ sendCTCPRequest: S2AS(@"CLIENTINFO") withArgument: nil
+	  to: S2AS(who) onConnection: connection sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandUserinfo: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 2];
+
+	if ([array count] == 0)
+	{
+		return S2AS(_(@"Usage: /userinfo <nick>"));
+	}
+
+	who = [array objectAtIndex: 0];
+	
+	[_TS_ sendCTCPRequest: S2AS(@"USERINFO") withArgument: nil
+	  to: S2AS(who) onConnection: connection sender: output];
+	
+	return nil;
+}
+- (NSAttributedString *)commandPing: (NSString *)command connection: connection
+{
+	id array;
+	id who;
+	id arg = nil;
+	
+	if (!connection) return NO_CONNECT;
+	
+	array = [command separateIntoNumberOfArguments: 2];
+
+	if ([array count] <= 1)
+	{
+		return S2AS(_(@"Usage: /ping <nick> <argument>"));
+	}
+
+	who = [array objectAtIndex: 0];
+	if ([array count] >= 2)
+	{
+		arg = [array objectAtIndex: 1];
+	}
+	
+	[_TS_ sendCTCPRequest: S2AS(@"PING") withArgument: S2AS(arg)
+	  to: S2AS(who) onConnection: connection sender: output];
+	
+	return nil;
+}
 - (void)setupCommandList
 {
 #define ADD_COMMAND(_sel, _name) { id invoc; \
@@ -971,6 +1086,11 @@ static inline NSArray *get_bundles_in_directory(NSString *dir)
 	ADD_COMMAND(@selector(commandAway:connection:), @"away");
 	ADD_COMMAND(@selector(commandQuit:connection:), @"quit");
 	ADD_COMMAND(@selector(commandColors:connection:), @"colors");
+	ADD_COMMAND(@selector(commandCtcp:connection:), @"ctcp");
+	ADD_COMMAND(@selector(commandVersion:connection:), @"version");
+	ADD_COMMAND(@selector(commandClientinfo:connection:), @"clientinfo");
+	ADD_COMMAND(@selector(commandUserinfo:connection:), @"userinfo");
+	ADD_COMMAND(@selector(commandPing:connection:), @"ping");
 
 #undef ADD_COMMAND
 }

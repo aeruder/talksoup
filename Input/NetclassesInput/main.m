@@ -341,6 +341,8 @@
    withArgument: (NSAttributedString *)args
    to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
 {
+	[_TS_ CTCPReplyReceived: aCTCP withArgument: args
+	  from: S2AS(nick) onConnection: aConnection sender: control];
 	[super sendCTCPReply: AS2S(aCTCP) withArgument: AS2S(args)
 	  to: AS2S(aPerson)];
 	return self;
@@ -349,6 +351,8 @@
    withArgument: (NSAttributedString *)args
    to: (NSAttributedString *)aPerson onConnection: aConnection sender: aPlugin
 {
+	[_TS_ CTCPRequestReceived: aCTCP withArgument: args
+	  from: S2AS(nick) onConnection: aConnection sender: control];
 	[super sendCTCPRequest: AS2S(aCTCP) withArgument: AS2S(args)
 	  to: AS2S(aPerson)];
 	return self;
