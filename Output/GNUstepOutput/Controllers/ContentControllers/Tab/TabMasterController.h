@@ -37,6 +37,7 @@
 		NSMapTable *tabToView;
 		NSMutableArray *contentControllers;
 		
+		id <TypingController> typingController;
 		NSTextField *typeView;
 		NSTextField *nickView;
 		NSTabView *tabView;

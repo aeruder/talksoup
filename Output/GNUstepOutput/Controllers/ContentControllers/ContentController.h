@@ -85,8 +85,14 @@ extern NSString *ContentConsoleName;
 - (NSWindow *)window;
 @end
 
+@protocol TypingController <NSObject>
+- (NSText *)fieldEditor;
+- (void)commandTyped: (NSString *)aCommand;
+@end
 
 @protocol ContentController <NSObject>
+- (id <TypingController>)typingControllerForView: 
+   (id <ContentControllerQueryView>)aView;
 - (void)setFieldEditor: (NSText *)aFieldEditor;
 - (NSText *)fieldEditor;
 

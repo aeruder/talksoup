@@ -95,6 +95,10 @@ static NSString *TypeOfColor = @"TypeOfColor";
 {
 	return [self initWithMasterController: nil];
 }
+- (id <TypingController>)typingControllerForView:
+   (id <ContentControllerQueryView>)aView {
+	return nil;
+}
 - (void)setFieldEditor: (NSText *)aFieldEditor
 {
 	ASSIGN(fieldEditor, aFieldEditor);

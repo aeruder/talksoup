@@ -109,13 +109,25 @@
 }
 - (void)selectView: (id <ContentControllerQueryView>)aView
 {
-	id tab;
+	id tab, content;
 
 	tab = NSMapGet(viewToTab, aView);
+	content = NSMapGet(viewToContent, aView);
 
-	if (!tab) return;
+	if (!tab || !content) return;
 
 	[tabView selectTabViewItem: tab];
+
+	[[NSNotificationCenter defaultCenter]
+	 postNotificationName: ContentControllerSelectedNameNotification
+	 object: content userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
+	  aView, @"View",
+	  content, @"Content",
+	  self, @"Master",
+	  nil]];
+	RELEASE(typingController);
+	typingController = RETAIN([content 
+	     typingControllerForView: aView]);
 }
 - (void)selectViewAtIndex: (unsigned)aIndex
 {
