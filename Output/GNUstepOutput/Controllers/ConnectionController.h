@@ -68,6 +68,8 @@
 
 - (ContentController *)contentController;
 
+- (NSArray *)channelsWithUser: (NSString *)user;
+
 - setOtherColor: (NSColor *)aColor;
 - setPersonalColor: (NSColor *)aColor;
 

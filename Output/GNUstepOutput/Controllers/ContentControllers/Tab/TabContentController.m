@@ -199,6 +199,18 @@ NSString *ContentConsoleName = @"Content Console Name";
 		controller = [nameToBoth objectForKey: 
 		    GNUstepOutputLowercase([aChannel string])];
 	}
+	else if ([aChannel isKindOf: [NSArray class]])
+	{
+		NSEnumerator *iter;
+		id object;
+		
+		iter = [aChannel objectEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[self putMessage: aString in: object withEndLine: aBool];
+		}
+		return self;
+	}
 	
 	if (controller == nil)
 	{
@@ -237,21 +249,13 @@ NSString *ContentConsoleName = @"Content Console Name";
 }
 - putMessageInAll: (id)aString withEndLine: (BOOL)aBool
 {
-	NSEnumerator *iter;
-	id object;
-
-	iter = [nameToBoth keyEnumerator];
-
-	while ((object = [iter nextObject]))
-	{
-		[self putMessage: aString in: object withEndLine: aBool];
-	}
-
+	[self putMessage: aString in: [nameToBoth allKeys] withEndLine: aBool];
 	return self;
 }
 - putMessageInAll: (id)aString
 {
-	return [self putMessageInAll: aString withEndLine: YES];
+	[self putMessage: aString in: [nameToBoth allKeys] withEndLine: YES];
+	return self;
 }
 - addQueryWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
 {
@@ -260,6 +264,14 @@ NSString *ContentConsoleName = @"Content Console Name";
 	id tabItem;
 
 	name = GNUstepOutputLowercase(aName);
+
+	if ([nameToBoth objectForKey: name])
+	{
+		[self setLabel: aLabel forViewWithName: name];
+		[tabView selectTabViewItem: [nameToTabItem objectForKey: name]];
+		return nil;
+	}
+
 	query = AUTORELEASE([QueryController new]);
 	
 	if (![NSBundle loadNibNamed: @"Query" owner: query])
@@ -298,6 +310,14 @@ NSString *ContentConsoleName = @"Content Console Name";
 	id tabItem;
 
 	name = GNUstepOutputLowercase(aName);
+	
+	if ([nameToBoth objectForKey: name])
+	{
+		[self setLabel: aLabel forViewWithName: name];
+		[tabView selectTabViewItem: [nameToTabItem objectForKey: name]];
+		return nil;
+	}
+	
 	chan = AUTORELEASE([ChannelController new]);
 
 	if (![NSBundle loadNibNamed: @"Channel" owner: chan])
