@@ -1,3 +1,7 @@
+2004-01-12 Andy Ruder <aeruder at ksu dot edu>
+ * Manually applying various attributes to NSTextView subclasses
+   since OS X doesn't support custom subclasses on them.
+
 2004-01-11 Andy Ruder <aeruder at ksu dot edu>
  * Added /ping, /topic to GNUstepOutput
  * Made /join not require the # on the channels
