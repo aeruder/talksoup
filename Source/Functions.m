@@ -24,6 +24,7 @@
 #include <Foundation/NSAttributedString.h>
 #include <Foundation/NSDictionary.h>
 #include <Foundation/NSNull.h>
+#include <Foundation/NSBundle.h>
 
 #include <stdarg.h>
 
@@ -33,22 +34,22 @@ static void build_mappings(void)
 {
 	RELEASE(mappings);
 	mappings = RETAIN(([NSDictionary dictionaryWithObjectsAndKeys:
-	  IRCColorWhite, @"white",
-	  IRCColorBlack, @"black",
-	  IRCColorBlue, @"blue",
-	  IRCColorGreen, @"green",
-	  IRCColorRed, @"red",
-	  IRCColorMaroon, @"maroon", 
-	  IRCColorMagenta, @"magenta",
-	  IRCColorOrange, @"orange",
-	  IRCColorYellow, @"yellow",
-	  IRCColorLightGreen, @"light green",
-	  IRCColorTeal, @"teal",
-	  IRCColorLightCyan, @"light cyan",
-	  IRCColorLightBlue, @"light blue",
-	  IRCColorLightMagenta, @"light magenta",
-	  IRCColorLightGrey, @"light grey",
-	  IRCColorGrey, @"grey", nil]));
+	  IRCColorWhite, _(@"white"),
+	  IRCColorBlack, _(@"black"),
+	  IRCColorBlue, _(@"blue"),
+	  IRCColorGreen, _(@"green"),
+	  IRCColorRed, _(@"red"),
+	  IRCColorMaroon, _(@"maroon"), 
+	  IRCColorMagenta, _(@"magenta"),
+	  IRCColorOrange, _(@"orange"),
+	  IRCColorYellow, _(@"yellow"),
+	  IRCColorLightGreen, _(@"light green"),
+	  IRCColorTeal, _(@"teal"),
+	  IRCColorLightCyan, _(@"light cyan"),
+	  IRCColorLightBlue, _(@"light blue"),
+	  IRCColorLightMagenta, _(@"light magenta"),
+	  IRCColorLightGrey, _(@"light grey"),
+	  IRCColorGrey, _(@"grey"), nil]));
 }
 
 NSString *IRCColorFromUserColor(NSString *string)
@@ -59,7 +60,7 @@ NSString *IRCColorFromUserColor(NSString *string)
 	string = [string lowercaseString];	
 	x = [mappings objectForKey: string];
 	
-	if ([string hasPrefix: @"custom"])
+	if ([string hasPrefix: _(@"custom")])
 	{
 		int r,g,b;
 		id scan;

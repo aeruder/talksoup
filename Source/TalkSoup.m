@@ -736,8 +736,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	
 	[[NSUserDefaults standardUserDefaults] setObject: dict forKey: @"Plugins"];
 	
-	return S2AS(_(@"The loaded bundles will now load automagically on TalkSoup "
-	              @"startup."));
+	return S2AS(_(@"The loaded bundles will now load automagically on TalkSoup startup."));
 }
 - (NSAttributedString *)commandLoaded: (NSString *)args connection: (id)connection
 {
@@ -987,9 +986,9 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	return BuildAttributedString(
 	 _(@"Valid color names include any color from the following list: "),
 	 [PossibleUserColors() componentsJoinedByString: @", "], @"\n",
-	 _(@"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "
-	  @"where [red], [green], [blue] are the red, green, and blue "
-	  @"components of the color on a scale of 0 to 1000."), nil);
+	 _(@"Also, a string is valid if it is of the form 'custom [red] [green] [blue]' "),
+	  _(@"where [red], [green], [blue] are the red, green, and blue "),
+	  _(@"components of the color on a scale of 0 to 1000."), nil);
 }  		  
 - (NSAttributedString *)commandCtcp: (NSString *)command connection: connection
 {
