@@ -101,10 +101,18 @@ extern NSString *DCCInfoNick;     //NSString
 	}
 - initWithSendOfFile: (NSString *)name
     withSize: (NSNumber *)size
-	 withDelegate: aDelegate
+    withDelegate: aDelegate
     withTimeout: (int)seconds
     withBlockSize: (uint32_t)numBytes
     withUserInfo: (NSDictionary *)userInfo;
+
+- initWithSendOfFile: (NSString *)name
+    withSize: (NSNumber *)size
+    withDelegate: aDelegate
+    withTimeout: (int)seconds
+    withBlockSize: (uint32_t)numBytes
+    withUserInfo: (NSDictionary *)userInfo
+    withPort: (int)low to: (int)high;
 
 - writeData: (NSData *)someData;
 

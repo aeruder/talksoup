@@ -359,10 +359,11 @@ static id connection_holder = nil;
 	
 @implementation DCCSendObject
 - initWithSendOfFile: (NSString *)name
-    withSize: (NSNumber *)size
-    withDelegate: aDelegate
-    withTimeout: (int)seconds withBlockSize: (uint32_t)numBytes
-    withUserInfo: (NSDictionary *)aUserInfo
+   withSize: (NSNumber *)size
+   withDelegate: aDelegate
+   withTimeout: (int)seconds withBlockSize: (uint32_t)numBytes
+   withUserInfo: (NSDictionary *)aUserInfo
+   withPort: (int)low to: (int)high
 {
 	id address;
 	id portNum;
@@ -389,9 +390,40 @@ static id connection_holder = nil;
 		return nil;
 	}
 	
-	port = [[[DCCSendObjectPort alloc] initOnPort: 0 withDelegate: self]
-	 setNetObject: [DCCConnectionHolder class]];
+	if (low < 0 || high < 0)
+	{
+		port = [[[DCCSendObjectPort alloc] initOnPort: 0 withDelegate: self]
+	 	  setNetObject: [DCCConnectionHolder class]];
+	}
+	else
+	{
+		if (low > 65535) low = 65535;
+		if (high > 65535) high = 65535;
 
+		if (low > high)
+		{
+			int temp;
+			temp = high;
+			high = low;
+			low = temp;
+		}
+		if (low == high)
+		{
+			port = [[[DCCSendObjectPort alloc] initOnPort: low withDelegate: self]
+			  setNetObject: [DCCConnectionHolder class]];
+		}
+		else
+		{
+			do
+			{
+				port = [[[DCCSendObjectPort alloc] initOnPort: low withDelegate: self]
+				  setNetObject: [DCCConnectionHolder class]];
+				if (port) break;
+				low++;
+			} while (low <= high);
+		}
+	}
+	
 	if (!port)
 	{
 		[self dealloc];
@@ -431,6 +463,17 @@ static id connection_holder = nil;
 	  nil];
 	
 	return self;
+}
+- initWithSendOfFile: (NSString *)name
+    withSize: (NSNumber *)size
+    withDelegate: aDelegate
+    withTimeout: (int)seconds withBlockSize: (uint32_t)numBytes
+    withUserInfo: (NSDictionary *)aUserInfo
+{
+	return [self initWithSendOfFile: name
+	 withSize: size withDelegate: aDelegate
+	 withTimeout: seconds withBlockSize: numBytes
+	 withUserInfo: aUserInfo withPort: -1 to: -1];
 }
 - (void)dealloc
 {

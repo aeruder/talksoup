@@ -43,6 +43,8 @@
 	id dfm;
 	NSNumber *fileSize;
 	id dict;
+	id range;
+	int low, high;
 	
 	dfm = [NSFileManager defaultManager];
 	
@@ -69,10 +71,28 @@
 	
 	connection = RETAIN(aConnection);
 	
+	range = get_default(DCCPortRange);
+
+	range = [NSMutableArray arrayWithArray: [range 
+	   componentsSeparatedByString: @"-"]];
+	[range removeObject: @""];
+
+	if ([range count] < 2)
+	{
+		low = -1;
+		high = -1;
+	}
+	else
+	{
+		low = [[range objectAtIndex: 0] intValue];
+		high = [[range objectAtIndex: 1] intValue];
+	}
+
 	sender = [[DCCSendObject alloc] initWithSendOfFile: [path lastPathComponent]  
 	  withSize: fileSize
 	  withDelegate: self withTimeout: GET_DEFAULT_INT(DCCSendTimeout) 
-	  withBlockSize: 2000 withUserInfo: nil];
+	  withBlockSize: GET_DEFAULT_INT(DCCBlockSize) withUserInfo: nil
+	  withPort: low to: high];
 	
 	[_TS_ sendCTCPRequest: S2AS(@"DCC") 
 	  withArgument: S2AS(BuildDCCSendRequest([sender info]))
