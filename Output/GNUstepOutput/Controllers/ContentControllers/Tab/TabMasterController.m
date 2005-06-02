@@ -73,6 +73,10 @@
 }
 - (void)dealloc
 {
+	[window setDelegate: nil];
+	[window close];
+	DESTROY(window);
+	
 	[[NSNotificationCenter defaultCenter] removeObserver: self
 	  name: ContentControllerChangedNicknameNotification
 	  object: nil];
@@ -91,10 +95,6 @@
 	[nickView setDelegate: nil];
 	
 	[tabView setDelegate: nil];
-	
-	[window setDelegate: nil];
-	[window close];
-	DESTROY(window);
 	
 	[super dealloc];
 }

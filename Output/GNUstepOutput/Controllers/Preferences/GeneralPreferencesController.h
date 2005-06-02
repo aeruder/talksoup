@@ -18,6 +18,7 @@
 @class GeneralPreferencesController;
 @class NSString;
 extern NSString *GNUstepOutputBufferLines;
+extern NSString *GNUstepOutputDefaultQuitMessage;
 
 #ifndef GENERAL_PREFERENCES_CONTROLLER_H
 #define GENERAL_PREFERENCES_CONTROLLER_H
@@ -36,6 +37,7 @@ extern NSString *GNUstepOutputBufferLines;
 		NSTextField *nameView;
 		NSTextField *passwordView;
 		NSTextField *nickView;
+		NSTextField *quitView;
 		BOOL activated;
 	}
 - (void)setText: (NSTextField *)aField;

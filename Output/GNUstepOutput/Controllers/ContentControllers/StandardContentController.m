@@ -42,6 +42,7 @@
 - (NSColor *)colorForKey: (NSString *)aKey;
 - (void)viewSelected: (NSNotification *)aNotification;
 - (void)userOpened: (NSNotification *)aNotification;
+- (void)windowWillClose: (NSNotification *)aNotification;
 @end
 
 @implementation StandardContentController
@@ -73,7 +74,8 @@
 	bothToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
 	  NSObjectMapValueCallBacks, 10);
 	  
-	if (!aMaster) aMaster = [[[self class] masterClass] new]; 
+	if (!aMaster) 
+		aMaster = AUTORELEASE([[[self class] masterClass] new]); 
 	if (!aMaster)
 	{
 		[self dealloc];
@@ -94,6 +96,11 @@
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(userOpened:)
 	  name: ChannelControllerUserOpenedNotification
+	  object: nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(windowWillClose:)
+	  name: NSWindowWillCloseNotification
 	  object: nil];
 
 	return self;
@@ -131,8 +138,27 @@
 {
 	return connectionController;
 }
-// FIXME a dealloc needs to be written
-// An additional note: don't forget to removeObserver:
+/* Dealllocate this instance while ensuring that it is removed
+ * from the notification pool.
+ */
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+
+	RELEASE(masterControllers);
+	RELEASE(nameToChannel);
+	RELEASE(nameToQuery);
+	RELEASE(nameToBoth);
+	RELEASE(nameToPresentation);
+	RELEASE(nameToLabel);
+	RELEASE(nameToMasterController);
+	RELEASE(nameToTyping);
+	RELEASE(nameToTitle);
+	NSFreeMapTable(bothToName);
+	RELEASE(nickname);
+	connectionController = nil;
+	lastSelected = nil;
+}
 /* Returns an array of all master controllers that are used by any of the channels or 
  * queries within this controller
  */
@@ -440,20 +466,12 @@
 	if (isQuery)
 	{
 		controller = AUTORELEASE([queryClass new]);
-		if (![NSBundle loadNibNamed: [queryClass standardNib] owner: controller])
-		{
-			return nil;
-		}
 		
 		[nameToQuery setObject: controller forKey: name];
 	}
 	else if (isChannel)
 	{
 		controller = AUTORELEASE([channelClass new]);
-		if (![NSBundle loadNibNamed: [channelClass standardNib] owner: controller])
-		{
-			return nil;
-		}
 		
 		[nameToChannel setObject: controller forKey: name];
 	}
@@ -506,7 +524,21 @@
 	[nameToPresentation removeObjectForKey: lo];
 	[nameToLabel removeObjectForKey: lo];
 	[nameToTyping removeObjectForKey: lo];
+	[nameToMasterController removeObjectForKey: lo];
+	[nameToTitle removeObjectForKey: lo];
 	NSMapRemove(bothToName, cont);
+
+	AUTORELEASE(masterControllers);
+	masterControllers = [[NSMutableArray alloc] 
+	  initWithArray: 
+	  [nameToMasterController allValues]];
+
+	if (![masterControllers count]) 
+	{
+		AUTORELEASE(RETAIN(self)); /* Do not want to die yet... */
+		[connectionController setContentController: nil];
+		connectionController = nil;
+	}
 }
 - (void)renameViewControllerWithName: (NSString *)aName to: (NSString *)newName
 {
@@ -747,5 +779,28 @@
 	  withName: chanUser withLabel: S2AS(chanUser)
 	  inMasterController: master]; 
 
+}
+- (void)windowWillClose: (NSNotification *)aNotification
+{
+	NSWindow *win;
+	NSEnumerator *iter;
+	id object;
+
+	win = [aNotification object];
+	iter = [masterControllers objectEnumerator];
+	while ((object = [iter nextObject])) 
+	{
+		if ([object window] == win) 
+		{
+			NSArray *names;
+
+			names = [nameToMasterController allKeysForObject: object];
+			iter = [names objectEnumerator];
+			while ((object = [iter nextObject]))
+			{
+				[self removeViewControllerWithName: object];
+			}
+		}
+	}
 }
 @end

@@ -17,6 +17,7 @@
 
 #import "Controllers/ConnectionController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "Controllers/ContentControllers/StandardChannelController.h"
 #import "Controllers/ContentControllers/Tab/TabContentController.h"
 #import "Controllers/ContentControllers/Tab/TabMasterController.h"
@@ -259,6 +260,14 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 - (void)setContentController: (id <ContentController>)aController
 {
 	ASSIGN(content, aController);
+	if (!content)
+	{
+		AUTORELEASE(RETAIN(self));
+		[_GS_ removeConnectionController: self];
+		if (connection) {
+			[[_TS_ pluginForInput] closeConnection: connection];
+		}
+	}
 }
 - (NSArray *)channelsWithUser: (NSString *)user
 {

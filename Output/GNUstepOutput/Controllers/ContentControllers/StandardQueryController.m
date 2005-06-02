@@ -130,6 +130,7 @@
 	  selector: @selector(scrollLinesChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputBufferLines];
+
 }
 - (void)dealloc
 {

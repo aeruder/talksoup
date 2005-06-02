@@ -30,6 +30,7 @@
 #import <Foundation/NSNotification.h>
 
 NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
+NSString *GNUstepOutputDefaultQuitMessage = @"GNUstepOutputDefaultQuitMessage";
 
 @interface GeneralPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;
@@ -86,6 +87,11 @@ NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 	  name: DefaultsChangedNotification 
 	  object: IRCDefaultsPassword];
 
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(preferenceChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputDefaultQuitMessage];
+
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: PreferencesModuleAdditionNotification 
 	 object: self];
@@ -126,6 +132,10 @@ NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 	else if (aField == nickView)
 	{
 		preference = IRCDefaultsNick;
+	}
+	else if (aField == quitView)
+	{
+		preference = GNUstepOutputDefaultQuitMessage;
 	}
 	else
 	{
@@ -184,7 +194,7 @@ NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 }
 - (void)refreshFromPreferences
 {
-	id nick, user, pass, rn;
+	id nick, user, pass, rn, qt;
 
 	nick = [_PREFS_ preferenceForKey:
 	  IRCDefaultsNick];
@@ -194,15 +204,19 @@ NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 	  IRCDefaultsPassword];
 	rn = [_PREFS_ preferenceForKey:
 	  IRCDefaultsRealName];
+	qt = [_PREFS_ preferenceForKey:
+	  GNUstepOutputDefaultQuitMessage];
 
 	if (!nick) nick = @"";
 	if (!user) user = @"";
 	if (!pass) pass = @"";
 	if (!rn) rn = @"";
+	if (!qt) qt = @"";
 
 	[nickView setStringValue: nick];
 	[userView setStringValue: user];
 	[passwordView setStringValue: pass];
 	[nameView setStringValue: rn];
+	[quitView setStringValue: qt];
 }
 @end

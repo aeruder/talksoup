@@ -15,7 +15,8 @@
 	    userView,
 	    nameView,
 	    passwordView,
-	    nickView
+	    nickView,
+	    quitView
 	);
 	Super = NSObject;
     };

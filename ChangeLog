@@ -1,6 +1,12 @@
 2005-06-01 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Topic inspector did not correctly update
- when someone else applied a new topic.
+ when someone else applied a new topic.  Fixed several memory leaks
+ between interactions with ConnectionController and the ContentControllers.
+
+ Should drop connections correctly when window is closed.  Added a default
+ quit message preference and added to General preferences UI.  Added a dealloc
+ routine for the StandardContentController class.  Fixed double initialization
+ of the UI for QueryViewControllers and ChannelViewControllers.
 
 2004-01-12 Andy Ruder <aeruder at ksu dot edu>
  * Manually applying various attributes to NSTextView subclasses
