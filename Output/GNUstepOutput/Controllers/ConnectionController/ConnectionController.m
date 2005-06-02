@@ -111,12 +111,6 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 
 	[_GS_ addConnectionController: self];
 
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(windowWillClose:)
-	  name: NSWindowWillCloseNotification 
-	  object: nil];
-
-
 	[content bringNameToFront: ContentConsoleName];
 	
 	return self;

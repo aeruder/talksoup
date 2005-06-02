@@ -581,6 +581,10 @@
 	  BuildAttributedFormat(_l(@"%@ changed the topic in %@ to '%@'"),
 	   [IRCUserComponents(aPerson) objectAtIndex: 0], channel, aTopic)
 	  in: [channel string]];
+	[_TS_ setTopicForChannel: channel 
+	  to: nil onConnection: aConnection 
+	  withNickname: S2AS([aConnection nick])
+	  sender: _GS_];
 	
 	return self;
 }
