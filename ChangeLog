@@ -4,14 +4,12 @@
  up what the person is currently typing.
 
  Added support for // to escape normal command handling:
-
  //dev/hda is cool
-
  would send
-
  /dev/hda is cool
-
  to the channel.
+
+ Fixed autoconnect commands for autoconnected servers.
 
 2005-06-01 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Topic inspector did not correctly update

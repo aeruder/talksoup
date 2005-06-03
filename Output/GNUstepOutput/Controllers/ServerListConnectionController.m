@@ -148,10 +148,10 @@
 	{
 		id views = [[content primaryMasterController]
 		  viewControllerListForContentController: content];
-		id view = ([views count]) ? [view objectAtIndex: 0] : nil;
-		id input = [content typingControllerForViewController: view];
+		id view = ([views count]) ? [views objectAtIndex: 0] : nil;
+		id input;
 
-		if (input) 
+		if (view && (input = [content typingControllerForViewController: view])) 
 		{
 			[input commandTyped: tmp];
 		}
