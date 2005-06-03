@@ -68,7 +68,6 @@ static void send_message(id command, id name, id connection)
 }	
 
 @interface InputController (PrivateInputController)
-- (void)singleLineTyped: (NSString *)aLine;
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
 - (void)previousHistoryItem: (NSText *)aFieldEditor;
 - (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender;
@@ -179,10 +178,12 @@ static void send_message(id command, id name, id connection)
 		{
 			if (![object2 isEqualToString: @""])
 			{
-				[self singleLineTyped: object2];
+				[history addObject: command];	
+				[self processSingleCommand: object2];
 			}
 		}
 	}
+	historyIndex = [history count];
 
 	[modHistory removeAllObjects];
 	[modHistory addObject: @""];
@@ -194,25 +195,19 @@ static void send_message(id command, id name, id connection)
 		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 	}
 }
-@end
-
-@implementation InputController (PrivateInputController)
-- (void)singleLineTyped: (NSString *)command
+- (void)processSingleCommand: (NSString *)aCommand
 {
 	id connection;
 	id name;
 	
-	[history addObject: command];	
-	historyIndex = [history count];
-	
 	connection = AUTORELEASE(RETAIN(
 	  [_GS_ connectionToConnectionController: controller]));
 	
-	if ([command length] == 0)
+	if ([aCommand length] == 0)
 	{
 		return;
 	}
-	if ([command hasPrefix: @"/"])
+	if ([aCommand hasPrefix: @"/"] && ![aCommand hasPrefix: @"//"])
 	{
 		id substring;
 		id arguments;
@@ -220,9 +215,9 @@ static void send_message(id command, id name, id connection)
 		id array;
 		id invoc;
 
-		command = [command substringFromIndex: 1];
+		aCommand = [aCommand substringFromIndex: 1];
 		
-		array = [command separateIntoNumberOfArguments: 2];
+		array = [aCommand separateIntoNumberOfArguments: 2];
 		if ([array count] == 0)
 		{
 			return;
@@ -273,6 +268,8 @@ static void send_message(id command, id name, id connection)
 			  sender: _GS_];
 		}
 		return;
+	} else if ([aCommand hasPrefix: @"/"]) {
+		aCommand = [aCommand substringFromIndex: 1];
 	}
 
 	if (!connection) return;
@@ -283,8 +280,11 @@ static void send_message(id command, id name, id connection)
 		return;
 	}
 
-	send_message(command, name, connection); 	
+	send_message(aCommand, name, connection); 	
 }
+@end
+
+@implementation InputController (PrivateInputController)
 - (void)previousHistoryItem: (NSText *)aFieldEditor
 {
 	int modIndex;

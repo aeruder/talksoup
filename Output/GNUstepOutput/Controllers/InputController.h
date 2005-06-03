@@ -45,6 +45,7 @@
 - (void)losingFieldEditorForField: (NSTextField *)aField
    forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
+- (void)processSingleCommand: (NSString *)aCommand;
 - (NSText *)fieldEditorForField: (NSTextField *)aField
             forMasterController: (id <MasterController>)aMaster;
 @end

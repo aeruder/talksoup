@@ -94,6 +94,7 @@ extern NSString *ContentConsoleName;
 - (NSText *)fieldEditorForField: (NSTextField *)aField
             forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
+- (void)processSingleCommand: (NSString *)aCommand;
 @end
 
 @protocol ContentController <NSObject>
