@@ -89,6 +89,8 @@ static void send_message(id command, id name, id connection)
   largestValue: (NSString **)large;
 - (NSArray *)nameStartingWith: (NSString *)pre 
   largestValue: (NSString **)large;
+- (NSArray *)historyStartingWith: (NSString *)pre 
+  largestValue: (NSString **)large;
 @end
 
 @implementation InputController
@@ -407,6 +409,12 @@ static void send_message(id command, id name, id connection)
 }
 - (void)tabPressed: (id)sender
 {
+	NSRange aRange;
+
+	aRange = [fieldEditor selectedRange];
+	if (aRange.length != 0 || 
+	    aRange.location != [[fieldEditor string] length])
+		return;
 	if (tabCompletion)
 	{
 		[self extraTabPressed: sender];
@@ -452,6 +460,7 @@ static void send_message(id command, id name, id connection)
 	NSRange range;
 	NSString *largest;
 	NSString *word;
+	NSString *filler = @" ";
 	
 	range = [typed rangeOfCharacterFromSet:
 	  [NSCharacterSet whitespaceAndNewlineCharacterSet]
@@ -475,6 +484,12 @@ static void send_message(id command, id name, id connection)
 		possibleCompletions = [self channelStartingWith: word
 		  largestValue: &largest];
 	}
+	else if ([word hasPrefix: @"s/"])
+	{
+		possibleCompletions = [self historyStartingWith: word
+		  largestValue: &largest];
+		filler = @"/";
+	}
 	else 
 	{
 		possibleCompletions = [self nameStartingWith: word
@@ -491,8 +506,8 @@ static void send_message(id command, id name, id connection)
 	}
 	else if ([possibleCompletions count] == 1)
 	{
-		[fieldEditor setStringValue: [NSString stringWithFormat: @"%@%@ ",
-		  [typed substringToIndex: start], largest]];
+		[fieldEditor setStringValue: [NSString stringWithFormat: @"%@%@%@",
+		  [typed substringToIndex: start], largest, filler]];
 	}
 	else if ([possibleCompletions count] > 1)
 	{
@@ -615,7 +630,58 @@ static void send_message(id command, id name, id connection)
 	
 	return [self completionsInArray: x startingWith: pre
 	  largestValue: large];
-	return AUTORELEASE([NSArray new]);
+}
+- (NSArray *)historyStartingWith: (NSString *)pre 
+  largestValue: (NSString **)large
+{
+	NSMutableArray *x = AUTORELEASE([NSMutableArray new]);
+	NSMutableArray *y = AUTORELEASE([NSMutableArray new]);
+	NSString *historyString;
+	unsigned count;
+	unsigned len;
+	NSRange leftRange, wordRange, foundRange;
+	NSEnumerator *iter;
+	id object;
+
+	count = [history count];
+
+	if (count > 0)
+	{
+		historyString = [history objectAtIndex: [history count] - 1];
+		len = [historyString length];
+		leftRange = NSMakeRange(0, len);
+
+		while (leftRange.length > 0) 
+		{ 
+			foundRange = [historyString rangeOfCharacterFromSet:
+			  [NSCharacterSet whitespaceAndNewlineCharacterSet]
+			  options: 0 range: leftRange];
+			if (foundRange.location == NSNotFound) 
+			{ 
+				[x addObject: [historyString substringWithRange: leftRange]];
+				break;
+			} 
+			else 
+			{
+				wordRange.location = leftRange.location;
+				wordRange.length = foundRange.location - leftRange.location;
+				if (wordRange.length > 0)
+					[x addObject: [historyString substringWithRange: wordRange]];
+				leftRange.location = foundRange.location + foundRange.length;
+				leftRange.length = len - leftRange.location;
+			}
+		}
+	}
+
+	iter = [x objectEnumerator];
+	while ((object = [iter nextObject]))
+	{
+		object = [NSString stringWithFormat: @"s/%@", object];
+		[y addObject: object];
+	}
+
+	return [self completionsInArray: y startingWith: pre
+	  largestValue: large];
 }
 @end
 

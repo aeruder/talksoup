@@ -21,6 +21,8 @@
 
  Added Favorites item to the server list that always stays on top.
 
+ Added support for s// style tab completion
+
 2005-06-01 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Topic inspector did not correctly update
  when someone else applied a new topic.  Fixed several memory leaks
