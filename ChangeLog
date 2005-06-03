@@ -1,3 +1,18 @@
+2005-06-02 Andrew Ruder <aeruder@ksu.edu>
+ * GNUstepOutput: Added a method to InputController to allow a command to
+ be executed (programmatically) without making it into the history or messing
+ up what the person is currently typing.
+
+ Added support for // to escape normal command handling:
+
+ //dev/hda is cool
+
+ would send
+
+ /dev/hda is cool
+
+ to the channel.
+
 2005-06-01 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Topic inspector did not correctly update
  when someone else applied a new topic.  Fixed several memory leaks
