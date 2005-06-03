@@ -42,6 +42,8 @@
 - initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController;
 
+- (void)setConnectionController: (ConnectionController *)aController;
+
 - (void)losingFieldEditorForField: (NSTextField *)aField
    forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;

@@ -11,6 +11,16 @@
 
  Fixed autoconnect commands for autoconnected servers.
 
+ Fixed InputController's hold on ConnectionController when
+ a ContentController is given a new ConnectionController
+
+ Got rid of some used methods in ConnectionController pertaining to
+ InputController
+
+ Made InputController stop throwing things in the history.
+
+ Added Favorites item to the server list that always stays on top.
+
 2005-06-01 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Topic inspector did not correctly update
  when someone else applied a new topic.  Fixed several memory leaks

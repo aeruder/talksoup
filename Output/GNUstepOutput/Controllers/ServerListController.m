@@ -45,12 +45,36 @@ NSString *ServerListInfoPort = @"Port";
 NSString *ServerListInfoName = @"Name";
 NSString *ServerListInfoEntries = @"Entries";
 NSString *ServerListInfoAutoConnect = @"AutoConnect";
+NSString *ServerListFavorites = @"Favorites";
 
 #define APP_SUPPORT @"/ApplicationSupport/"
 #ifndef GNUSTEP
 #undef APP_SUPPORT
 #define APP_SUPPORT @"/Application Support/"
 #endif
+
+static NSMutableArray *add_favorites(NSMutableArray *anArray)
+{
+	NSEnumerator *iter;
+	id object;
+
+	iter = [anArray objectEnumerator];
+	while ((object = [iter nextObject])) 
+	{
+		if ([[object objectForKey: ServerListInfoName] 
+		  isEqualToString: _l(ServerListFavorites)])
+		{
+			return anArray;
+		}
+	}
+
+	object = AUTORELEASE([NSMutableDictionary new]);
+	[object setObject: _l(ServerListFavorites) forKey: ServerListInfoName];
+	[object setObject: AUTORELEASE([NSMutableArray new]) forKey: ServerListInfoEntries];
+	[anArray addObject: object];
+
+	return anArray;
+}	
 
 static id mutable_object(id object)
 {
@@ -94,6 +118,14 @@ static id mutable_object(id object)
 
 static int sort_server_dictionary(id first, id second, void *x)
 {
+	if ([[first objectForKey: ServerListInfoName] 
+	  isEqualToString: _l(ServerListFavorites)])
+		return NSOrderedAscending;
+		
+	if ([[second objectForKey: ServerListInfoName] 
+	  isEqualToString: _l(ServerListFavorites)])
+		return NSOrderedDescending;
+		
 	return [[first objectForKey: ServerListInfoName] caseInsensitiveCompare:
 	  [second objectForKey: ServerListInfoName]];
 }
@@ -205,13 +237,13 @@ static int sort_server_dictionary(id first, id second, void *x)
 				if (dict && (obj = [dict objectForKey: @"Servers"])
 				 && [obj isKindOfClass: [NSArray class]])
 				{
-					return mutable_object(obj);
+					return add_favorites(mutable_object(obj));
 				}
 			}
 		}
 	}
 
-	return AUTORELEASE([NSMutableArray new]);
+	return add_favorites(AUTORELEASE([NSMutableArray new]));
 }
 + (BOOL)startAutoconnectServers
 {
@@ -624,6 +656,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	id tmp = [self serverListPreferences];
 	id aContent = nil;
+	id aConnect;
 	
 	int first, row;
 	if ([browser selectedColumn] != 1) return;
@@ -644,19 +677,19 @@ static int sort_server_dictionary(id first, id second, void *x)
 		tmpArray = [_GS_ unconnectedConnectionControllers];
 		if ([tmpArray count])
 		{
-			id aConnect;
 			aConnect = [tmpArray objectAtIndex: 0];
 			aContent = RETAIN([aConnect contentController]);
 			AUTORELEASE(aContent);
+			[aContent setConnectionController: nil];
 			[aConnect setContentController: nil];
 		}
 	}	
 
-	AUTORELEASE(aContent = [[ServerListConnectionController alloc]
+	AUTORELEASE(aConnect = [[ServerListConnectionController alloc]
 	  initWithServerListDictionary: [tmp objectAtIndex: row]
 	  inGroup: first atRow: row withContentController: aContent]);
 
-	aContent = [aContent contentController];
+	aContent = [aConnect contentController];
 	
 	[[editor window] close];
 	[window close];

@@ -150,10 +150,26 @@
 		  viewControllerListForContentController: content];
 		id view = ([views count]) ? [views objectAtIndex: 0] : nil;
 		id input;
+		id lines, object, object2;
+		NSEnumerator *iter, *iter2;
 
 		if (view && (input = [content typingControllerForViewController: view])) 
 		{
-			[input commandTyped: tmp];
+			lines = [tmp componentsSeparatedByString: @"\r\n"];
+				
+			iter = [lines objectEnumerator];
+			while ((object = [iter nextObject]))
+			{
+				iter2 = [[object componentsSeparatedByString: @"\n"]
+				  objectEnumerator];
+				while ((object2 = [iter2 nextObject]))
+				{
+					if (![object2 isEqualToString: @""])
+					{
+						[input processSingleCommand: object2];
+					}
+				}
+			}
 		}
 	}
 

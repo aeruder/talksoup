@@ -129,6 +129,10 @@ static void send_message(id command, id name, id connection)
 	RELEASE(view);
 	[super dealloc];
 }
+- (void)setConnectionController: (ConnectionController *)aController
+{
+	controller = aController;
+}
 - (void)losingFieldEditorForField: (NSTextField *)aField
    forMasterController: (id <MasterController>)aMaster
 {

@@ -46,7 +46,6 @@
 		int tabCompletionIndex;
 		
 		NSMutableDictionary *nameToChannelData;
-		NSMapTable *inputToName;
 		
 		BOOL registered;
 	}
@@ -58,7 +57,6 @@
 - connectToServer: (NSString *)aName onPort: (int)aPort;
 
 - (Channel *)dataForChannelWithName: (NSString *)aName;
-- (NSString *)nameForInputController: (InputController *)aInputController;
 
 - setNick: (NSString *)aString;
 - (NSString *)nick;

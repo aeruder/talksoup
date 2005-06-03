@@ -130,7 +130,14 @@
  */
 - (void)setConnectionController: (ConnectionController *)aController
 {
+	NSEnumerator *iter;
+	id object;
+
 	connectionController = aController;
+	iter = [nameToTyping objectEnumerator];
+	while ((object = [iter nextObject])) {
+		[object setConnectionController: aController];
+	}	
 }
 /* Returns ConnectionController for this content controller.
  */

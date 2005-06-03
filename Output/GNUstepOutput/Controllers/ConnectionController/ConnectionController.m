@@ -106,7 +106,6 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	  forViewController: [content viewControllerForName: ContentConsoleName]];
 
 	nameToChannelData = [NSMutableDictionary new];
-	inputToName = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	
 	[self setLowercasingFunction: IRCLowercase];
 
@@ -127,7 +126,6 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	RELEASE(content);
 	RELEASE(tabCompletion);
 	RELEASE(nameToChannelData);
-	NSFreeMapTable(inputToName);
 	
 	[super dealloc];
 }
@@ -174,11 +172,6 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 - (Channel *)dataForChannelWithName: (NSString *)aName
 {
 	return [nameToChannelData objectForKey: GNUstepOutputLowercase(aName)];
-}
-- (NSString *)nameForInputController: (InputController *)aInputController
-{
-	NSLog(@"nameForInputController called: %@", aInputController);
-	return NSMapGet(inputToName, aInputController);
 }
 - setNick: (NSString *)aString
 {
