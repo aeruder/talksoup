@@ -185,14 +185,13 @@ static void send_message(id command, id name, id connection)
 			if (![object2 isEqualToString: @""])
 			{
 				[history addObject: command];	
+				historyIndex = [history count];
+				[modHistory removeAllObjects];
+				[modHistory addObject: @""];
 				[self processSingleCommand: object2];
 			}
 		}
 	}
-	historyIndex = [history count];
-
-	[modHistory removeAllObjects];
-	[modHistory addObject: @""];
 
 	[[lastMaster typeView] setStringValue: @""];
 

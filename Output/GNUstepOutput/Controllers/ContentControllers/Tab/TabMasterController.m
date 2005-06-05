@@ -227,7 +227,7 @@
 	{
 		oldIndex = [tabView numberOfTabViewItems] - 2;
 	}
-	[tabView selectTabViewItemAtIndex: oldIndex];
+	[self selectViewControllerAtIndex: oldIndex];
 	[tabView removeTabViewItem: tab];
 	
 	[tabView setNeedsDisplay: YES];
