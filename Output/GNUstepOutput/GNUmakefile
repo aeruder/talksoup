@@ -112,7 +112,10 @@ Models = Models/Channel.m
 
 GNUstepOutput_OBJC_FILES = GNUstepOutput.m $(Controllers) $(Views) $(Misc)\
                            $(Models)
+
+SUBPROJECTS = Tools
 						   
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/bundle.make
+include $(GNUSTEP_MAKEFILES)/aggregate.make
 -include GNUmakefile.postamble

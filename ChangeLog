@@ -2,6 +2,9 @@
  * GNUstepOutput: Changed /scrollback lines to work with new scrollback
  history mechanism.  Obsoleted several unused preferences. ;)
 
+ * GNUstepOutput: Added Tools/ directory for various helper tools.
+ Began exec_helper (A tool to help with /exec)
+
 2005-06-05 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Fixed history corruption when closing tab with /close.
  Fixed notifications when removing tabs so that new selection is sent out
