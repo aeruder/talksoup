@@ -22,6 +22,7 @@
 #import "Controllers/ContentControllers/StandardQueryController.h"
 #import "Controllers/InputController.h"
 #import "Controllers/Preferences/PreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "GNUstepOutput.h"
 #import "Misc/NSObjectAdditions.h"
 #import "Models/Channel.h"
@@ -1030,20 +1031,48 @@ static void send_message(id command, id name, id connection)
 	if ([x count] == 0)
 	{
 		[controller showMessage:
-		  BuildAttributedString(_l(@"Usage: /scrollback <characters>"),
+		  BuildAttributedString(_l(@"Usage: /scrollback <lines>"),
 		    @"\n", _l(@"Current value is: "), 
-			 [_PREFS_ preferenceForKey: GNUstepOutputScrollBack], nil) 
+			 [_PREFS_ preferenceForKey: GNUstepOutputBufferLines], nil) 
 		  onConnection: nil];
 		return self;
 	}
 	
 	length = [[x objectAtIndex: 0] intValue];
-	
-	if (length < 512) length = 512;
+	if (length < 0) length = 10;
 	
 	[_PREFS_ setPreference: [NSString stringWithFormat: @"%d", length]
-	  forKey: GNUstepOutputScrollBack];
+	  forKey: GNUstepOutputBufferLines];
 	
+	return self;
+}
+- commandExec: (NSString *)command
+{
+	id x = [command separateIntoNumberOfArguments: 1];
+	id newcommand = nil;
+	id destination = nil;
+
+	if ([x count] > 0 && [[x objectAtIndex: 0] hasPrefix: @"-o "])
+	{
+		x = [command separateIntoNumberOfArguments: 3];
+		if ([x count] == 3)
+		{
+			newcommand = [x objectAtIndex: 2];
+			destination = [x objectAtIndex: 1];
+		}
+	} 
+	else if ([x count] > 0)
+	{
+		newcommand = [x objectAtIndex: 0];	
+	}
+
+	if ([x count] == 0)
+	{
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /exec [-o <destination>] <command>"))
+		 onConnection: nil];
+	}
+
 	return self;
 }
 @end

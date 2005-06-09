@@ -42,11 +42,7 @@ NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNot
 NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
 
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
-NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
-NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
 NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
-NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 @interface PreferencesController (PrivateMethods)
 - (void)buttonClicked: (NSMatrix *)aCell;
