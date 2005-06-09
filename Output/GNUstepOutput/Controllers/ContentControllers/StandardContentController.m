@@ -522,7 +522,7 @@
 	{
 		return;
 	}
-	
+
 	[master removeViewController: cont];
 	
 	[nameToChannel removeObjectForKey: lo];	

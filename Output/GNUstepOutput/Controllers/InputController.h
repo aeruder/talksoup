@@ -25,6 +25,8 @@
 #import "ContentControllers/ContentController.h"
 
 @class ConnectionController, NSMutableArray, NSText, KeyTextView, NSTextField;
+@class NSConnection;
+
 @interface InputController : NSObject <TypingController>
 	{
 		id <ContentController> content;
@@ -38,6 +40,9 @@
 		NSTextField *activeTextField;
 		NSMutableArray *tabCompletion;
 		unsigned tabCompletionIndex;
+		NSConnection *distConnection;
+		NSString *distConnectionName;
+		NSMutableArray *executingTasks;
 	}
 - initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController;

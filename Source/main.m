@@ -31,6 +31,7 @@
 #import <Foundation/NSException.h>
 
 #include <stdlib.h>
+#include <signal.h>
 
 @interface NSException (blah)
 @end
@@ -83,6 +84,7 @@ int main(void)
 	NSDictionary *defaultPlugins;
 	CREATE_AUTORELEASE_POOL(apr);
 
+	signal(SIGPIPE, SIG_IGN);
 #ifdef GNUSTEP
 	[NSObject enableDoubleReleaseCheck: YES];
 #endif

@@ -8,4 +8,5 @@ before-all::
 	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Models
 
 after-all::
+	$(MAKE) -C Tools all
 	$(MAKE) -C Tools install
