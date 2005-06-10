@@ -13,7 +13,10 @@ else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 endif
 
+DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m DCCSender.m DCCGetter.m
+
 ifeq ($(USE_APPKIT), yes)
+DCCSupport_OBJC_FILES += DCCSupportPreferencesController.m
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 DCCSupport_LOCALIZED_RESOURCE_FILES = DCCSupportPreferences.nib
 else
@@ -25,12 +28,9 @@ endif
 
 DCCSupport_LANGUAGES = English
 DCCSupport_LOCALIZED_RESOURCE_FILES += Localizable.strings
-DCCSupport_RESOURCE_FILES = AllLanguages/Defaults.plist
+DCCSupport_RESOURCE_FILES = AllLanguages/Defaults.plist AllLanguages/dccsupport_prefs.tiff
 
 DCCSupport_PRINCIPAL_CLASS = DCCSupport
-
-DCCSupport_OBJC_FILES = DCCSupport.m DCCObject.m DCCSupportPreferencesController.m \
- DCCSender.m DCCGetter.m
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 DCCSupport_BUNDLE_LIBS = -framework netclasses -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)

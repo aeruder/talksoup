@@ -19,9 +19,16 @@
 #import <netclasses/NetTCP.h>
 #import "DCCObject.h"
 #import "DCCSupport.h"
-#import "DCCSupportPreferencesController.h"
 #import "DCCSender.h"
 #import "DCCGetter.h"
+
+#ifdef USE_APPKIT
+#import "DCCSupportPreferencesController.h"
+#else
+@protocol NoAppKitProtocolForDCCSupport
+- (void)reloadData;
+@end
+#endif
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSInvocation.h>
@@ -36,6 +43,7 @@
 #import <Foundation/NSData.h>
 #import <Foundation/NSPathUtilities.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSNotification.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -823,14 +831,15 @@ static NSString *unique_path(NSString *path)
 }	
 - pluginActivated
 {
+#ifdef USE_APPKIT
 	controller = [DCCSupportPreferencesController new];
 
-#ifdef USE_APPKIT
-	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"AddBundlePreferencesController", @"Process",
-	  @"DCCSupport", @"Name",
-	  controller, @"Controller",
-	  nil] onConnection: nil withNickname: nil sender: self];
+	if (controller)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: @"PreferencesModuleAdditionNotification"
+		 object: controller];
+	}
 #endif
 
 	[invoc setTarget: self];
@@ -840,13 +849,14 @@ static NSString *unique_path(NSString *path)
 - pluginDeactivated
 {
 #ifdef USE_APPKIT
-	[controller shouldHide];
-	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"RemoveBundlePreferencesController", @"Process",
-	  @"DCCSupport", @"Name", nil]
-	  onConnection: nil withNickname: nil sender: [_TS_ pluginForInput]];
-#endif
+	if (controller)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: @"PreferencesModuleRemovalNotification" 
+		 object: controller];
+	}
 	DESTROY(controller);
+#endif
 
 	[invoc setTarget: nil];
 	[_TS_ removeCommand: @"dcc"];

@@ -414,10 +414,9 @@ static NSInvocation *invoc = nil;
 		 postNotificationName: @"PreferencesModuleRemovalNotification" 
 		 object: controller];
 	}
-#endif
-
-	DESTROY(controller);
 	main_controller = nil;
+	DESTROY(controller);
+#endif
 
 	[_TS_ removeCommand: @"highlighting"];
 	return self;

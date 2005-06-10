@@ -18,13 +18,12 @@
 #import "DCCSupportPreferencesController.h"
 #import "DCCSupport.h"
 
-#ifdef USE_APPKIT
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSOpenPanel.h>
-#endif
+#import <AppKit/NSImage.h>
 
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSUserDefaults.h>
@@ -39,14 +38,50 @@
 #define SET_DEFAULT_INT(_x, _y) set_default(_x, ([NSString stringWithFormat: @"%d", _y]))
 
 @implementation DCCSupportPreferencesController
-#ifndef USE_APPKIT
-- (void)reloadData
+- init
 {
-	return;
+	id bundle, path;
+
+	if (!(self = [super init])) return nil;
+
+	bundle = [NSBundle bundleForClass: [DCCSupport class]];
+
+	if (![bundle loadNibFile: @"DCCSupportPreferences"
+	  externalNameTable: [NSDictionary dictionaryWithObjectsAndKeys:
+	    self, @"NSOwner",
+	    nil] withZone: 0])
+	{
+		[super dealloc];
+		return nil;
+	}
+
+	path = [bundle pathForResource: @"dccsupport_prefs" ofType: @"tiff"];
+	if (!path) 
+	{
+		NSLog(@"Could not find dccsupport_prefs.tiff");
+		[self dealloc];
+		return nil;
+	}
+
+	preferencesIcon = [[NSImage alloc] initWithContentsOfFile:
+	  path];
+	if (!preferencesIcon)
+	{
+		NSLog(@"Could not load image %@", path);
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
 }
-#else
 - (void)awakeFromNib
 {
+	NSWindow *tempWindow;
+
+	tempWindow = (NSWindow *)window;
+	window = RETAIN([tempWindow contentView]);
+	RELEASE(tempWindow);
+
 	[blockSizeField setNextKeyView: portRangeField];
 	[portRangeField setNextKeyView: blockSizeField];
 	[self reloadData];
@@ -55,7 +90,7 @@
 {
 	id path1 = get_default(DCCCompletedDirectory);
 	id path2 = get_default(DCCDownloadDirectory);
-	
+
 	path1 = [path1 stringByStandardizingPath];
 	path2 = [path2 stringByStandardizingPath];
 	
@@ -71,44 +106,33 @@
 	[portRangeField setStringValue:
 	  get_default(DCCPortRange)];
 }
-- (void)shouldDisplay
-{
-	id bundle;
-
-	if (window)
-	{
-		[window makeKeyAndOrderFront: nil];
-		return;
-	}
-
-	bundle = [NSBundle bundleForClass: [DCCSupport class]];
-
-	if (![bundle loadNibFile: @"DCCSupportPreferences"
-	  externalNameTable: [NSDictionary dictionaryWithObjectsAndKeys:
-	  self, @"NSOwner",
-	  nil] withZone: 0])
-	{
-		return;
-	}
-
-	[window makeKeyAndOrderFront: nil];
-}
 - (void)dealloc
 {
-	[self shouldHide];
+	RELEASE(preferencesIcon);
+	DESTROY(window);
 	[super dealloc];
 }
-- (void)shouldHide
+- (NSView *)preferencesView
 {
-	[window close];
-	DESTROY(window);
+	return window;
+}
+- (NSImage *)preferencesIcon
+{
+	return preferencesIcon;
+}
+- (NSString *)preferencesName
+{
+	return _l(@"DCC Support");
+}
+- (void)activate: aPrefs
+{
+	isActive = YES;	
 
-	blockSizeField = nil;
-	portRangeField = nil;
-	changeCompletedField = nil;
-	changeDownloadField = nil;
-	changeCompletedButton = nil;
-	changeDownloadButton = nil;
+	[self reloadData];
+}
+- (void)deactivate
+{
+	isActive = NO;
 }
 - (void)changeCompletedHit: (NSButton *)sender
 {
@@ -231,5 +255,4 @@
 		
 	[self reloadData];		
 }
-#endif
 @end

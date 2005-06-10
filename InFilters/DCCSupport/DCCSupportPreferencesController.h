@@ -22,7 +22,8 @@
 
 #import <Foundation/NSObject.h>
 
-@class NSWindow, NSTextField, NSButton;
+@class NSWindow, NSTextField, NSButton, NSImage;
+@class NSView;
 
 @interface DCCSupportPreferencesController : NSObject
 	{
@@ -32,20 +33,17 @@
 		NSTextField *changeDownloadField;
 		NSTextField *changeCompletedButton;
 		NSTextField *changeDownloadButton;
-		NSWindow *window;
+		NSView *window;
+		NSImage *preferencesIcon;
+		BOOL isActive;
 	}
 
 - (void)reloadData;
-
-#ifdef USE_APPKIT
-- (void)shouldDisplay;
-- (void)shouldHide;
 
 - (void)changeCompletedHit: (NSButton *)sender;
 - (void)changeDownloadHit: (NSButton *)sender;
 - (void)blockSizeHit: (NSTextField *)sender;
 - (void)portRangeHit: (NSTextField *)sender;
-#endif
 
 @end
 
