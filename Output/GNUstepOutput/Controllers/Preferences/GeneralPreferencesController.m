@@ -31,6 +31,7 @@
 
 NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 NSString *GNUstepOutputDefaultQuitMessage = @"GNUstepOutputDefaultQuitMessage";
+NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 
 @interface GeneralPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;

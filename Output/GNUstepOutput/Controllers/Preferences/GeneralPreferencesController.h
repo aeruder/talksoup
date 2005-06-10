@@ -17,8 +17,10 @@
 
 @class GeneralPreferencesController;
 @class NSString;
+
 extern NSString *GNUstepOutputBufferLines;
 extern NSString *GNUstepOutputDefaultQuitMessage;
+extern NSString *GNUstepOutputAliases;
 
 #ifndef GENERAL_PREFERENCES_CONTROLLER_H
 #define GENERAL_PREFERENCES_CONTROLLER_H

@@ -42,7 +42,6 @@ NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNot
 NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
 
 NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 
 @interface PreferencesController (PrivateMethods)
 - (void)buttonClicked: (NSMatrix *)aCell;

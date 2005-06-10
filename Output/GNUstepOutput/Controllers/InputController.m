@@ -237,6 +237,42 @@ static void send_message(id command, id name, id connection)
 	{
 		return;
 	}
+
+	/* First check for aliases */
+	if ([aCommand hasPrefix: @"/"] && ![aCommand hasPrefix: @"//"])
+	{
+		id tempCommand;
+		id array;
+
+		tempCommand = [aCommand substringFromIndex: 1];
+		array = [tempCommand separateIntoNumberOfArguments: 2];
+		
+		if ([array count] >= 1)
+		{
+			id alias;
+			id aliases;
+
+			alias = [array objectAtIndex: 0];
+			alias = [alias lowercaseString];
+
+			aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
+
+			if ((tempCommand = [aliases objectForKey: alias]))
+			{
+				if ([array count] > 1)
+				{
+					aCommand = [NSString stringWithFormat: @"%@ %@", tempCommand, 
+					  [array objectAtIndex: 1]];
+				}
+				else
+				{
+					aCommand = tempCommand;
+				}
+			}
+		}
+	}
+
+	/* Now the real deal */
 	if ([aCommand hasPrefix: @"/"] && ![aCommand hasPrefix: @"//"])
 	{
 		id substring;
@@ -1072,6 +1108,131 @@ static void send_message(id command, id name, id connection)
 	[_PREFS_ setPreference: [NSString stringWithFormat: @"%d", length]
 	  forKey: GNUstepOutputBufferLines];
 	
+	return self;
+}
+- commandAlias: (NSString *)command
+{
+	id x = [command separateIntoNumberOfArguments: 2];
+	id aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
+	id alias, to;
+
+	if ([x count] == 0)
+	{
+		id object;
+		NSEnumerator *iter;
+
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /alias <alias> <command>"))
+		  onConnection: nil];
+		[controller showMessage:
+		  S2AS(_l(@"Current aliases:"))
+		  onConnection: nil];
+
+		iter = [aliases keyEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[controller showMessage:
+			  BuildAttributedFormat(@"  /%@ = '%@'",
+			  object, [aliases objectForKey: object])
+			  onConnection: nil];
+		}
+		[controller showMessage:
+		  S2AS(_l(@"End of alias list."))
+		  onConnection: nil];
+
+		return self;
+	}
+
+	alias = [x objectAtIndex: 0];
+	if ([alias hasPrefix: @"/"]) alias = [alias substringFromIndex: 1];
+	alias = [alias lowercaseString];
+
+	if ([x count] == 1)
+	{
+		id to = [aliases objectForKey: alias];
+		if (!to)
+		{
+			[controller showMessage:
+			  BuildAttributedFormat(_l(@"/%@ is not currently aliased."),
+			  alias)
+			  onConnection: nil];
+		}
+		else
+		{
+			[controller showMessage:
+			  BuildAttributedFormat(_l(@"/%@ is currently aliased to '%@'"),
+			  alias, to)
+			  onConnection: nil];
+		}
+		return self;
+	}
+
+	to = [x objectAtIndex: 1];
+
+	[aliases setObject: to forKey: alias];
+	[_PREFS_ setPreference: aliases forKey: GNUstepOutputAliases];
+
+	[controller showMessage:
+	  BuildAttributedFormat(_l(@"/%@ aliased to '%@'"),
+	  alias, to)
+	  onConnection: nil];
+		  
+	return self;
+}
+- commandUnalias: (NSString *)command
+{
+	id x = [command separateIntoNumberOfArguments: 2];
+	id aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
+	id alias;
+
+	if ([x count] == 0)
+	{
+		id object;
+		NSEnumerator *iter;
+
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /unalias <alias>"))
+		  onConnection: nil];
+		[controller showMessage:
+		  S2AS(_l(@"Current aliases:"))
+		  onConnection: nil];
+
+		iter = [aliases keyEnumerator];
+		while ((object = [iter nextObject]))
+		{
+			[controller showMessage:
+			  BuildAttributedFormat(@"  /%@ = '%@'",
+			  object, [aliases objectForKey: object])
+			  onConnection: nil];
+		}
+		[controller showMessage:
+		  S2AS(_l(@"End of alias list."))
+		  onConnection: nil];
+
+		return self;
+	}
+
+	alias = [x objectAtIndex: 0];
+	if ([alias hasPrefix: @"/"]) alias = [alias substringFromIndex: 1];
+	alias = [alias lowercaseString];
+
+	id to = [aliases objectForKey: alias];
+	if (!to)
+	{
+		[controller showMessage:
+		  BuildAttributedFormat(_l(@"/%@ is not currently aliased."),
+		  alias)
+		  onConnection: nil];
+	}
+	else
+	{
+		[aliases removeObjectForKey: alias];
+		[_PREFS_ setPreference: aliases forKey: GNUstepOutputAliases];
+		[controller showMessage:
+		  BuildAttributedFormat(_l(@"/%@ unaliased."),
+		  alias)
+		  onConnection: nil];
+	}
 	return self;
 }
 - commandExec: (NSString *)command

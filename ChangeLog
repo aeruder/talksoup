@@ -4,6 +4,8 @@
 
  Moved /server dns look ups to a helper tool
 
+ Added /alias,/unalias and a default set of aliases
+
  * NetclassesInput: Added a warning when using a package version < 1.04
 
 2005-06-08 Andrew Ruder <aeruder@ksu.edu>
