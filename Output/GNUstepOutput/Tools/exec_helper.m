@@ -141,17 +141,15 @@ int main(int argc, char **argv, char **env)
 	NSString *command;
 
 	signal(SIGPIPE, SIG_IGN);
-	if (argc < 3) 
+	if (argc < 2) 
 		return 1;
-	if (strcmp("GNUstepOutput", argv[1]))
-		return 2;
 
-	regname = [NSString stringWithCString: argv[2]];
+	regname = [NSString stringWithCString: argv[1]];
 
 	dict = [[NSConnection rootProxyForConnectionWithRegisteredName: regname
 	  host: nil] retain];
 
-	command = [NSString stringWithCString: argv[3]];
+	command = [NSString stringWithCString: argv[2]];
 
 	input_controller = [dict objectForKey: @"Input"];
 	my_dest = [dict objectForKey: @"Destination"];

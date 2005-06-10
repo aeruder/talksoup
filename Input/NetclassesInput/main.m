@@ -24,6 +24,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
 
+#define DEPENDS_MAJOR 1 
+#define DEPENDS_MINOR 4
+
 #ifdef S2AS
 	#undef S2AS
 #endif
@@ -53,6 +56,15 @@
 - init
 {
 	if (!(self = [super init])) return nil;
+
+	if (([NetApplication netclassesMajorVersion] < DEPENDS_MAJOR) || 
+	     (([NetApplication netclassesMajorVersion] == DEPENDS_MAJOR) && 
+	      ([NetApplication netclassesMinorVersion] < DEPENDS_MINOR)))
+	{
+		NSLog(@"Depends on netclasses of at least %d.%02d", DEPENDS_MAJOR,
+		  DEPENDS_MINOR);
+		NSLog(@"netclasses %@ is installed", [NetApplication netclassesVersion]);
+	}
 
 	connections = [[NSMutableArray alloc] init];
 

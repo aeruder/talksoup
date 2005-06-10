@@ -155,6 +155,12 @@ PreferencesController *_PREFS_ = nil;
 	[pendingIdentToConnectionController setObject: controller forKey: aIdent];
 	return self;
 }
+- notWaitingForConnectionOnConnectionController: (ConnectionController *)aController
+{
+	[pendingIdentToConnectionController removeObjectsForKeys: 
+	  [pendingIdentToConnectionController allKeysForObject: aController]]; 
+	return self;
+}
 - addConnectionController: (ConnectionController *)aCont
 {
 	[connectionControllers addObject: aCont];

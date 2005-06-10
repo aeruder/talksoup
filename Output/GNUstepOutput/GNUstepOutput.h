@@ -71,6 +71,7 @@ extern PreferencesController *_PREFS_;
 - (id)connectionToConnectionController: (id)aObject;
 
 - waitingForConnection: (NSString *)aIdent onConnectionController: (id)controller;
+- notWaitingForConnectionOnConnectionController: (ConnectionController *)aController;
 
 - addConnectionController: (ConnectionController *)aCont;
 - removeConnectionController: (ConnectionController *)aCont;

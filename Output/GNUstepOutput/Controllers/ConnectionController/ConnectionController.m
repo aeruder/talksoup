@@ -26,6 +26,8 @@
 #import "Controllers/InputController.h"
 #import "Views/ScrollingTextView.h"
 #import "Models/Channel.h"
+#import "Misc/HelperExecutor.h"
+#import "Misc/LookedUpHost.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
 
@@ -43,6 +45,14 @@
 
 NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerUpdatedTopicNotification";
 
+@interface ConnectionController (PrivateMethods)
+- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost;
+- (void)connectToHost: (NSHost *)aHost;
+@end
+
+static NSString *dns_helper = @"dns_helper";
+static unsigned long int dns_counter = 0;
+
 @implementation ConnectionController
 - init
 {
@@ -57,6 +67,8 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 - initWithIRCInfoDictionary: (NSDictionary *)aDict 
    withContentController: (id <ContentController>)aContent
 {
+	NSString *aIdentifier;
+
 	if (!(self = [super init])) return nil;
 
 	if (!aDict)
@@ -112,11 +124,18 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	[_GS_ addConnectionController: self];
 
 	[content bringNameToFront: ContentConsoleName];
+
+	aIdentifier = [NSString stringWithFormat: @"GNUstepOutputConnectionController%ld",
+	  dns_counter];
+	helper = [[HelperExecutor alloc] initWithHelperName: dns_helper 
+	  identifier: aIdentifier];
+	dns_counter++;
 	
 	return self;
 }
 - (void)dealloc
 {
+	RELEASE(helper);
 	RELEASE(typedHost);
 	RELEASE(preNick);
 	RELEASE(userName);
@@ -131,42 +150,23 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 }
 - connectToServer: (NSString *)aName onPort: (int)aPort
 {
-	NSHost *aHost = [NSHost hostWithName: aName];
-	NSString *ident = [NSString stringWithFormat: @"%p", self];
-	
-	RELEASE(typedHost);
-	typedHost = RETAIN(aName);
-	typedPort = aPort;
-	
-	if (!aHost)
-	{
-		[self systemMessage: BuildAttributedString(_l(@"Host not found: "),
-		  aName, nil) onConnection: nil];
-		return self;
-	}
-	
+	registered = NO;
+
+	[_GS_ notWaitingForConnectionOnConnectionController: self];
 	if (connection)
 	{
 		[[_TS_ pluginForInput] closeConnection: connection];
 	}
 	
-	[_GS_ waitingForConnection: ident
-	  onConnectionController: self];
-	  
-	[[_TS_ pluginForInput] initiateConnectionToHost: aHost onPort: aPort
-	  withTimeout: 30 withNickname: preNick 
-	  withUserName: userName withRealName: realName 
-	  withPassword: password 
-	  withIdentification: ident];
+	[self systemMessage: BuildAttributedFormat(_l(@"Looking up %@"),
+	  aName) onConnection: nil];
 	
-	[content setLabel: S2AS(_l(@"Connecting")) 
-	  forName: ContentConsoleName];
-	[content setTitle: [NSString stringWithFormat: 
-	  _l(@"Connecting to %@"), typedHost]
-	  forViewController: [content viewControllerForName: ContentConsoleName]];
-	
-	registered = NO;
-	
+	ASSIGN(typedHost, aName);
+	typedPort = aPort;
+
+	[helper runWithArguments: [NSArray arrayWithObject: typedHost]
+	  object: self];
+
 	return self;
 }
 - (Channel *)dataForChannelWithName: (NSString *)aName
@@ -255,6 +255,7 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	ASSIGN(content, aController);
 	if (!content)
 	{
+		[helper cleanup];
 		AUTORELEASE(RETAIN(self));
 		[_GS_ removeConnectionController: self];
 		if (connection) {
@@ -290,5 +291,49 @@ NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerU
 	  forName: channel];
 
 	return self;
+}
+@end
+
+@implementation ConnectionController (PrivateMethods)
+/* Called by dns_helper 
+ */
+- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost
+{
+	NSHost *realHost = nil;
+
+	if (!aHost || ![aHost isEqualToString: typedHost])
+		return;
+
+	if (aAddress)
+		realHost = [NSHost hostWithName: AUTORELEASE([aHost copy])
+		  address: AUTORELEASE([aAddress copy])];
+
+	if (!realHost)
+	{
+		[self systemMessage: BuildAttributedFormat(_l(@"%@ not found"),
+		  typedHost) onConnection: nil];
+		return;
+	}
+
+	[self connectToHost: realHost];
+}
+- (void)connectToHost: (NSHost *)aHost
+{
+	NSString *ident = [NSString stringWithFormat: @"%p", self];
+	
+	[_GS_ waitingForConnection: ident
+	  onConnectionController: self];
+	  
+	[[_TS_ pluginForInput] initiateConnectionToHost: aHost onPort: typedPort 
+	  withTimeout: 30 withNickname: preNick 
+	  withUserName: userName withRealName: realName 
+	  withPassword: password 
+	  withIdentification: ident];
+	
+	[content setLabel: S2AS(_l(@"Connecting")) 
+	  forName: ContentConsoleName];
+	[content setTitle: [NSString stringWithFormat: 
+	  _l(@"Connecting to %@"), typedHost]
+	  forViewController: [content viewControllerForName: ContentConsoleName]];
 }
 @end

@@ -10,3 +10,9 @@ before-all::
 after-all::
 	$(MAKE) -C Tools all
 	$(MAKE) -C Tools install
+
+after-clean::
+	$(MAKE) -C Tools clean
+
+after-distclean::
+	$(MAKE) -C Tools distclean

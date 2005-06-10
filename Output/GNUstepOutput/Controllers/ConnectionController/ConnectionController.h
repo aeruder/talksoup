@@ -22,7 +22,7 @@
 
 @class NSString, KeyTextView, ContentController, NSArray;
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
-@class NSDictionary, InputController;
+@class NSDictionary, InputController, HelperExecutor;
 
 #import "Controllers/ContentControllers/ContentController.h"
 #import <Foundation/NSObject.h>
@@ -48,6 +48,8 @@
 		NSMutableDictionary *nameToChannelData;
 		
 		BOOL registered;
+
+		HelperExecutor *helper;
 	}
 - initWithIRCInfoDictionary: (NSDictionary *)aDict;
 

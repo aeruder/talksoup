@@ -25,7 +25,7 @@
 #import "ContentControllers/ContentController.h"
 
 @class ConnectionController, NSMutableArray, NSText, KeyTextView, NSTextField;
-@class NSConnection;
+@class NSConnection, HelperExecutor;
 
 @interface InputController : NSObject <TypingController>
 	{
@@ -43,6 +43,7 @@
 		NSConnection *distConnection;
 		NSString *distConnectionName;
 		NSMutableArray *executingTasks;
+		HelperExecutor *helper;
 	}
 - initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController;

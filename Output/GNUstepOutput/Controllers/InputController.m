@@ -24,6 +24,7 @@
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "GNUstepOutput.h"
+#import "Misc/HelperExecutor.h"
 #import "Misc/NSObjectAdditions.h"
 #import "Models/Channel.h"
 #import "Views/ScrollingTextView.h"
@@ -47,7 +48,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-static NSString *exec_helper_path = @"Tools/exec_helper";
+static NSString *exec_helper = @"exec_helper";
 static unsigned long int exec_counter = 0;
 
 static void send_message(id command, id name, id connection)
@@ -76,7 +77,6 @@ static void send_message(id command, id name, id connection)
 }	
 
 @interface InputController (PrivateInputController)
-- (void)taskEnded: (NSNotification *)aNotification;
 - (void)viewControllerRemoved: (NSNotification *)aNotification;
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
 - (void)previousHistoryItem: (NSText *)aFieldEditor;
@@ -107,7 +107,7 @@ static void send_message(id command, id name, id connection)
 - initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController
 {
-	NSMessagePort *aPort;
+	NSString *aIdentifier;
 
 	if (!(self = [super init])) return nil;
 
@@ -129,31 +129,16 @@ static void send_message(id command, id name, id connection)
 	[(KeyTextView *)[view chatView] 
 	  setKeyAction: @selector(chatKeyPressed:sender:)];
 
-	aPort = AUTORELEASE([NSMessagePort new]);
-	distConnection = [NSConnection connectionWithReceivePort: aPort sendPort: nil];
+	aIdentifier = [NSString stringWithFormat: @"GNUstepOutputInputController%ld",
+	  exec_counter];
+	helper = [[HelperExecutor alloc] initWithHelperName: exec_helper 
+	  identifier: aIdentifier];
 	exec_counter++;
-	distConnectionName = [[NSString alloc] 
-	  initWithFormat: @"TalkSoupInputController%d", exec_counter];
-	if (!distConnection || ![distConnection registerName: distConnectionName])
-	{
-		DESTROY(distConnectionName);
-		distConnection = nil;
-		NSLog(@"Couldn't register NSConnection in InputController");
-		return self;
-	}
-	RETAIN(distConnection);
 
-	executingTasks = [NSMutableArray new];
-	
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(viewControllerRemoved:)
 	  name: ContentControllerRemovedFromMasterControllerNotification
 	  object: content];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(taskEnded:)
-	  name: NSTaskDidTerminateNotification 
-	  object: nil];
 
 	return self;
 }
@@ -163,10 +148,7 @@ static void send_message(id command, id name, id connection)
 	[fieldEditor setKeyTarget: nil];
 	[fieldEditor setDelegate: nil];
 	[(KeyTextView *)[view chatView] setKeyTarget: nil];
-	[distConnection registerName: nil];
-	RELEASE(executingTasks);
-	RELEASE(distConnection);
-	RELEASE(distConnectionName);
+	RELEASE(helper);
 	RELEASE(fieldEditor);
 	RELEASE(modHistory);
 	RELEASE(history);
@@ -333,36 +315,9 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController (PrivateInputController)
-- (void)taskEnded: (NSNotification *)aNotification
-{
-	id task = [aNotification object];
-
-	if (![executingTasks containsObject: task])
-		return;
-
-	if ([executingTasks objectAtIndex: [executingTasks count] - 1] 
-	    == task)
-	{
-		[distConnection setRootObject: [NSNull null]];
-	}
-
-	[executingTasks removeObject: task];
-}
 - (void)viewControllerRemoved: (NSNotification *)aNotification
 {
-	NSEnumerator *iter;
-	id object;
-
-	if ([[aNotification userInfo] objectForKey: @"View"] != view)
-		return;
-
-	iter = [[NSArray arrayWithArray: executingTasks] objectEnumerator];
-	while ((object = [iter nextObject])) 
-	{
-		[object terminate];
-	}
-
-	[distConnection setRootObject: [NSNull null]];
+	[helper cleanup];
 }
 - (void)previousHistoryItem: (NSText *)aFieldEditor
 {
@@ -1122,11 +1077,8 @@ static void send_message(id command, id name, id connection)
 - commandExec: (NSString *)command
 {
 	id x = [command separateIntoNumberOfArguments: 1];
-	id path;
 	id newcommand = nil;
 	id destination = nil;
-	NSBundle *bundle;
-	NSTask *aTask;
 
 	if ([x count] > 0 && [[x objectAtIndex: 0] hasPrefix: @"-o "])
 	{
@@ -1152,29 +1104,20 @@ static void send_message(id command, id name, id connection)
 		 onConnection: nil];
 		return self;
 	}
-	if (!distConnection)
+
+	if (!helper)
 	{
 		[controller showMessage:
-		  S2AS(_l(@"There was a problem registering the NSConnection."))
+		  S2AS(_l(@"Something went wrong initializing the helper application. Can't execute."))
 		  onConnection: nil];
 		return self;
 	}
 	
-	[distConnection setRootObject:
-	  [NSDictionary dictionaryWithObjectsAndKeys:
+	[helper runWithArguments: [NSArray arrayWithObject: newcommand]
+	  object: [NSDictionary dictionaryWithObjectsAndKeys:
        self, @"Input",
 	   destination, @"Destination",
 	   nil]];
-
-	bundle = [NSBundle bundleForClass: [_GS_ class]];
-	path = [NSString stringWithFormat: @"%@/%@", [bundle resourcePath], exec_helper_path];
-
-	aTask = AUTORELEASE([NSTask new]);
-	[aTask setArguments: [NSArray arrayWithObjects: 
-	  @"GNUstepOutput", distConnectionName, newcommand, nil]];
-	[aTask setLaunchPath: path];
-	[executingTasks addObject: aTask];
-	[aTask launch];
 
 	return self;
 }
@@ -1182,11 +1125,13 @@ static void send_message(id command, id name, id connection)
 {
 	if ([controller connection] && [dest length])
 	{
-		send_message(message, dest, [controller connection]);
+		send_message(AUTORELEASE([message copy]), 
+		 AUTORELEASE([dest copy]), [controller connection]);
 	} 
 	else
 	{
-		[controller showMessage: S2AS(message) onConnection: nil];
+		[controller showMessage: S2AS(AUTORELEASE([message copy])) 
+		  onConnection: nil];
 	}
 }
 @end

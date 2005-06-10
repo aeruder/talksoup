@@ -106,7 +106,9 @@ Views/KeyTextView.m
 
 Misc = Misc/NSColorAdditions.m \
 Misc/NSObjectAdditions.m \
-Misc/NSAttributedStringAdditions.m
+Misc/NSAttributedStringAdditions.m \
+Misc/LookedUpHost.m \
+Misc/HelperExecutor.m
 
 Models = Models/Channel.m
 

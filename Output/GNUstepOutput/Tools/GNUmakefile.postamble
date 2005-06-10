@@ -1,8 +1,0 @@
-before-all::
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Controllers/Preferences
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Controllers/ConnectionController
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Controllers/ContentControllers
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Controllers/ContentControllers/Tab
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Views
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Misc
-	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Models
