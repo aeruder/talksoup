@@ -8,6 +8,8 @@
 
  * NetclassesInput: Added a warning when using a package version < 1.04
 
+ * Highlighting: Added back in the preferences to new preferences system.
+
 2005-06-08 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Changed /scrollback lines to work with new scrollback
  history mechanism.  Obsoleted several unused preferences. ;)
