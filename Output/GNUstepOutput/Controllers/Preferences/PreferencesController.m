@@ -299,6 +299,13 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 
 	index = [prefsModules indexOfObject: aPreferencesModule];
 
+	if (index == [prefsList selectedColumn])
+	{
+		[prefsList selectCellAtRow: 0 column: 0];
+		[self buttonClicked: prefsList];
+		[window makeFirstResponder: prefsList];
+	}
+
 	[prefsModules removeObjectAtIndex: index];
 	[prefsList removeColumn: index];
 	[prefsList sizeToCells];

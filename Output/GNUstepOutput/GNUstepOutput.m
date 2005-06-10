@@ -131,6 +131,12 @@ PreferencesController *_PREFS_ = nil;
 	
 	RELEASE(_GS_);
 	_GS_ = RETAIN(self);
+
+	_PREFS_ = [PreferencesController new];
+	AUTORELEASE([GeneralPreferencesController new]);
+	AUTORELEASE([ColorPreferencesController new]);
+	AUTORELEASE([FontPreferencesController new]);
+	AUTORELEASE([BundlePreferencesController new]);
 	
 	return self;
 }
@@ -419,12 +425,6 @@ PreferencesController *_PREFS_ = nil;
 {
 	topic = [TopicInspectorController new];
 	[NSBundle loadNibNamed: @"TopicInspector" owner: topic];
-
-	_PREFS_ = [PreferencesController new];
-	AUTORELEASE([GeneralPreferencesController new]);
-	AUTORELEASE([ColorPreferencesController new]);
-	AUTORELEASE([FontPreferencesController new]);
-	AUTORELEASE([BundlePreferencesController new]);
 
 	if (![ServerListController startAutoconnectServers])
 	{

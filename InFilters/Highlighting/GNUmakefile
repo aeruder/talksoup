@@ -13,7 +13,10 @@ else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 endif
 
+Highlighting_OBJC_FILES = Highlighting.m 
+
 ifeq ($(USE_APPKIT), yes)
+Highlighting_OBJC_FILES += HighlightingPreferencesController.m
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 Highlighting_LOCALIZED_RESOURCE_FILES = HighlightingPreferences.nib
 else
@@ -25,7 +28,7 @@ endif
 
 Highlighting_LANGUAGES = English
 Highlighting_LOCALIZED_RESOURCE_FILES += Localizable.strings
-Highlighting_RESOURCE_FILES = AllLanguages/Defaults.plist
+Highlighting_RESOURCE_FILES = AllLanguages/Defaults.plist AllLanguages/highlighting_prefs.tiff
 
 Highlighting_PRINCIPAL_CLASS = Highlighting
 

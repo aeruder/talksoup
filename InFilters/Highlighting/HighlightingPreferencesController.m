@@ -18,14 +18,13 @@
 #import "HighlightingPreferencesController.h"
 #import "Highlighting.h"
 
-#ifdef USE_APPKIT
 #import <AppKit/NSTableView.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSColorWell.h>
+#import <AppKit/NSImage.h>
 #import <AppKit/NSColor.h>
-#endif
 
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSUserDefaults.h>
@@ -35,22 +34,78 @@
 #define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
 #define set_pref(__x,__y) [Highlighting setDefaultsObject: (__y) forKey: (__x)]
 
-#ifdef USE_APPKIT
 @protocol HighlightingPreferencesControllerNeedsSomeGNUstepOutputStuff
 + (NSColor *)colorFromEncodedData: (id)aData;
 - (id)encodeToData;
 @end
-#endif
 
 @implementation HighlightingPreferencesController
-#ifndef USE_APPKIT
-- (void)reloadData
+- init
 {
-	return;
+	id bundle, path;
+
+	if (!(self = [super init])) return nil;
+
+	bundle = [NSBundle bundleForClass: [Highlighting class]];
+
+	if (![bundle loadNibFile: @"HighlightingPreferences"
+	  externalNameTable: [NSDictionary dictionaryWithObjectsAndKeys:
+	    self, @"NSOwner",
+	    nil] withZone: 0])
+	{
+		[super dealloc];
+		return nil;
+	}
+
+	path = [bundle pathForResource: @"highlighting_prefs" ofType: @"tiff"];
+	if (!path) 
+	{
+		NSLog(@"Could not find highlighting_prefs.tiff");
+		[self dealloc];
+		return nil;
+	}
+
+	preferencesIcon = [[NSImage alloc] initWithContentsOfFile:
+	  path];
+	if (!preferencesIcon)
+	{
+		NSLog(@"Could not load image %@", path);
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
 }
-#else
+- (NSView *)preferencesView
+{
+	return window;
+}
+- (NSImage *)preferencesIcon
+{
+	return preferencesIcon;
+}
+- (NSString *)preferencesName
+{
+	return _l(@"Highlighting");
+}
+- (void)activate: aPrefs
+{
+	isActive = YES;	
+
+	[self reloadData];
+}
+- (void)deactivate
+{
+	isActive = NO;
+}
 - (void)awakeFromNib
 {
+	NSWindow *tempWindow;
+
+	tempWindow = (NSWindow *)window;
+	window = RETAIN([tempWindow contentView]);
+	RELEASE(tempWindow);
+
 	[extraTable setDataSource: self];
 	[extraTable setDelegate: self];
 	[extraTable setRowHeight: 
@@ -62,7 +117,7 @@
 	id temp;
 	Class aClass;
 
-	if (!window) return;
+	if (!window || !isActive) return;
 
 	aClass = [NSColor class];
 
@@ -88,44 +143,10 @@
 }
 - (void)dealloc
 {
-	[self shouldHide];
-	[super dealloc];
-}
-- (void)shouldHide
-{
-	[window close];
-	DESTROY(window);
-	
-	highlightButton = nil;
-	removeButton = nil;
-	extraTable = nil;
-	highlightInChannelColor = nil;
-	highlightInTabColor = nil;
-	messageInTabColor = nil;
-
+	RELEASE(preferencesIcon);
 	DESTROY(extraNames);
-}
-- (void)shouldDisplay
-{
-	id bundle;
-	
-	if (window)
-	{
-		[window makeKeyAndOrderFront: nil];
-		return;
-	}
-	
-	bundle = [NSBundle bundleForClass: [Highlighting class]];
-
-	if (![bundle loadNibFile: @"HighlightingPreferences"
-	  externalNameTable: [NSDictionary dictionaryWithObjectsAndKeys:
-	    self, @"NSOwner",
-	    nil] withZone: 0])
-	{
-		return;
-	}
-
-	[window makeKeyAndOrderFront: nil];
+	DESTROY(window);
+	[super dealloc];
 }
 - (void)highlightingHit: (id)sender
 {
@@ -213,5 +234,4 @@
 	set_pref(HighlightingExtraWords, AUTORELEASE([extraNames copy]));
 	[aTableView reloadData];
 }
-#endif
 @end

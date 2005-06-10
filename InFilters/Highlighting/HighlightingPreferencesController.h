@@ -18,30 +18,33 @@
 #import <Foundation/NSObject.h>
 
 @class NSButton, NSTableView, NSWindow, NSColorWell;
-@class NSMutableArray;
+@class NSMutableArray, NSView, NSImage;
 
 @interface HighlightingPreferencesController : NSObject
 	{
 		NSButton *highlightButton;
 		NSButton *removeButton;
 		NSTableView *extraTable;
-		NSWindow *window;
+		NSView *window;
 		NSColorWell *highlightInChannelColor;
 		NSColorWell *highlightInTabColor;
 		NSColorWell *messageInTabColor;
 		NSMutableArray *extraNames;
+		NSImage *preferencesIcon;
 		int currentlySelected;
+		BOOL isActive;
 	}
 - (void)reloadData;
-#ifdef USE_APPKIT
-- (void)shouldDisplay;
-- (void)shouldHide;
+- (NSView *)preferencesView;
+- (NSImage *)preferencesIcon;
+- (NSString *)preferencesName;
+- (void)activate: aPrefs;
+- (void)deactivate;
 
 - (void)highlightingHit: (id)sender;
 - (void)removeHit: (id)sender;
 - (void)highlightInChannelHit: (id)sender;
 - (void)highlightInTabHit: (id)sender;
 - (void)messageInTabHit: (id)sender;
-#endif
 @end
 

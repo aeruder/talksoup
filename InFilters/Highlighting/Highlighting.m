@@ -18,7 +18,13 @@
 #import "Highlighting.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
+#ifdef USE_APPKIT
 #import "HighlightingPreferencesController.h"
+#else
+@protocol NoAppKitProtocolForHighlighting
+- (void)reloadData;
+@end
+#endif
 
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSCharacterSet.h>
@@ -29,6 +35,7 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSNotification.h>
 
 static NSDictionary *highlighting_defaults = nil;
 static id main_controller = nil;
@@ -385,14 +392,14 @@ static NSInvocation *invoc = nil;
 }
 - pluginActivated
 {
-	main_controller = controller = [HighlightingPreferencesController new];
-
 #ifdef USE_APPKIT
-	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"AddBundlePreferencesController", @"Process",
-	  @"Highlighting", @"Name",
-	  controller, @"Controller",
-	  nil] onConnection: nil withNickname: nil sender: self];
+	main_controller = controller = [HighlightingPreferencesController new];
+	if (controller)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: @"PreferencesModuleAdditionNotification"
+		 object: controller];
+	}
 #endif
 
 	[_TS_ addCommand: @"highlighting" withInvocation: invoc];
@@ -401,11 +408,12 @@ static NSInvocation *invoc = nil;
 - pluginDeactivated
 {
 #ifdef USE_APPKIT
-	[controller shouldHide];
-	[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
-	  @"RemoveBundlePreferencesController", @"Process",
-	  @"Highlighting", @"Name", nil]
-	  onConnection: nil withNickname: nil sender: [_TS_ pluginForInput]];
+	if (controller)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: @"PreferencesModuleRemovalNotification" 
+		 object: controller];
+	}
 #endif
 
 	DESTROY(controller);
