@@ -46,7 +46,8 @@
 NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerUpdatedTopicNotification";
 
 @interface ConnectionController (PrivateMethods)
-- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost;
+- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost
+   withReverse: (NSString *)aReverse;
 - (void)connectToHost: (NSHost *)aHost;
 @end
 
@@ -298,14 +299,18 @@ static unsigned long int dns_counter = 0;
 /* Called by dns_helper 
  */
 - (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost
+  withReverse: (NSString *)aReverse;
 {
 	NSHost *realHost = nil;
 
 	if (!aHost || ![aHost isEqualToString: typedHost])
 		return;
 
-	if (aAddress)
-		realHost = [NSHost hostWithName: AUTORELEASE([aHost copy])
+	aReverse = AUTORELEASE([aReverse copy]);
+	if (!aReverse) aReverse = typedHost;
+
+	if (aAddress && aReverse)
+		realHost = [NSHost hostWithName: aReverse 
 		  address: AUTORELEASE([aAddress copy])];
 
 	if (!realHost)

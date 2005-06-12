@@ -1,3 +1,7 @@
+2005-06-12 Andrew Ruder <aeruder@ksu.edu>
+ * GNUstepOutput: dns_helper returns the reverse lookup of the hostname
+ as well.
+
 2005-06-09 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Added a helper tool class to ease use of external
  tools + distributed objects.

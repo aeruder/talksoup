@@ -32,17 +32,16 @@
 #include <signal.h>
 
 @protocol SomeBogusProtocoldns_helper
-- (void)dnsLookupCallback: (NSString *)ip_address forHost: (NSString *)aHost;
+- (void)dnsLookupCallback: (NSString *)ip_address forHost: (NSString *)aHost
+  withReverse: (NSString *)aReverse;
 @end
 
 int main(int argc, char **argv, char **env)
 {
 	CREATE_AUTORELEASE_POOL(apr);
-	NSString *regname;
-	NSString *hostname;
+	NSString *regname, *address, *reverse, *hostname;
 	id connection;
-	id aHost;
-	id address;
+	NSHost *aHost, *aHost2;
 
 	signal(SIGPIPE, SIG_IGN);
 	if (argc < 2) 
@@ -63,8 +62,14 @@ int main(int argc, char **argv, char **env)
 	}
 	aHost = [NSHost hostWithName: hostname];
 	address = [aHost address];
+	reverse = nil;
+	if (address)
+	{
+		aHost2 = [NSHost hostWithAddress: address];
+		reverse = [aHost2 name];
+	}
 
-	[connection dnsLookupCallback: address forHost: hostname];
+	[connection dnsLookupCallback: address forHost: hostname withReverse: reverse];
 
 	RELEASE(connection);
 	RELEASE(apr);
