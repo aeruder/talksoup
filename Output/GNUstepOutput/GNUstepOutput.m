@@ -50,6 +50,12 @@
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSObjCRuntime.h>
+#import <Foundation/NSMethodSignature.h>
 
 NSString *StandardLowercase(NSString *aString)
 {
@@ -417,10 +423,10 @@ PreferencesController *_PREFS_ = nil;
 }
 @end
 
-@interface GNUstepOutput (NSApplicationDelegate)
+@interface GNUstepOutput (GNUstepOutputApplicationDelegate)
 @end
 
-@implementation GNUstepOutput (NSApplicationDelegate)
+@implementation GNUstepOutput (GNUstepOutputApplicationDelegate)
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification
 {
 	topic = [TopicInspectorController new];

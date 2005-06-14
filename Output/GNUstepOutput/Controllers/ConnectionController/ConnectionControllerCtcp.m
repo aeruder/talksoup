@@ -22,6 +22,9 @@
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSBundle.h>
 
 #include <sys/time.h>
 #include <time.h>

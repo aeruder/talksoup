@@ -21,6 +21,7 @@
 #import <TalkSoupBundles/TalkSoup.h>
 
 #import <Foundation/NSString.h>
+#import <Foundation/NSNotification.h>
 
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextField.h>

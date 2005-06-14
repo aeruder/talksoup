@@ -44,6 +44,13 @@
 #import <Foundation/NSPort.h>
 #import <Foundation/NSConnection.h>
 #import <Foundation/NSTask.h>
+#import <Foundation/NSRange.h>
+#import <AppKit/NSText.h>
+#import <AppKit/NSEvent.h>
+#import <Foundation/NSObjCRuntime.h>
+#import <Foundation/NSObject.h>
+#import <AppKit/NSGraphics.h>
+#import <Foundation/NSDictionary.h>
 
 #include <sys/time.h>
 #include <time.h>

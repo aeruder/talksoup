@@ -19,6 +19,8 @@
 
 #import <Foundation/NSArray.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSHost.h>
+#import <Foundation/NSObject.h>
 
 @interface LookedUpHost (PrivateMethods)
 - (void)setName: (NSString *)aName;

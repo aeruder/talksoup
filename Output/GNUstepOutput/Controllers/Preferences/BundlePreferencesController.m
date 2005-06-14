@@ -32,8 +32,14 @@
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSDragging.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSGeometry.h>
 
 static NSString *bundlePboardType = @"bundlePboardType";
 static NSString *big_description = nil;

@@ -28,6 +28,7 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSRange.h>
 
 #include <stdarg.h>
 

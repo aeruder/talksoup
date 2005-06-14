@@ -29,6 +29,10 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSButtonCell.h>
+#import <AppKit/NSCell.h>
 #import <AppKit/NSScrollView.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSWindow.h>

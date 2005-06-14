@@ -29,6 +29,10 @@
 #import <AppKit/NSScrollView.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+#import <AppKit/NSEvent.h>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSText.h>
 
 @interface TopicInspectorController (PrivateMethods)
 - (void)focusedControllerChanged: (NSNotification *)aNotification;

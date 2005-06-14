@@ -42,6 +42,9 @@
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSFont.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSArray.h>
 
 NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerUpdatedTopicNotification";
 

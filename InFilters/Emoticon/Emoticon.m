@@ -25,6 +25,8 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSRange.h>
 
 #import <AppKit/NSAttributedString.h>
 #import <AppKit/NSTextAttachment.h>

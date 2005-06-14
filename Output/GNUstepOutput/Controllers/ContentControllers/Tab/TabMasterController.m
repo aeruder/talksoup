@@ -26,6 +26,13 @@
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSValue.h>
 #import <AppKit/NSNibLoading.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSGeometry.h>
 
 @interface TabMasterController (PrivateMethods)
 - (void)setNickname: (NSString *)aNickname;

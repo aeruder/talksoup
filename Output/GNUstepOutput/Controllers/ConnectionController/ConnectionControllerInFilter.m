@@ -34,6 +34,12 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTableView.h>
+#import <Foundation/NSArray.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSAttributedString.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSObjCRuntime.h>
 
 #define MARK [NSNull null]
 

@@ -30,6 +30,11 @@
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSDebug.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSFont.h>
+#import <AppKit/NSCell.h>
+#import <AppKit/NSTableColumn.h>
 
 #define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
 #define set_pref(__x,__y) [Highlighting setDefaultsObject: (__y) forKey: (__x)]

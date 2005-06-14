@@ -23,6 +23,7 @@
 #import <Foundation/NSScanner.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSString.h>
 #import <AppKit/NSColor.h>
 
 static NSColor *common_color = nil;

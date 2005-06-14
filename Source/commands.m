@@ -24,6 +24,8 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSMapTable.h>
 
 #define MARK [NSNull null]
 #define NO_CONNECT S2AS(_(@"Connect to a server before using this command"))

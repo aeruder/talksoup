@@ -36,6 +36,10 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSRange.h>
 
 static NSDictionary *highlighting_defaults = nil;
 static id main_controller = nil;

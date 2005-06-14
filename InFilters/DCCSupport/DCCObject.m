@@ -23,6 +23,9 @@
 #import <Foundation/NSHost.h>
 #import <Foundation/NSTimer.h>
 #import <Foundation/NSData.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSDate.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>

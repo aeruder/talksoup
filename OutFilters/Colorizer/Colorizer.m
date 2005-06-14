@@ -24,6 +24,9 @@
 #import <Foundation/NSScanner.h>
 #import <Foundation/NSAutoreleasePool.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDictionary.h>
 
 #include <ctype.h>
 

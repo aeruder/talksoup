@@ -30,6 +30,7 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSInvocation.h>
+#import <Foundation/NSAttributedString.h>
 
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSView.h>

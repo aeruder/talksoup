@@ -34,6 +34,12 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSColor.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSDictionary.h>
 
 NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
 NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";

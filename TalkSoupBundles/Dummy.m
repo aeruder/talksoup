@@ -19,6 +19,7 @@
 
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSString.h>
 
 @implementation TalkSoupDummyProtocolClass
 - pluginActivated

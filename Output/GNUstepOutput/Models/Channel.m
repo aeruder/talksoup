@@ -22,6 +22,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSZone.h>
 
 #import <AppKit/NSTableView.h>
 #import <AppKit/NSTableColumn.h>

@@ -22,6 +22,8 @@
 #import <AppKit/NSColor.h>
 #import <AppKit/NSTabView.h>
 #import <Foundation/NSAttributedString.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSGeometry.h>
 
 @implementation AttributedTabViewItem
 - (void)dealloc

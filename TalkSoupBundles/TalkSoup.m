@@ -25,10 +25,16 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSPathUtilities.h>
+#import <Foundation/NSMethodSignature.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSObjCRuntime.h>
 
 NSString *DefaultsChangedNotification = @"DefaultsChangedNotification";
 

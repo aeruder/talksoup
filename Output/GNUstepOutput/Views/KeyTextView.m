@@ -19,6 +19,8 @@
 
 #import <AppKit/NSEvent.h>
 #import <AppKit/NSTextStorage.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSRange.h>
 
 @implementation KeyTextView
 - setKeyTarget: (id)aTarget

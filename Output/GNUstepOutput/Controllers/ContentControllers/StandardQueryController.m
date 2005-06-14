@@ -33,6 +33,12 @@
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSWindow.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSString.h>
+#import <AppKit/NSView.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSColor.h>
 
 @interface StandardQueryController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;

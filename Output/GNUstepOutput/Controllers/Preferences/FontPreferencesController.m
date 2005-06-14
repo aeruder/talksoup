@@ -29,6 +29,10 @@
 #import <AppKit/NSStepper.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSDebug.h>
+#import <AppKit/NSButton.h>
+#import <AppKit/NSFontManager.h>
+#import <Foundation/NSDictionary.h>
 
 #include <math.h>
 

@@ -30,6 +30,8 @@
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSRange.h>
 
 static NSAttributedString *pipeit(NSAttributedString *a)
 {

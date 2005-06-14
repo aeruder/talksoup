@@ -22,6 +22,10 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSAutoreleasePool.h>
 #import <Foundation/NSCharacterSet.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSDebug.h>
 
 #include <ctype.h>
 

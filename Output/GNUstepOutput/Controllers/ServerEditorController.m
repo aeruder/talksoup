@@ -22,6 +22,8 @@
 #import <AppKit/NSButton.h>
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSTextContainer.h>
+#import <Foundation/NSGeometry.h>
+#import <AppKit/NSView.h>
 
 @implementation ServerEditorController
 - (void)awakeFromNib

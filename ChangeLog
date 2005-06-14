@@ -1,3 +1,8 @@
+2005-06-14 Andrew Ruder <aeruder@ksu.edu>
+ * All: Filled in lots of headers that will be needed for
+ OS X compilation.  Fixed relative paths in GNUmakefile.preambles
+ in Output/GNUstepOutput and Input/NetclassesInput.
+
 2005-06-12 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: dns_helper returns the reverse lookup of the hostname
  as well.

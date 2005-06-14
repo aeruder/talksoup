@@ -44,6 +44,12 @@
 #import <Foundation/NSPathUtilities.h>
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSMapTable.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSObjCRuntime.h>
 
 #include <string.h>
 #include <stdlib.h>

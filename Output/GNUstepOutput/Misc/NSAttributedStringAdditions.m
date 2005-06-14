@@ -32,6 +32,10 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSScanner.h>
+#import <Foundation/NSGeometry.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSObject.h>
 
 NSString *TypeOfColor = @"TypeOfColor";
 NSString *InverseTypeForeground = @"InverseTypeForeground";

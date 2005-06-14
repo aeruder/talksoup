@@ -23,6 +23,8 @@
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSHost.h>
 
 #define DEPENDS_MAJOR 1 
 #define DEPENDS_MINOR 4

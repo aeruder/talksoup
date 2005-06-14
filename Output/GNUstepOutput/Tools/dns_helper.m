@@ -28,6 +28,8 @@
 #import <Foundation/NSRunLoop.h>
 #import <Foundation/NSHost.h>
 #import <Foundation/NSData.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDebug.h>
 
 #include <signal.h>
 

@@ -36,6 +36,12 @@
 #import <AppKit/NSBrowser.h>
 #import <AppKit/NSBrowserCell.h>
 #import <AppKit/NSTextView.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSObject.h>
+#import <AppKit/NSCell.h>
 
 NSString *ServerListInfoEncoding = @"Encoding";
 NSString *ServerListInfoWindowFrame = @"WindowFrame";

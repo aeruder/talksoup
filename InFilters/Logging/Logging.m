@@ -31,6 +31,8 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSPathUtilities.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSData.h>
+#import <Foundation/NSEnumerator.h>
 
 static NSMapTable *files = 0;
 static NSInvocation *invoc = nil;

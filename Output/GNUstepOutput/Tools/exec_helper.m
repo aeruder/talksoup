@@ -30,6 +30,12 @@
 #import <Foundation/NSTask.h>
 #import <Foundation/NSFileHandle.h>
 #import <Foundation/NSData.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSRange.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSDebug.h>
 
 #include <signal.h>
 

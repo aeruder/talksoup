@@ -21,6 +21,7 @@
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSRange.h>
 
 static NSAttributedString *dereverse(id a)
 {

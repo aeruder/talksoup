@@ -37,6 +37,9 @@
 #import <Foundation/NSMapTable.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSNull.h>
+#import <AppKit/NSColor.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSEnumerator.h>
 
 @interface StandardContentController (PrivateMethods)
 - (NSColor *)colorForKey: (NSString *)aKey;

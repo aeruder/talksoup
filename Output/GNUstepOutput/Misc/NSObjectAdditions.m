@@ -18,6 +18,9 @@
 #import "Misc/NSObjectAdditions.h"
 
 #import <Foundation/NSArray.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSObjCRuntime.h>
 
 #ifdef __APPLE__
 #include <objc/objc-class.h>

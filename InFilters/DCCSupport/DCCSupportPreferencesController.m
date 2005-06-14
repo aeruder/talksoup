@@ -29,6 +29,9 @@
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSDebug.h>
+#import <AppKit/NSView.h>
+#import <AppKit/NSPanel.h>
 
 #define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
 #define set_default(_x, _y) \

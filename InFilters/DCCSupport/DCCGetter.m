@@ -27,6 +27,7 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSHost.h>
 #import <Foundation/NSFileManager.h> 
+#import <Foundation/NSData.h>
 
 #define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
 #define set_default(_x, _y) \

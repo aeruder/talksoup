@@ -40,6 +40,14 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSWindow.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSGeometry.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSDebug.h>
+#import <AppKit/NSCell.h>
+#import <AppKit/NSColor.h>
+#import <Foundation/NSAttributedString.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
 
 @interface StandardChannelController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;

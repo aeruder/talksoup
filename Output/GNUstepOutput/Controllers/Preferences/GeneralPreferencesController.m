@@ -28,6 +28,8 @@
 #import <AppKit/NSTextField.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSDebug.h>
+#import <Foundation/NSDictionary.h>
 
 NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 NSString *GNUstepOutputDefaultQuitMessage = @"GNUstepOutputDefaultQuitMessage";
