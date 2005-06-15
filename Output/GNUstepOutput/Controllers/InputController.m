@@ -835,13 +835,7 @@ static void send_message(id command, id name, id connection)
 	name = [content nameForViewController: view];
 	if (![[content typeForName: name] isEqualToString: 
 	       ContentControllerChannelType])
-	{
-		name = nil;
-	} 
-	else 
-	{
 		return self;
-	}
 
 	connection = [controller connection];
 	
@@ -849,16 +843,6 @@ static void send_message(id command, id name, id connection)
 	  onConnection: connection 
 	  withNickname: S2AS([connection nick]) sender: _GS_];
 
-	if (topic)
-	{
-		/* After setting the topic, force a query of the topic so
-		 * that anything monitoring the topic will be informed of
-		 * the update.
-		 */
-		[_TS_ setTopicForChannel: S2AS(name) to: nil
-		  onConnection: connection withNickname: S2AS([connection nick])
-		  sender: _GS_];
-	}
 	return self;
 }
 - commandJoin: (NSString *)aString

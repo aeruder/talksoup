@@ -203,10 +203,6 @@
 		 S2AS([sender string]) onConnection: realConnect
 		 withNickname: S2AS([realConnect nick])
 		 sender: _GS_];
-		[_TS_ setTopicForChannel: S2AS(channel) to:
-		 nil onConnection: realConnect 
-		 withNickname: S2AS([realConnect nick])
-		 sender: _GS_];
 	}
 	
 	return NO;
