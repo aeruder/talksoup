@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+
+while (<>) {
+	my $msg = $_;
+	my $x = 0;
+# Remove date
+	$msg =~ s/^[A-Z][a-z]+ +\d+ \d+:\d+:\d+ // and ++$x;
+# Handle joins
+	$msg =~ s/.*-->\011([^ ]*).*has joined.*/JOIN $1/ and ++$x;
+# quits
+	$msg =~ s/.*\<--.([^ ]*) has quit.*/QUIT $1/ and ++$x;
+# messages
+	$msg =~ s/^\<([^>]+)>.(.*)/MESSAGE $1 $2/ and ++$x;
+# actions
+	$msg =~ s/^\*.([^ ]+) (.*)/ACTION $1 $2/ and ++$x;
+# nick
+	$msg =~ s/.*?([^ \011]+) is now known as ([^ ]+).*/NICK $1 $2/ and ++$x;
+# parts
+	$msg =~ s/.*\<--.([^ ]*) \(.* has left.*/PART $1/ and ++$x;
+
+	if ($x <= 1) {
+		print STDERR "Can't handle line: $msg";
+	} else {
+		print $msg;
+	}
+}
