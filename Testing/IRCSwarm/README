@@ -1,5 +1,5 @@
 This will basically replay logs to an IRC server.  Run the program for
-example usage.  The script ./cleanupxchat will process Xchat logs into
+example usage.  The script ./cleanupxchatlog will process Xchat logs into
 a format that this program can understand.
 
 I'm not responsible if you get kick-banned for life for using this on a non
