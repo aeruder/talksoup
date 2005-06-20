@@ -168,6 +168,8 @@
 	RELEASE(nickname);
 	connectionController = nil;
 	lastSelected = nil;
+
+	[super dealloc];
 }
 /* Returns an array of all master controllers that are used by any of the channels or 
  * queries within this controller

@@ -242,7 +242,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	iter = [[preferencesView subviews] objectEnumerator];
 	while ((object = [iter nextObject])) 
 	{
-		[preferencesView removeSubview: object];
+		[object removeFromSuperview];
 	}
 
 	[view setFrame: [preferencesView frame]];

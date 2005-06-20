@@ -33,6 +33,7 @@
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
+#import <Foundation/NSEnumerator.h>
 
 @interface TabMasterController (PrivateMethods)
 - (void)setNickname: (NSString *)aNickname;

@@ -21,6 +21,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSObjCRuntime.h>
+#import <Foundation/NSPathUtilities.h>
 
 #ifdef __APPLE__
 #include <objc/objc-class.h>

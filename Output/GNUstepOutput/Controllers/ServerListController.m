@@ -518,7 +518,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if (editor)
 	{
-		if ([editor isKindOf: [ServerEditorController class]])
+		if ([editor isKindOfClass: [ServerEditorController class]])
 		{
 			[[editor window] makeKeyAndOrderFront: nil];
 			return;
@@ -546,7 +546,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 {
 	if (editor)
 	{
-		if ([editor isKindOf: [GroupEditorController class]])
+		if ([editor isKindOfClass: [GroupEditorController class]])
 		{
 			[[editor window] makeKeyAndOrderFront: nil];
 			return;

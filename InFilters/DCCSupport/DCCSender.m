@@ -30,6 +30,7 @@
 #import <Foundation/NSValue.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSData.h>
+#import <Foundation/NSPathUtilities.h>
 
 #define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
 #define set_default(_x, _y) \

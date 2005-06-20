@@ -30,6 +30,7 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSDebug.h>
+#import <Foundation/NSPathUtilities.h>
 #import <AppKit/NSView.h>
 #import <AppKit/NSPanel.h>
 

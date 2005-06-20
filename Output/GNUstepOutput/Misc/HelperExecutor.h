@@ -20,7 +20,7 @@
 
 #import <Foundation/NSObject.h>
 
-@class NSConnection, NSString, NSMutableArray;
+@class NSConnection, NSString, NSMutableArray, NSArray;
 
 @interface HelperExecutor : NSObject
 	{	

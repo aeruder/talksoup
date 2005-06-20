@@ -85,6 +85,8 @@
 	RELEASE(distConnection);
 	RELEASE(distConnectionName);
 	RELEASE(helper);
+
+	[super dealloc];
 }
 - (void)runWithArguments: (NSArray *)aArgs object: (id)aObject
 {
