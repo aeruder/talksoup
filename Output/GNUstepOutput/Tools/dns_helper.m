@@ -30,6 +30,7 @@
 #import <Foundation/NSData.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSDebug.h>
+#import <Foundation/NSPortNameServer.h>
 
 #include <signal.h>
 
@@ -52,7 +53,9 @@ int main(int argc, char **argv, char **env)
 	regname = [NSString stringWithCString: argv[1]];
 
 	connection = [[NSConnection rootProxyForConnectionWithRegisteredName: 
-	  regname host: nil] retain];
+	  regname host: nil usingNameServer: 
+	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]] 
+	  retain];
 
 	hostname = [NSString stringWithCString: argv[2]];
 

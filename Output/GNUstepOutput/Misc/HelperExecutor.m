@@ -29,6 +29,7 @@
 #import <Foundation/NSTask.h>
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSPortNameServer.h>
 
 @interface HelperExecutor (PrivateMethods)
 - (void)taskEnded: (NSNotification *)aNotification;
@@ -58,7 +59,10 @@
 	aPort = AUTORELEASE([NSMessagePort new]);
 
 	distConnection = [NSConnection connectionWithReceivePort: aPort sendPort: nil];
-	if (!distConnection || ![distConnection registerName: aIdentifier])
+	if (!distConnection || ![distConnection registerName: aIdentifier
+	  withNameServer: 
+	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]]
+	)
 	{
 		NSLog(@"Couldn't register NSConnection in HelperExecutor :(");
 		[super dealloc];

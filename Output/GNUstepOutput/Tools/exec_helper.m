@@ -36,6 +36,7 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSDebug.h>
+#import <Foundation/NSPortNameServer.h>
 
 #include <signal.h>
 
@@ -153,7 +154,9 @@ int main(int argc, char **argv, char **env)
 	regname = [NSString stringWithCString: argv[1]];
 
 	dict = [[NSConnection rootProxyForConnectionWithRegisteredName: regname
-	  host: nil] retain];
+	  host: nil usingNameServer:
+	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]] 
+	  retain];
 
 	command = [NSString stringWithCString: argv[2]];
 
