@@ -36,6 +36,7 @@
 #import <Foundation/NSRange.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSObject.h>
+#import <Foundation/NSNotification.h>
 
 NSString *TypeOfColor = @"TypeOfColor";
 NSString *InverseTypeForeground = @"InverseTypeForeground";
@@ -121,10 +122,97 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 }
 @end
 
+static NSMutableDictionary *_color_cache = nil;
+static float _indent_cache = 6.0/0.0;
 
-@implementation NSMutableAttributedString (OutputAdditions2)	  
-#define COLOR_FOR_KEY(_aKey) ([NSColor colorFromEncodedData: \
-   [_PREFS_ preferenceForKey: (_aKey)]])
+@interface NSMutableAttributedString (ColorCache)
++ (void)colorChanged: (NSNotification *)aNotification;
++ (NSColor *)colorForKey: (NSString *)aKey;
++ (void)indentChanged: (NSNotification *)aNotification;
++ (float)cachedIndent;
+@end
+
+@implementation NSMutableAttributedString (ColorCache)
++ (void)colorChanged: (NSNotification *)aNotification
+{
+	id color, key;
+
+	key = [aNotification object];
+	if ((color = [NSColor colorFromEncodedData:
+	 [_PREFS_ preferenceForKey: key]]))
+	{
+		[_color_cache setObject: color forKey: key];
+	}
+}
++ (NSColor *)colorForKey: (NSString *)aKey
+{
+	id object;
+	if (!_color_cache)
+	{
+		_color_cache = [NSMutableDictionary new];
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(colorChanged:)
+		  name: DefaultsChangedNotification
+		  object: GNUstepOutputBackgroundColor];
+		[_color_cache setObject: [NSColor colorFromEncodedData: 
+			[_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]
+			forKey: GNUstepOutputBackgroundColor];
+
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(colorChanged:)
+		  name: DefaultsChangedNotification
+		  object: GNUstepOutputTextColor];
+		[_color_cache setObject: [NSColor colorFromEncodedData: 
+			[_PREFS_ preferenceForKey: GNUstepOutputTextColor]]
+			forKey: GNUstepOutputTextColor];
+
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(colorChanged:)
+		  name: DefaultsChangedNotification
+		  object: GNUstepOutputOtherBracketColor];
+		[_color_cache setObject: [NSColor colorFromEncodedData: 
+			[_PREFS_ preferenceForKey: GNUstepOutputOtherBracketColor]]
+			forKey: GNUstepOutputOtherBracketColor];
+
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(colorChanged:)
+		  name: DefaultsChangedNotification
+		  object: GNUstepOutputPersonalBracketColor];
+		[_color_cache setObject: [NSColor colorFromEncodedData: 
+			[_PREFS_ preferenceForKey: GNUstepOutputPersonalBracketColor]]
+			forKey: GNUstepOutputPersonalBracketColor];
+	}
+	if ((object = [_color_cache objectForKey: aKey]))
+		return object;
+
+	return [NSColor colorFromEncodedData:
+	  [_PREFS_ preferenceForKey: aKey]];
+}
++ (void)indentChanged: (NSNotification *)aNotification
+{
+	id key;
+
+	key = [aNotification object];
+	_indent_cache = [[_PREFS_ preferenceForKey: key] floatValue];
+}
++ (float)cachedIndent
+{
+	if (_indent_cache != _indent_cache)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver: self
+		  selector: @selector(indentChanged:)
+		  name: DefaultsChangedNotification
+		  object: GNUstepOutputWrapIndent];
+		_indent_cache = [[_PREFS_ preferenceForKey: GNUstepOutputWrapIndent] floatValue];
+	}
+
+	return _indent_cache;
+}
+@end
+
+#define COLOR_FOR_KEY(_aKey) ([NSMutableAttributedString colorForKey: (_aKey)])
+
+@implementation NSMutableAttributedString (OutputAdditions2)
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString
 {
 	NSMutableAttributedString *aResult;
@@ -132,9 +220,10 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	NSRange aRange;
 	NSMutableParagraphStyle *paraStyle;
 	float wIndentF;
+	id object1, object2;
 
-	chatFont = AUTORELEASE(RETAIN([FontPreferencesController
-	  getFontFromPreferences: GNUstepOutputChatFont]));
+	chatFont = RETAIN([FontPreferencesController
+	  getFontFromPreferences: GNUstepOutputChatFont]);
 
 	if ([aString isKindOfClass: [NSAttributedString class]])
 	{
@@ -151,10 +240,14 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		// Set the foreground to the default background color when the foreground color
 		// does not already have a color and IRCReverse is set
 		
+		object1 = [[NSArray alloc] initWithObjects: [NSNull null], 
+		  IRCReverseValue, nil];
+		object2 = [[NSArray alloc] initWithObjects: NSForegroundColorAttributeName, 
+		  IRCReverse, nil];
 		[aResult setAttribute: InverseTypeForeground toValue: @""
-		  inRangesWithAttributes: [NSArray arrayWithObjects: NSForegroundColorAttributeName,
-		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    IRCReverseValue, nil] withRange: aRange];
+		  inRangesWithAttributes: object2
+		  matchingValues: object1 withRange: aRange];
+		RELEASE(object2);
 
 		[aResult setAttribute: NSForegroundColorAttributeName toValue:
 		  COLOR_FOR_KEY(GNUstepOutputBackgroundColor)
@@ -164,10 +257,13 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		// Set the InverseTypeBackground to non-nil for ones without background already set
 		// Set the background to the default foreground color when the background color
 		// does not already have a color and IRCReverse is set.
+		object2 = [[NSArray alloc] initWithObjects: NSBackgroundColorAttributeName, 
+		  IRCReverse, nil];
 		[aResult setAttribute: InverseTypeBackground toValue: @""
-		  inRangesWithAttributes: [NSArray arrayWithObjects: NSBackgroundColorAttributeName,
-		    IRCReverse, nil] matchingValues: [NSArray arrayWithObjects: [NSNull null], 
-		    IRCReverseValue, nil] withRange: aRange];
+		  inRangesWithAttributes: object2
+		  matchingValues: object1 withRange: aRange];
+		RELEASE(object1);
+		RELEASE(object2);
 
 		[aResult setAttribute: NSBackgroundColorAttributeName toValue:
 		  COLOR_FOR_KEY(GNUstepOutputTextColor)
@@ -175,13 +271,16 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		  matchingValue: @"" withRange: aRange];
 		
 		// When NSForegroundColorAttribute is not set, set the type of color to foreground color
+		object1 = [[NSArray alloc] initWithObjects: NSForegroundColorAttributeName,
+		  TypeOfColor, nil];
+		object2 = [[NSArray alloc] initWithObjects: 
+		  [NSNull null], [NSNull null], nil];
 		[aResult setAttribute: TypeOfColor toValue: GNUstepOutputTextColor
-		  inRangesWithAttributes: 
-		    [NSArray arrayWithObjects: NSForegroundColorAttributeName,
-		      TypeOfColor, nil]
-		  matchingValues: 
-		    [NSArray arrayWithObjects: [NSNull null], [NSNull null], nil]
+		  inRangesWithAttributes: object1
+		  matchingValues: object2
 		  withRange: aRange];
+		RELEASE(object1);
+		RELEASE(object2);
 		// and then set the actual color to the foreground color
 		[aResult setAttribute: NSForegroundColorAttributeName
 		  toValue: COLOR_FOR_KEY(GNUstepOutputTextColor)
@@ -223,6 +322,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	[aResult addAttribute: NSParagraphStyleAttributeName 
 	  value: paraStyle range: aRange];
 
+	RELEASE(chatFont);
 	return aResult;
 }
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey
@@ -286,7 +386,6 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		}
 	}
 }
-#undef COLOR_FOR_KEY
 - (void)chopNumberOfLines: (int)numLines
 {
 	NSRange aRange;
@@ -309,4 +408,5 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	[self deleteCharactersInRange: NSMakeRange(0, start)];
 }
 @end
+#undef COLOR_FOR_KEY
 

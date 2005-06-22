@@ -28,6 +28,7 @@
 @interface ChannelUser : NSObject <NSCopying>
 	{
 		NSString *userName;
+		NSString *lowerName;
 		BOOL hasOps;
 		BOOL hasVoice;
 	}

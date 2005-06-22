@@ -1,6 +1,11 @@
 2005-06-20 Andrew Ruder <aeruder@ksu.edu>
  * All: Additional header changes/code tweaks to allow clean compilation
  on OS X.  (Still no .nib files though... :-/)
+ 
+ * All: Improvements on reducing autorelease usage.
+
+ * GNUstepOutput: Force use of NSMessagePort even when the default is
+ something else.
 
 2005-06-17 Andrew Ruder <aeruder@ksu.edu>
  * Testing: Added a IRCSwarm testing tool that can replay preprocessed

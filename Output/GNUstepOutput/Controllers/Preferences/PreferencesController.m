@@ -84,7 +84,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	  selector: @selector(preferencesModuleRemoved:)
 	  name: PreferencesModuleRemovalNotification
 	  object: nil];
-	
+
 	return self;
 }	
 - (void)awakeFromNib

@@ -27,6 +27,17 @@
 #import <AppKit/NSTableView.h>
 #import <AppKit/NSTableColumn.h>
 
+@interface ChannelUser (PrivateMethods)
+- (NSString *)lowerName;
+@end
+
+@implementation ChannelUser (PrivateMethods)
+- (NSString *)lowerName
+{
+	return lowerName;
+}
+@end
+
 @implementation ChannelUser
 - initWithModifiedName: (NSString *)aName
 {
@@ -83,6 +94,8 @@
 	
 	RELEASE(userName);
 	userName = RETAIN(aName);
+	RELEASE(lowerName);
+	lowerName = RETAIN(GNUstepOutputLowercase(userName));
 
 	return self;
 }
@@ -106,8 +119,7 @@
 }
 - (NSComparisonResult)sortByName: (ChannelUser *)aUser
 {
-	return [GNUstepOutputLowercase(userName) compare: 
-	  GNUstepOutputLowercase([aUser userName])];
+	return [userName compare: [aUser lowerName]];
 }
 @end
 

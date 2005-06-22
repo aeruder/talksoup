@@ -35,6 +35,7 @@
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSObjCRuntime.h>
+#import <Foundation/NSAutoreleasePool.h>
 
 NSString *DefaultsChangedNotification = @"DefaultsChangedNotification";
 
@@ -372,6 +373,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	int index = NSNotFound;
 	id sender;
 	id next;
+	CREATE_AUTORELEASE_POOL(apr);
 
 	sel = [aInvocation selector];
 	selString = NSStringFromSelector(sel);
@@ -380,13 +382,13 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	if (![selString hasSuffix: @"sender:"])
 	{
 		[super forwardInvocation: aInvocation];
-		return;
+		goto out1;
 	}
 
 	[aInvocation retainArguments];
 
-	in = [NSMutableArray arrayWithObjects: input, nil];
-	out = [NSMutableArray arrayWithObjects: output, nil];
+	in = [[NSMutableArray alloc] initWithObjects: input, nil];
+	out = [[NSMutableArray alloc] initWithObjects: output, nil];
 
 	[in addObjectsFromArray: activatedInFilters];
 	[out addObjectsFromArray: activatedOutFilters];
@@ -412,7 +414,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		if (sel && [next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
-			return;
+			goto out2;
 		}
 		else
 		{
@@ -445,7 +447,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 		if (sel && [next respondsToSelector: sel])
 		{
 			[aInvocation invokeWithTarget: next];
-			return;
+			goto out2;
 		}
 		else
 		{
@@ -456,6 +458,11 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 			}
 		}
 	}
+out2:
+	RELEASE(in);
+	RELEASE(out);
+out1:
+	RELEASE(apr);
 }
 - (NSString *)input
 {
