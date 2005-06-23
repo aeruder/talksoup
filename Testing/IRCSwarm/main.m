@@ -34,6 +34,9 @@
 NSMutableDictionary *sharedBots = nil;
 NSMutableDictionary *connectingBots = nil;
 
+static float low_time = 0.0;
+static float high_time = 0.0;
+
 @implementation ControlSwarm
 + (void)initialize
 {
@@ -75,7 +78,7 @@ NSMutableDictionary *connectingBots = nil;
 	channel = RETAIN(aChan);
 	host = RETAIN(aHost);
 	
-	[NSTimer scheduledTimerWithTimeInterval:10.0 target: self 
+	[NSTimer scheduledTimerWithTimeInterval:5.0 target: self 
 	   selector: @selector(timerFired:) userInfo: nil repeats: NO];
 	return self;
 }
@@ -87,7 +90,7 @@ NSMutableDictionary *connectingBots = nil;
 	float lenwait;
 	SEL aSel;
 
-	lenwait = 7.0*rand()/(RAND_MAX + 1.0);
+	lenwait = low_time + ((high_time - low_time)*rand()/(RAND_MAX + 1.0));
 
 	this_string = [play objectAtIndex: curIndex];
 	separate = [this_string separateIntoNumberOfArguments: 2];
@@ -129,10 +132,14 @@ NSMutableDictionary *connectingBots = nil;
 - getBotForName: (NSString *)aNick
 {
 	id bot;
+	id normalName;
+
+	if ([aNick length] > 8)
+		aNick = [aNick substringToIndex: 8];
+
+	normalName = aNick;
 
 	aNick = [aNick lowercaseString];
-	if ([aNick length] > 8)
-		aNick = [aNick substringToIndex: 7];
 
 	bot = [sharedBots objectForKey: aNick];
 	if (bot) return bot;
@@ -141,7 +148,7 @@ NSMutableDictionary *connectingBots = nil;
 	if ([bot transport]) return nil;
 
 	bot = [[IRCSwarmBot alloc] 
-	  initWithNickname: aNick
+	  initWithNickname: normalName 
 	  withUserName: nil withRealName: @"IRCSwarm Bot"
 	  withPassword: nil
 	  withControl: self];
@@ -250,14 +257,14 @@ NSMutableDictionary *connectingBots = nil;
 }
 - (void)botDied: (IRCSwarmBot *)aBot
 {
-	id nick = [aBot nick];
+	id nick = [[aBot nick] lowercaseString];
 
 	[sharedBots removeObjectForKey: nick];
 	[sharedBots removeObjectForKey: nick];
 }
 - (void)botRegistered: (IRCSwarmBot *)aBot
 {
-	id nick = [aBot nick];
+	id nick = [[aBot nick] lowercaseString];
 
 	if ([connectingBots objectForKey: nick])
 	{
@@ -279,19 +286,28 @@ int main(int argc, char **argv, char **env)
 	srand(time(0) ^ gethostid() % getpid());
 		
 	args = [[NSProcessInfo processInfo] arguments];
-	if (([args count] < 4) || (([args count] % 2) == 1)) 
+	if (([args count] < 6) || (([args count] % 2) == 1)) 
 	{
-		NSLog(@"Usage: %@ <server> <channel> <play> [<channel2> <play2>] ...",
+		NSLog(@"Usage: %@ <lowtime> <hightime> <server> <channel> <play> [<channel2> <play2>] ...",
 		 [args objectAtIndex: 0]);
 		exit(0);
 	}
-	aHost = [NSHost hostWithName: [args objectAtIndex: 1]];
+	aHost = [NSHost hostWithName: [args objectAtIndex: 3]];
 	if (!aHost)
 	{
-		NSLog(@"Couldn't find host %@", [args objectAtIndex: 1]);
+		NSLog(@"Couldn't find host %@", [args objectAtIndex: 3]);
+		exit(2);
+	}
+	low_time = [[args objectAtIndex: 1] floatValue];
+	high_time = [[args objectAtIndex: 2] floatValue];
+	
+	if ((high_time - low_time) <= 0.00001)
+	{
+		NSLog(@"Invalid time constraints");
+		exit(1);
 	}
 
-	for (index = 2; index < [args count]; index += 2)
+	for (index = 4; index < [args count]; index += 2)
 	{
 		[[ControlSwarm alloc] initWithChannel: [args objectAtIndex: index]
 		  withPlay: [args objectAtIndex: index + 1] withHost: aHost];

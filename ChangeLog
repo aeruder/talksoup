@@ -1,4 +1,7 @@
 2005-06-22 Andrew Ruder <aeruder@ksu.edu>
+ * IRCSwarm: Updating to allow time constraints (to adjust time between
+ events) and correct case on nicknames.
+
  * GNUstepOutput: Using bold font correctly.  (It was only appropriately
  applied when the preferences were updated.)
 
