@@ -34,6 +34,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSGeometry.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSSet.h>
 
 @interface TabMasterController (PrivateMethods)
 - (void)setNickname: (NSString *)aNickname;
@@ -47,6 +48,9 @@
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
 - (void)tabView: (NSTabView *)tabView 
   didSelectTabViewItem: (NSTabViewItem *)tabViewItem;
+- (void)selectNextTab: (id)aSender;
+- (void)selectPreviousTab: (id)aSender;
+- (void)closeCurrentTab: (id)aSender;
 @end
 
 @implementation TabMasterController
@@ -61,6 +65,7 @@
 	tabToViewController = 
 	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	contentControllers = [NSMutableArray new];
+	indexToViewController = [NSMutableArray new];
 
 	if (!([NSBundle loadNibNamed: @"TabContent" owner: self]))
 	{
@@ -95,6 +100,7 @@
 	NSFreeMapTable(viewControllerToContent);
 	NSFreeMapTable(tabToViewController);
 	DESTROY(contentControllers);
+	DESTROY(indexToViewController);
 	
 	[typeView setTarget: nil];
 	[typeView setDelegate: nil];
@@ -125,7 +131,9 @@
 	NSMapInsert(viewControllerToTab, aController, tabItem);
 	NSMapInsert(viewControllerToContent, aController, aContentController);
 	NSMapInsert(tabToViewController, tabItem, aController);
-	
+	[indexToViewController insertObject: aController atIndex: aIndex]; 
+	[contentControllers addObject: aContentController];
+
 	[tabView insertTabViewItem: tabItem atIndex: aIndex];
 	numItems++;
 	[tabItem setView: [aController contentView]];
@@ -205,7 +213,7 @@
 {
 	id view;
 
-	if (aIndex >= [indexToViewController count]) return;
+	if (aIndex >= numItems) return;
 
 	view = [indexToViewController objectAtIndex: aIndex];
 
@@ -220,7 +228,7 @@
 	id tab;
 	id userInfo;
 	id content;
-	int oldIndex;
+	int index;
 
 	if (!(NSMapMember(viewControllerToTab, aController, 0, 0)))
 	{
@@ -229,13 +237,24 @@
 	
 	tab = NSMapGet(viewControllerToTab, aController);
 	
-	[tab setView: nil];
-	oldIndex = [tabView indexOfTabViewItem: tab] + 1;
-	if (oldIndex >= [tabView numberOfTabViewItems]) 
+	index = [tabView indexOfTabViewItem: tab];
+	if (selectedController == aController)
 	{
-		oldIndex = [tabView numberOfTabViewItems] - 2;
+		int oldIndex = index + 1;
+		if (oldIndex >= [tabView numberOfTabViewItems]) 
+		{
+			oldIndex = [tabView numberOfTabViewItems] - 2;
+		}
+		[typeView abortEditing];
+		[typingController losingFieldEditorForField: typeView
+		  forMasterController: self];
+		DESTROY(typingController);
+
+		[self selectViewControllerAtIndex: oldIndex];
 	}
-	[self selectViewControllerAtIndex: oldIndex];
+
+	[tab setView: nil];
+
 	[tabView removeTabViewItem: tab];
 	
 	[tabView setNeedsDisplay: YES];
@@ -252,16 +271,11 @@
 	NSMapRemove(viewControllerToTab, aController);
 	NSMapRemove(viewControllerToContent, aController);
 	NSMapRemove(tabToViewController, tab);
+	[indexToViewController removeObjectAtIndex: index];
+	[contentControllers removeObjectAtIndex: [contentControllers 
+	  indexOfObject: content]];
 	
 	numItems--;
-
-	if (aController == selectedController) 
-	{
-		[typingController losingFieldEditorForField: typeView
-		  forMasterController: self];
-		selectedController = nil;
-		DESTROY(typingController);
-	}
 		
 	[[NSNotificationCenter defaultCenter]
 	 postNotificationName: ContentControllerRemovedFromMasterControllerNotification
@@ -314,8 +328,10 @@
 	}
 	
 	[tabView removeTabViewItem: tab];
+	[indexToViewController removeObjectAtIndex: origIndex];
 	
 	[tabView insertTabViewItem: tab atIndex: index];
+	[indexToViewController insertObject: aController atIndex: aIndex];
 
 	content = NSMapGet(viewControllerToContent, aController);
 
@@ -347,15 +363,7 @@
 }	 
 - (unsigned)indexForViewController: (id <ContentControllerQueryController>)aController
 {
-	NSTabViewItem *tab;
-	unsigned index;
-
-	tab = NSMapGet(viewControllerToTab, aController);
-	if (!tab) return NSNotFound;
-
-	index = [tabView indexOfTabViewItem: tab];
-
-	return index;
+	return [indexToViewController indexOfObject: aController];
 }
 - (unsigned)count
 {
@@ -388,7 +396,7 @@
 }
 - (NSArray *)containedContentControllers
 {
-	return [NSArray arrayWithArray: contentControllers];
+	return [NSSet setWithArray: contentControllers];
 }
 - (NSArray *)viewControllerListForContentController: 
     (id <ContentController>)aContentController
@@ -520,5 +528,35 @@
 	if (view != selectedController) {
 		[self selectViewController: view];
 	}
+}
+- (void)selectNextTab: (id)aSender
+{
+	unsigned index;
+
+	index = [self indexForViewController: selectedController];
+
+	if (index >= (numItems - 1))
+		index = 0;
+	else
+		index++;
+
+	[self selectViewControllerAtIndex: index];
+}
+- (void)selectPreviousTab: (id)aSender
+{
+	unsigned index;
+
+	index = [self indexForViewController: selectedController];
+
+	if (index == 0)
+		index = numItems - 1;
+	else
+		index--;
+
+	[self selectViewControllerAtIndex: index];
+}
+- (void)closeCurrentTab: (id)aSender
+{
+	[typingController processSingleCommand: @"/close"];
 }
 @end

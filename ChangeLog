@@ -7,6 +7,10 @@
 
  Removed caching (over complicated logic) from NSAttributedString.
 
+ Several bug fixes in TabMasterController.m along the way to reenabling
+ the select previous/next tab/close tab buttons on the menu. (which now
+ work)
+
  * TalkSoup.app: I am a fricking retard.  I had doubleReleaseCheck on.
  Yes.  That is why it was slow.  I... am... a... retard.
  
