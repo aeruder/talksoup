@@ -1,4 +1,9 @@
 2005-06-22 Andrew Ruder <aeruder@ksu.edu>
+ * GNUstepOutput: Using bold font correctly.  (It was only appropriately
+ applied when the preferences were updated.)
+
+ Removed caching (over complicated logic) from NSAttributedString.
+
  * TalkSoup.app: I am a fricking retard.  I had doubleReleaseCheck on.
  Yes.  That is why it was slow.  I... am... a... retard.
  

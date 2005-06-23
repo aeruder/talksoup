@@ -28,7 +28,7 @@ extern NSString *InverseTypeBackground;
  
 @interface NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont:
-  (NSFont *)aFont;
+  (NSFont *)aFont withBoldFont: (NSFont *)aBoldFont;
 @end
 
 @interface NSMutableAttributedString (OutputAdditions2)	  

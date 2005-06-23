@@ -292,7 +292,7 @@ static NSString *big_description = nil;
 	  (object = [object pluginDescription]))
 	{
 		return [object substituteColorCodesIntoAttributedStringWithFont:
-		  [NSFont systemFontOfSize: 0.0]];
+		  [NSFont systemFontOfSize: 0.0] withBoldFont: [NSFont boldSystemFontOfSize: 0.0]];
 	}
 
 	return S2AS(_l(@"No description available."));

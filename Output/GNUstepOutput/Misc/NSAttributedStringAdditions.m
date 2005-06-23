@@ -44,7 +44,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 
 @implementation NSAttributedString (OutputAdditions)	  
 - (NSMutableAttributedString *)substituteColorCodesIntoAttributedStringWithFont: 
-  (NSFont *)chatFont
+  (NSFont *)chatFont withBoldFont: (NSFont *)aBoldFont
 {
 	NSMutableAttributedString *a = AUTORELEASE([NSMutableAttributedString new]);
 	NSRange all =  { 0 };
@@ -103,7 +103,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		}
 		if ([dict objectForKey: IRCBold])
 		{
-			[dict setObject: [NSFont boldSystemFontOfSize: [chatFont pointSize]]
+			[dict setObject: aBoldFont 
 			  forKey: NSFontAttributeName];
 		}
 		else
@@ -122,101 +122,14 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 }
 @end
 
-static NSMutableDictionary *_color_cache = nil;
-static float _indent_cache = 6.0/0.0;
-
-@interface NSMutableAttributedString (ColorCache)
-+ (void)colorChanged: (NSNotification *)aNotification;
-+ (NSColor *)colorForKey: (NSString *)aKey;
-+ (void)indentChanged: (NSNotification *)aNotification;
-+ (float)cachedIndent;
-@end
-
-@implementation NSMutableAttributedString (ColorCache)
-+ (void)colorChanged: (NSNotification *)aNotification
-{
-	id color, key;
-
-	key = [aNotification object];
-	if ((color = [NSColor colorFromEncodedData:
-	 [_PREFS_ preferenceForKey: key]]))
-	{
-		[_color_cache setObject: color forKey: key];
-	}
-}
-+ (NSColor *)colorForKey: (NSString *)aKey
-{
-	id object;
-	if (!_color_cache)
-	{
-		_color_cache = [NSMutableDictionary new];
-		[[NSNotificationCenter defaultCenter] addObserver: self
-		  selector: @selector(colorChanged:)
-		  name: DefaultsChangedNotification
-		  object: GNUstepOutputBackgroundColor];
-		[_color_cache setObject: [NSColor colorFromEncodedData: 
-			[_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]
-			forKey: GNUstepOutputBackgroundColor];
-
-		[[NSNotificationCenter defaultCenter] addObserver: self
-		  selector: @selector(colorChanged:)
-		  name: DefaultsChangedNotification
-		  object: GNUstepOutputTextColor];
-		[_color_cache setObject: [NSColor colorFromEncodedData: 
-			[_PREFS_ preferenceForKey: GNUstepOutputTextColor]]
-			forKey: GNUstepOutputTextColor];
-
-		[[NSNotificationCenter defaultCenter] addObserver: self
-		  selector: @selector(colorChanged:)
-		  name: DefaultsChangedNotification
-		  object: GNUstepOutputOtherBracketColor];
-		[_color_cache setObject: [NSColor colorFromEncodedData: 
-			[_PREFS_ preferenceForKey: GNUstepOutputOtherBracketColor]]
-			forKey: GNUstepOutputOtherBracketColor];
-
-		[[NSNotificationCenter defaultCenter] addObserver: self
-		  selector: @selector(colorChanged:)
-		  name: DefaultsChangedNotification
-		  object: GNUstepOutputPersonalBracketColor];
-		[_color_cache setObject: [NSColor colorFromEncodedData: 
-			[_PREFS_ preferenceForKey: GNUstepOutputPersonalBracketColor]]
-			forKey: GNUstepOutputPersonalBracketColor];
-	}
-	if ((object = [_color_cache objectForKey: aKey]))
-		return object;
-
-	return [NSColor colorFromEncodedData:
-	  [_PREFS_ preferenceForKey: aKey]];
-}
-+ (void)indentChanged: (NSNotification *)aNotification
-{
-	id key;
-
-	key = [aNotification object];
-	_indent_cache = [[_PREFS_ preferenceForKey: key] floatValue];
-}
-+ (float)cachedIndent
-{
-	if (_indent_cache != _indent_cache)
-	{
-		[[NSNotificationCenter defaultCenter] addObserver: self
-		  selector: @selector(indentChanged:)
-		  name: DefaultsChangedNotification
-		  object: GNUstepOutputWrapIndent];
-		_indent_cache = [[_PREFS_ preferenceForKey: GNUstepOutputWrapIndent] floatValue];
-	}
-
-	return _indent_cache;
-}
-@end
-
-#define COLOR_FOR_KEY(_aKey) ([NSMutableAttributedString colorForKey: (_aKey)])
+#define COLOR_FOR_KEY(_aKey) \
+  [NSColor colorFromEncodedData: [_PREFS_ preferenceForKey: (_aKey)]]
 
 @implementation NSMutableAttributedString (OutputAdditions2)
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString
 {
 	NSMutableAttributedString *aResult;
-	id chatFont;
+	NSFont *chatFont, *boldFont;
 	NSRange aRange;
 	NSMutableParagraphStyle *paraStyle;
 	float wIndentF;
@@ -224,13 +137,16 @@ static float _indent_cache = 6.0/0.0;
 
 	chatFont = RETAIN([FontPreferencesController
 	  getFontFromPreferences: GNUstepOutputChatFont]);
+	boldFont = RETAIN([FontPreferencesController
+	  getFontFromPreferences: GNUstepOutputBoldChatFont]);
 
 	if ([aString isKindOfClass: [NSAttributedString class]])
 	{
 		aRange = NSMakeRange(0, [aString length]);
 		// Change those attributes used by the underlying TalkSoup system into attributes
 		// used by AppKit
-		aResult = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont];
+		aResult = [aString substituteColorCodesIntoAttributedStringWithFont: chatFont
+		  withBoldFont: boldFont];
 		
 		// NOTE: a large part of the code below sets an attribute called 'TypeOfColor' to the
 		// GNUstepOutput type of color.  This is used to more accurately change the colors should
@@ -323,6 +239,7 @@ static float _indent_cache = 6.0/0.0;
 	  value: paraStyle range: aRange];
 
 	RELEASE(chatFont);
+	RELEASE(boldFont);
 	return aResult;
 }
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey
