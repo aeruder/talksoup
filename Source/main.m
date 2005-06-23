@@ -85,8 +85,10 @@ int main(void)
 	CREATE_AUTORELEASE_POOL(apr);
 
 	signal(SIGPIPE, SIG_IGN);
-#ifdef GNUSTEP
+#ifdef GNUSTEP 
+#ifdef DOUBLE_RELEASE_COUNT
 	[NSObject enableDoubleReleaseCheck: YES];
+#endif
 #endif
 
 	[TalkSoup sharedInstance];
