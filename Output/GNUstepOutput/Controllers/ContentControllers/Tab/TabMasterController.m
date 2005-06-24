@@ -64,7 +64,7 @@
 	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
 	tabToViewController = 
 	  NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 10);
-	contentControllers = [NSMutableArray new];
+	contentControllers = [NSCountedSet new];
 	indexToViewController = [NSMutableArray new];
 
 	if (!([NSBundle loadNibNamed: @"TabContent" owner: self]))
@@ -272,8 +272,7 @@
 	NSMapRemove(viewControllerToContent, aController);
 	NSMapRemove(tabToViewController, tab);
 	[indexToViewController removeObjectAtIndex: index];
-	[contentControllers removeObjectAtIndex: [contentControllers 
-	  indexOfObject: content]];
+	[contentControllers removeObject: content];
 	
 	numItems--;
 		
@@ -396,7 +395,7 @@
 }
 - (NSArray *)containedContentControllers
 {
-	return [NSSet setWithArray: contentControllers];
+	return [contentControllers allObjects];
 }
 - (NSArray *)viewControllerListForContentController: 
     (id <ContentController>)aContentController

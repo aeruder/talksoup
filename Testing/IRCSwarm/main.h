@@ -34,5 +34,11 @@
 - (void)timerFired: (NSTimer *)aTimer;
 - (void)botDied: (IRCSwarmBot *)aBot;
 - (void)botRegistered: (IRCSwarmBot *)aBot;
+
+- commandACTION: (NSString *)command;
+- commandJOIN: (NSString *)command;
+- commandQUIT: (NSString *)command;
+- commandPART: (NSString *)command;
+- commandMESSAGE: (NSString *)command;
 @end
 

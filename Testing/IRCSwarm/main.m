@@ -34,7 +34,11 @@
 NSMutableDictionary *sharedBots = nil;
 NSMutableDictionary *connectingBots = nil;
 
+static int max_clients = 40;
+
 static float low_time = 0.0;
+static float wait_connecting = 5.0;
+static float wait_cant_connect = 300.0;
 static float high_time = 0.0;
 
 @implementation ControlSwarm
@@ -120,10 +124,14 @@ static float high_time = 0.0;
 	else
 	{
 		repeat++;
+		lenwait = wait_connecting;
 	}
 
 	if (repeat > 5)
-		lenwait = 300.0;
+	{
+		lenwait = wait_cant_connect;
+		curIndex = (curIndex == [play count] - 1) ? 0 : curIndex + 1;
+	}
 
 	[NSTimer scheduledTimerWithTimeInterval: lenwait
 	   target:self selector: @selector(timerFired:) userInfo: nil 
@@ -133,6 +141,7 @@ static float high_time = 0.0;
 {
 	id bot;
 	id normalName;
+	int num;
 
 	if ([aNick length] > 8)
 		aNick = [aNick substringToIndex: 8];
@@ -147,6 +156,17 @@ static float high_time = 0.0;
 	bot = [connectingBots objectForKey: aNick];
 	if ([bot transport]) return nil;
 
+	num = [[sharedBots allKeys] count];
+	if (num > max_clients)
+	{
+		int index = (int)(num * (rand() / (RAND_MAX + 1.0)));
+		id bot;
+
+		bot = [sharedBots objectForKey: [[sharedBots allKeys] 
+		  objectAtIndex: index]];
+		NSLog(@"Disconnecting %@ (index %d)", [bot nick], index);
+		[[NetApplication sharedInstance] disconnectObject: bot];
+	}
 	bot = [[IRCSwarmBot alloc] 
 	  initWithNickname: normalName 
 	  withUserName: nil withRealName: @"IRCSwarm Bot"

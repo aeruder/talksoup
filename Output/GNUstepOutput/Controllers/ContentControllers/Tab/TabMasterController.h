@@ -26,7 +26,7 @@
 #import <Foundation/NSMapTable.h>
  
 @class NSTextField, NSTabView, NSWindow, NSMutableArray;
-@class NSAttributedString;
+@class NSAttributedString, NSCountedSet;
 
 @interface TabMasterController : NSObject < MasterController >
 	{
@@ -35,7 +35,7 @@
 		NSMapTable *viewControllerToTab;
 		NSMapTable *viewControllerToContent;
 		NSMapTable *tabToViewController;
-		NSMutableArray *contentControllers;
+		NSCountedSet *contentControllers;
 		
 		id <ContentControllerQueryController> selectedController;
 		id <TypingController> typingController;
