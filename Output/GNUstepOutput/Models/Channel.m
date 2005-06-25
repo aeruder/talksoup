@@ -119,7 +119,7 @@
 }
 - (NSComparisonResult)sortByName: (ChannelUser *)aUser
 {
-	return [userName compare: [aUser lowerName]];
+	return [lowerName compare: [aUser lowerName]];
 }
 @end
 

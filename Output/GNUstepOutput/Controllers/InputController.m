@@ -83,6 +83,56 @@ static void send_message(id command, id name, id connection)
 	}
 }	
 
+@interface InputControllerFieldEditor : KeyTextView
+	{
+		NSRange lastSelectedRange;
+	}
+- (void)restoreLastSelected;
+@end
+
+@implementation InputControllerFieldEditor
+- (void)restoreLastSelected
+{
+	unsigned length;
+
+	length = [[self textStorage] length];
+	if ((lastSelectedRange.location + lastSelectedRange.length) > 
+	  length)
+	{
+		lastSelectedRange.location = length;
+		lastSelectedRange.length = 0;
+	}
+
+	[self setSelectedRange: lastSelectedRange];
+}
+- (BOOL)resignFirstResponder
+{
+	if (![super resignFirstResponder]) return NO;
+
+	lastSelectedRange = [self selectedRange];
+
+	return YES;
+}
+- (BOOL)becomeFirstResponder
+{
+	unsigned length;
+
+	if (![super becomeFirstResponder]) return NO;
+
+	length = [[self textStorage] length];
+	if ((lastSelectedRange.location + lastSelectedRange.length) > 
+	  length)
+	{
+		lastSelectedRange.location = length;
+		lastSelectedRange.length = 0;
+	}
+
+	[self setSelectedRange: lastSelectedRange];
+
+	return YES;
+}
+@end
+
 @interface InputController (PrivateInputController)
 - (void)viewControllerRemoved: (NSNotification *)aNotification;
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
@@ -126,7 +176,7 @@ static void send_message(id command, id name, id connection)
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
 
-	fieldEditor = [KeyTextView new];
+	fieldEditor = [InputControllerFieldEditor new];
 	[fieldEditor setDelegate: self];
 	[fieldEditor setFieldEditor: YES];
 	[fieldEditor setKeyTarget: self];
@@ -181,13 +231,16 @@ static void send_message(id command, id name, id connection)
             forMasterController: (id <MasterController>)aMaster
 {
 	int modIndex;
+	id string;
 
 	modIndex = [history count] - historyIndex;
 
 	lastMaster = aMaster;
 	activeTextField = aField;
 
-	[aField setStringValue: [modHistory objectAtIndex: modIndex]];
+	string = [modHistory objectAtIndex: modIndex];
+	[aField setStringValue: string];
+
 	return fieldEditor;
 }
 - (void)commandTyped: (NSString *)command
@@ -418,9 +471,12 @@ static void send_message(id command, id name, id connection)
 }
 - (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender
 {
-	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
-	[fieldEditor keyDown: aEvent];
-
+	id typeview;
+	typeview = [lastMaster typeView];
+	if ([[lastMaster window] makeFirstResponder: typeview])
+	{
+		[fieldEditor keyDown: aEvent]; 
+	}
 	return NO;
 }
 - (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender

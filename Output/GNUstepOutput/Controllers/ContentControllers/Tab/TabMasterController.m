@@ -46,11 +46,13 @@
 - (void)typeViewEnterPressed: (NSTextField *)aField;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
+- (void)windowDidResignKey:(NSNotification *)aNotification;
 - (void)tabView: (NSTabView *)tabView 
   didSelectTabViewItem: (NSTabViewItem *)tabViewItem;
 - (void)selectNextTab: (id)aSender;
 - (void)selectPreviousTab: (id)aSender;
 - (void)closeCurrentTab: (id)aSender;
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification;
 @end
 
 @implementation TabMasterController
@@ -83,6 +85,7 @@
 		[tabView removeTabViewItem: object];
 	[typeView setAction: @selector(typeViewEnterPressed:)];
 	[typeView setTarget: self];
+	[typeView setDelegate: self];
 }
 - (void)dealloc
 {
@@ -167,10 +170,8 @@
 	tab = NSMapGet(viewControllerToTab, aController);
 	content = NSMapGet(viewControllerToContent, aController);
 
+	[window makeFirstResponder: window];
 	if (!tab || !content) return;
-
-	[typingController losingFieldEditorForField: typeView
-	  forMasterController: self];
 
 	[[NSNotificationCenter defaultCenter] removeObserver: self
 	  name: ContentControllerChangedNicknameNotification
@@ -206,7 +207,6 @@
 	[self setNickname: [content nickname]];
 	[window setTitle: [content titleForViewController: aController]];
 
-	[typeView abortEditing];
 	[window makeFirstResponder: typeView]; 
 }
 - (void)selectViewControllerAtIndex: (unsigned)aIndex
@@ -245,10 +245,6 @@
 		{
 			oldIndex = [tabView numberOfTabViewItems] - 2;
 		}
-		[typeView abortEditing];
-		[typingController losingFieldEditorForField: typeView
-		  forMasterController: self];
-		DESTROY(typingController);
 
 		[self selectViewControllerAtIndex: oldIndex];
 	}
@@ -506,6 +502,10 @@
 
 	[window makeFirstResponder: typeView]; 
 }
+- (void)windowDidResignKey:(NSNotification *)aNotification
+{
+	[window makeFirstResponder: window];
+}
 - (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
 {
 	id content;
@@ -557,5 +557,13 @@
 - (void)closeCurrentTab: (id)aSender
 {
 	[typingController processSingleCommand: @"/close"];
+}
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+{
+	if ([aNotification object] == typeView)
+	{
+		[typingController losingFieldEditorForField: typeView
+		  forMasterController: self];
+	}
 }
 @end
