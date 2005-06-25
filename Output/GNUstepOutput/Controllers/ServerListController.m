@@ -33,9 +33,12 @@
 #import <AppKit/NSNibLoading.h>
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSFont.h>
+#import <AppKit/NSMatrix.h>
 #import <AppKit/NSBrowser.h>
 #import <AppKit/NSBrowserCell.h>
 #import <AppKit/NSTextView.h>
+#import <AppKit/NSClipView.h>
+#import <AppKit/NSScroller.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSDictionary.h>
@@ -134,6 +137,50 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 	return [[first objectForKey: ServerListInfoName] caseInsensitiveCompare:
 	  [second objectForKey: ServerListInfoName]];
+}
+
+/* Giant hack alert!  This reloads a column then attempts
+ * to pretty much restore it's position.
+ */
+static void reload_column(NSBrowser *browse, int col)
+{
+	id matrix;
+	NSPoint myPos;
+	NSRect visRect;
+	int row1, row2;
+	int col1, col2;
+	int row3, rows;
+
+	if (!browse) return;
+
+	matrix = [browse matrixInColumn: col];
+
+	if (!matrix)
+	{
+		[browse reloadColumn: col];
+		return;
+	}
+
+	visRect = [matrix visibleRect];
+	myPos = visRect.origin;
+	[matrix getRow: &row1 column: &col1 forPoint: myPos];
+
+	myPos = visRect.origin;
+	myPos.y += visRect.size.height;
+	[matrix getRow: &row2 column: &col2 forPoint: myPos];
+
+	row3 = [browse selectedRowInColumn: col];
+
+	[browse reloadColumn: col];
+	matrix = [browse matrixInColumn: col];
+	rows = [matrix numberOfRows];
+	if (row2 > rows) row2 = rows;
+	if (row3 > rows) row3 = rows;
+	if (row1 > rows) row1 = rows;
+
+	[browse selectRow: row2 inColumn: col];
+	[browse selectRow: row1 inColumn: col];
+	[browse selectRow: row3 inColumn: col];
 }
 
 @implementation ServerListController
@@ -391,7 +438,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 	if (!editor) return;
 	
-	string = [[editor entryField] stringValue];
+	string = AUTORELEASE(RETAIN([[editor entryField] stringValue]));
 	
 	if ([string length] == 0)
 	{
@@ -426,7 +473,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 		[self saveServerListPreferences: x];
 	
-		[browser reloadColumn: 0]; 
+		reload_column(browser, 0);
 		
 		[[editor window] close];
 		[window makeKeyAndOrderFront: nil];
@@ -508,7 +555,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 	
 		[self saveServerListPreferences: prefs];
 	
-		[browser reloadColumn: 1]; 
+		reload_column(browser, 1);
 		
 		[[editor window] close];
 		[window makeKeyAndOrderFront: nil];
@@ -637,7 +684,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[self saveServerListPreferences: prefs];
 	
-		[browser reloadColumn: 0];
+		reload_column(browser, 0);
 	}
 	else
 	{
@@ -655,7 +702,7 @@ static int sort_server_dictionary(id first, id second, void *x)
 		
 		[self saveServerListPreferences: prefs];
 	
-		[browser reloadColumn: 1];
+		reload_column(browser, 1);
 	}		
 }
 - (void)connectHit: (NSButton *)sender
