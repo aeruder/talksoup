@@ -445,6 +445,11 @@
 	NSRect nick;
 	NSRect type;
 
+	if (!aNickname)
+	{
+		aNickname = @"";
+	}
+
 	[nickView setStringValue: aNickname];
 	[nickView sizeToFit];
 	
