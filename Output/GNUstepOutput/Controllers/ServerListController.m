@@ -180,7 +180,7 @@ static void reload_column(NSBrowser *browse, int col)
 
 	[browse selectRow: row2 inColumn: col];
 	[browse selectRow: row1 inColumn: col];
-	if (row3 < row2 && row3 > row1)
+	if (row3 <= row2 && row3 >= row1)
 		[browse selectRow: row3 inColumn: col];
 }
 
