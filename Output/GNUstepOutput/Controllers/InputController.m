@@ -251,10 +251,7 @@ static void send_message(id command, id name, id connection)
 
 	if ([command length] == 0)
 	{
-		if ([lastMaster selectedViewController] == view) 
-		{
-			[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
-		}
+		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 		return;
 	}
 
@@ -280,10 +277,7 @@ static void send_message(id command, id name, id connection)
 
 	[[lastMaster typeView] setStringValue: @""];
 
-	if ([lastMaster selectedViewController] == view)
-	{
-		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
-	}
+	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
 }
 - (void)processSingleCommand: (NSString *)aCommand
 {
@@ -1041,6 +1035,7 @@ static void send_message(id command, id name, id connection)
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
 	id name;
+	id cont;
 	
 	if ([x count] < 1)
 	{
@@ -1052,9 +1047,11 @@ static void send_message(id command, id name, id connection)
 	
 	name = [x objectAtIndex: 0];
 	
-	[content addViewControllerOfType: ContentControllerQueryType
+	cont = [content addViewControllerOfType: ContentControllerQueryType
 	  withName: name withLabel: S2AS(name) 
 	  inMasterController: lastMaster]; 
+
+	[lastMaster selectViewController: cont];
 	
 	return self;
 }
