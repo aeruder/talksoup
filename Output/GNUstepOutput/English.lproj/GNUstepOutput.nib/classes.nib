@@ -1,0 +1,29 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {closeTab = id; selectNextTab = id; selectPreviousTab = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                doApplicationHide = id; 
+                doApplicationHideOtherApplications = id; 
+                doApplicationOrderFrontStandardAboutPanel = id; 
+                doApplicationTerminate = id; 
+                doApplicationUnhideAllApplications = id; 
+                loadPreferencesPanel = id; 
+                openEmptyWindow = id; 
+                openNamePrompt = id; 
+                openServerList = id; 
+                openTopicInspector = id; 
+            }; 
+            CLASS = GNUstepOutput; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {menu = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

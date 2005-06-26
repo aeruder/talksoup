@@ -2,6 +2,9 @@
  * GNUstepOutput: Fixed serverlist focusing issues.  When you remove a server
  it won't always scroll to the top.
 
+ * GNUstepOutput: Added 5 .nibs (special thanks to Aaron Glen for doing this
+ over IRC ;)
+
 2005-06-24 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: There was a bug in the sorting code for the userlist.
  

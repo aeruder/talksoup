@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = ScrollingTextView; LANGUAGE = ObjC; SUPERCLASS = NSTextView; }, 
+        {
+            CLASS = StandardQueryController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {chatView = id; window = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
