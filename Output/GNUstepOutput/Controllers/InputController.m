@@ -269,7 +269,7 @@ static void send_message(id command, id name, id connection)
 		{
 			if (![object2 isEqualToString: @""])
 			{
-				[history addObject: command];	
+				[history addObject: object2];	
 				historyIndex = [history count];
 				[modHistory removeAllObjects];
 				[modHistory addObject: @""];
@@ -494,6 +494,7 @@ static void send_message(id command, id name, id connection)
 	if (character == NSCarriageReturnCharacter || 
 	    character == NSEnterCharacter)
 	{
+		[[lastMaster window] makeFirstResponder: [lastMaster window]];
 		[self commandTyped: [sender string]];
 		return NO;
 	}
