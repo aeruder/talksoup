@@ -491,6 +491,13 @@ static void send_message(id command, id name, id connection)
 
    character = [characters characterAtIndex: 0];
 
+	if (character == NSCarriageReturnCharacter || 
+	    character == NSEnterCharacter)
+	{
+		[self commandTyped: [sender string]];
+		return NO;
+	}
+
 	if (character == NSTabCharacter)
 	{
 		[self tabPressed: sender];

@@ -488,11 +488,9 @@
 }
 - (void)typeViewEnterPressed: (NSTextField *)aField
 {
-	id content;
-
-	content = NSMapGet(viewControllerToContent, selectedController);
-
-	[typingController commandTyped: [aField stringValue]];
+	/* just let it be, the typeviews can handle it 
+	 * in their field editor.
+	 */
 }
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {

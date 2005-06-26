@@ -1,3 +1,9 @@
+2005-06-26 Andrew Ruder <aeruder@ksu.edu>
+ * GNUstepOutput: On OS X focusing a textfield causes the action to be sent.
+ This was causing the messages to be sent everytime the window was made key.
+ Instead I am now trapping the key in the field editor so that it works 
+ correctly on OS X and GNUstep.
+
 2005-06-25 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Fixed serverlist focusing issues.  When you remove a server
  it won't always scroll to the top.
