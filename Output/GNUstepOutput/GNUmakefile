@@ -57,6 +57,7 @@ Extra_Resources = $(shell \
 endif
 
 GNUstepOutput_RESOURCE_FILES += $(Extra_Resources)
+GNUstepOutput_RESOURCE_FILES += Tools/dns_helper Tools/exec_helper 
 	
 GNUstepOutput_LANGUAGES = English
 

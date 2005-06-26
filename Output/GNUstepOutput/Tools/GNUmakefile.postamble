@@ -1,0 +1,2 @@
+after-clean::
+	rm -f exec_helper dns_helper

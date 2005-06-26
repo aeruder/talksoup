@@ -1,8 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 TOOL_NAME = exec_helper dns_helper
-
-TOOL_INSTALL_DIR = ../GNUstepOutput/Resources/Tools
+TOOL_INSTALL_DIR = .
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 exec_helper_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
