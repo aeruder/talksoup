@@ -17,11 +17,14 @@
 
 #import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Views/AttributedTabViewItem.h"
+#import "Views/FocusNotificationTextView.h"
 
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTabView.h>
 #import <AppKit/NSTabViewItem.h>
 #import <AppKit/NSWindow.h>
+#import <AppKit/NSScrollView.h>
+#import <AppKit/NSTextContainer.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSValue.h>
@@ -43,16 +46,15 @@
 @interface TabMasterController (DelegateMethods)
 - (void)nicknameChanged: (NSNotification *)aNotification;
 - (void)titleChanged: (NSNotification *)aNotification;
-- (void)typeViewEnterPressed: (NSTextField *)aField;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
-- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)anObject;
 - (void)windowDidResignKey:(NSNotification *)aNotification;
 - (void)tabView: (NSTabView *)tabView 
   didSelectTabViewItem: (NSTabViewItem *)tabViewItem;
 - (void)selectNextTab: (id)aSender;
 - (void)selectPreviousTab: (id)aSender;
 - (void)closeCurrentTab: (id)aSender;
-- (void)controlTextDidEndEditing:(NSNotification *)aNotification;
+- (void)textViewTookFocus: (FocusNotificationTextView *)aTextView;
+- (void)textViewResignedFocus: (FocusNotificationTextView *)aTextView;
 @end
 
 @implementation TabMasterController
@@ -83,9 +85,21 @@
 	while ([tabView numberOfTabViewItems] && 
 	       (object = [tabView tabViewItemAtIndex: 0])) 
 		[tabView removeTabViewItem: object];
-	[typeView setAction: @selector(typeViewEnterPressed:)];
-	[typeView setTarget: self];
 	[typeView setDelegate: self];
+	[typeView setRichText: NO];
+	[typeView setUsesFontPanel: NO];
+	[typeView setHorizontallyResizable: NO];
+	[typeView setVerticallyResizable: YES];
+	[typeView setMinSize: NSMakeSize(0, 0)];
+	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
+	[typeView setEditable: YES];
+	[typeView setAutoresizingMask: NSViewWidthSizable];
+	[[typeView textContainer] setContainerSize:
+	  NSMakeSize([typeView frame].size.width, 1e7)];
+	[[typeView textContainer] setWidthTracksTextView: YES];
+	[typeView setTextContainerInset: NSMakeSize(2, 0)];
+	[[typeView enclosingScrollView] setHasVerticalScroller: NO];
+	[[typeView enclosingScrollView] setHasHorizontalScroller: NO];
 }
 - (void)dealloc
 {
@@ -105,7 +119,7 @@
 	DESTROY(contentControllers);
 	DESTROY(indexToViewController);
 	
-	[typeView setTarget: nil];
+	[typeView setKeyTarget: nil];
 	[typeView setDelegate: nil];
 	
 	[nickView setTarget: nil];
@@ -421,7 +435,7 @@
 {
 	return NSAllMapTableKeys(viewControllerToContent);
 }
-- (NSTextField *)typeView
+- (KeyTextView *)typeView
 {
 	return typeView;
 }
@@ -491,12 +505,6 @@
 
 	[window setTitle: [[aNotification userInfo] objectForKey: @"Title"]];
 }
-- (void)typeViewEnterPressed: (NSTextField *)aField
-{
-	/* just let it be, the typeviews can handle it 
-	 * in their field editor.
-	 */
-}
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
 	/* Basically we just need to force the 
@@ -508,17 +516,6 @@
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
 	[window makeFirstResponder: window];
-}
-- (id)windowWillReturnFieldEditor: (NSWindow *)sender toObject: (id)anObject
-{
-	id content;
-
-	if (anObject != typeView) return nil;
-
-	content = NSMapGet(viewControllerToContent, selectedController);
-
-	return [typingController
-	  fieldEditorForField: typeView forMasterController: self];
 }
 - (void)tabView: (NSTabView *)tabView 
   didSelectTabViewItem: (NSTabViewItem *)tabViewItem
@@ -561,12 +558,14 @@
 {
 	[typingController processSingleCommand: @"/close"];
 }
-- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+- (void)textViewTookFocus: (FocusNotificationTextView *)aTextView
 {
-	if ([aNotification object] == typeView)
-	{
-		[typingController losingFieldEditorForField: typeView
-		  forMasterController: self];
-	}
+	[typingController
+	  handleTextField: typeView forMasterController: self];
+}
+- (void)textViewResignedFocus: (FocusNotificationTextView *)aTextView
+{
+	[typingController
+	  loseTextField: typeView forMasterController: self];
 }
 @end

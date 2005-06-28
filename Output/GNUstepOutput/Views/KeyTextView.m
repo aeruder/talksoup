@@ -58,7 +58,7 @@
 }
 - (void)setStringValue: (NSString *)aValue
 {
-	[self setString: aValue]; 
+	[self setString: [NSString stringWithString: aValue]]; 
 	[self setSelectedRange: NSMakeRange([aValue length], 0)];
 }
 @end

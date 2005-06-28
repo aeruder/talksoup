@@ -6,6 +6,20 @@
 	);
 	Super = NSObject;
     };
+    FocusNotificationTextView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTextView;
+    };
+    KeyTextView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTextView;
+    };
     TabMasterController = {
 	Actions = (
 	);

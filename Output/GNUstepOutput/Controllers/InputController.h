@@ -37,25 +37,25 @@
 		NSMutableArray *history;
 		NSMutableArray *modHistory;
 		KeyTextView *fieldEditor;
-		NSTextField *activeTextField;
 		NSMutableArray *tabCompletion;
 		unsigned tabCompletionIndex;
 		NSConnection *distConnection;
 		NSString *distConnectionName;
 		NSMutableArray *executingTasks;
 		HelperExecutor *helper;
+		NSRange savedRange;
 	}
 - initWithViewController: (id <ContentControllerQueryController>)aController
     contentController: (id <ContentController>)aContentController;
 
 - (void)setConnectionController: (ConnectionController *)aController;
 
-- (void)losingFieldEditorForField: (NSTextField *)aField
-   forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
+- (void)loseTextField: (KeyTextView *)aField
+   forMasterController: (id <MasterController>)aMaster;
+- (void)handleTextField: (KeyTextView *)aField
+   forMasterController: (id <MasterController>)aMaster;
 - (void)processSingleCommand: (NSString *)aCommand;
-- (NSText *)fieldEditorForField: (NSTextField *)aField
-            forMasterController: (id <MasterController>)aMaster;
 @end
 
 #endif

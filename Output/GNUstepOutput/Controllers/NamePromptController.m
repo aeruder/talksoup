@@ -43,6 +43,7 @@
 }
 - (void)returnHit: (NSTextField *)sender
 {
+#if 0
 	id components;
 	id x;
 	id content;
@@ -64,6 +65,7 @@
 	
 	[[content window] makeKeyAndOrderFront: nil];
 	[[content window] makeFirstResponder: [content typeView]];
+#endif
 }
 - (NSWindow *)window
 {

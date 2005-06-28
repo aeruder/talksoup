@@ -26,6 +26,7 @@
 
 @class ConnectionController, NSView, NSString, NSAttributedString;
 @class NSArray, NSTextView, NSTextField, NSWindow, Channel, NSText;
+@class KeyTextView;
 
 extern NSString *ContentControllerChannelType;
 extern NSString *ContentControllerQueryType;
@@ -81,7 +82,7 @@ extern NSString *ContentConsoleName;
     (id <ContentController>)aContentController;
 - (NSArray *)allViewControllers;
 
-- (NSTextField *)typeView;
+- (KeyTextView *)typeView;
 - (NSTextField *)nickView;
 
 - (void)bringToFront;
@@ -89,10 +90,10 @@ extern NSString *ContentConsoleName;
 @end
 
 @protocol TypingController <NSObject>
-- (void)losingFieldEditorForField: (NSTextField *)aField
+- (void)loseTextField: (KeyTextView *)aField
    forMasterController: (id <MasterController>)aMaster;
-- (NSText *)fieldEditorForField: (NSTextField *)aField
-            forMasterController: (id <MasterController>)aMaster;
+- (void)handleTextField: (KeyTextView *)aField
+   forMasterController: (id <MasterController>)aMaster;
 - (void)commandTyped: (NSString *)aCommand;
 - (void)processSingleCommand: (NSString *)aCommand;
 @end

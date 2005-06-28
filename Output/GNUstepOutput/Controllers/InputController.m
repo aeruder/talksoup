@@ -83,56 +83,6 @@ static void send_message(id command, id name, id connection)
 	}
 }	
 
-@interface InputControllerFieldEditor : KeyTextView
-	{
-		NSRange lastSelectedRange;
-	}
-- (void)restoreLastSelected;
-@end
-
-@implementation InputControllerFieldEditor
-- (void)restoreLastSelected
-{
-	unsigned length;
-
-	length = [[self textStorage] length];
-	if ((lastSelectedRange.location + lastSelectedRange.length) > 
-	  length)
-	{
-		lastSelectedRange.location = length;
-		lastSelectedRange.length = 0;
-	}
-
-	[self setSelectedRange: lastSelectedRange];
-}
-- (BOOL)resignFirstResponder
-{
-	if (![super resignFirstResponder]) return NO;
-
-	lastSelectedRange = [self selectedRange];
-
-	return YES;
-}
-- (BOOL)becomeFirstResponder
-{
-	unsigned length;
-
-	if (![super becomeFirstResponder]) return NO;
-
-	length = [[self textStorage] length];
-	if ((lastSelectedRange.location + lastSelectedRange.length) > 
-	  length)
-	{
-		lastSelectedRange.location = length;
-		lastSelectedRange.length = 0;
-	}
-
-	[self setSelectedRange: lastSelectedRange];
-
-	return YES;
-}
-@end
-
 @interface InputController (PrivateInputController)
 - (void)viewControllerRemoved: (NSNotification *)aNotification;
 - (void)nextHistoryItem: (NSText *)aFieldEditor;
@@ -176,12 +126,6 @@ static void send_message(id command, id name, id connection)
 	modHistory = [NSMutableArray new];
 	[modHistory addObject: @""];
 
-	fieldEditor = [InputControllerFieldEditor new];
-	[fieldEditor setDelegate: self];
-	[fieldEditor setFieldEditor: YES];
-	[fieldEditor setKeyTarget: self];
-	[fieldEditor setKeyAction: @selector(fieldKeyPressed:sender:)];
-
 	[(KeyTextView *)[view chatView] setKeyTarget: self];
 	[(KeyTextView *)[view chatView] 
 	  setKeyAction: @selector(chatKeyPressed:sender:)];
@@ -217,43 +161,57 @@ static void send_message(id command, id name, id connection)
 {
 	controller = aController;
 }
-- (void)losingFieldEditorForField: (NSTextField *)aField
+- (void)loseTextField: (KeyTextView *)aField
    forMasterController: (id <MasterController>)aMaster
 {
 	int modIndex;
 
+	if (fieldEditor != aField)
+		NSLog(@"fieldEditor != aField!!!");
+
 	modIndex = [history count] - historyIndex;
 
 	[modHistory replaceObjectAtIndex: modIndex withObject: 
-	  [aField stringValue]];
+	  [NSString stringWithString: [fieldEditor string]]];
+	savedRange = [fieldEditor selectedRange];
+
+	[fieldEditor setKeyTarget: nil];
+
+	DESTROY(fieldEditor);
 }
-- (NSText *)fieldEditorForField: (NSTextField *)aField 
-            forMasterController: (id <MasterController>)aMaster
+- (void)handleTextField: (KeyTextView *)aField
+   forMasterController: (id <MasterController>)aMaster;
 {
 	int modIndex;
 	id string;
+	unsigned length;
 
 	modIndex = [history count] - historyIndex;
 
 	lastMaster = aMaster;
-	activeTextField = aField;
 
 	string = [modHistory objectAtIndex: modIndex];
-	[aField setStringValue: string];
 
-	return fieldEditor;
+	ASSIGN(fieldEditor, aField);
+	[fieldEditor setStringValue: string];
+
+	[fieldEditor setKeyTarget: self];
+	[fieldEditor setKeyAction: @selector(fieldKeyPressed:sender:)];
+
+	length = [string length];
+	if ((savedRange.length + savedRange.location) > length)
+	{
+		savedRange.length = 0;
+		savedRange.location = length;
+	}
+
+	[fieldEditor setSelectedRange: savedRange];
 }
 - (void)commandTyped: (NSString *)command
 {
 	NSArray *lines;
 	NSEnumerator *iter, *iter2;
 	id object, object2;
-
-	if ([command length] == 0)
-	{
-		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
-		return;
-	}
 
 	lines = [command componentsSeparatedByString: @"\r\n"];
 		
@@ -275,9 +233,7 @@ static void send_message(id command, id name, id connection)
 		}
 	}
 
-	[[lastMaster typeView] setStringValue: @""];
-
-	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+	[fieldEditor setStringValue: @""];
 }
 - (void)processSingleCommand: (NSString *)aCommand
 {
@@ -430,18 +386,13 @@ static void send_message(id command, id name, id connection)
 	{
 		[modHistory replaceObjectAtIndex: modIndex - 1 withObject: string];
 
-		[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
+		[fieldEditor setStringValue: [modHistory objectAtIndex: modIndex]];
 	}
 	else
 	{
 		string = [history objectAtIndex: historyIndex];
 		[modHistory addObject: string];
-		[fieldEditor setString: string];
-	}
-	
-	if ([lastMaster selectedViewController] == view)
-	{
-		[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+		[fieldEditor setStringValue: string];
 	}
 }
 - (void)nextHistoryItem: (NSText *)aFieldEditor
@@ -459,9 +410,7 @@ static void send_message(id command, id name, id connection)
 	[modHistory replaceObjectAtIndex: modIndex + 1 withObject: 
 	  [NSString stringWithString: [fieldEditor string]]];
 	
-	[fieldEditor setString: [modHistory objectAtIndex: modIndex]];
-
-	[[lastMaster window] makeFirstResponder: [lastMaster typeView]];
+	[fieldEditor setStringValue: [modHistory objectAtIndex: modIndex]];
 }
 - (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender
 {
@@ -483,12 +432,11 @@ static void send_message(id command, id name, id connection)
 		return YES;
 	}
 
-   character = [characters characterAtIndex: 0];
+	character = [characters characterAtIndex: 0];
 
 	if (character == NSCarriageReturnCharacter || 
 	    character == NSEnterCharacter)
 	{
-		[[lastMaster window] makeFirstResponder: [lastMaster window]];
 		[self commandTyped: [sender string]];
 		return NO;
 	}
@@ -555,8 +503,7 @@ static void send_message(id command, id name, id connection)
 }
 - (void)extraTabPressed: (id)sender
 {
-	id field = [lastMaster typeView];
-	NSString *typed = [field stringValue];
+	NSString *typed = [NSString stringWithString: [fieldEditor string]];
 	int start;
 	NSRange range;
 
@@ -582,8 +529,7 @@ static void send_message(id command, id name, id connection)
 }
 - (void)firstTabPressed: (id)sender
 {
-	id field = [lastMaster typeView];
-	NSString *typed = [field stringValue];
+	NSString *typed = [NSString stringWithString: [fieldEditor string]];
 	NSArray *possibleCompletions;
 	int start;
 	NSRange range;

@@ -26,7 +26,7 @@
 #import <Foundation/NSMapTable.h>
  
 @class NSTextField, NSTabView, NSWindow, NSMutableArray;
-@class NSAttributedString, NSCountedSet;
+@class NSAttributedString, NSCountedSet, FocusNotificationTextView;
 
 @interface TabMasterController : NSObject < MasterController >
 	{
@@ -39,7 +39,7 @@
 		
 		id <ContentControllerQueryController> selectedController;
 		id <TypingController> typingController;
-		NSTextField *typeView;
+		FocusNotificationTextView *typeView;
 		NSTextField *nickView;
 		NSTabView *tabView;
 		NSWindow *window;
@@ -79,7 +79,7 @@
     (id <ContentController>)aContentController;
 - (NSArray *)allViewControllers;
 
-- (NSTextField *)typeView;
+- (KeyTextView *)typeView;
 - (NSTextField *)nickView;
 
 - (void)bringToFront;
