@@ -1,6 +1,7 @@
 {
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = FocusNotificationTextView; LANGUAGE = ObjC; SUPERCLASS = NSTextView; }, 
         {
             CLASS = TabMasterController; 
             LANGUAGE = ObjC; 
