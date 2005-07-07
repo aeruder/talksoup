@@ -27,6 +27,8 @@
 @class ConnectionController, NSMutableArray, NSText, KeyTextView, NSTextField;
 @class NSConnection, HelperExecutor;
 
+extern NSString *TaskExecutionOutputNotification;
+
 @interface InputController : NSObject <TypingController>
 	{
 		id <ContentController> content;

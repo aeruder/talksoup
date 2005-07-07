@@ -45,17 +45,17 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 
 NSString *ConnectionControllerUpdatedTopicNotification = @"ConnectionControllerUpdatedTopicNotification";
 
 @interface ConnectionController (PrivateMethods)
-- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost
-   withReverse: (NSString *)aReverse;
+- (void)dnsLookup: (NSNotification *)aNotification;
 - (void)connectToHost: (NSHost *)aHost;
 @end
 
+NSString *DNSLookupNotification = @"DNSLookupNotification";
 static NSString *dns_helper = @"dns_helper";
-static unsigned long int dns_counter = 0;
 
 @implementation ConnectionController
 - init
@@ -129,16 +129,24 @@ static unsigned long int dns_counter = 0;
 
 	[content bringNameToFront: ContentConsoleName];
 
-	aIdentifier = [NSString stringWithFormat: @"GNUstepOutputConnectionController%ld",
-	  dns_counter];
+	aIdentifier = [NSString stringWithFormat: @"%p%@%ld",
+	  self, self, rand()];
 	helper = [[HelperExecutor alloc] initWithHelperName: dns_helper 
 	  identifier: aIdentifier];
-	dns_counter++;
+
+	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter] 
+	  addObserver: self
+	  selector: @selector(dnsLookup:)
+	  name: DNSLookupNotification 
+	  object: aIdentifier 
+	  suspensionBehavior: NSNotificationSuspensionBehaviorDeliverImmediately];
 	
 	return self;
 }
 - (void)dealloc
 {
+	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
+	  removeObserver: self];
 	RELEASE(helper);
 	RELEASE(typedHost);
 	RELEASE(preNick);
@@ -168,8 +176,8 @@ static unsigned long int dns_counter = 0;
 	ASSIGN(typedHost, aName);
 	typedPort = aPort;
 
-	[helper runWithArguments: [NSArray arrayWithObject: typedHost]
-	  object: self];
+	[helper runWithArguments: [NSArray arrayWithObjects: 
+	  DNSLookupNotification, typedHost, nil]];
 
 	return self;
 }
@@ -301,10 +309,13 @@ static unsigned long int dns_counter = 0;
 @implementation ConnectionController (PrivateMethods)
 /* Called by dns_helper 
  */
-- (void)dnsLookupCallback: (NSString *)aAddress forHost: (NSString *)aHost
-  withReverse: (NSString *)aReverse;
+- (void)dnsLookup: (NSNotification *)aNotification
 {
 	NSHost *realHost = nil;
+	id userInfo = [aNotification userInfo];
+	id aHost = [userInfo objectForKey: @"Hostname"];
+	id aAddress = [userInfo objectForKey: @"Address"];
+	id aReverse = [userInfo objectForKey: @"Reverse"];
 
 	if (!aHost || ![aHost isEqualToString: typedHost])
 		return;

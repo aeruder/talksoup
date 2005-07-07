@@ -23,9 +23,6 @@
 #import <TalkSoupBundles/TalkSoup.h>
 
 #import <Foundation/NSAutoreleasePool.h>
-#import <Foundation/NSConnection.h>
-#import <Foundation/NSDistantObject.h>
-#import <Foundation/NSProxy.h>
 #import <Foundation/NSRunLoop.h>
 #import <Foundation/NSTask.h>
 #import <Foundation/NSFileHandle.h>
@@ -36,16 +33,13 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSDebug.h>
-#import <Foundation/NSPortNameServer.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 
 #include <signal.h>
 
-static id input_controller;
-static NSString *my_dest;
-
-@protocol SomeBogusProtocolexec_handler
-- (void)execCallback: (NSString *)message withDest: (NSString *)dest;
-@end
+static NSString *my_dest = nil;
+static NSString *my_regname = nil;
+static NSString *my_notname = nil;
 
 static NSString *getlp(NSString *command)
 {
@@ -89,7 +83,14 @@ static void handle_lines(NSMutableString *str, int force_all)
 
 		if ([output length] == 0) continue;
 
-		[input_controller execCallback: output withDest: my_dest];
+		[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
+		  postNotificationName: my_notname
+		  object: my_regname
+		  userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+			output, @"Output",
+			my_dest, @"Destination",
+			nil]
+		  deliverImmediately: YES];
 	}
 }
 
@@ -144,31 +145,18 @@ int main(int argc, char **argv, char **env)
 {
 	CREATE_AUTORELEASE_POOL(apr);
 	NSDictionary *dict;
-	NSString *regname;
 	NSString *command;
 
 	signal(SIGPIPE, SIG_IGN);
-	if (argc < 2) 
+	if (argc < 3) 
 		return 1;
 
-	regname = [NSString stringWithCString: argv[1]];
+	my_regname = [NSString stringWithCString: argv[1]];
+	my_notname = [NSString stringWithCString: argv[2]];
+	command = [NSString stringWithCString: argv[3]];
+	if (argc >= 4)
+		my_dest = [NSString stringWithCString: argv[4]];
 
-	dict = [[NSConnection rootProxyForConnectionWithRegisteredName: regname
-	  host: nil usingNameServer:
-	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]] 
-	  retain];
-
-	command = [NSString stringWithCString: argv[2]];
-
-	input_controller = [dict objectForKey: @"Input"];
-	my_dest = [dict objectForKey: @"Destination"];
-
-	if (!input_controller)
-	{
-		NSLog(@"Can't run %@, got dictionary: %@", command, dict);
-		RELEASE(dict);
-		return 5;
-	}
 	run_it(command);
 
 	RELEASE(dict);

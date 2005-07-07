@@ -41,8 +41,6 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSSet.h>
 #import <Foundation/NSString.h>
-#import <Foundation/NSPort.h>
-#import <Foundation/NSConnection.h>
 #import <Foundation/NSTask.h>
 #import <Foundation/NSRange.h>
 #import <AppKit/NSText.h>
@@ -51,12 +49,14 @@
 #import <Foundation/NSObject.h>
 #import <AppKit/NSGraphics.h>
 #import <Foundation/NSDictionary.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 
 #include <sys/time.h>
 #include <time.h>
+#include <stdlib.h>
 
+NSString *TaskExecutionOutputNotification = @"TaskExecutionOutputNotification";
 static NSString *exec_helper = @"exec_helper";
-static unsigned long int exec_counter = 0;
 
 static void send_message(id command, id name, id connection)
 {
@@ -89,6 +89,7 @@ static void send_message(id command, id name, id connection)
 - (void)previousHistoryItem: (NSText *)aFieldEditor;
 - (BOOL)chatKeyPressed: (NSEvent *)aEvent sender: (id)sender;
 - (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender;
+- (void)taskExecutionOutput: (NSNotification *)aNotification;
 @end
 
 @interface InputController (TabCompletion)
@@ -115,7 +116,6 @@ static void send_message(id command, id name, id connection)
     contentController: (id <ContentController>)aContentController
 {
 	NSString *aIdentifier;
-
 	if (!(self = [super init])) return nil;
 
 	content = RETAIN(aContentController);
@@ -130,21 +130,29 @@ static void send_message(id command, id name, id connection)
 	[(KeyTextView *)[view chatView] 
 	  setKeyAction: @selector(chatKeyPressed:sender:)];
 
-	aIdentifier = [NSString stringWithFormat: @"GNUstepOutputInputController%ld",
-	  exec_counter];
-	helper = [[HelperExecutor alloc] initWithHelperName: exec_helper 
-	  identifier: aIdentifier];
-	exec_counter++;
-
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(viewControllerRemoved:)
 	  name: ContentControllerRemovedFromMasterControllerNotification
 	  object: content];
 
+	aIdentifier = [NSString stringWithFormat: @"%p%@%ld",
+	  self, self, rand()];
+	helper = [[HelperExecutor alloc] initWithHelperName: exec_helper 
+	  identifier: aIdentifier];
+
+	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter] 
+	  addObserver: self
+	  selector: @selector(taskExecutionOutput:)
+	  name: TaskExecutionOutputNotification
+	  object: aIdentifier 
+	  suspensionBehavior: NSNotificationSuspensionBehaviorDeliverImmediately];
+
 	return self;
 }
 - (void)dealloc
 {
+	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
+	  removeObserver: self];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[fieldEditor setKeyTarget: nil];
 	[fieldEditor setDelegate: nil];
@@ -474,6 +482,23 @@ static void send_message(id command, id name, id connection)
 	
 	return YES;
 }	
+- (void)taskExecutionOutput: (NSNotification *)aNotification
+{
+	id userInfo = [aNotification userInfo];
+	id message = [userInfo objectForKey: @"Output"];
+	id dest = [userInfo objectForKey: @"Destination"];
+	
+	if ([controller connection] && [dest length])
+	{
+		send_message(AUTORELEASE([message copy]), 
+		 AUTORELEASE([dest copy]), [controller connection]);
+	} 
+	else
+	{
+		[controller showMessage: S2AS(AUTORELEASE([message copy])) 
+		  onConnection: nil];
+	}
+}
 @end
 
 @implementation InputController (TabCompletion)
@@ -1272,25 +1297,9 @@ static void send_message(id command, id name, id connection)
 		return self;
 	}
 	
-	[helper runWithArguments: [NSArray arrayWithObject: newcommand]
-	  object: [NSDictionary dictionaryWithObjectsAndKeys:
-       self, @"Input",
-	   destination, @"Destination",
-	   nil]];
+	[helper runWithArguments: [NSArray arrayWithObjects: TaskExecutionOutputNotification, 
+	  newcommand, destination, nil]];
 
 	return self;
-}
-- (void)execCallback: (NSString *)message withDest: (NSString *)dest
-{
-	if ([controller connection] && [dest length])
-	{
-		send_message(AUTORELEASE([message copy]), 
-		 AUTORELEASE([dest copy]), [controller connection]);
-	} 
-	else
-	{
-		[controller showMessage: S2AS(AUTORELEASE([message copy])) 
-		  onConnection: nil];
-	}
 }
 @end

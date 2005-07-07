@@ -24,6 +24,8 @@
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
 @class NSDictionary, InputController, HelperExecutor;
 
+extern NSString *DNSLookupNotification;
+
 #import "Controllers/ContentControllers/ContentController.h"
 #import <Foundation/NSObject.h>
 #import <Foundation/NSMapTable.h>

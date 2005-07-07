@@ -24,13 +24,12 @@
 
 @interface HelperExecutor : NSObject
 	{	
-		NSConnection *distConnection;
-		NSString *distConnectionName;
+		NSString *notificationName;
 		NSMutableArray *executingTasks;
 		NSString *helper;
 	}
 - initWithHelperName: (NSString *)aName identifier: (NSString *)aIdentifier;
-- (void)runWithArguments: (NSArray *)aArgs object: (id)aObject;
+- (void)runWithArguments: (NSArray *)aArgs;
 - (void)cleanup;
 @end
 

@@ -22,49 +22,29 @@
 #import <TalkSoupBundles/TalkSoup.h>
 
 #import <Foundation/NSAutoreleasePool.h>
-#import <Foundation/NSConnection.h>
-#import <Foundation/NSDistantObject.h>
-#import <Foundation/NSProxy.h>
 #import <Foundation/NSRunLoop.h>
 #import <Foundation/NSHost.h>
 #import <Foundation/NSData.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSDebug.h>
-#import <Foundation/NSPortNameServer.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 
 #include <signal.h>
-
-@protocol SomeBogusProtocoldns_helper
-- (void)dnsLookupCallback: (NSString *)ip_address forHost: (NSString *)aHost
-  withReverse: (NSString *)aReverse;
-@end
 
 int main(int argc, char **argv, char **env)
 {
 	CREATE_AUTORELEASE_POOL(apr);
-	NSString *regname, *address, *reverse, *hostname;
-	id connection;
+	NSString *notname, *regname, *address, *reverse, *hostname;
 	NSHost *aHost, *aHost2;
 
 	signal(SIGPIPE, SIG_IGN);
-	if (argc < 2) 
+	if (argc < 3) 
 		return 1;
 
 	regname = [NSString stringWithCString: argv[1]];
+	notname = [NSString stringWithCString: argv[2]];
+	hostname = [NSString stringWithCString: argv[3]];
 
-	connection = [[NSConnection rootProxyForConnectionWithRegisteredName: 
-	  regname host: nil usingNameServer: 
-	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]] 
-	  retain];
-
-	hostname = [NSString stringWithCString: argv[2]];
-
-	if (!connection)
-	{
-		NSLog(@"Can't lookup %@, got connection: %@", connection);
-		RELEASE(connection);
-		return 5;
-	}
 	aHost = [NSHost hostWithName: hostname];
 	address = [aHost address];
 	reverse = nil;
@@ -74,9 +54,16 @@ int main(int argc, char **argv, char **env)
 		reverse = [aHost2 name];
 	}
 
-	[connection dnsLookupCallback: address forHost: hostname withReverse: reverse];
+	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
+	  postNotificationName: notname
+	  object: regname
+	  userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+	    hostname, @"Hostname",
+	    address, @"Address",
+	    reverse, @"Reverse",
+	    nil]
+	  deliverImmediately: YES];
 
-	RELEASE(connection);
 	RELEASE(apr);
 	return 0;
 }

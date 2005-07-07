@@ -18,10 +18,8 @@
 #import "Misc/HelperExecutor.h"
 #import "GNUstepOutput.h"
 
-#import <Foundation/NSPort.h>
 #import <Foundation/NSBundle.h>
 #import <Foundation/NSFileManager.h>
-#import <Foundation/NSConnection.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSNull.h>
@@ -29,7 +27,6 @@
 #import <Foundation/NSTask.h>
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSEnumerator.h>
-#import <Foundation/NSPortNameServer.h>
 
 @interface HelperExecutor (PrivateMethods)
 - (void)taskEnded: (NSNotification *)aNotification;
@@ -38,7 +35,6 @@
 @implementation HelperExecutor
 - initWithHelperName: (NSString *)aName identifier: (NSString *)aIdentifier
 {
-	NSMessagePort *aPort;
 	NSBundle *aBundle;
 	NSFileManager *aManager;
 
@@ -56,23 +52,9 @@
 		return nil;
 	}
 
-	aPort = AUTORELEASE([NSMessagePort new]);
-
-	distConnection = [NSConnection connectionWithReceivePort: aPort sendPort: nil];
-	if (!distConnection || ![distConnection registerName: aIdentifier
-	  withNameServer: 
-	  (NSMessagePortNameServer *)[NSMessagePortNameServer sharedInstance]]
-	)
-	{
-		NSLog(@"Couldn't register NSConnection in HelperExecutor :(");
-		[super dealloc];
-		return nil;
-	}
-
-	RETAIN(distConnection);
 	RETAIN(helper);
 	executingTasks = [NSMutableArray new];
-	distConnectionName = RETAIN(aIdentifier);
+	notificationName = RETAIN(aIdentifier);
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(taskEnded:)
@@ -84,15 +66,13 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	[distConnection registerName: nil];
 	RELEASE(executingTasks);
-	RELEASE(distConnection);
-	RELEASE(distConnectionName);
+	RELEASE(notificationName);
 	RELEASE(helper);
 
 	[super dealloc];
 }
-- (void)runWithArguments: (NSArray *)aArgs object: (id)aObject
+- (void)runWithArguments: (NSArray *)aArgs
 {
 	NSMutableArray *args;
 	NSTask *aTask;
@@ -100,10 +80,8 @@
 	if (!aArgs)
 		aArgs = AUTORELEASE([NSArray new]);
 
-	[distConnection setRootObject: aObject];
-
 	args = [NSMutableArray new];
-	[args addObject: distConnectionName];
+	[args addObject: notificationName];
 	[args addObjectsFromArray: aArgs];
 
 	aTask = AUTORELEASE([NSTask new]);
@@ -122,8 +100,6 @@
 	{
 		[object terminate];
 	}
-
-	[distConnection setRootObject: [NSNull null]];
 }
 @end
 
@@ -134,12 +110,6 @@
 
 	if (![executingTasks containsObject: task])
 		return;
-
-	if ([executingTasks objectAtIndex: [executingTasks count] - 1] 
-	    == task)
-	{
-		[distConnection setRootObject: [NSNull null]];
-	}
 
 	[executingTasks removeObject: task];
 }
