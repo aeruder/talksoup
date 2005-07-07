@@ -1,6 +1,8 @@
 2005-07-07 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: Moved to using distributed notifications instead of 
  distributed objects.
+ * GNUstepOutput: Fix autoresize of nickview
+ * GNUstepOutput: Fix tab completion picking up noncommand commandTyping:
 
 2005-06-27 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput: The NSTextField was much too much of a pain to use anymore.
