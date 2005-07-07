@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 @interface NSException (blah)
 @end
@@ -90,6 +91,7 @@ int main(void)
 	[NSObject enableDoubleReleaseCheck: YES];
 #endif
 #endif
+	srand(time(NULL));
 
 	[TalkSoup sharedInstance];
 	
