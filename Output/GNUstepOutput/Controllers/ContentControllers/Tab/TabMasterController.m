@@ -470,13 +470,13 @@
 	nick = [nickView frame];
 	nick.origin.y = 8;
 
-	type = [typeView frame];
+	type = [[typeView enclosingScrollView] frame];
 	type.origin.y = 4;
 	type.origin.x = NSMaxX(nick) + 4;
 	type.size.width = [[window contentView] frame].size.width - 4 - type.origin.x;
 	
 	[nickView setFrame: nick];
-	[typeView setFrame: type];
+	[[typeView enclosingScrollView] setFrame: type];
 	
 	[[window contentView] setNeedsDisplay: YES];
 }
