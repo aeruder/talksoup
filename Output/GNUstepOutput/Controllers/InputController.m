@@ -321,7 +321,7 @@ static void send_message(id command, id name, id connection)
 		substring = GNUstepOutputLowercase(substring);
 		
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
-		  @"command%@:", [substring capitalizedString]]);
+		  @"ircCommand%@:", [substring capitalizedString]]);
 		
 		if (commandSelector && [self respondsToSelector: commandSelector])
 		{
@@ -664,10 +664,10 @@ static void send_message(id command, id name, id connection)
 	
 	while ((x = [iter nextObject]))
 	{
-		if ([x hasPrefix: @"command"] && [x hasSuffix: @":"] &&
-		  ![x isEqualToString: @"command:"])
+		if ([x hasPrefix: @"ircCommand"] && [x hasSuffix: @":"] &&
+		  ![x isEqualToString: @"ircCommand:"])
 		{
-			x = [x substringFromIndex: 7];
+			x = [x substringFromIndex: 10];
 			x = [x substringToIndex: [x length] - 1];
 			x = [@"/" stringByAppendingString: [x uppercaseString]];
 		
@@ -789,7 +789,7 @@ static void send_message(id command, id name, id connection)
 @end
 
 @implementation InputController (CommonCommands)
-- commandPing: (NSString *)aString
+- ircCommandPing: (NSString *)aString
 {
 	NSArray *x;
 	id who;
@@ -828,7 +828,7 @@ static void send_message(id command, id name, id connection)
 	  sender: _GS_];
 	return self;
 }				
-- commandSay: (NSString *)aString
+- ircCommandSay: (NSString *)aString
 {
 	NSString *name;
 
@@ -851,7 +851,7 @@ static void send_message(id command, id name, id connection)
 	send_message(aString, name, [controller connection]);
 	return self;
 }
-- commandTopic: (NSString *)aString
+- ircCommandTopic: (NSString *)aString
 {
 	NSArray *x;
 	id connection;
@@ -874,7 +874,7 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }
-- commandJoin: (NSString *)aString
+- ircCommandJoin: (NSString *)aString
 {
 	NSMutableArray *x;
 	x = [NSMutableArray arrayWithArray:
@@ -927,7 +927,7 @@ static void send_message(id command, id name, id connection)
 	}
 	return self;
 }
-- commandServer: (NSString *)aString
+- ircCommandServer: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 3];
 	int aPort;
@@ -953,7 +953,7 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }	
-- commandNick: (NSString *)aString
+- ircCommandNick: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
 	id connection = [controller connection];
@@ -982,7 +982,7 @@ static void send_message(id command, id name, id connection)
 	
 	return self;
 }
-- commandMe: (NSString *)aString
+- ircCommandMe: (NSString *)aString
 {
 	id connection = [controller connection];
 
@@ -1002,7 +1002,7 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }
-- commandQuery: (NSString *)aString
+- ircCommandQuery: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
 	id name;
@@ -1026,7 +1026,7 @@ static void send_message(id command, id name, id connection)
 	
 	return self;
 }
-- commandClose: (NSString *)aString
+- ircCommandClose: (NSString *)aString
 {
 	NSArray *x = [aString separateIntoNumberOfArguments: 2];
 	id name;
@@ -1065,7 +1065,7 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }
-- commandPart: (NSString *)args
+- ircCommandPart: (NSString *)args
 {
 	id x = [args separateIntoNumberOfArguments: 2];
 	id name, msg;
@@ -1104,13 +1104,13 @@ static void send_message(id command, id name, id connection)
 	
 	return self;
 }
-- commandClear: (NSString *)command
+- ircCommandClear: (NSString *)command
 {
 	[[view chatView] setString: @""]; 
 	
 	return self;
 }	
-- commandScrollback: (NSString *)command
+- ircCommandScrollback: (NSString *)command
 {
 	id x = [command separateIntoNumberOfArguments: 2];
 	int length;
@@ -1133,7 +1133,7 @@ static void send_message(id command, id name, id connection)
 	
 	return self;
 }
-- commandAlias: (NSString *)command
+- ircCommandAlias: (NSString *)command
 {
 	id x = [command separateIntoNumberOfArguments: 2];
 	id aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
@@ -1202,7 +1202,7 @@ static void send_message(id command, id name, id connection)
 		  
 	return self;
 }
-- commandUnalias: (NSString *)command
+- ircCommandUnalias: (NSString *)command
 {
 	id x = [command separateIntoNumberOfArguments: 2];
 	id aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
@@ -1258,7 +1258,7 @@ static void send_message(id command, id name, id connection)
 	}
 	return self;
 }
-- commandExec: (NSString *)command
+- ircCommandExec: (NSString *)command
 {
 	id x = [command separateIntoNumberOfArguments: 1];
 	id newcommand = nil;
