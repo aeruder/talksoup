@@ -1,0 +1,20 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = KeyTextView; LANGUAGE = ObjC; SUPERCLASS = NSTextView; }, 
+        {
+            CLASS = TopicInspectorController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                authorField = id; 
+                channelField = id; 
+                dateField = id; 
+                nothingView = id; 
+                topicText = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
