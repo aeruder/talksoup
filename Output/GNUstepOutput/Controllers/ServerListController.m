@@ -62,6 +62,12 @@ NSString *ServerListFavorites = @"Favorites";
 #define APP_SUPPORT @"/Application Support/"
 #endif
 
+#define RSRC_DIR @"/Resources/"
+#ifndef GNUSTEP
+#undef RSRC_DIR 
+#define RSRC_DIR @"/Contents/Resources/"
+#endif
+
 static NSMutableArray *add_favorites(NSMutableArray *anArray)
 {
 	NSEnumerator *iter;
@@ -270,7 +276,7 @@ static void reload_column(NSBrowser *browse, int col)
 
 	subdirs = [NSArray arrayWithObjects:
 	  APP_SUPPORT @"TalkSoup",
-	  APP_SUPPORT @"TalkSoup/Output/GNUstepOutput/Resources",
+	  APP_SUPPORT @"TalkSoup/Output/GNUstepOutput" RSRC_DIR,
 	  nil];
 
 	while ((object = [iter nextObject]))
