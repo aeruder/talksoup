@@ -106,5 +106,9 @@
 	RELEASE(hostName);
 
 	objDealloc(self, _cmd);
+
+	if (1) return;
+
+	[super dealloc];
 }
 @end

@@ -27,6 +27,7 @@
 #import <Foundation/NSTask.h>
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSEnumerator.h>
+#import <Foundation/NSPathUtilities.h>
 
 @interface HelperExecutor (PrivateMethods)
 - (void)taskEnded: (NSNotification *)aNotification;

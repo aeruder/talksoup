@@ -56,7 +56,7 @@
 			sel = list->method_list[z].method_name;
 #ifdef __APPLE__
 			[array addObject: AUTORELEASE([[NSString alloc] initWithUTF8String:
-			  sel])];
+			  (char *)sel])];
 #else
 			[array addObject: NSStringFromSelector(sel)];
 #endif
