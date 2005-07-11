@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {setEntry = id; }; 
+            CLASS = GroupEditorController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {entryField = id; okButton = id; window = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -54,6 +54,7 @@ int main(int argc, char **argv, char **env)
 		reverse = [aHost2 name];
 	}
 
+	NSLog(@"Whoo: %@ %@ %@: ", hostname, address, reverse);
 	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
 	  postNotificationName: notname
 	  object: regname

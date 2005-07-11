@@ -1,0 +1,29 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                addEntryHit = id; 
+                addGroupHit = id; 
+                connectHit = id; 
+                editHit = id; 
+                forceHit = id; 
+                removeHit = id; 
+            }; 
+            CLASS = ServerListController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addEntryButton = id; 
+                addGroupButton = id; 
+                browser = id; 
+                connectButton = id; 
+                editButton = id; 
+                forceButton = id; 
+                removeButton = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
