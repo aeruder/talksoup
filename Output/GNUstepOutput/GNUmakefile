@@ -104,7 +104,8 @@ $(ContentController)
 Views = Views/AttributedTabViewItem.m \
 Views/ScrollingTextView.m \
 Views/FocusNotificationTextView.m \
-Views/KeyTextView.m
+Views/KeyTextView.m \
+Views/InputControllerTextView.m
 
 Misc = Misc/NSColorAdditions.m \
 Misc/NSObjectAdditions.m \

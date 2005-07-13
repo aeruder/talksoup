@@ -41,6 +41,7 @@
 #import <Foundation/NSNull.h>
 #import <Foundation/NSSet.h>
 #import <Foundation/NSString.h>
+#import <Foundation/NSRunLoop.h>
 #import <Foundation/NSTask.h>
 #import <Foundation/NSRange.h>
 #import <AppKit/NSText.h>
@@ -432,7 +433,7 @@ static void send_message(id command, id name, id connection)
 }
 - (BOOL)fieldKeyPressed: (NSEvent *)aEvent sender: (id)sender
 {
-	NSString *characters = [aEvent characters];
+	NSString *characters = [aEvent charactersIgnoringModifiers];
 	unichar character = 0;
 	
 	if ([characters length] == 0)
@@ -1022,7 +1023,11 @@ static void send_message(id command, id name, id connection)
 	  withName: name withLabel: S2AS(name) 
 	  inMasterController: lastMaster]; 
 
-	[lastMaster selectViewController: cont];
+	[[NSRunLoop currentRunLoop] performSelector: @selector(selectViewController:)
+	  target: lastMaster
+	  argument: cont
+	  order: 0
+	  modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
 	
 	return self;
 }

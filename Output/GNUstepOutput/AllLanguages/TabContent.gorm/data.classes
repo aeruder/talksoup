@@ -13,6 +13,13 @@
 	);
 	Super = NSTextView;
     };
+    InputControllerTextView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = FocusNotificationTextView;
+    };
     KeyTextView = {
 	Actions = (
 	);

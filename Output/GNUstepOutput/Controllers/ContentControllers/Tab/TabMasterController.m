@@ -88,15 +88,15 @@
 	[typeView setDelegate: self];
 	[typeView setRichText: NO];
 	[typeView setUsesFontPanel: NO];
-	[typeView setHorizontallyResizable: NO];
+	[typeView setHorizontallyResizable: YES];
 	[typeView setVerticallyResizable: YES];
 	[typeView setMinSize: NSMakeSize(0, 0)];
 	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
 	[typeView setEditable: YES];
 	[typeView setAutoresizingMask: NSViewWidthSizable];
 	[[typeView textContainer] setContainerSize:
-	  NSMakeSize([typeView frame].size.width, 1e7)];
-	[[typeView textContainer] setWidthTracksTextView: YES];
+	  NSMakeSize(1e7, [typeView frame].size.height)];
+	[[typeView textContainer] setWidthTracksTextView: NO];
 	[typeView setTextContainerInset: NSMakeSize(2, 0)];
 	[[typeView enclosingScrollView] setHasVerticalScroller: NO];
 	[[typeView enclosingScrollView] setHasHorizontalScroller: NO];
@@ -458,6 +458,7 @@
 {
 	NSRect nick;
 	NSRect type;
+	float oldx;
 
 	if (!aNickname)
 	{
@@ -468,12 +469,11 @@
 	[nickView sizeToFit];
 	
 	nick = [nickView frame];
-	nick.origin.y = 8;
 
 	type = [[typeView enclosingScrollView] frame];
-	type.origin.y = 4;
-	type.origin.x = NSMaxX(nick) + 4;
-	type.size.width = [[window contentView] frame].size.width - 4 - type.origin.x;
+	oldx = type.origin.x;
+	type.origin.x = NSMaxX(nick) + 6.0;
+	type.size.width += (oldx - type.origin.x); 
 	
 	[nickView setFrame: nick];
 	[[typeView enclosingScrollView] setFrame: type];
