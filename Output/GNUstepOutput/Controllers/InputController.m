@@ -1070,6 +1070,20 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }
+- ircCommandQuit: (NSString *)args
+{
+	id x = [args separateIntoNumberOfArguments: 1];
+	id connection = [controller connection];
+	id msg;
+
+	msg = ([x count]) ? [x objectAtIndex: 0] : 
+	  [_PREFS_ preferenceForKey: GNUstepOutputDefaultQuitMessage];
+
+	[_TS_ quitWithMessage: S2AS(msg) onConnection: connection
+	  withNickname: S2AS([connection nick]) sender: _GS_];
+
+	return self;
+}
 - ircCommandPart: (NSString *)args
 {
 	id x = [args separateIntoNumberOfArguments: 2];

@@ -271,6 +271,11 @@ static NSString *dns_helper = @"dns_helper";
 		AUTORELEASE(RETAIN(self));
 		[_GS_ removeConnectionController: self];
 		if (connection) {
+			id msg = 
+			  [_PREFS_ preferenceForKey: GNUstepOutputDefaultQuitMessage];
+
+			[_TS_ quitWithMessage: S2AS(msg) onConnection: connection
+			  withNickname: S2AS([connection nick]) sender: _GS_];
 			[[_TS_ pluginForInput] closeConnection: connection];
 		}
 	}

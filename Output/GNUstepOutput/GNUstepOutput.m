@@ -56,6 +56,8 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSObjCRuntime.h>
 #import <Foundation/NSMethodSignature.h>
+#import <Foundation/NSRunLoop.h>
+#import <Foundation/NSDate.h>
 
 NSString *StandardLowercase(NSString *aString)
 {
@@ -462,6 +464,11 @@ PreferencesController *_PREFS_ = nil;
 			[[object2 window] close];
 		}
 	}
+	/* Give about half a second to close off connections
+	 * properly...
+	 */
+	[[NSRunLoop currentRunLoop] runUntilDate: 
+	  [NSDate dateWithTimeIntervalSinceNow: .5]];
 }
 - (void)doApplicationTerminate: (id)sender
 {

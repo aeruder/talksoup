@@ -17,6 +17,7 @@
 
 #import "main.h"
 #import "Functions.h"
+#import "NetclassesInputSendThenDieTransport.h"
 
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSArray.h>
@@ -96,9 +97,25 @@
 }
 - (void)closeConnection: (id)connection
 {
+	AUTORELEASE(RETAIN(connection));
 	if ([connections containsObject: connection])
 	{
-		[[NetApplication sharedInstance] disconnectObject: connection];
+		[_TS_ lostConnection: connection 
+		  withNickname: S2AS([connection nick])
+		  sender: self];
+		[connections removeObject: connection];
+		if ([connection transport])
+		{
+			if (![[connection transport] isDoneWriting])
+			{
+				[(NetclassesInputSendThenDieTransport *)[connection transport] 
+				  writeThenCloseForObject: connection];
+			} 
+			else
+			{
+				[[NetApplication sharedInstance] disconnectObject: connection];
+			}
+		}
 	}
 }	
 - (NSArray *)connections
@@ -166,15 +183,16 @@
 }
 - (void)connectionLost
 {
-	[control removeConnection: self];
-	[_TS_ lostConnection: self 
-	  withNickname: S2AS(nick)
-	  sender: control];
+	[transport close];
 	[super connectionLost];
+	[control closeConnection: self];
 }
 - connectionEstablished: (id)aTransport
 {
-	id x = [super connectionEstablished: aTransport];
+	id x;
+	aTransport = AUTORELEASE([[NetclassesInputSendThenDieTransport 
+	  alloc] initWithTransport: aTransport]);
+	x = [super connectionEstablished: aTransport];
 	[_TS_ newConnection: self 
 	  withNickname: S2AS(nick)
 	  sender: control];

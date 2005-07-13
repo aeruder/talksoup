@@ -19,7 +19,7 @@ NetclassesInput_PRINCIPAL_CLASS = NetclassesInput
 
 main = main.m Functions.m
 
-NetclassesInput_OBJC_FILES = $(main)
+NetclassesInput_OBJC_FILES = $(main) NetclassesInputSendThenDieTransport.m
 
 GUI_LIB = 
 
