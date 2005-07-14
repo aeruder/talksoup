@@ -1,3 +1,9 @@
+2005-07-14 Andrew Ruder <aeruder@ksu.edu>
+ * GNUstepOutput/BundlePreferences: Moved help text to external file,
+ corrected help text.  Corrected NSTableView handling...
+
+ * GNUstepOutput/Misc: Added code to debug NSView hierarchies
+ 
 2005-07-12 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput
    NetclassesInput: Made changes to allow default quit message to work
