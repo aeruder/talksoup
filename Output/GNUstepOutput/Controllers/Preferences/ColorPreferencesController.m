@@ -126,10 +126,10 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	[textPreview setVerticallyResizable: YES];
 	[textPreview setMinSize: NSMakeSize(0, 0)];
 	[textPreview setMaxSize: NSMakeSize(1e7, 1e7)];
+	[textPreview setTextContainerInset: NSMakeSize(2, 2)];
 	[[textPreview textContainer] setContainerSize:
 	  NSMakeSize([textPreview frame].size.width, 1e7)];
 	[[textPreview textContainer] setWidthTracksTextView: YES];
-	[textPreview setTextContainerInset: NSMakeSize(2, 2)];
 	[textPreview setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[textPreview setFrameSize: [[textPreview enclosingScrollView] contentSize]];
 	[textPreview setEditable: NO];

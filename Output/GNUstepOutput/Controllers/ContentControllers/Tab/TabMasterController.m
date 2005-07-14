@@ -83,6 +83,7 @@
 - (void)awakeFromNib
 {
 	id object;
+	NSRect arect;
 	while ([tabView numberOfTabViewItems] && 
 	       (object = [tabView tabViewItemAtIndex: 0])) 
 		[tabView removeTabViewItem: object];
@@ -94,13 +95,18 @@
 	[typeView setMinSize: NSMakeSize(0, 0)];
 	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
 	[typeView setEditable: YES];
-	[typeView setAutoresizingMask: NSViewWidthSizable];
+	[typeView setDrawsBackground: YES];
+	arect = [[typeView superview] frame];
+	arect.origin.x = arect.origin.y = 0;
+	[typeView setFrame: arect];
+	[typeView setTextContainerInset: NSMakeSize(2, 0)];
 	[[typeView textContainer] setContainerSize:
 	  NSMakeSize(1e7, [typeView frame].size.height)];
+	[[typeView textContainer] setHeightTracksTextView: YES];
 	[[typeView textContainer] setWidthTracksTextView: NO];
-	[typeView setTextContainerInset: NSMakeSize(2, 0)];
 	[[typeView enclosingScrollView] setHasVerticalScroller: NO];
 	[[typeView enclosingScrollView] setHasHorizontalScroller: NO];
+	[typeView setNeedsDisplay: YES];
 }
 - (void)dealloc
 {
@@ -478,6 +484,8 @@
 	
 	[nickView setFrame: nick];
 	[[typeView enclosingScrollView] setFrame: type];
+	type.origin.x = type.origin.y = 0;
+	[typeView setFrame: type];
 	
 	[[window contentView] setNeedsDisplay: YES];
 }

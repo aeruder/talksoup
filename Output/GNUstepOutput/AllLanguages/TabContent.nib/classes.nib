@@ -3,6 +3,11 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = FocusNotificationTextView; LANGUAGE = ObjC; SUPERCLASS = NSTextView; }, 
         {
+            CLASS = InputControllerTextView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = FocusNotificationTextView; 
+        }, 
+        {
             CLASS = TabMasterController; 
             LANGUAGE = ObjC; 
             OUTLETS = {nickView = id; tabView = id; typeView = id; window = id; }; 

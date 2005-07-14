@@ -55,10 +55,10 @@
 	[topicText setVerticallyResizable: YES];
 	[topicText setMinSize: NSMakeSize(0, 0)];
 	[topicText setMaxSize: NSMakeSize(1e7, 1e7)];
+	[topicText setTextContainerInset: NSMakeSize(2, 2)];
 	[[topicText textContainer] setContainerSize:
 	  NSMakeSize([topicText frame].size.width, 1e7)];
 	[[topicText textContainer] setWidthTracksTextView: YES];
-	[topicText setTextContainerInset: NSMakeSize(2, 2)];
 	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[topicText setFrameSize: [[topicText enclosingScrollView] contentSize]];
 	[topicText setBackgroundColor: [NSColor whiteColor]];

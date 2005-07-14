@@ -21,6 +21,7 @@
 #import <Foundation/NSData.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
+#import <Foundation/NSEnumerator.h>
 #import <AppKit/NSText.h>
 #import <AppKit/NSEvent.h>
 
