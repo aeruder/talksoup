@@ -1,7 +1,7 @@
 {
     IBClasses = (
         {
-            ACTIONS = {closeTab = id; selectNextTab = id; selectPreviousTab = id; }; 
+            ACTIONS = {closeCurrentTab = id; selectNextTab = id; selectPreviousTab = id; }; 
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 
             SUPERCLASS = NSObject; 
