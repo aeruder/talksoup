@@ -71,30 +71,10 @@ static NSString *big_description = nil;
 @implementation BundlePreferencesController
 + (void)initialize
 {
-	 big_description = 
-	 _l((@"Welcome to the TalkSoup Plugin Preferences.\n\n"
-	 @"TalkSoup is a highly-modular IRC client, and parts of it "
-	 @"can be loaded and unloaded while it is running.  These "
-	 @"optional parts are called plugins (or bundles).  There "
-	 @"are two sets of bundles.  The first set, the input "
-	 @"bundles, affect data coming into the IRC client. The "
-	 @"second set, the output bundles, affect the data leaving "
-	 @"the IRC client.  The pop up button located at the top is "
-	 @"used to change which of these sets are being configured.\n\n"
-	 
-	 @"Above are two tables of bundles.  On the left, there is a "
-	 @"table showing the loaded bundles and the order they are loaded "
-	 @"in.  On the right, there is a table showing the bundles which can "
-	 @"be loaded but currently are not.  You may click and drag these "
-	 @"various bundles to/from the table on the left to load/unload them.\n\n"
-
-	 @"All the changes will be automatically applied to TalkSoup.  If "
-	 @"you should want to revert to the bundles that were loaded when you "
-	 @"opened the bundle setup dialog, just hit the button in the bottom "
-	 @"left.\n\n"
-	 
-	 @"Clicking on any bundle will show information about "
-	 @"that bundle in this text area."));
+	big_description = 
+	 RETAIN([NSString stringWithContentsOfFile: [[NSBundle bundleForClass:
+	  [GNUstepOutput class]]
+	  pathForResource: @"BundlePreferences" ofType: @"txt"]]);
 }
 - init
 {
@@ -152,7 +132,6 @@ static NSString *big_description = nil;
 	availCol = [availableTable tableColumnWithIdentifier: @"available"];
 	[availCol setDataCell: x];
 	[[availCol headerCell] setFont: aFont];
-	[availCol sizeToFit];
 	
 	[loadedTable setDelegate: self];
 	[loadedTable setDataSource: self];
@@ -164,7 +143,6 @@ static NSString *big_description = nil;
 	loadCol = [loadedTable tableColumnWithIdentifier: @"loaded"];
 	[loadCol setDataCell: x];
 	[[loadCol headerCell] setFont: aFont];
-	[loadCol sizeToFit];
 
 	[descriptionText setHorizontallyResizable: NO];
 	[descriptionText setVerticallyResizable: YES];

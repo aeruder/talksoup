@@ -25,11 +25,14 @@ ServerEditor.nib \
 TopicInspector.nib \
 GNUstepOutput.nib
 
+All_Localized_Other = BundlePreferences.txt \
+Localizable.strings
+
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings \
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = $(All_Localized_Other) \
 $(All_Localized_Nibs)
 else
-GNUstepOutput_LOCALIZED_RESOURCE_FILES = Localizable.strings \
+GNUstepOutput_LOCALIZED_RESOURCE_FILES = $(All_Localized_Other) \
 $(shell \
 echo "$(All_Localized_Nibs)" | \
 sed -e 's/\.nib/\.gorm/g')
