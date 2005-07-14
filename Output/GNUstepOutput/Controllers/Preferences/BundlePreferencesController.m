@@ -18,6 +18,7 @@
 #import "Controllers/Preferences/BundlePreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "Misc/NSAttributedStringAdditions.h"
+#import "Misc/NSViewAdditions.h"
 #import "GNUstepOutput.h"
 
 #import <AppKit/NSCell.h>
@@ -27,6 +28,7 @@
 #import <AppKit/NSPopUpButton.h>
 #import <AppKit/NSTableColumn.h>
 #import <AppKit/NSTableView.h>
+#import <AppKit/NSTableHeaderView.h>
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSTextStorage.h>
 #import <AppKit/NSTextView.h>
@@ -125,24 +127,23 @@ static NSString *big_description = nil;
 	[availableTable setDelegate: self];
 	[availableTable setDataSource: self];
 	[availableTable setRowHeight: [aFont pointSize] * 1.5];
-	[availableTable setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[availableTable setAutoresizesAllColumnsToFit: YES];
 	[availableTable registerForDraggedTypes: [NSArray arrayWithObject:
 	  bundlePboardType]];
 	availCol = [availableTable tableColumnWithIdentifier: @"available"];
+	[availCol setResizable: YES];
 	[availCol setDataCell: x];
 	[[availCol headerCell] setFont: aFont];
+	[availCol sizeToFit];
 	
 	[loadedTable setDelegate: self];
 	[loadedTable setDataSource: self];
 	[loadedTable setRowHeight: [aFont pointSize] * 1.5];
-	[loadedTable setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[loadedTable setAutoresizesAllColumnsToFit: YES];
 	[loadedTable registerForDraggedTypes: [NSArray arrayWithObject:
 	  bundlePboardType]];
 	loadCol = [loadedTable tableColumnWithIdentifier: @"loaded"];
 	[loadCol setDataCell: x];
 	[[loadCol headerCell] setFont: aFont];
+	[loadCol sizeToFit];
 
 	[descriptionText setHorizontallyResizable: NO];
 	[descriptionText setVerticallyResizable: YES];
@@ -184,14 +185,9 @@ static NSString *big_description = nil;
 	[showingPopUp selectItemAtIndex: 0];
 	[showingPopUp setEnabled: YES];
 	[self showingSelected: showingPopUp];
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(prefsWindowResized:)
-	  name: NSWindowDidResizeNotification
-	  object: [_PREFS_ window]];
 }
 - (void)deactivate
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 - (void)showingSelected: (id)sender
 {
@@ -408,9 +404,9 @@ static NSString *big_description = nil;
 	id availCol, loadCol;
 
 	availCol = [availableTable tableColumnWithIdentifier: @"available"];
-	[availableTable sizeToFit];
+// [availableTable sizeToFit];
 	
 	loadCol = [loadedTable tableColumnWithIdentifier: @"loaded"];
-	[loadedTable sizeToFit];
+//	[loadedTable sizeToFit];
 }
 @end

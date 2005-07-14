@@ -114,6 +114,7 @@ Misc = Misc/NSColorAdditions.m \
 Misc/NSObjectAdditions.m \
 Misc/NSAttributedStringAdditions.m \
 Misc/LookedUpHost.m \
+Misc/NSViewAdditions.m \
 Misc/HelperExecutor.m
 
 Models = Models/Channel.m

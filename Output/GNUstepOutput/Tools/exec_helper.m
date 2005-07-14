@@ -144,7 +144,6 @@ static void run_it(NSString *command)
 int main(int argc, char **argv, char **env)
 {
 	CREATE_AUTORELEASE_POOL(apr);
-	NSDictionary *dict;
 	NSString *command;
 
 	signal(SIGPIPE, SIG_IGN);
@@ -159,7 +158,6 @@ int main(int argc, char **argv, char **env)
 
 	run_it(command);
 
-	RELEASE(dict);
 	RELEASE(apr);
 	return 0;
 }

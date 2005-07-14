@@ -53,10 +53,7 @@
 
 	bundle = [NSBundle bundleForClass: [Highlighting class]];
 
-	if (![bundle loadNibFile: @"HighlightingPreferences"
-	  externalNameTable: [NSDictionary dictionaryWithObjectsAndKeys:
-	    self, @"NSOwner",
-	    nil] withZone: 0])
+	if (![NSBundle loadNibNamed: @"HighlightingPreferences" owner: self])
 	{
 		[super dealloc];
 		return nil;

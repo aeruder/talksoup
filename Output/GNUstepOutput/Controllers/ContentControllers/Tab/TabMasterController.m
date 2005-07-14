@@ -18,6 +18,7 @@
 #import "Controllers/ContentControllers/Tab/TabMasterController.h"
 #import "Views/AttributedTabViewItem.h"
 #import "Views/FocusNotificationTextView.h"
+#import "Misc/NSViewAdditions.h"
 
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTabView.h>

@@ -23,6 +23,7 @@
 #import "Views/ScrollingTextView.h"
 #import "Misc/NSColorAdditions.h"
 #import "Misc/NSAttributedStringAdditions.h"
+#import "Misc/NSViewAdditions.h"
 #import "Models/Channel.h"
 #import "GNUstepOutput.h"
 #import <TalkSoupBundles/TalkSoup.h>
