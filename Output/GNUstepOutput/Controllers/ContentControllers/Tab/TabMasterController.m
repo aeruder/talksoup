@@ -110,11 +110,11 @@
 	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
 
 	contain = [typeView textContainer];
-	[contain setContainerSize:
-	  NSMakeSize(1e7, [typeView frame].size.height)];
 	/* Center the text */
 	[typeView setTextContainerInset: 
 	  NSMakeSize(2, (arect.size.height - FIELD_FONT_SIZE)/2)];
+	[contain setContainerSize:
+	  NSMakeSize(1e7, [typeView frame].size.height)];
 	[contain setHeightTracksTextView: YES];
 	[contain setWidthTracksTextView: NO];
 
