@@ -72,7 +72,7 @@
 	BOOL scroll = NO;
 
 	if (fabs(NSMaxY([[[self enclosingScrollView] contentView] 
-	                   documentVisibleRect]) - NSMaxY([self frame])) < 5)
+	                   bounds]) - NSMaxY([self frame])) < 5)
 	{
 		scroll = YES;
 	}

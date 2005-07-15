@@ -31,6 +31,7 @@
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSTextStorage.h>
 #import <AppKit/NSTextView.h>
+#import <AppKit/NSClipView.h>
 #import <AppKit/NSWindow.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
@@ -90,6 +91,7 @@
 	[chatView setTextColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
 
+	[chatView setFrame: [[[chatView enclosingScrollView] contentView] bounds]];
 	[chatView setNeedsDisplay: YES];
 		  
 	x = RETAIN([(NSWindow *)window contentView]);

@@ -93,7 +93,6 @@
 	NSRect frame;
 	
 	frame = [[[chatView enclosingScrollView] contentView] bounds];
-	[chatView setFrame: frame];
 
 	[chatView setEditable: NO];
 	[chatView setSelectable: YES];
@@ -114,6 +113,7 @@
 	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
+	[chatView setFrame: frame];
 
 	[chatView setNeedsDisplay: YES];
 
