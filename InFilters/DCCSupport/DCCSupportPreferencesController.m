@@ -133,6 +133,8 @@
 	isActive = YES;	
 
 	[self reloadData];
+
+	[[aPrefs window] makeFirstResponder: changeDownloadButton];
 }
 - (void)deactivate
 {

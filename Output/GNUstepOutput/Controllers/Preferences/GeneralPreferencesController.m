@@ -176,6 +176,7 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 {
 	activated = YES;
 	[self refreshFromPreferences];
+	[[aPrefs window] makeFirstResponder: nickView];
 }
 - (void)deactivate
 {

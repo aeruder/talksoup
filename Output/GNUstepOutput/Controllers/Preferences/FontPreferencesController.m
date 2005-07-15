@@ -250,6 +250,7 @@ NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 {
 	activated = YES;
 	[self refreshFromPreferences];
+	[[aPrefs window] makeFirstResponder: chatFontButton];
 }
 - (void)deactivate
 {

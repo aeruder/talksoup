@@ -290,6 +290,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 {
 	activated = YES;
 	[self refreshFromPreferences];
+	[[aPrefs window] makeFirstResponder: textColorWell];
 }
 - (void)deactivate
 {
