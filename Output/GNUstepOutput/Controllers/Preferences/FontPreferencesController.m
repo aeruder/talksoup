@@ -86,6 +86,15 @@ NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 
 	return font;
 }
++ (NSFont *)getFontFromPreferences: (NSString *)aPrefName ofSize: (float)aSize
+{
+	NSFontManager *manager;
+
+	manager = [NSFontManager sharedFontManager];
+	
+	return [manager convertFont: [self getFontFromPreferences: aPrefName]
+	  toSize: aSize];
+}
 - init
 {
 	id path;

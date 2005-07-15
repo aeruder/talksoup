@@ -47,6 +47,7 @@ extern NSString *GNUstepOutputWrapIndent;
 		id lastView;
 	}
 + (NSFont *)getFontFromPreferences: (NSString *)aPrefName;
++ (NSFont *)getFontFromPreferences: (NSString *)aPrefName ofSize: (float)aSize;
 
 - (void)hitFontButton: (NSButton *)aButton;
 - (void)setWrapIndent: (NSTextField *)aField;

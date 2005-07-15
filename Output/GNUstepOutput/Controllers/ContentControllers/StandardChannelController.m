@@ -30,6 +30,7 @@
 
 #import <AppKit/NSFont.h>
 #import <AppKit/NSNibLoading.h>
+#import <AppKit/NSClipView.h>
 #import <AppKit/NSScrollView.h>
 #import <AppKit/NSSplitView.h>
 #import <AppKit/NSTableColumn.h>
@@ -87,24 +88,34 @@
 	id x;
 	id userColumn;
 	id userScroll;
+	id contain;
 	id font;
 	NSRect frame;
 	
-	[splitView setVertical: YES];
+	frame = [[[chatView enclosingScrollView] contentView] bounds];
+	[chatView setFrame: frame];
+
+	[chatView setEditable: NO];
+	[chatView setSelectable: YES];
+	[chatView setRichText: NO];
+	[chatView setDrawsBackground: YES];
 
 	[chatView setHorizontallyResizable: NO];
 	[chatView setVerticallyResizable: YES];
 	[chatView setMinSize: NSMakeSize(0, 0)];
 	[chatView setMaxSize: NSMakeSize(1e7, 1e7)];
+
+	contain = [chatView textContainer];
 	[chatView setTextContainerInset: NSMakeSize(2, 2)];
-	[[chatView textContainer] setContainerSize:
-	  NSMakeSize([chatView frame].size.width, 1e7)];
-	[[chatView textContainer] setWidthTracksTextView: YES];
-	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[chatView setFrameSize: [[chatView enclosingScrollView] contentSize]];
-	[chatView setEditable: NO];
-	[chatView setSelectable: YES];
-	[chatView setRichText: NO];
+	[contain setWidthTracksTextView: YES];
+	[contain setHeightTracksTextView: NO];
+	
+	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
+	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
+	[chatView setTextColor: [NSColor colorFromEncodedData:
+	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
+
+	[chatView setNeedsDisplay: YES];
 
 	userColumn = AUTORELEASE([[NSTableColumn alloc] 
 	  initWithIdentifier: @"User List"]);
@@ -141,14 +152,10 @@
 	[tableView setRowHeight: [font pointSize] * 1.5];
 	
 	[userColumn setDataCell: x];
-	
-	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
-	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
 	 
 	[splitView addSubview: userScroll];
 	[splitView setDelegate: self];
+	[splitView setVertical: YES];
 	
 	frame = [userScroll frame];
 	frame.size.width = 120;

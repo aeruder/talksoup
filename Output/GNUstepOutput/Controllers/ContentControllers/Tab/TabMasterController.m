@@ -16,14 +16,17 @@
  ***************************************************************************/
 
 #import "Controllers/ContentControllers/Tab/TabMasterController.h"
+#import "Controllers/Preferences/FontPreferencesController.h"
 #import "Views/AttributedTabViewItem.h"
 #import "Views/FocusNotificationTextView.h"
 #import "Misc/NSViewAdditions.h"
+#import <TalkSoupBundles/TalkSoup.h>
 
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTabView.h>
 #import <AppKit/NSTabViewItem.h>
 #import <AppKit/NSWindow.h>
+#import <AppKit/NSClipView.h>
 #import <AppKit/NSScrollView.h>
 #import <AppKit/NSTextContainer.h>
 #import <Foundation/NSArray.h>
@@ -45,6 +48,7 @@
 @end
 
 @interface TabMasterController (DelegateMethods)
+- (void)chatFontChanged: (NSNotification *)aNotification;
 - (void)nicknameChanged: (NSNotification *)aNotification;
 - (void)titleChanged: (NSNotification *)aNotification;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
@@ -57,6 +61,8 @@
 - (void)textViewTookFocus: (FocusNotificationTextView *)aTextView;
 - (void)textViewResignedFocus: (FocusNotificationTextView *)aTextView;
 @end
+
+#define FIELD_FONT_SIZE 12.0
 
 @implementation TabMasterController
 - init
@@ -83,30 +89,47 @@
 - (void)awakeFromNib
 {
 	id object;
+	id contain;
 	NSRect arect;
 	while ([tabView numberOfTabViewItems] && 
 	       (object = [tabView tabViewItemAtIndex: 0])) 
 		[tabView removeTabViewItem: object];
 	[typeView setDelegate: self];
+
 	[typeView setRichText: NO];
 	[typeView setUsesFontPanel: NO];
-	[typeView setHorizontallyResizable: YES];
-	[typeView setVerticallyResizable: YES];
-	[typeView setMinSize: NSMakeSize(0, 0)];
-	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
 	[typeView setEditable: YES];
 	[typeView setDrawsBackground: YES];
-	arect = [[typeView superview] frame];
-	arect.origin.x = arect.origin.y = 0;
+
+	arect = [[[typeView enclosingScrollView] contentView] bounds];
 	[typeView setFrame: arect];
-	[typeView setTextContainerInset: NSMakeSize(2, 0)];
-	[[typeView textContainer] setContainerSize:
+
+	[typeView setHorizontallyResizable: YES];
+	[typeView setVerticallyResizable: NO];
+	[typeView setMinSize: NSMakeSize(0, 0)];
+	[typeView setMaxSize: NSMakeSize(1e7, 1e7)];
+
+	contain = [typeView textContainer];
+	[contain setContainerSize:
 	  NSMakeSize(1e7, [typeView frame].size.height)];
-	[[typeView textContainer] setHeightTracksTextView: YES];
-	[[typeView textContainer] setWidthTracksTextView: NO];
+	/* Center the text */
+	[typeView setTextContainerInset: 
+	  NSMakeSize(2, (arect.size.height - FIELD_FONT_SIZE)/2)];
+	[contain setHeightTracksTextView: YES];
+	[contain setWidthTracksTextView: NO];
+
 	[[typeView enclosingScrollView] setHasVerticalScroller: NO];
 	[[typeView enclosingScrollView] setHasHorizontalScroller: NO];
+
+	[typeView setFont: [FontPreferencesController getFontFromPreferences:
+	  GNUstepOutputChatFont ofSize: FIELD_FONT_SIZE]];
+
 	[typeView setNeedsDisplay: YES];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(chatFontChanged:)
+	  name: DefaultsChangedNotification 
+	  object: GNUstepOutputChatFont];
 }
 - (void)dealloc
 {
@@ -114,12 +137,7 @@
 	[window close];
 	DESTROY(window);
 	
-	[[NSNotificationCenter defaultCenter] removeObserver: self
-	  name: ContentControllerChangedNicknameNotification
-	  object: nil];
-	[[NSNotificationCenter defaultCenter] removeObserver: self
-	  name: ContentControllerChangedTitleNotification
-	  object: nil];
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	NSFreeMapTable(viewControllerToTab);
 	NSFreeMapTable(viewControllerToContent);
 	NSFreeMapTable(tabToViewController);
@@ -492,6 +510,13 @@
 @end
 
 @implementation TabMasterController (DelegateMethods)
+- (void)chatFontChanged: (NSNotification *)aNotification
+{
+	[typeView setFont: [FontPreferencesController getFontFromPreferences:
+	  GNUstepOutputChatFont ofSize: FIELD_FONT_SIZE]];
+
+	[typeView setNeedsDisplay: YES];
+}
 - (void)nicknameChanged: (NSNotification *)aNotification
 {
 	id content;

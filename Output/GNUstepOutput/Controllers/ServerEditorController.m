@@ -21,7 +21,9 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSTextView.h>
+#import <AppKit/NSScrollView.h>
 #import <AppKit/NSTextContainer.h>
+#import <AppKit/NSClipView.h>
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSView.h>
 
@@ -39,16 +41,18 @@
 	[portField setNextKeyView: commandsText];
 	[commandsText setNextKeyView: entryField];
 
+	[commandsText setFrame: [[[commandsText enclosingScrollView] 
+	  contentView] bounds]];
 	[commandsText setHorizontallyResizable: NO];
 	[commandsText setVerticallyResizable: YES];
 	[commandsText setMinSize: NSMakeSize(0, 0)];
 	[commandsText setMaxSize: NSMakeSize(1e7, 1e7)];
 	[commandsText setTextContainerInset: NSMakeSize(2, 2)];
-	[[commandsText textContainer] setContainerSize:
-	  NSMakeSize([commandsText frame].size.width, 1e7)];
+
 	[[commandsText textContainer] setWidthTracksTextView: YES];
-	[commandsText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	
+	[[commandsText textContainer] setHeightTracksTextView: NO];
+
+	[commandsText setNeedsDisplay: YES];
 }
 - (void)dealloc
 {

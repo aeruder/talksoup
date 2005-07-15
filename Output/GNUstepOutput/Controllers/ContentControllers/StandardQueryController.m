@@ -68,25 +68,29 @@
 - (void)awakeFromNib
 {	
 	id x;
+	id contain;
 	
+	[chatView setEditable: NO];
+	[chatView setSelectable: YES];
+	[chatView setRichText: NO];
+	[chatView setDrawsBackground: YES];
+
 	[chatView setHorizontallyResizable: NO];
 	[chatView setVerticallyResizable: YES];
 	[chatView setMinSize: NSMakeSize(0, 0)];
 	[chatView setMaxSize: NSMakeSize(1e7, 1e7)];
+
+	contain = [chatView textContainer];
 	[chatView setTextContainerInset: NSMakeSize(2, 2)];
-	[[chatView textContainer] setContainerSize:
-	  NSMakeSize([chatView frame].size.width, 1e7)];
-	[[chatView textContainer] setWidthTracksTextView: YES];
-	[chatView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[chatView setFrameSize: [[chatView enclosingScrollView] contentSize]];
-	[chatView setEditable: NO];
-	[chatView setSelectable: YES];
-	[chatView setRichText: NO];
+	[contain setWidthTracksTextView: YES];
+	[contain setHeightTracksTextView: NO];
 	
 	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
 	[chatView setTextColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
+
+	[chatView setNeedsDisplay: YES];
 		  
 	x = RETAIN([(NSWindow *)window contentView]);
 	[window close];

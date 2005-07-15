@@ -149,9 +149,11 @@ static NSString *big_description = nil;
 	[descriptionText setVerticallyResizable: YES];
 	[descriptionText setMinSize: NSMakeSize(0, 0)];
 	[descriptionText setMaxSize: NSMakeSize(1e7, 1e7)];
-	[[descriptionText textContainer] setWidthTracksTextView: YES];
 	[descriptionText setTextContainerInset: NSMakeSize(2, 2)];
-	[descriptionText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[[descriptionText textContainer] setWidthTracksTextView: YES];
+	[[descriptionText textContainer] setHeightTracksTextView: YES];
+
+	[descriptionText setNeedsDisplay: YES];
 
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);

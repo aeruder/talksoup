@@ -25,6 +25,7 @@
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSTextView.h>
+#import <AppKit/NSClipView.h>
 #import <AppKit/NSTextContainer.h>
 #import <AppKit/NSScrollView.h>
 #import <Foundation/NSString.h>
@@ -39,6 +40,7 @@
 - (void)topicChanged: (NSNotification *)aNotification;
 - (void)suckFieldsFromChannel: (NSString *)aChannel withSource: (Channel *)aSource;
 - (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender;
+- (void)windowDidBecomeKey:(NSNotification *)aNotification;
 @end
 
 @implementation TopicInspectorController
@@ -51,20 +53,22 @@
 
 	[window setContentView: nothingView];
 	
+	[topicText setFrame: [[[topicText enclosingScrollView] contentView] bounds]];
+
 	[topicText setHorizontallyResizable: NO];
 	[topicText setVerticallyResizable: YES];
 	[topicText setMinSize: NSMakeSize(0, 0)];
 	[topicText setMaxSize: NSMakeSize(1e7, 1e7)];
+
 	[topicText setTextContainerInset: NSMakeSize(2, 2)];
-	[[topicText textContainer] setContainerSize:
-	  NSMakeSize([topicText frame].size.width, 1e7)];
 	[[topicText textContainer] setWidthTracksTextView: YES];
-	[topicText setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[topicText setFrameSize: [[topicText enclosingScrollView] contentSize]];
-	[topicText setBackgroundColor: [NSColor whiteColor]];
+	[[topicText textContainer] setHeightTracksTextView: YES];
+
 	[topicText setEditable: YES];
 	[topicText setSelectable: YES];
 	[topicText setRichText: NO];
+	
+	[topicText setNeedsDisplay: YES];
 
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(focusedControllerChanged:)
@@ -73,9 +77,12 @@
 
 	[topicText setKeyTarget: self];
 	[topicText setKeyAction: @selector(topicKeyHit:sender:)];
+
+	[window setDelegate: self];
 }
 - (void)dealloc
 {
+	[window setDelegate: nil];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	RELEASE(nothingView);
 	RELEASE(contentView);
@@ -206,5 +213,9 @@
 	}
 	
 	return NO;
+}
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+	[window makeFirstResponder: topicText];
 }
 @end

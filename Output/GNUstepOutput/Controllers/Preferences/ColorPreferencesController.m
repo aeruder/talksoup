@@ -115,6 +115,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 - (void)awakeFromNib
 {
 	id pubstring;
+	id contain;
 	
 	NSWindow *tempWindow;
 
@@ -122,23 +123,27 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
 
+	[textPreview setEditable: NO];
+	[textPreview setSelectable: YES];
+	[textPreview setRichText: NO];
+	[textPreview setDrawsBackground: YES];
+
 	[textPreview setHorizontallyResizable: NO];
 	[textPreview setVerticallyResizable: YES];
 	[textPreview setMinSize: NSMakeSize(0, 0)];
 	[textPreview setMaxSize: NSMakeSize(1e7, 1e7)];
+
+	contain = [textPreview textContainer];
 	[textPreview setTextContainerInset: NSMakeSize(2, 2)];
-	[[textPreview textContainer] setContainerSize:
-	  NSMakeSize([textPreview frame].size.width, 1e7)];
-	[[textPreview textContainer] setWidthTracksTextView: YES];
-	[textPreview setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[textPreview setFrameSize: [[textPreview enclosingScrollView] contentSize]];
-	[textPreview setEditable: NO];
-	[textPreview setSelectable: YES];
-	[textPreview setRichText: NO];
-	[textPreview setTextColor: [NSColor colorFromEncodedData: 
-	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
-	[textPreview setBackgroundColor: [NSColor colorFromEncodedData: 
+	[contain setWidthTracksTextView: YES];
+	[contain setHeightTracksTextView: NO];
+	
+	[textPreview setBackgroundColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
+	[textPreview setTextColor: [NSColor colorFromEncodedData:
+	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
+
+	[textPreview setNeedsDisplay: YES];
 
 	pubstring = BuildAttributedString(
 	  MARK, TypeOfColor, GNUstepOutputPersonalBracketColor, @"<", 
