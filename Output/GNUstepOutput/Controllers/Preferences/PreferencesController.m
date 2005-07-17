@@ -94,10 +94,9 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	 * so nicely? 
 	 */
 	prefsList = AUTORELEASE([[NSMatrix alloc] initWithFrame: 
-	  NSMakeRect(0, 0, 64*30, 64)]);
-	[prefsList setCellClass: [NSButtonCell class]];
+	  NSMakeRect(0, 0, 64*30, 64) mode: NSRadioModeMatrix cellClass: [NSButtonCell class]
+	  numberOfRows: 1 numberOfColumns: 0]);
 	[prefsList setCellSize: NSMakeSize(64, 64)];
-	[prefsList setMode: NSRadioModeMatrix];
 	[prefsList setIntercellSpacing: NSZeroSize];
 
 	[prefsList setTarget: self];

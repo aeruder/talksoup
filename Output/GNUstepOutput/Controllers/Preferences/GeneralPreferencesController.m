@@ -48,6 +48,7 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 
 	if (!([NSBundle loadNibNamed: @"GeneralPreferences" owner: self]))
 	{
+		NSLog(@"Couldn't load GeneralPreferences nib");
 		[self dealloc];
 		return nil;
 	}

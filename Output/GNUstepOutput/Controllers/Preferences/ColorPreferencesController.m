@@ -60,6 +60,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 
 	if (!([NSBundle loadNibNamed: @"ColorPreferences" owner: self]))
 	{
+		NSLog(@"Couldn't load ColorPreferences nib");
 		[self dealloc];
 		return nil;
 	}
@@ -138,6 +139,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	[contain setWidthTracksTextView: YES];
 	[contain setHeightTracksTextView: NO];
 	
+	[textPreview setString: @""];
 	[textPreview setBackgroundColor: [NSColor colorFromEncodedData:
 	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
 	[textPreview setTextColor: [NSColor colorFromEncodedData:
@@ -290,7 +292,7 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 {
 	activated = YES;
 	[self refreshFromPreferences];
-	[[aPrefs window] makeFirstResponder: textColorWell];
+	[[aPrefs window] makeFirstResponder: personalColorWell];
 }
 - (void)deactivate
 {

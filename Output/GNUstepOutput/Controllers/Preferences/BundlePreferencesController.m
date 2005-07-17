@@ -85,6 +85,7 @@ static NSString *big_description = nil;
 
 	if (!([NSBundle loadNibNamed: @"BundlePreferences" owner: self]))
 	{
+		NSLog(@"Couldn't load BundlePreferences nib");
 		[self dealloc];
 		return nil;
 	}

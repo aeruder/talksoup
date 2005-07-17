@@ -102,6 +102,7 @@ NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 
 	if (!([NSBundle loadNibNamed: @"FontPreferences" owner: self]))
 	{
+		NSLog(@"Couldn't load FontPreferences nib");
 		[self dealloc];
 		return nil;
 	}

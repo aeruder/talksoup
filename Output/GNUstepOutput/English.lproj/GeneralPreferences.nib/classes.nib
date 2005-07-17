@@ -1,0 +1,20 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {setText = id; }; 
+            CLASS = GeneralPreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                nameView = id; 
+                nickView = id; 
+                passwordView = id; 
+                preferencesView = id; 
+                quitView = id; 
+                userView = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
