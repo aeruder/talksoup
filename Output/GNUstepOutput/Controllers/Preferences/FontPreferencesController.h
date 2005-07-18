@@ -26,6 +26,7 @@ extern NSString *GNUstepOutputWrapIndent;
 #define FONT_PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
+#import <AppKit/NSView.h>
 
 @class NSString, NSImage, NSFont;
 @class NSView, NSImage, NSTextField, NSButton;
@@ -57,6 +58,13 @@ extern NSString *GNUstepOutputWrapIndent;
 - (NSView *)preferencesView;
 - (void)activate: (PreferencesController *)aPrefs;
 - (void)deactivate;
+@end
+
+@interface FontPreferencesFontView : NSView
+	{
+		id delegate;
+	}
+- (void)setDelegate: aDelegate;
 @end
 
 #endif

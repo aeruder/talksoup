@@ -1,0 +1,27 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                highlightInChannelHit = id; 
+                highlightInTabHit = id; 
+                highlightingHit = id; 
+                messageInTabHit = id; 
+                removeHit = id; 
+            }; 
+            CLASS = HighlightingPreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                extraTable = id; 
+                highlightButton = id; 
+                highlightInChannelColor = id; 
+                highlightInTabColor = id; 
+                messageInTabColor = id; 
+                removeButton = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

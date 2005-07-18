@@ -1,0 +1,19 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {showingSelected = id; }; 
+            CLASS = BundlePreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                availableTable = id; 
+                descriptionText = id; 
+                loadedTable = id; 
+                preferencesView = id; 
+                showingPopUp = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

@@ -109,6 +109,8 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+	[preferencesView setAutoresizingMask:
+	  NSViewWidthSizable | NSViewHeightSizable];
 }
 - (void)dealloc
 {

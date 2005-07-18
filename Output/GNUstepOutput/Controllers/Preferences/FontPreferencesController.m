@@ -41,13 +41,6 @@ NSString *GNUstepOutputBoldChatFont = @"GNUstepOutputBoldChatFont";
 NSString *GNUstepOutputUserListFont = @"GNUstepOutputUserListFont";
 NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 
-@interface FontPreferencesFontView : NSView
-	{
-		id delegate;
-	}
-- (void)setDelegate: aDelegate;
-@end
-
 @interface FontPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;
 - (void)refreshFromPreferences;
@@ -160,6 +153,8 @@ NSString *GNUstepOutputWrapIndent = @"GNUstepOutputWrapIndent";
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+	[preferencesView setAutoresizingMask:
+	  NSViewWidthSizable | NSViewHeightSizable];
 
 	[fontSetView setDelegate: self];
 }

@@ -85,6 +85,8 @@
 	tempWindow = (NSWindow *)window;
 	window = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+	[window setAutoresizingMask:
+	  NSViewWidthSizable | NSViewHeightSizable];
 
 	[blockSizeField setNextKeyView: portRangeField];
 	[portRangeField setNextKeyView: blockSizeField];

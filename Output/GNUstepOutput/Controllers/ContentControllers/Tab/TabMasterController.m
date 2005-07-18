@@ -284,11 +284,11 @@
 		{
 			oldIndex = [tabView numberOfTabViewItems] - 2;
 		}
-
-		[self selectViewControllerAtIndex: oldIndex];
+		if (oldIndex >= 0)
+		{
+			[self selectViewControllerAtIndex: oldIndex];
+		}
 	}
-
-	[tab setView: nil];
 
 	[tabView removeTabViewItem: tab];
 	

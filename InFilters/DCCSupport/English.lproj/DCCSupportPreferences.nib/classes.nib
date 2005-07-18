@@ -1,0 +1,26 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                blockSizeHit = id; 
+                changeCompletedHit = id; 
+                changeDownloadHit = id; 
+                portRangeHit = id; 
+            }; 
+            CLASS = DCCSupportPreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                blockSizeField = id; 
+                changeCompletedButton = id; 
+                changeCompletedField = id; 
+                changeDownloadButton = id; 
+                changeDownloadField = id; 
+                portRangeField = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

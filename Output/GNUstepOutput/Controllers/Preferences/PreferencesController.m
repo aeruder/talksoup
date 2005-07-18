@@ -42,6 +42,7 @@
 #import <AppKit/NSBox.h>
 
 NSString *PreferencesChangedNotification = @"PreferencesChangedNotification";
+
 NSString *PreferencesModuleAdditionNotification = @"PreferencesModuleAdditionNotification";
 NSString *PreferencesModuleRemovalNotification = @"PreferencesModuleRemovalNotification";
 
@@ -98,6 +99,10 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	  numberOfRows: 1 numberOfColumns: 0]);
 	[prefsList setCellSize: NSMakeSize(64, 64)];
 	[prefsList setIntercellSpacing: NSZeroSize];
+
+	[labelBox setAutoresizesSubviews: YES];
+	[[labelBox contentView] setAutoresizingMask: 
+	  NSViewHeightSizable | NSViewWidthSizable];
 
 	[prefsList setTarget: self];
 	[prefsList setAction: @selector(buttonClicked:)];

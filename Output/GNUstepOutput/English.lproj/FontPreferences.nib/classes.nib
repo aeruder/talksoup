@@ -1,0 +1,24 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {hitFontButton = id; setWrapIndent = id; }; 
+            CLASS = FontPreferencesController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                boldFontButton = id; 
+                boldFontField = id; 
+                chatFontButton = id; 
+                chatFontField = id; 
+                fontSetView = id; 
+                preferencesView = id; 
+                userFontButton = id; 
+                userFontField = id; 
+                wrapIndentField = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FontPreferencesFontView; LANGUAGE = ObjC; SUPERCLASS = NSView; }
+    ); 
+    IBVersion = 1; 
+}

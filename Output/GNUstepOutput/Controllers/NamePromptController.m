@@ -42,13 +42,13 @@
 	[super dealloc];
 }
 - (void)returnHit: (NSTextField *)sender
-{
+{ // TODO 
 #if 0
 	id components;
 	id x;
 	id content;
 	
-	components = [[sender stringValue] separateIntoNumberOfArguments: 2];
+	components = [[typeView stringValue] separateIntoNumberOfArguments: 2];
 	
 	if ([components count] == 0)
 	{

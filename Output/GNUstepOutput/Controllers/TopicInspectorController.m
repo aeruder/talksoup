@@ -172,17 +172,29 @@
 }
 - (void)suckFieldsFromChannel: (NSString *)aChannel withSource: (Channel *)aSource
 {
+	id topicDate;
+	id topicAuthor;
+	id topic;
+
 	if (!aChannel || !aSource)
 	{
 		[window setContentView: nothingView];
 	}
 	else
 	{
+		topicDate = [aSource topicDate];
+		topicAuthor = [aSource topicAuthor];
+		topic = [aSource topic];
+
+		if (!topicDate) topicDate = @"";
+		if (!topicAuthor) topicAuthor = @"";
+		if (!topic) topic = @"";
+
 		[window setContentView: contentView];
 		[channelField setStringValue: aChannel];
-		[dateField setStringValue: [aSource topicDate]];
-		[authorField setStringValue: [aSource topicAuthor]];
-		[topicText setString: [aSource topic]];
+		[dateField setStringValue: topicDate];
+		[authorField setStringValue: topicAuthor];
+		[topicText setString: topic];
 	}
 }
 - (BOOL)topicKeyHit: (NSEvent *)aEvent sender: (id)sender

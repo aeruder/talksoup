@@ -1,0 +1,35 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                setConnect = id; 
+                setEntry = id; 
+                setNick = id; 
+                setPassword = id; 
+                setPort = id; 
+                setReal = id; 
+                setServer = id; 
+                setUser = id; 
+            }; 
+            CLASS = ServerEditorController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                commandsText = id; 
+                connectButton = id; 
+                entryField = id; 
+                extraField = id; 
+                nickField = id; 
+                okButton = id; 
+                passwordField = id; 
+                portField = id; 
+                realField = id; 
+                serverField = id; 
+                userField = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

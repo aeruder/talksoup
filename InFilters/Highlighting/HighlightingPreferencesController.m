@@ -39,12 +39,18 @@
 #define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
 #define set_pref(__x,__y) [Highlighting setDefaultsObject: (__y) forKey: (__x)]
 
+NSString *nothingThereYetMessage = nil;
+
 @protocol HighlightingPreferencesControllerNeedsSomeGNUstepOutputStuff
 + (NSColor *)colorFromEncodedData: (id)aData;
 - (id)encodeToData;
 @end
 
 @implementation HighlightingPreferencesController
++ (void)initialize
+{
+	nothingThereYetMessage = _l(@"Double-click to add");
+}
 - init
 {
 	id bundle, path;
@@ -107,6 +113,8 @@
 	tempWindow = (NSWindow *)window;
 	window = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+	[window setAutoresizingMask:
+	  NSViewWidthSizable | NSViewHeightSizable];
 
 	[extraTable setDataSource: self];
 	[extraTable setDelegate: self];
@@ -210,7 +218,7 @@
 {
 	if (rowIndex >= [extraNames count])
 	{
-		return _l(@"Double-click to add");
+		return nothingThereYetMessage;
 	}
 	return [extraNames objectAtIndex: rowIndex];
 }
@@ -223,7 +231,11 @@
 - (void)tableView: (NSTableView *)aTableView setObjectValue: (id)anObject
  forTableColumn: (NSTableColumn *)aTableColumn row: (int)rowIndex
 {
-	if (rowIndex >= [extraNames count])
+	if ([anObject isEqualToString: nothingThereYetMessage])
+	{
+		return;
+	}
+	else if (rowIndex >= [extraNames count])
 	{
 		[extraNames addObject: anObject];
 	}

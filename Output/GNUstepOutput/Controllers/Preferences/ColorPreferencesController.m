@@ -123,6 +123,8 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	tempWindow = (NSWindow *)preferencesView;
 	preferencesView = RETAIN([tempWindow contentView]);
 	RELEASE(tempWindow);
+	[preferencesView setAutoresizingMask:
+	  NSViewWidthSizable | NSViewHeightSizable];
 
 	[textPreview setEditable: NO];
 	[textPreview setSelectable: YES];
