@@ -428,6 +428,7 @@ static void reload_column(NSBrowser *browse, int col)
 	
 	tmp = [self serverListPreferences];
 	[browser reloadColumn: 0];
+	[window makeFirstResponder: browser];
 	
 	RETAIN(self);
 	wasEditing = -1;
@@ -730,7 +731,6 @@ static void reload_column(NSBrowser *browse, int col)
 	
 	if (row >= (int)[tmp count]) return;
 
-	/* FIXME */
 	if ([forceButton state] == NSOffState)
 	{
 		id tmpArray;
