@@ -31,6 +31,7 @@
 {
 	[window setDelegate: self];
 	[window makeKeyAndOrderFront: nil];
+	[window makeFirstResponder: window];
 	[window makeFirstResponder: typeView];
 	RETAIN(self);
 }
@@ -42,8 +43,7 @@
 	[super dealloc];
 }
 - (void)returnHit: (NSTextField *)sender
-{ // TODO 
-#if 0
+{
 	id components;
 	id x;
 	id content;
@@ -59,13 +59,13 @@
 	x = [ConnectionController new];
 	[x connectToServer: [components objectAtIndex: 0] onPort: 6667];
 	
+	AUTORELEASE(RETAIN(self));
 	[window close]; // This object is officially destroyed at this point...
 	
 	content = [x contentController];
 	
-	[[content window] makeKeyAndOrderFront: nil];
-	[[content window] makeFirstResponder: [content typeView]];
-#endif
+	[[[[x contentController] primaryMasterController] window] 
+	  makeKeyAndOrderFront: nil];
 }
 - (NSWindow *)window
 {
