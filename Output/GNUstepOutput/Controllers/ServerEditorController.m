@@ -105,34 +105,26 @@
 }
 - (void)setCommands: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setPort: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setServer: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setUser: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setPassword: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setReal: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setNick: (id)sender
 {
-	[okButton performClick: nil];
 }
 - (void)setEntry: (id)sender
 {
-	[okButton performClick: nil];
 }
 @end 
