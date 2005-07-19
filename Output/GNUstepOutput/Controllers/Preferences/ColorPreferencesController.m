@@ -345,6 +345,15 @@ NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
 	[otherColorWell setColor: otherColor];
 	[personalColorWell setColor: persColor];
 	[backgroundColorWell setColor: bgColor];
+
+	[[textPreview textStorage] 
+	  updateAttributedStringForGNUstepOutputPreferences: GNUstepOutputBackgroundColor];
+	[[textPreview textStorage] 
+	  updateAttributedStringForGNUstepOutputPreferences: GNUstepOutputTextColor];
+	[[textPreview textStorage] 
+	  updateAttributedStringForGNUstepOutputPreferences: GNUstepOutputOtherBracketColor];
+	[[textPreview textStorage] 
+	  updateAttributedStringForGNUstepOutputPreferences: GNUstepOutputPersonalBracketColor];
 }
 - (void)preferenceChanged: (NSNotification *)aNotification
 {
