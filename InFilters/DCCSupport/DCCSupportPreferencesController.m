@@ -88,8 +88,6 @@
 	[window setAutoresizingMask:
 	  NSViewWidthSizable | NSViewHeightSizable];
 
-	[blockSizeField setNextKeyView: portRangeField];
-	[portRangeField setNextKeyView: blockSizeField];
 	[self reloadData];
 }
 - (void)reloadData
