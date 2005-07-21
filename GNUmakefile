@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME=TalkSoup
-VERSION=0.82pre8
+VERSION=1.0beta
 
 ifneq ($(USE_DMALLOC),)
 ADDITIONAL_OBJCFLAGS += -include stdlib.h -include dmalloc.h
