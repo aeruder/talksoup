@@ -1,6 +1,7 @@
 ADDITIONAL_OBJCFLAGS += -Wall
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
+LIB_LINK_INSTALL_NAME = @executable_path/../Frameworks/TalkSoupBundles.framework/TalkSoupBundles
 ADDITIONAL_OBJCFLAGS += -I../Misc -include GNUstep.h
 endif
 

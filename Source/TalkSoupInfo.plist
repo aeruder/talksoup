@@ -17,5 +17,5 @@
 	CFBundlePackageType = "APPL";
 	CFBundleShortVersionString = "1.0beta";
 	CFBundleSignature = "TSup";
-	CFBundleVersion = "1.0beta"
+	CFBundleVersion = "1.0beta";
 }

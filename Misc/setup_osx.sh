@@ -66,7 +66,7 @@ sleep 1
 	  LIB_LINK_INSTALL_NAME="@executable_path/../Frameworks/TalkSoupBundles.framework/TalkSoupBundles"
 )
 
-make debug=yes install 
+make debug=yes
 
 echo "Installing TalkSoup into build/"
 mkdir -p build/Library/Application\ Support/TalkSoup/{OutFilters,InFilters,Input,Output}
