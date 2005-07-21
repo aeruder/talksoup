@@ -38,7 +38,6 @@
 	struct timeval tv = {0, 0};
 	int sec;
 	int microsec;
-	NSLog(@"Tessssting");
 	if (gettimeofday(&tv, NULL) == -1)
 	{
 		[content putMessage: S2AS(_l(@"gettimeofday() failed"))
@@ -142,7 +141,7 @@
 {
 	[_TS_ sendCTCPReply: S2AS(@"CLIENTINFO") withArgument:
 	  BuildAttributedString(_l(@"TalkSoup can be obtained from: "),
-	    @"http://aeruder.gnustep.us ", nil)
+	    @"http://talksoup.aeruder.net", nil)
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0]
 	  onConnection: connection 
 	  withNickname: S2AS([connection nick])
