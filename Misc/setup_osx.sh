@@ -41,6 +41,7 @@ echo "Cleaning up"
 sleep 1
 rm -fr build || true
 rm -fr TalkSoup.app || true
+rm -fr TalkSoupBundles/netclasses.framework || true
 mkdir build
 make distclean
 make -C ../netclasses distclean || true
@@ -57,14 +58,15 @@ sleep 1
 	make debug=yes \
 	  LIB_LINK_INSTALL_NAME="@executable_path/../Frameworks/netclasses.framework/netclasses"
 	mv netclasses.framework ../../TalkSoup/TalkSoupBundles
-)
+) || exit 1
+
 # Then TalkSoupBundles
 (
 	trap "exit 1" ERR
 	cd TalkSoupBundles
 	make debug=yes \
 	  LIB_LINK_INSTALL_NAME="@executable_path/../Frameworks/TalkSoupBundles.framework/TalkSoupBundles"
-)
+) || exit 1
 
 make debug=yes
 
