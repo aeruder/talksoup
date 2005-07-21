@@ -26,6 +26,7 @@
 #import <Foundation/NSEnumerator.h>
 #import <Foundation/NSFileManager.h>
 #import <Foundation/NSPathUtilities.h>
+#import <Foundation/NSBundle.h>
 #import <AppKit/NSButton.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTableColumn.h>
@@ -265,40 +266,38 @@ static void reload_column(NSBrowser *browse, int col)
 	NSEnumerator *iter;
 	id object;
 	BOOL isDir;
-	NSArray *subdirs;
-
-	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,
-	  NSAllDomainsMask, YES);
+	NSMutableArray *subdirs;
 
 	fm = [NSFileManager defaultManager];
 
-	iter = [x objectEnumerator];
+	subdirs = AUTORELEASE([NSMutableArray new]);
 
-	subdirs = [NSArray arrayWithObjects:
-	  APP_SUPPORT @"TalkSoup",
-	  APP_SUPPORT @"TalkSoup/Output/GNUstepOutput" RSRC_DIR,
-	  nil];
+	x = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,
+	  NSAllDomainsMask, YES);
+	iter = [x objectEnumerator];
 
 	while ((object = [iter nextObject]))
 	{
-		NSEnumerator *iter2;
-		id object2;
-		iter2 = [subdirs objectEnumerator];
-		while ((object2 = [iter2 nextObject]))
-		{
-			object2 = [object stringByAppendingString: object2];
-			object2 = [object2 stringByAppendingString: @"/ServerList.plist"];
+		object = [object stringByAppendingString: APP_SUPPORT @"TalkSoup"];
+		[subdirs addObject: object];
+	}
+	[subdirs addObject: 
+	  [[NSBundle bundleForClass: [GNUstepOutput class]] resourcePath]];
 
-			if ([fm fileExistsAtPath: object2 isDirectory: &isDir] && !isDir)
+	iter = [subdirs objectEnumerator];
+	while ((object = [iter nextObject]))
+	{
+		object = [object stringByAppendingString: @"/ServerList.plist"];
+
+		if ([fm fileExistsAtPath: object isDirectory: &isDir] && !isDir)
+		{
+			id dict = [NSDictionary dictionaryWithContentsOfFile: object];
+			id obj;
+			
+			if (dict && (obj = [dict objectForKey: @"Servers"])
+			 && [obj isKindOfClass: [NSArray class]])
 			{
-				id dict = [NSDictionary dictionaryWithContentsOfFile: object2];
-				id obj;
-				
-				if (dict && (obj = [dict objectForKey: @"Servers"])
-				 && [obj isKindOfClass: [NSArray class]])
-				{
-					return add_favorites(mutable_object(obj));
-				}
+				return add_favorites(mutable_object(obj));
 			}
 		}
 	}
