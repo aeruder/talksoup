@@ -221,12 +221,34 @@ Commands specific to the GNUstep output plugin (GNUstepOutput)
 /clear
   Clears the text in the current tab.
 
-/scrollback <characters>
-  This sets how many characters your scroll-back buffer holds.
+/scrollback <lines>
+  This sets how many lines are in the scroll-back buffer.
   This change will automatically be saved to the defaults.
 
 /ping <person>
   Good way to find out the lag between you and that person.
+
+/topic [topic]
+  This will set the current channel's topic to [topic].  If [topic] is
+  not specified, the topic for the channel will be displayed.
+
+/exec [-o] command
+  This will execute command and display it's output.  If -o is specified,
+  the output will actually be sent to the current channel/query.
+
+/alias <alias> <command>
+  Alias a command to another command.  For example,
+
+  /alias j /join
+
+  This will make /j the same as /join.
+
+  /alias hi hello everybody!!!!
+
+  This will make /hi send "hello everybody!!!!" to the channel/query.
+
+/unalias <alias>
+  Unset an alias set with the /alias command.
   
 ===================================
 Notes about GNUstepOutput (default)
@@ -239,7 +261,6 @@ Notes about GNUstepOutput (default)
     bundles even provide nice GUIs for configuration.
 	
 ===============================================================================
-Please read the INSTALL file for the details on installing TalkSoup.
 The FAQ (Frequently Asked Questions) also covers many common questions
 that TalkSoup users have.
 ===============================================================================
@@ -253,31 +274,37 @@ Authors
 Special Thanks
 ==============
   Luis Garcia Alanis <luis.garcia at mac.com>
-    For his initial drive to make a GNUstep IRC client using netclasses
-    and his first version of Charla.app
+	For his initial drive to make a GNUstep IRC client using netclasses and his
+	first version of Charla.app
   Alex Perez <aperez at student.santarosa.edu>
-    For his immense testing efforts and all his suggestions and
-    he also drew the icon that is currently being used by the
-    GNUstep output plugin right now.  Alex is also one of the 
-    primary people behind making an OS X port possible.
+	For his immense testing efforts and all his suggestions and he also drew
+	the icon that is currently being used by the GNUstep output plugin right
+	now.  Alex is also one of the primary people behind making the original OS
+	X port possible.
   Jeff Reinecke
-    Jeff provided the machine that the port was done on.  Using solely
-    VNC and SSH into his machine, TalkSoup OS X was made possible.  Thanks
-    a ton Jeff!!!!
+	Jeff provided the machine that the port was done on.  Using solely VNC and
+	SSH into his machine, the very first TalkSoup OS X was made possible.
+	Thanks a ton Jeff!!!!
   Lyndon Tremblay <humasect at shaw.ca>
-    For his time and effort in both testing and making TalkSoup
-    an icon.
+	For his time and effort in both testing and making TalkSoup an icon.
   Gregory Casemento <greg_casamento at yahoo.com>
-    For his tremendous work on Gorm, which made TalkSoup possible.
+	For his tremendous work on Gorm, which made TalkSoup possible.
   Alexander Malmberg <alexander at malmberg.org>
-    For his constant help, bug-fixes, and overall contributions
-    to the GNUstep project. 
+	For his constant help, bug-fixes, and overall contributions to the GNUstep
+	project. 
+  Matt Rice:
+    He knows something about everything; a constant source of advice and help
+	during the development of TalkSoup.
+  Aaron Glenn:
+    Actually made several of the new TalkSoup OS X nibs with me explaining
+	(over IRC, of course) how to make them.  (He was unfamiliar with 
+	using Interface Builder).  Without this guy, it's unlikely I would have
+	ever gotten started on the new TalkSoup OS X port.
   
-  Also, a big thanks goes out to: Nicolas Roard, Thom
-    Cherryhomes, Tim Harrison, Ian Jones, Matt Rice, 
-    and all the other people I probably forgot about
-    who offered bug fixes, suggestions, and just took
-    the time to compile and use TalkSoup.
+  Also, a big thanks goes out to: Nicolas Roard, Thom Cherryhomes, Tim
+  Harrison, Ian Jones, and all the other people I probably forgot about who
+  offered bug fixes, suggestions, and just took the time to compile and use
+  TalkSoup.
     
 ===============================================================================
 Copyright (C) 2003 by Andy Ruder
