@@ -4,7 +4,7 @@ APP_NAME = TalkSoup
 
 TalkSoup_OBJC_FILES = main.m commands.m
 
-TalkSoup_RESOURCE_FILES = Defaults.plist Images/TalkSoup.tiff
+TalkSoup_RESOURCE_FILES = Defaults.plist Images/TalkSoup.tiff Images/TalkSoup.icns
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
 TalkSoup_GUI_LIBS = -framework netclasses -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
