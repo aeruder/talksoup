@@ -45,6 +45,7 @@ int main(int argc, char **argv, char **env)
 	notname = [NSString stringWithCString: argv[2]];
 	hostname = [NSString stringWithCString: argv[3]];
 
+	NSLog(@"Performing DNS lookup for %@", hostname);
 	aHost = [NSHost hostWithName: hostname];
 	address = [aHost address];
 	reverse = nil;
@@ -54,7 +55,7 @@ int main(int argc, char **argv, char **env)
 		reverse = [aHost2 name];
 	}
 
-	NSLog(@"Whoo: %@ %@ %@: ", hostname, address, reverse);
+	NSLog(@"DNS Lookup: host: %@ addr: %@ reverse: %@: ", hostname, address, reverse);
 	[(NSDistributedNotificationCenter *)[NSDistributedNotificationCenter defaultCenter]
 	  postNotificationName: notname
 	  object: regname
