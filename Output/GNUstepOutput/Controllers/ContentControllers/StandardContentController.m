@@ -462,7 +462,6 @@
 	isChannel = [aType isEqualToString: ContentControllerChannelType];
 	
 	name = GNUstepOutputLowercase(aName, connectionController);
-	NSLog(@"ConnectionController: %@", NSStringFromSelector([[connectionController connection] lowercasingSelector]));
 	
 	if ((controller = [nameToBoth objectForKey: name]))
 	{

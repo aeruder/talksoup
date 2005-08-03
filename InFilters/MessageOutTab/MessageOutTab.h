@@ -35,6 +35,14 @@
 @class NSAttributedString;
 
 @interface MessageOutTab : NSObject
+- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick    
+   sender: aPlugin;
+- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin;
 @end
 
 #endif

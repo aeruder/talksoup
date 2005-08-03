@@ -35,5 +35,37 @@
 	 _l(@"Copyright (C) 2005 by Andrew Ruder"),
 	 nil);
 }
+- sendMessage: (NSAttributedString *)message to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick    
+   sender: aPlugin
+{
+	[_TS_ controlObject: 
+	 [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"OpenTab", @"Process",
+	  [receiver string], @"TabName", 
+	  receiver, @"TabLabel",
+	  nil]
+	 onConnection: aConnection withNickname: aNick sender: self];
+	[_TS_ sendMessage: message to: receiver onConnection: aConnection
+	  withNickname: aNick sender: self];
+	return self;
+}
+- sendAction: (NSAttributedString *)anAction to: (NSAttributedString *)receiver 
+   onConnection: aConnection 
+   withNickname: (NSAttributedString *)aNick 
+   sender: aPlugin
+{
+	[_TS_ controlObject: 
+	 [NSDictionary dictionaryWithObjectsAndKeys:
+	  @"OpenTab", @"Process",
+	  [receiver string], @"TabName", 
+	  receiver, @"TabLabel",
+	  nil]
+	 onConnection: aConnection withNickname: aNick sender: self];
+	[_TS_ sendAction: anAction to: receiver onConnection: aConnection
+	  withNickname: aNick sender: self];
+	return self;
+}
 @end
 
