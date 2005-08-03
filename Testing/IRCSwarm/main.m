@@ -34,10 +34,10 @@
 NSMutableDictionary *sharedBots = nil;
 NSMutableDictionary *connectingBots = nil;
 
-static int max_clients = 40;
+static int max_clients = 200;
 
 static float low_time = 0.0;
-static float wait_connecting = 5.0;
+static float wait_connecting = 0.0;
 static float wait_cant_connect = 300.0;
 static float high_time = 0.0;
 
@@ -306,20 +306,21 @@ int main(int argc, char **argv, char **env)
 	srand(time(0) ^ gethostid() % getpid());
 		
 	args = [[NSProcessInfo processInfo] arguments];
-	if (([args count] < 6) || (([args count] % 2) == 1)) 
+	if (([args count] < 7) || (([args count] % 2) != 1)) 
 	{
-		NSLog(@"Usage: %@ <lowtime> <hightime> <server> <channel> <play> [<channel2> <play2>] ...",
+		NSLog(@"Usage: %@ <lowtime> <hightime> <waitconnect> <server> <channel> <play> [<channel2> <play2>] ...",
 		 [args objectAtIndex: 0]);
 		exit(0);
 	}
-	aHost = [NSHost hostWithName: [args objectAtIndex: 3]];
+	aHost = [NSHost hostWithName: [args objectAtIndex: 4]];
 	if (!aHost)
 	{
-		NSLog(@"Couldn't find host %@", [args objectAtIndex: 3]);
+		NSLog(@"Couldn't find host %@", [args objectAtIndex: 4]);
 		exit(2);
 	}
 	low_time = [[args objectAtIndex: 1] floatValue];
 	high_time = [[args objectAtIndex: 2] floatValue];
+	wait_connecting = [[args objectAtIndex: 3] floatValue];
 	
 	if ((high_time - low_time) <= 0.00001)
 	{
@@ -327,7 +328,7 @@ int main(int argc, char **argv, char **env)
 		exit(1);
 	}
 
-	for (index = 4; index < [args count]; index += 2)
+	for (index = 5; index < [args count]; index += 2)
 	{
 		[[ControlSwarm alloc] initWithChannel: [args objectAtIndex: index]
 		  withPlay: [args objectAtIndex: index + 1] withHost: aHost];
