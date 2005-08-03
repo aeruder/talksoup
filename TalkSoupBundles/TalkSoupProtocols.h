@@ -261,6 +261,31 @@
 - setEncoding: (NSStringEncoding)encoding;
 
 - (NSStringEncoding)encoding;
+
+/**
+ * Set the lowercasing selector.  This is the selector that is called
+ * on a NSString to get the lowercase form.  Used to determine if two
+ * nicknames are equivalent.  Generally <var>aSelector</var> would be
+ * either @selector(lowercaseString) or @selector(lowercaseIRCString).
+ * By default, this is lowercaseIRCString but will be autodetected
+ * from the server if possible.  It will be reset to lowercaseIRCString
+ * upon reconnection.
+ */
+- setLowercasingSelector: (SEL)aSelector;
+
+/**
+ * Return the lowercasing selector.  See -setLowercasingSelector: for
+ * more information on the use of this lowercasing selector.
+ */
+- (SEL)lowercasingSelector;
+
+/**
+ * Use the lowercasingSelector to compare two strings.  Returns a 
+ * NSComparisonResult ( NSOrderedAscending, NSOrderedSame or 
+ * NSOrderedDescending )
+ */
+- (NSComparisonResult)caseInsensitiveCompare: (NSString *)aString1
+   to: (NSString *)aString2;
 @end
 
 @protocol TalkSoupInFilterProtocol < TalkSoupPluginProtocol >
