@@ -55,11 +55,13 @@ NSString *HighlightingUserColor = @"HighlightingUserColor";
 NSString *HighlightingTabReferenceColor = @"HighlightingTabReferenceColor";
 NSString *HighlightingTabAnythingColor = @"HighlightingTabAnythingColor";
 NSString *HighlightingExtraWords = @"HighlightingExtraWords";
+NSString *TalkSoupHighlightingNotification = @"TalkSoupHighlightingNotification";
+NSString *TalkSoupPrivateMessageNotification = @"TalkSoupPrivateMessageNotification";
 
 static BOOL has_name(NSString *str, NSString *name)
 {
 	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
-	 @".:,- '\""];
+	 @".:,- '\"\t!@#$%^&*()[]+=/\\{};<>"];
 	NSRange cur = {0};
 	NSRange a = {0};
 	unichar x;
@@ -111,9 +113,53 @@ NSString *get_destination(NSString *to, NSString *from, NSString *nick)
 	return name;
 }
 
+void handle_notifications(id cont, NSAttributedString *msg, NSString *type, 
+  NSAttributedString *sender, NSAttributedString *to, id connection,
+  BOOL highlit)
+{
+	NSAttributedString *from;
+	NSAttributedString *typeattr;
+
+	from = [IRCUserComponents(sender) objectAtIndex: 0];
+	typeattr = AUTORELEASE([[NSAttributedString alloc] initWithString: type]);
+	
+	if (highlit) 
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: TalkSoupHighlightingNotification
+		 object: msg 
+		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+		  msg, @"Message",
+		  typeattr, @"Type",
+		  from, @"From",
+		  sender, @"FromFull",
+		  to, @"To",
+		  connection, @"Connection",
+		  nil
+		]];
+	}
+
+	if ([connection caseInsensitiveCompare: [to string] to: [connection nick]] 
+	   == NSOrderedSame)
+	{
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: TalkSoupPrivateMessageNotification
+		 object: msg 
+		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+		  msg, @"Message",
+		  typeattr, @"Type",
+		  from, @"From",
+		  sender, @"FromFull",
+		  to, @"To",
+		  connection, @"Connection",
+		  nil
+		]];
+	}
+}
+
 NSAttributedString *do_highlighting(id cont, NSString *msg, 
   NSAttributedString *from, NSArray *words, NSString *where, id connection,
-  NSAttributedString *aNick)
+  NSAttributedString *aNick, BOOL *highlit)
 {
 	NSString *userColor = get_pref(HighlightingUserColor);
 	NSString *refColor = get_pref(HighlightingTabReferenceColor);
@@ -133,6 +179,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 		}
 	}
 	
+	if (highlit) *highlit = does;
 	if (does)
 	{
 		if (refColor)
@@ -435,6 +482,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	BOOL highlit;
 	
 	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
 	{
@@ -447,7 +495,8 @@ static NSInvocation *invoc = nil;
 	}
 	
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection, aNick);
+	  where, connection, aNick, &highlit);
+	handle_notifications(self, aMessage, @"Message", sender, to, connection, highlit);
  
 	[_TS_ messageReceived: aMessage to: to from: sender 
 	  onConnection: connection withNickname: aNick sender: self];	
@@ -463,6 +512,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	BOOL highlit;
 	
 	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
 	{
@@ -474,7 +524,8 @@ static NSInvocation *invoc = nil;
 		[x addObjectsFromArray: words];
 	}
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection, aNick);
+	  where, connection, aNick, &highlit);
+	handle_notifications(self, aMessage, @"Notice", sender, to, connection, highlit);
 	
 	[_TS_ noticeReceived: aMessage to: to from: sender 
 	  onConnection: connection withNickname: aNick sender: self];
@@ -490,6 +541,7 @@ static NSInvocation *invoc = nil;
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
+	BOOL highlit;
 	
 	if (!shouldAdd || [shouldAdd isEqualToString: @"YES"])
 	{
@@ -501,7 +553,8 @@ static NSInvocation *invoc = nil;
 		[x addObjectsFromArray: words];
 	}
 	sender = do_highlighting(self, [aMessage string], sender, x, 
-	  where, connection, aNick); 
+	  where, connection, aNick, &highlit); 
+	handle_notifications(self, aMessage, @"Action", sender, to, connection, highlit);
 	
 	[_TS_ actionReceived: aMessage to: to from: sender 
 	  onConnection: connection withNickname: aNick sender: self];

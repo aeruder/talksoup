@@ -67,5 +67,36 @@ extern NSString *HighlightingExtraWords;
    sender: aPlugin;
 @end
 
+/**
+ * This notification is put out everytime something is highlighted.
+ * This can be used by other bundles to trap highlighting without having
+ * to have their own preferences on extra words and such...
+ */
+extern NSString *TalkSoupHighlightingNotification;
 
+/* TalkSoupHighlightingNotification = @"TalkSoupHighlightingNotification"
+   object: the message (NSAttributedString)
+   userinfo:
+     @"Message": The message (NSAttributedString)
+	 @"Type": The type (@"Action", @"Notice", @"Message") (NSString)
+	 @"From": The person who sent it (NSAttributedString)
+	 @"FromFull": The person who sent it with full prefix information (NSAttributedString)
+	 @"To": Who it was sent to. (NSAttributedString)
+	 @"Connection": the connection (id <TalkSoupConnectionProtocol>)
+*/
+
+/**
+ * This notification is sent out everytime a private message is received
+ */
+extern NSString *TalkSoupPrivateMessageNotification;
+/* TalkSoupPrivateMessageNotification = @"TalkSoupPrivateMessageNotification"
+   object: the message (NSAttributedString)
+   userinfo:
+     @"Message": The message (NSAttributedString)
+	 @"Type": The type (@"Action", @"Notice", @"Message") (NSString)
+	 @"From": The person who sent it (NSAttributedString)
+	 @"FromFull": The person who sent it with full prefix information (NSAttributedString)
+	 @"To": Who it was sent to. (NSAttributedString)
+	 @"Connection": the connection (id <TalkSoupConnectionProtocol>)
+*/
 #endif
