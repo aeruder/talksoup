@@ -58,7 +58,7 @@ NSString *HighlightingExtraWords = @"HighlightingExtraWords";
 NSString *TalkSoupHighlightingNotification = @"TalkSoupHighlightingNotification";
 NSString *TalkSoupPrivateMessageNotification = @"TalkSoupPrivateMessageNotification";
 
-static BOOL has_name(NSString *str, NSString *name)
+static BOOL has_name(NSString *str, NSString *name, id connection)
 {
 	NSCharacterSet *set = [NSCharacterSet characterSetWithCharactersInString:
 	 @".:,- '\"\t!@#$%^&*()[]+=/\\{};<>"];
@@ -69,8 +69,8 @@ static BOOL has_name(NSString *str, NSString *name)
 	BOOL is = NO;
 	
 	a.length = len = [str length];
-	str = [str lowercaseString];
-	name = [name lowercaseString];
+	str = [str performSelector: [connection lowercasingSelector]];
+	name = [name performSelector: [connection lowercasingSelector]];
 	
 	while ((int)a.location < len)
 	{
@@ -103,10 +103,10 @@ static BOOL has_name(NSString *str, NSString *name)
 	return NO;
 }
 
-NSString *get_destination(NSString *to, NSString *from, NSString *nick)
+NSString *get_destination(NSString *to, NSString *from, NSString *nick, id connection)
 {
 	id name = to;
-	if ([[name lowercaseString] isEqualToString: [nick lowercaseString]])
+	if ([connection caseInsensitiveCompare: name to: nick] == NSOrderedSame)
 	{
 		name = from;
 	}
@@ -172,7 +172,7 @@ NSAttributedString *do_highlighting(id cont, NSString *msg,
 	
 	while ((object = [iter nextObject]))
 	{
-		if (has_name(msg, object))
+		if (has_name(msg, object, connection))
 		{
 			does = YES;
 			break;
@@ -478,7 +478,8 @@ static NSInvocation *invoc = nil;
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
-	id where = get_destination([to string], [from string], [connection nick]);
+	id where = get_destination([to string], [from string], [connection nick], 
+	  connection);
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
@@ -508,7 +509,8 @@ static NSInvocation *invoc = nil;
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
-	id where = get_destination([to string], [from string], [connection nick]);
+	id where = get_destination([to string], [from string], [connection nick],
+	  connection);
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 
@@ -537,7 +539,8 @@ static NSInvocation *invoc = nil;
    sender: aPlugin
 {
 	id from = [IRCUserComponents(sender) objectAtIndex: 0];
-	id where = get_destination([to string], [from string], [connection nick]);
+	id where = get_destination([to string], [from string], [connection nick],
+	  connection);
 	id words = get_pref(HighlightingExtraWords);
 	id shouldAdd = get_pref(HighlightingShouldDoNick);
 	NSMutableArray *x = [NSMutableArray arrayWithObjects: nil]; 

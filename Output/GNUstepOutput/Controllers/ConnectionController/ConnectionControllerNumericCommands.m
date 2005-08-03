@@ -102,7 +102,7 @@
 - numericHandler353: (NSArray *)arguments
 {
 	id channel = [nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase([[arguments objectAtIndex: 1] string])];
+	  GNUstepOutputLowercase([[arguments objectAtIndex: 1] string], connection)];
 	  
 	if (!channel)
 	{
@@ -117,7 +117,7 @@
 // RPL_ENDOFNAMES
 - numericHandler366: (NSArray *)arguments
 {
-	id name = GNUstepOutputLowercase([[arguments objectAtIndex: 0] string]);
+	id name = GNUstepOutputLowercase([[arguments objectAtIndex: 0] string], connection);
 	id cont = [content viewControllerForName: name];
 	id channel = [nameToChannelData objectForKey: name];
 

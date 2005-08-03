@@ -123,8 +123,6 @@ static NSString *dns_helper = @"dns_helper";
 
 	nameToChannelData = [NSMutableDictionary new];
 	
-	[self setLowercasingFunction: IRCLowercase];
-
 	[_GS_ addConnectionController: self];
 
 	[content bringNameToFront: ContentConsoleName];
@@ -183,7 +181,7 @@ static NSString *dns_helper = @"dns_helper";
 }
 - (Channel *)dataForChannelWithName: (NSString *)aName
 {
-	return [nameToChannelData objectForKey: GNUstepOutputLowercase(aName)];
+	return [nameToChannelData objectForKey: GNUstepOutputLowercase(aName, connection)];
 }
 - setNick: (NSString *)aString
 {
@@ -244,15 +242,6 @@ static NSString *dns_helper = @"dns_helper";
 - (NSString *)serverString
 {
 	return server;
-}
-- (NSString * (*)(NSString *))lowercasingFunction
-{
-	return lowercase;
-}
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
-{
-	lowercase = aFunction;
-	[content setLowercasingFunction: lowercase];
 }
 - (id)connection
 {

@@ -76,9 +76,6 @@ extern NSString *DNSLookupNotification;
 
 - (NSString *)serverString;
 
-- (NSString * (*)(NSString *))lowercasingFunction;
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
-
 - (id)connection;
 
 - (id <ContentController>)contentController;

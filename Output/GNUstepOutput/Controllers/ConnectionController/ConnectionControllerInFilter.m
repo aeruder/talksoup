@@ -280,10 +280,10 @@
    sender: aPlugin
 {
 	id name = [IRCUserComponents(kicker) objectAtIndex: 0];
-	id lowChan = GNUstepOutputLowercase([aChannel string]);
+	id lowChan = GNUstepOutputLowercase([aChannel string], connection);
 	id view = [content viewControllerForName: lowChan];
 
-	if (GNUstepOutputCompare([aPerson string], [connection nick]))
+	if (GNUstepOutputCompare([aPerson string], [connection nick], connection))
 	{
 		[self leaveChannel: lowChan];
 	}
@@ -342,7 +342,7 @@
 	}
 		
 	chan = [nameToChannelData objectForKey: 
-	  GNUstepOutputLowercase([anObject string])];
+	  GNUstepOutputLowercase([anObject string], connection)];
 
 	for (modeindex = 0; modeindex < modelen; modeindex++)
 	{
@@ -457,7 +457,7 @@
 	id array;
 	NSAttributedString *oldName = [IRCUserComponents(aPerson) objectAtIndex: 0];
 	
-	if (GNUstepOutputCompare([newName string], [connection nick]))
+	if (GNUstepOutputCompare([newName string], [connection nick], connection))
 	{
 		[self setNick: [newName string]];
 		[content setNickname: [newName string]];
@@ -468,7 +468,7 @@
 	while ((object = [iter nextObject]))
 	{
 		[[nameToChannelData objectForKey: 
-		  GNUstepOutputLowercase(object)] userRenamed: [oldName string] 
+		  GNUstepOutputLowercase(object, connection)] userRenamed: [oldName string] 
 		  to: [newName string]];
 		[(id <ContentControllerChannelController>)
 		  [content viewControllerForName: object] refreshFromChannelSource];
@@ -495,16 +495,17 @@
 {
 	id name = [channel string];
 	id array = IRCUserComponents(joiner);
-	id lowName = GNUstepOutputLowercase(name);
+	id lowName = GNUstepOutputLowercase(name, connection);
 
-	if (GNUstepOutputCompare([[array objectAtIndex: 0] string], [aConnection nick]))
+	if (GNUstepOutputCompare([[array objectAtIndex: 0] string], [aConnection nick], connection))
 	{
 		id x;
 
 		[content addViewControllerOfType: ContentControllerChannelType withName: name
 		  withLabel: channel inMasterController: [content primaryMasterController]];
 		[nameToChannelData setObject: x = AUTORELEASE([[Channel alloc] 
-		  initWithIdentifier: lowName]) forKey: lowName];
+		  initWithIdentifier: lowName withConnectionController: self]) 
+		  forKey: lowName];
 				
 		[(id <ContentControllerChannelController>)
 		 [content viewControllerForName: lowName] attachChannelSource: x];
@@ -531,10 +532,10 @@
    sender: aPlugin
 {
 	id name = [IRCUserComponents(parter) objectAtIndex: 0];
-	id lowChan = GNUstepOutputLowercase([channel string]);
+	id lowChan = GNUstepOutputLowercase([channel string], connection);
 	id view = [content viewControllerForName: lowChan];
 
-	if (GNUstepOutputCompare([name string], [connection nick]))
+	if (GNUstepOutputCompare([name string], [connection nick], connection))
 	{
 		[self leaveChannel: lowChan];
 	}
@@ -565,7 +566,7 @@
 	iter = [array objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
-		id low = GNUstepOutputLowercase(object);
+		id low = GNUstepOutputLowercase(object, connection);
 		[[nameToChannelData objectForKey: low] 
 		  removeUser: [name string]];
 		[(id <ContentControllerChannelController>)
@@ -618,7 +619,7 @@
 	
 	string = pubstring;
 	
-	if (GNUstepOutputCompare([to string], [connection nick]))
+	if (GNUstepOutputCompare([to string], [connection nick], connection))
 	{
 		if (![content viewControllerForName: where = whos])
 		{
@@ -659,7 +660,7 @@
 	id where;
 	NSString *prefix = @"*";
 	
-	if (GNUstepOutputCompare([to string], [connection nick]))
+	if (GNUstepOutputCompare([to string], [connection nick], connection))
 	{
 		if (![content viewControllerForName: where = whos])
 		{

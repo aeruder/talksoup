@@ -31,8 +31,11 @@
 		NSString *lowerName;
 		BOOL hasOps;
 		BOOL hasVoice;
+		id connection;
 	}
-- initWithModifiedName: (NSString *)aName;
+- initWithModifiedName: (NSString *)aName
+   withConnectionController: aConnection;
+
 - copyWithZone: (NSZone *)aZone;
 
 - (NSString *)userName;
@@ -64,8 +67,10 @@ extern const int ChannelUserVoice;
 		NSString *topic;
 		NSString *topicDate;
 		NSString *topicAuthor;
+		id connection;
 	}
-- initWithIdentifier: (NSString *)aName;
+- initWithIdentifier: (NSString *)aName
+   withConnectionController: aConnection;
 
 - setTopic: (NSString *)aTopic;
 - (NSString *)topic;

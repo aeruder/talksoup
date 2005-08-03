@@ -319,7 +319,7 @@ static void send_message(id command, id name, id connection)
 			substring = [array objectAtIndex: 0];
 		}
 		
-		substring = GNUstepOutputLowercase(substring);
+		substring = GNUstepOutputLowercase(substring, controller);
 		
 		commandSelector = NSSelectorFromString([NSString stringWithFormat: 
 		  @"ircCommand%@:", [substring capitalizedString]]);
@@ -360,7 +360,7 @@ static void send_message(id command, id name, id connection)
 	if (!connection) return;
 	
 	name = [content nameForViewController: view];
-	if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)]) 
+	if (GNUstepOutputCompare(name, ContentConsoleName, controller))
 	{
 		return;
 	}
@@ -629,18 +629,18 @@ static void send_message(id command, id name, id connection)
 	id lowObject;
 	NSMutableArray *out = AUTORELEASE([NSMutableArray new]);
 	
-	pre = GNUstepOutputLowercase(pre);
+	pre = GNUstepOutputLowercase(pre, controller);
 	
 	iter = [x objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
-		lowObject = GNUstepOutputLowercase(object);
+		lowObject = GNUstepOutputLowercase(object, controller);
 		if ([lowObject hasPrefix: pre])
 		{
 			[out addObject: object];
 			if (lar)
 			{
-				lar = [GNUstepOutputLowercase(lar) commonPrefixWithString: 
+				lar = [GNUstepOutputLowercase(lar, controller) commonPrefixWithString: 
 				  lowObject options: 0];
 				lar = [object substringToIndex: [lar length]];
 			}
@@ -843,7 +843,7 @@ static void send_message(id command, id name, id connection)
 	}
 
 	name = [content nameForViewController: view];
-	if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)])
+	if (GNUstepOutputCompare(name, ContentConsoleName, controller))
 		return self;
 
 	if (![controller connection])
@@ -1040,7 +1040,7 @@ static void send_message(id command, id name, id connection)
 	name = [content nameForViewController: view];
 	if ([x count] < 1)
 	{
-		if ([name isEqualToString: [content lowercasingFunction](ContentConsoleName)])
+		if (GNUstepOutputCompare(name, ContentConsoleName, controller))
 		{			
 			[controller showMessage:
 			  S2AS(_l(@"Usage: /close <tab label>")) 
@@ -1290,8 +1290,7 @@ static void send_message(id command, id name, id connection)
 		{
 			newcommand = [x objectAtIndex: 1];
 			destination = [content nameForViewController: view];
-			if ([destination isEqualToString: 
-			    [content lowercasingFunction](ContentConsoleName)])
+			if (GNUstepOutputCompare(destination, ContentConsoleName, controller))
 				destination = nil;
 		}
 	} 

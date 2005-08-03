@@ -41,9 +41,6 @@ extern NSString *TaskExecutionOutputNotification;
 		KeyTextView *fieldEditor;
 		NSMutableArray *tabCompletion;
 		unsigned tabCompletionIndex;
-		NSConnection *distConnection;
-		NSString *distConnectionName;
-		NSMutableArray *executingTasks;
 		HelperExecutor *helper;
 		NSRange savedRange;
 	}

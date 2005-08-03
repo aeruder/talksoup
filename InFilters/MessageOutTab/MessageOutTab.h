@@ -1,7 +1,7 @@
 /***************************************************************************
-                                MessageInTab.h
+                            MessageOutTab.h
                           -------------------
-    begin                : Sat May 10 18:58:30 CDT 2003
+    begin                : Tue Aug  2 23:21:01 CDT 2005
     copyright            : (C) 2005 by Andrew Ruder
     email                : aeruder@ksu.edu
  ***************************************************************************/
@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-@class MessageInTab;
+@class MessageOutTab;
 
-#ifndef MESSAGE_IN_TAB_H
-#define MESSAGE_IN_TAB_H
+#ifndef MESSAGE_OUT_TAB_H
+#define MESSAGE_OUT_TAB_H
 
 #import <Foundation/NSObject.h>
 
@@ -28,22 +28,13 @@
 	#undef _l
 #endif
 
-#define _l(X) [[NSBundle bundleForClass: [MessageInTab class]] \
+#define _l(X) [[NSBundle bundleForClass: [MessageOutTab class]] \
                localizedStringForKey: (X) value: nil \
                table: @"Localizable"]
 
 @class NSAttributedString;
 
-@interface MessageInTab : NSObject
-- messageReceived: (NSAttributedString *)aMessage to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   withNickname: (NSAttributedString *)aNick
-   sender: aPlugin;
-
-- actionReceived: (NSAttributedString *)anAction to: (NSAttributedString *)to
-   from: (NSAttributedString *)sender onConnection: (id)connection 
-   withNickname: (NSAttributedString *)aNick
-   sender: aPlugin;
+@interface MessageOutTab : NSObject
 @end
 
 #endif

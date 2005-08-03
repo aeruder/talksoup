@@ -40,17 +40,20 @@
 
 @implementation ChannelUser
 - initWithModifiedName: (NSString *)aName
+   withConnectionController: aConnection
 {
 	if (!(self = [super init])) return nil;
 	
 	[self setUserName: aName];
+	connection = aConnection;
 	
 	return self;
 }
 - copyWithZone: (NSZone *)aZone
 {
 	return [[ChannelUser allocWithZone: aZone]
-	  initWithModifiedName: [self formattedName]];
+	  initWithModifiedName: [self formattedName]
+	  withConnectionController: connection];
 }
 - (void)dealloc
 {
@@ -95,7 +98,7 @@
 	RELEASE(userName);
 	userName = RETAIN(aName);
 	RELEASE(lowerName);
-	lowerName = RETAIN(GNUstepOutputLowercase(userName));
+	lowerName = RETAIN(GNUstepOutputLowercase(userName, connection));
 
 	return self;
 }
@@ -132,7 +135,8 @@
 - (BOOL)getObjectValue: (id *)obj forString: (NSString *)string
    errorDescription: (NSString **)error
 {
-	*obj = AUTORELEASE([[Channel alloc] initWithModifiedName: string]);
+	*obj = AUTORELEASE([[Channel alloc] initWithModifiedName: string
+	  withConnectionController: nil]);
 	return YES;
 }
 @end
@@ -143,9 +147,10 @@
 @implementation Channel
 - init
 {
-	return [self initWithIdentifier: nil];
+	return [self initWithIdentifier: nil withConnectionController: nil];
 }
 - initWithIdentifier: (NSString *)aName
+   withConnectionController: aConnection;
 {
 	if (!(self = [super init])) return nil;
 	
@@ -153,6 +158,7 @@
 	tempList = [NSMutableArray new];
 	userList = [NSMutableArray new];
 	lowercaseList = [NSMutableArray new];
+	connection = aConnection;
 	
 	[self setIdentifier: aName];
 	
@@ -230,7 +236,7 @@
 	iter = [userList objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
-		[lowercaseList addObject: GNUstepOutputLowercase([object userName])];
+		[lowercaseList addObject: GNUstepOutputLowercase([object userName], connection)];
 	}
 	
 	return self;
@@ -239,7 +245,8 @@
 {
 	id user;
 
-	user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: aString]);
+	user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: aString 
+	  withConnectionController: connection]);
 	
 	[userList addObject: user];
 	
@@ -249,11 +256,11 @@
 }
 - (BOOL)containsUser: aString
 {
-	return [lowercaseList containsObject: GNUstepOutputLowercase(aString)];
+	return [lowercaseList containsObject: GNUstepOutputLowercase(aString, connection)];
 }
 - removeUser: (NSString *)aString
 {
-	int x = [lowercaseList indexOfObject: GNUstepOutputLowercase(aString)];
+	int x = [lowercaseList indexOfObject: GNUstepOutputLowercase(aString, connection)];
 	if (x != NSNotFound)
 	{
 		[userList removeObjectAtIndex: x];
@@ -267,7 +274,7 @@
 	BOOL hasOps;
 	int index;
 
-	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(oldName)];
+	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(oldName, connection)];
 	if (index == NSNotFound) return self;
 	
 	hasVoice = [[userList objectAtIndex: index] isVoice];
@@ -276,7 +283,7 @@
 	[self removeUser: oldName];
 	[self addUser: newName];
 
-	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(newName)];
+	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(newName, connection)];
 	if (index == NSNotFound) return self;
 
 	[[userList objectAtIndex: index] setVoice: hasVoice];
@@ -288,7 +295,7 @@
 {
 	int index;
 
-	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(name)];
+	index = [lowercaseList indexOfObject: GNUstepOutputLowercase(name, connection)];
 
 	if (index == NSNotFound) return nil;
 
@@ -305,7 +312,8 @@
 	while ((object = [iter nextObject]))
 	{
 		if ([object length] == 0) break;
-		user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: object]);
+		user = AUTORELEASE([[ChannelUser alloc] initWithModifiedName: object 
+		  withConnectionController: connection]);
 		[tempList addObject: user];
 	}
 	

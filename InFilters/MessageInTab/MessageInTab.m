@@ -42,8 +42,8 @@
 {
 	id name;
 	
-	if ([[[to string] lowercaseString] isEqualToString: [[connection nick]
-	  lowercaseString]])
+	if ([connection caseInsensitiveCompare: [to string] to: [connection nick]]
+	  == NSOrderedSame)
 	{
 		name = [[IRCUserComponents(sender) objectAtIndex: 0] string];
 		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:
@@ -66,8 +66,8 @@
 {
 	id name;
 	
-	if ([[[to string] lowercaseString] isEqualToString: [[connection nick]
-	  lowercaseString]])
+	if ([connection caseInsensitiveCompare: [to string] to: [connection nick]]
+	  == NSOrderedSame)
 	{
 		name = [[IRCUserComponents(sender) objectAtIndex: 0] string];
 		[_TS_ controlObject: [NSDictionary dictionaryWithObjectsAndKeys:

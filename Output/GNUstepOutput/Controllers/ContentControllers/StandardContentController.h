@@ -41,7 +41,6 @@
 		NSMutableDictionary *nameToTitle;
 		NSMapTable *bothToName;
 		NSString *nickname;
-		NSString * (*lowercase)(NSString *);
 		Class channelClass;
 		Class queryClass;
 		ConnectionController *connectionController;
@@ -105,9 +104,6 @@
 - (NSString *)titleForViewController: (id <ContentControllerQueryController>)aController;
 - (void)setTitle: (NSString *)aTitle
     forViewController: (id <ContentControllerQueryController>)aController;
-
-- (NSString * (*)(NSString *))lowercasingFunction;
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 
 - (void)bringNameToFront: (NSString *)aName;
 @end

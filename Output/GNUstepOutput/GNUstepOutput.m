@@ -59,28 +59,29 @@
 #import <Foundation/NSRunLoop.h>
 #import <Foundation/NSDate.h>
 
-NSString *StandardLowercase(NSString *aString)
+NSString *GNUstepOutputLowercase(NSString *aString, id connection)
 {
-	return [aString lowercaseString];
+	if (connection)
+	{
+		if ([connection isKindOfClass: [ConnectionController class]])
+		{
+			connection = [connection connection];
+		} 
+		else if ([connection conformsToProtocol: @protocol(ContentController)])
+		{
+			connection = [[connection connectionController] connection];
+		}
+	}
+	if (!connection || ![connection respondsToSelector: @selector(lowercasingSelector)]) 
+	{
+		aString = [aString lowercaseString];
+	}
+	else
+	{
+		aString = [aString performSelector: [connection lowercasingSelector]];
+	}
+	return aString;
 }
-NSString *IRCLowercase(NSString *aString)
-{
-	NSMutableString *newString = [NSMutableString 
-	  stringWithString: [aString lowercaseString]];
-	NSRange aRange = {0, [newString length]};
-
-	[newString replaceOccurrencesOfString: @"[" withString: @"{" options: 0
-	  range: aRange];
-	[newString replaceOccurrencesOfString: @"]" withString: @"}" options: 0
-	  range: aRange];
-	[newString replaceOccurrencesOfString: @"\\" withString: @"|" options: 0
-	  range: aRange];
-	[newString replaceOccurrencesOfString: @"~" withString: @"^" options: 0
-	  range: aRange];
-	
-	return [newString lowercaseString];
-}
-NSString *(*GNUstepOutputLowercase)(NSString *aString) = StandardLowercase;
 
 NSString *GNUstepOutputIdentificationForController(id controller)
 {
@@ -89,10 +90,10 @@ NSString *GNUstepOutputIdentificationForController(id controller)
 	return string;
 }
 
-BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
+BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2, id connection)
 {
-	return [GNUstepOutputLowercase(aString) isEqualToString: 
-	  GNUstepOutputLowercase(aString2)];
+	return [GNUstepOutputLowercase(aString, connection) isEqualToString: 
+	  GNUstepOutputLowercase(aString2, connection)];
 }
 
 GNUstepOutput *_GS_ = nil;

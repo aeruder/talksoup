@@ -87,8 +87,6 @@
 	
 	[masterControllers addObject: aMaster];
 
-	lowercase = IRCLowercase;
-
 	channelClass = [[self class] channelClass];
 	queryClass = [[self class] queryClass];
 	[[NSNotificationCenter defaultCenter] addObserver: self
@@ -203,13 +201,13 @@
  */
 - (id <MasterController>)masterControllerForName: (NSString *)aName
 {
-	return [nameToMasterController objectForKey: lowercase(aName)];
+	return [nameToMasterController objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 }
 /* Returns the chat view for the name <var>aName</var>
  */
 - (NSTextView *)chatViewForName: (NSString *)aName
 {
-	return [[nameToBoth objectForKey: lowercase(aName)] chatView];
+	return [[nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)] chatView];
 }
 /* Returns the controller for the name <var>aName</var>
  * This will conform to [(ContentControllerQueryView)] in the case of
@@ -218,14 +216,14 @@
  */
 - (id)viewControllerForName: (NSString *)aName
 {
-	return [nameToBoth objectForKey: lowercase(aName)];
+	return [nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 }
 /* Returns the type of view for the name <var>aName</var>.  The types is either
  * <var>ContentControllerChannelType</var> or <var>ContentControllerQueryType</var>.
  */
 - (NSString *)typeForName: (NSString *)aName
 {
-	id object = [nameToBoth objectForKey: lowercase(aName)];
+	id object = [nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 	
 	if (!object) return nil;
 	
@@ -366,12 +364,12 @@
 	}
 	else if ([aName isKindOfClass: [NSString class]])
 	{
-		controller = [nameToBoth objectForKey: lowercase(aName)];
+		controller = [nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 	}
 	else if ([aName isKindOfClass: [NSAttributedString class]])
 	{
 		controller = [nameToBoth objectForKey: 
-		    lowercase([aName string])];
+		    GNUstepOutputLowercase([aName string], connectionController)];
 	}
 	else if ([aName isKindOfClass: [NSArray class]])
 	{
@@ -463,7 +461,8 @@
 	isQuery = [aType isEqualToString: ContentControllerQueryType];
 	isChannel = [aType isEqualToString: ContentControllerChannelType];
 	
-	name = lowercase(aName);
+	name = GNUstepOutputLowercase(aName, connectionController);
+	NSLog(@"ConnectionController: %@", NSStringFromSelector([[connectionController connection] lowercasingSelector]));
 	
 	if ((controller = [nameToBoth objectForKey: name]))
 	{
@@ -513,7 +512,7 @@
 	id lo;
 	id cont;
 	
-	lo = lowercase(aName);
+	lo = GNUstepOutputLowercase(aName, connectionController);
 	
 	master = [nameToMasterController objectForKey: lo];
 	
@@ -557,8 +556,8 @@
 	id lo1, lo2;
 	id obj, which;
 	
-	lo1 = lowercase(aName);
-	lo2 = lowercase(newName);
+	lo1 = GNUstepOutputLowercase(aName, connectionController);
+	lo2 = GNUstepOutputLowercase(newName, connectionController);
 	
 	if (![nameToBoth objectForKey: lo1]) return;
 	
@@ -596,7 +595,7 @@
 }
 - (NSAttributedString *)labelForName: (NSString *)aName
 {
-	return [nameToLabel objectForKey: lowercase(aName)];
+	return [nameToLabel objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 }
 - (void)setLabel: (NSAttributedString *)aLabel forName: (NSString *)aName
 {
@@ -605,7 +604,7 @@
 	id cont;
 	id mast;
 	
-	lo = lowercase(aName);
+	lo = GNUstepOutputLowercase(aName, connectionController);
 	
 	if (!(label = RETAIN([nameToLabel objectForKey: lo])))
 	{
@@ -626,7 +625,7 @@
 
 	if (label == aLabel) return;
 	
-	[nameToLabel setObject: aLabel forKey: lowercase(aName)];
+	[nameToLabel setObject: aLabel forKey: GNUstepOutputLowercase(aName, connectionController)];
 
 	[mast setLabel: aLabel forViewController: cont];
 	
@@ -644,11 +643,11 @@
 }
 - (NSString *)presentationalNameForName: (NSString *)aName
 {
-	return [nameToPresentation objectForKey: lowercase(aName)];
+	return [nameToPresentation objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 }
 - (void)setPresentationName: (NSString *)aPresentationName forName: (NSString *)aName
 {
-	[nameToPresentation setObject: aPresentationName forKey: lowercase(aName)];
+	[nameToPresentation setObject: aPresentationName forKey: GNUstepOutputLowercase(aName, connectionController)];
 }
 - (NSString *)nickname
 {
@@ -724,21 +723,13 @@
 	  [nameToMasterController objectForKey: name], @"Master",
 	  nil]];
 }
-- (NSString * (*)(NSString *))lowercasingFunction
-{
-	return lowercase;
-}
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction
-{
-	lowercase = aFunction;
-}
 - (void)bringNameToFront: (NSString *)aName
 {
 	id <MasterController> master;
 	id <ContentControllerQueryController> view;
 
-	master = [nameToMasterController objectForKey: lowercase(aName)];
-	view = [nameToBoth objectForKey: lowercase(aName)];
+	master = [nameToMasterController objectForKey: GNUstepOutputLowercase(aName, connectionController)];
+	view = [nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 	
 	if (master) {
 		[master bringToFront];

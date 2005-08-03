@@ -24,10 +24,10 @@ NSString *StandardLowercase(NSString *aString);
 NSString *IRCLowercase(NSString *aString);
 
 // lowercase function to be used by GNUstepOutput
-extern NSString *(*GNUstepOutputLowercase)(NSString *aString);
+NSString *GNUstepOutputLowercase(NSString *aString, id connection);
+BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2, id connection);
 
 NSString *GNUstepOutputIdentificationForController(id controller);
-BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2);
 
 extern GNUstepOutput *_GS_;
 extern PreferencesController *_PREFS_;

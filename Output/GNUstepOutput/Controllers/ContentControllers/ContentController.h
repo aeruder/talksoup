@@ -155,9 +155,6 @@ extern NSString *ContentConsoleName;
 - (void)setTitle: (NSString *)aTitle
     forViewController: (id <ContentControllerQueryController>)aController;
 
-- (NSString * (*)(NSString *))lowercasingFunction;
-- (void)setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
-
 - (void)bringNameToFront: (NSString *)aName;
 @end
 
