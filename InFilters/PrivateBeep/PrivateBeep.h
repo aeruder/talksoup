@@ -1,7 +1,7 @@
 /***************************************************************************
-                             Skeleton.h
+                             PrivateBeep.h
                           -------------------
-    begin                : Sat May 10 18:58:30 CDT 2003
+    begin                : Tue Aug  9 00:54:55 CDT 2005
     copyright            : (C) 2005 by Andrew Ruder
     email                : aeruder@ksu.edu
  ***************************************************************************/
@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-@class Skeleton;
+@class PrivateBeep;
 
-#ifndef SKELETON_H
-#define SKELETON_H
+#ifndef PRIVATE_BEEP_H
+#define PRIVATE_BEEP_H
 
 #import <Foundation/NSObject.h>
 
@@ -28,14 +28,13 @@
 	#undef _l
 #endif
 
-#define _l(X) [[NSBundle bundleForClass: [Skeleton class]] \
+#define _l(X) [[NSBundle bundleForClass: [PrivateBeep class]] \
                localizedStringForKey: (X) value: nil \
                table: @"Localizable"]
 
 @class NSAttributedString;
 
-@interface Skeleton : NSObject
-// Open up TalkSoupProtocols.h and insert methods you want here...
+@interface PrivateBeep : NSObject
 @end
 
 #endif

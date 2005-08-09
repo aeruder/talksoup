@@ -1,5 +1,5 @@
 include $(GNUSTEP_MAKEFILES)/common.make
-BUNDLE_NAME = Skeleton
+BUNDLE_NAME = PrivateBeep
 
 BUNDLE_EXTENSION =
 
@@ -9,17 +9,17 @@ else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 endif
 
-Skeleton_LANGUAGES = English
-Skeleton_LOCALIZED_RESOURCE_FILES = Localizable.strings
+PrivateBeep_LANGUAGES = English
+PrivateBeep_LOCALIZED_RESOURCE_FILES = Localizable.strings
 
-Skeleton_PRINCIPAL_CLASS = Skeleton
+PrivateBeep_PRINCIPAL_CLASS = PrivateBeep
 
-Skeleton_OBJC_FILES = Skeleton.m
+PrivateBeep_OBJC_FILES = PrivateBeep.m
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-Skeleton_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+PrivateBeep_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
 else
-Skeleton_BUNDLE_LIBS = -lTalkSoupBundles
+PrivateBeep_BUNDLE_LIBS = -lTalkSoupBundles
 endif
 
 GUI_LIB = 
