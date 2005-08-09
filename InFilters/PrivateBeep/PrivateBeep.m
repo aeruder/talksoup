@@ -21,6 +21,8 @@
 #import <Foundation/NSAttributedString.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSBundle.h>
+#import <Foundation/NSNotification.h>
+#import <AppKit/NSGraphics.h>
 
 @interface PrivateBeep (PrivateMethods)
 - (void)messageReceived: (NSNotification *)aNotification;
@@ -58,10 +60,12 @@
 	  selector: @selector(messageReceived:)
 	  name: @"TalkSoupPrivateMessageNotification" 
 	  object: nil];
+	return self;
 }
 - pluginDeactivated
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	return self;
 }
 @end
 
