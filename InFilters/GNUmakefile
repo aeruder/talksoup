@@ -6,7 +6,7 @@ endif
 
 SUBPROJECTS = Highlighting MessageInTab KeepAlive Debold \
               Decolorizer Deunderline Dereverse Logging \
-			  DCCSupport MessageOutTab
+			  DCCSupport MessageOutTab PrivateBeep
 
 ifeq ($(USE_APPKIT), yes)
 SUBPROJECTS += Emoticon
