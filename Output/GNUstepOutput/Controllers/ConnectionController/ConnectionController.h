@@ -41,7 +41,6 @@ extern NSString *DNSLookupNotification;
 		NSString *realName;
 		NSString *server;
 		
-		NSString * (*lowercase)(NSString *);
 		id connection;
 		id <ContentController> content;
 		NSArray *tabCompletion;

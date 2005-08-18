@@ -38,7 +38,7 @@
 {
 	id channel = [arguments objectAtIndex: 0];
 	id topic = [arguments objectAtIndex: 1];
-	id lowername = lowercase([channel string]);
+	id lowername = GNUstepOutputLowercase([channel string], connection);
 	id data = [nameToChannelData objectForKey: lowername];
 	id view = [content viewControllerForName: lowername];
 	
@@ -67,7 +67,7 @@
 	id who = [arguments objectAtIndex: 1];
 	NSDictionary *attrib;
 	id date = [arguments objectAtIndex: 2];
-	id lowername = lowercase([channel string]);
+	id lowername = GNUstepOutputLowercase([channel string], connection);
 	id data;
 	id view;
 
