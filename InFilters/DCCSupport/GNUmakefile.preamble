@@ -8,7 +8,7 @@ ADDITIONAL_OBJCFLAGS += -DUSE_APPKIT
 endif
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-ADDITIONAL_OBJCFLAGS += -I../../Misc -include GNUstep.h $(ADDITIONAL_FRAMEWORK_DIRS)
+ADDITIONAL_OBJCFLAGS += -I../../Misc -include GNUstep.h $(ADDITIONAL_FRAMEWORK_DIRS) -F../../TalkSoupBundles
 ADDITIONAL_LDFLAGS += -F../../TalkSoupBundles
 else
 ADDITIONAL_LDFLAGS += -L../../TalkSoupBundles/TalkSoupBundles.framework/Versions/Current
