@@ -21,6 +21,8 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSEnumerator.h>
 
+#include <stdio.h>
+
 static inline NSString *identifierForEncoding(NSStringEncoding encoding)
 {
 	return [NSString stringWithFormat: @"%u", (unsigned)encoding];
