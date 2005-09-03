@@ -121,7 +121,7 @@
 - lostConnection: (id)aConnection withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	id tmp = StringFromEncoding([aConnection encoding]);
+	NSString *tmp = [_TS_ identifierForEncoding: [aConnection encoding]];
 	
 	[newInfo setObject: tmp forKey: ServerListInfoEncoding];
 	
@@ -188,7 +188,7 @@
 	
 	if (connection)
 	{
-		[newInfo setObject: StringFromEncoding([connection encoding]) 
+		[newInfo setObject: [_TS_ identifierForEncoding: [connection encoding]] 
 		  forKey: ServerListInfoEncoding];
 	}
 	

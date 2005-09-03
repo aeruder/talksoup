@@ -73,6 +73,8 @@ static NSString *big_description = nil;
 @implementation BundlePreferencesController
 + (void)initialize
 {
+	if (big_description) return;
+
 	big_description = 
 	 RETAIN([NSString stringWithContentsOfFile: [[NSBundle bundleForClass:
 	  [GNUstepOutput class]]

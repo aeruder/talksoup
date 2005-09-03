@@ -44,6 +44,8 @@ static float high_time = 0.0;
 @implementation ControlSwarm
 + (void)initialize
 {
+	if (sharedBots) return;
+
 	sharedBots = [NSMutableDictionary new];
 	connectingBots = [NSMutableDictionary new];
 }

@@ -24,8 +24,6 @@
 NSArray *PossibleUserColors(void);
 NSString *IRCColorFromUserColor(NSString *string);
 
-NSString *StringFromEncoding(const NSStringEncoding aEncoding);
-
 @interface NSString (Separation)
 - separateIntoNumberOfArguments: (int)num;
 @end

@@ -17,6 +17,7 @@
 
 #import "TalkSoup.h"
 #import "TalkSoupPrivate.h"
+#import "Dummy.h"
 
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
@@ -239,22 +240,8 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	outObjects = [NSMutableDictionary new];
 	
 	_TS_ = RETAIN(self);
-
-	[self buildEncodingsList];
 	
 	return self;
-}
-- (void)buildEncodingsList
-{
-	const NSStringEncoding *curr;
-
-	encodings = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, 20);
-	
-	for (curr = [NSString availableStringEncodings]; *curr != 0; curr++)
-	{
-		NSMapInsert(encodings, StringFromEncoding(*curr), 
-		  (const void *)*curr);
-	}
 }
 - (void)refreshPluginList
 {
@@ -262,7 +249,7 @@ static void add_old_entries(NSMutableDictionary *new, NSMutableDictionary *names
 	id object;
 	NSEnumerator *iter;
 	id arr;
-	id inputNames2, outputNames2, inNames2, outNames2;
+	NSMutableDictionary *inputNames2, *outputNames2, *inNames2, *outNames2;
 	
 	dirList = get_directories_with_talksoup();
 

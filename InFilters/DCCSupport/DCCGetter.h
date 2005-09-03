@@ -45,8 +45,8 @@
 
 - (NSDictionary *)info;
 
-- (NSHost *)localHost;
-- (NSHost *)remoteHost;
+- (id)localHost;
+- (id)remoteHost;
 
 - (NSString *)percentDone;
 

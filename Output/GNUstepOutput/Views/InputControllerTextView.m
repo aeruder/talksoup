@@ -31,6 +31,8 @@ static NSEvent *newline_event = nil;
 @implementation InputControllerTextView
 + (void)initialize
 {
+	if (newline_set) return;
+
 	unichar enters[] = {
 		NSEnterCharacter,
 		NSNewlineCharacter,

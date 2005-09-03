@@ -139,11 +139,11 @@
 {
 	return [getter info];
 }
-- (NSHost *)localHost
+- (id)localHost
 {
 	return [connection localHost];
 }
-- (NSHost *)remoteHost
+- (id)remoteHost
 {
 	return [connection remoteHost];
 }

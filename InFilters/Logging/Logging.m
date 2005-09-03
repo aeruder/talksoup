@@ -43,6 +43,8 @@ static NSInvocation *invoc = nil;
 @implementation Logging
 + (void)initialize
 {
+	if (invoc) return;
+
 	files = NSCreateMapTable(NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, 5);
 	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
 	  [self methodSignatureForSelector: @selector(commandLogging:connection:)]]);

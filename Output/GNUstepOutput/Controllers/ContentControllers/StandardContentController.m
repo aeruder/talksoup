@@ -214,7 +214,7 @@
  * a query or [(ContentControllerQueryView)] and [(ContentControllerChannelName)]
  * in the case of a channel. 
  */
-- (id)viewControllerForName: (NSString *)aName
+- (id <ContentControllerQueryController>)viewControllerForName: (NSString *)aName;
 {
 	return [nameToBoth objectForKey: GNUstepOutputLowercase(aName, connectionController)];
 }

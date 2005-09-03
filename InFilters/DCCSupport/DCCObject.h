@@ -68,7 +68,7 @@ extern NSString *DCCInfoNick;     //NSString
 - (void)abortConnection;
 
 - (void)connectionLost;
-- connectionEstablished: aTransport;
+- connectionEstablished: (id <NetTransport>)aTransport;
 - dataReceived: (NSData *)data;
 - transport;
 

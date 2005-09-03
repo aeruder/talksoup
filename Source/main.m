@@ -48,7 +48,7 @@
 
 id GetSetting(NSString *key)
 {
-	id obj;
+	NSDictionary *obj;
 	NSUserDefaults *ud;
 
 	ud = [NSUserDefaults standardUserDefaults];

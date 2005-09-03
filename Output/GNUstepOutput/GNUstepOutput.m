@@ -306,7 +306,7 @@ PreferencesController *_PREFS_ = nil;
 	
 	if (aConnection)
 	{
-		id object;
+		ConnectionController *object;
 
 		object = NSMapGet(connectionToConnectionController, aConnection);
 		[object controlObject: aControl onConnection: aConnection

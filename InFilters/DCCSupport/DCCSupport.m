@@ -63,7 +63,7 @@ NSString *DCCBlockSize = @"DCCSupportBlockSize";
 NSString *DCCDefault = @"DCCSupport";
 
 static NSInvocation *invoc = nil;
-static NSDictionary *default_dict = nil;
+static NSMutableDictionary *default_dict = nil;
 
 #define get_default(_x) [DCCSupport defaultsObjectForKey: _x]
 #define set_default(_x, _y) \
@@ -119,7 +119,7 @@ static NSString *unique_path(NSString *path)
 }	
 + (void)setDefaultsObject: aObject forKey: aKey
 {
-	id object = [NSUserDefaults standardUserDefaults];
+	NSUserDefaults *object = [NSUserDefaults standardUserDefaults];
 	
 	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
 	{
@@ -152,7 +152,8 @@ static NSString *unique_path(NSString *path)
 }
 + (id)defaultsObjectForKey: aKey
 {
-	id object = [NSUserDefaults standardUserDefaults];
+	NSMutableDictionary *object = 
+	  (NSMutableDictionary *)[NSUserDefaults standardUserDefaults];
 	
 	if ([aKey hasPrefix: DCCDefault] && ![aKey isEqualToString: DCCDefault])
 	{
@@ -219,7 +220,7 @@ static NSString *unique_path(NSString *path)
 }
 - (void)startedReceive: (id)dcc onConnection: aConnection
 {
-	id info = [dcc info];
+	NSDictionary *info = [dcc info];
 	id nick = [info objectForKey: DCCInfoNick];
 	id filename = [info objectForKey: DCCInfoFileName];
 	
@@ -230,7 +231,7 @@ static NSString *unique_path(NSString *path)
 - (void)finishedReceive: (id)dcc onConnection: aConnection
 {
 	id status = [dcc status];
-	id info = [dcc info];
+	NSDictionary *info = [dcc info];
 	id cps = [NSString stringWithFormat: @"%d", [dcc cps]];
 	id path = [dcc path];
 	id filename = [info objectForKey: DCCInfoFileName];
@@ -309,12 +310,14 @@ static NSString *unique_path(NSString *path)
 @implementation DCCSupport
 + (void)initialize
 {
+	if (invoc) return;
+
 	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
 	  [self instanceMethodSignatureForSelector: @selector(commandDCC:connection:)]]);
 	[invoc retainArguments];
 	[invoc setSelector: @selector(commandDCC:connection:)];
 
-	default_dict = [[NSDictionary alloc] initWithContentsOfFile:
+	default_dict = [[NSMutableDictionary alloc] initWithContentsOfFile:
 	  [[NSBundle bundleForClass: [DCCSupport class]]
 	  pathForResource: @"Defaults" ofType: @"plist"]];
 }
@@ -352,7 +355,8 @@ static NSString *unique_path(NSString *path)
 		x = [NSDictionary dictionaryWithDictionary: x];
 		[connections removeObjectAtIndex: val];
 		return BuildAttributedFormat(_l(@"Offer of the file %@ from %@ removed."),
-		  [x objectForKey: DCCInfoFileName], [x objectForKey: DCCInfoNick]);
+		  [(NSDictionary *)x objectForKey: DCCInfoFileName], 
+		  [(NSDictionary *)x objectForKey: DCCInfoNick]);
 	}
 	
 	return nil;
@@ -563,9 +567,10 @@ static NSString *unique_path(NSString *path)
 			  BuildAttributedFormat(_l(@"%@. %@ %@ has requested to send %@ (%@ bytes)"),
 			  [NSString stringWithFormat: @"%d", index + 1],
 			  BuildAttributedString([NSNull null], IRCBold, IRCBoldValue, _l(@"REQUEST"), nil), 
-			  [object objectForKey: DCCInfoNick],
-			  [object objectForKey: DCCInfoFileName],  
-			  [NSString stringWithFormat: @"%d", [[object objectForKey: DCCInfoFileSize] intValue]])];
+			  [(NSDictionary *)object objectForKey: DCCInfoNick],
+			  [(NSDictionary *)object objectForKey: DCCInfoFileName],  
+			  [NSString stringWithFormat: @"%d", 
+			   [[(NSDictionary *)object objectForKey: DCCInfoFileSize] intValue]])];
 		}
 		if ([object isKindOfClass: [DCCGetter class]])
 		{
@@ -624,7 +629,7 @@ static NSString *unique_path(NSString *path)
 {
 	id x;
 	id path;
-	id dict;
+	NSDictionary *dict;
 	int number;
 	BOOL isDir;
 	id dfm;

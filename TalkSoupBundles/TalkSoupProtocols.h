@@ -254,9 +254,17 @@
 
 - (int)port;
 
-- (NSHost *)remoteHost;
+/**
+ * The object returned by this method should be or at least act like
+ * a NSHost object
+ */
+- (id)remoteHost;
 
-- (NSHost *)localHost;
+/**
+ * The object returned by this method should be or at least act like
+ * a NSHost object
+ */
+- (id)localHost;
 
 - setEncoding: (NSStringEncoding)encoding;
 

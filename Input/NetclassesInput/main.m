@@ -187,7 +187,7 @@
 	[super connectionLost];
 	[control closeConnection: self];
 }
-- connectionEstablished: (id)aTransport
+- connectionEstablished: (id <NetTransport>)aTransport;
 {
 	id x;
 	aTransport = AUTORELEASE([[NetclassesInputSendThenDieTransport 

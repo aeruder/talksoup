@@ -168,7 +168,7 @@ NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
 	
 	if ([aKey hasPrefix: @"GNUstepOutput"])
 	{
-		id y;
+		NSDictionary *y;
 		id newKey = [aKey substringFromIndex: 13];
 		
 		y = [[NSUserDefaults standardUserDefaults] 

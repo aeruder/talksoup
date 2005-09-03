@@ -41,7 +41,7 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSRange.h>
 
-static NSDictionary *highlighting_defaults = nil;
+static NSMutableDictionary *highlighting_defaults = nil;
 static id main_controller = nil;
 
 #define get_pref(__x) [Highlighting defaultsObjectForKey: (__x)]
@@ -225,12 +225,14 @@ static NSInvocation *invoc = nil;
 @implementation Highlighting
 + (void)initialize
 {
+	if (invoc) return;
+
 	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
 	  [self methodSignatureForSelector: @selector(commandHighlighting:connection:)]]);
 	[invoc retainArguments];
 	[invoc setTarget: self];
 	[invoc setSelector: @selector(commandHighlighting:connection:)];
-	highlighting_defaults = [[NSDictionary alloc] initWithContentsOfFile:
+	highlighting_defaults = [[NSMutableDictionary alloc] initWithContentsOfFile:
 	  [[NSBundle bundleForClass: [Highlighting class]] 
 	  pathForResource: @"Defaults" ofType: @"plist"]];
 }	
@@ -240,12 +242,12 @@ static NSInvocation *invoc = nil;
 }
 + (void)setDefaultsObject: aObject forKey: aKey
 {
-	id object = [NSUserDefaults standardUserDefaults];
+	NSUserDefaults *object = [NSUserDefaults standardUserDefaults];
 	
 	if ([aKey hasPrefix: @"Highlighting"] && ![aKey isEqualToString: @"Highlighting"])
 	{
 		NSMutableDictionary *y;
-		id tmp;
+		NSDictionary *tmp;
 		
 		aKey = [aKey substringFromIndex: 12];
 		tmp = [object objectForKey: @"Highlighting"];
@@ -273,7 +275,8 @@ static NSInvocation *invoc = nil;
 }
 + (id)defaultsObjectForKey: aKey
 {
-	id object = [NSUserDefaults standardUserDefaults];
+	NSMutableDictionary *object = 
+	  (NSMutableDictionary *)[NSUserDefaults standardUserDefaults];
 	
 	if ([aKey hasPrefix: @"Highlighting"] && ![aKey isEqualToString: @"Highlighting"])
 	{

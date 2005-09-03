@@ -559,7 +559,6 @@
 	id array;
 	id arg = nil;
 	NSStringEncoding enc = 0;
-	id temp;
 	
 	if (!connection) return NO_CONNECT;
 	
@@ -571,14 +570,31 @@
 		arg = [arg lowercaseString];
 	}
 	
-	if (arg) enc = (NSStringEncoding)NSMapGet(encodings, arg);
+	if (arg) enc = [_TS_ encodingForIdentifier: arg];
 	
 	if (!enc)
 	{
-		temp = NSAllMapTableKeys(encodings);
-		return BuildAttributedString(_(@"Usage: /encoding <encoding>"), @"\n", 
-		  _(@"Available encodings: "), [temp componentsJoinedByString: @", "], @"\n",
-		  _(@"Current encoding: "), StringFromEncoding([connection encoding]), nil);
+		NSMutableAttributedString *string;
+		const NSStringEncoding *iter;
+		string = AUTORELEASE([NSMutableAttributedString new]);
+
+		for (iter = [_TS_ allEncodings]; *iter; iter++)
+		{
+			NSAttributedString *thisone;
+			if ([string length] > 0) 
+				[string appendAttributedString: S2AS(@", ")];
+			thisone = 
+			  BuildAttributedString(@"(", MARK, IRCBold, IRCBoldValue,
+			  [_TS_ identifierForEncoding: *iter], @")", 
+			  [_TS_ nameForEncoding: *iter], nil);
+			[string appendAttributedString: thisone];
+		}
+		
+		return BuildAttributedString(_(@"Usage: /encoding <encoding #>"), @"\n", 
+		  MARK, IRCBold, IRCBoldValue, _(@"Available encodings: "), 
+		  string, @"\n", _(@"Current encoding: "), @"(", MARK, IRCBold, IRCBoldValue,
+		  [_TS_ identifierForEncoding: [connection encoding]], @")", 
+		  [_TS_ nameForEncoding: [connection encoding]], nil);
 	}
 	
 	[connection setEncoding: enc];

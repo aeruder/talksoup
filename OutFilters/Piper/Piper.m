@@ -106,6 +106,8 @@ NSInvocation *invoc = nil;
 @implementation Piper
 + (void)initialize
 {
+	if (invoc) return;
+
 	invoc = RETAIN([NSInvocation invocationWithMethodSignature: 
 	  [self methodSignatureForSelector: @selector(commandPiper:connection:)]]);
 	[invoc retainArguments];

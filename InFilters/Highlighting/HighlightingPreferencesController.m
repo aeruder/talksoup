@@ -49,6 +49,8 @@ NSString *nothingThereYetMessage = nil;
 @implementation HighlightingPreferencesController
 + (void)initialize
 {
+	if (nothingThereYetMessage) return;
+
 	nothingThereYetMessage = _l(@"Double-click to add");
 }
 - init

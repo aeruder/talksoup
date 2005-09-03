@@ -106,7 +106,7 @@ NSString *BuildDCCSendRequest(NSDictionary *info)
 		[[NetApplication sharedInstance] disconnectObject: self];
 	}
 }
-- connectionEstablished: aTransport
+- connectionEstablished: (id <NetTransport>)aTransport
 {
 	transport = RETAIN(aTransport);
 	[[NetApplication sharedInstance] connectObject: self];
@@ -185,7 +185,7 @@ NSString *BuildDCCSendRequest(NSDictionary *info)
 
 	return self;
 }
-- connectionEstablished: aTransport
+- connectionEstablished: (id <NetTransport>)aTransport
 {
 	DESTROY(connection);
 	[super connectionEstablished: aTransport];
@@ -241,7 +241,7 @@ static id connection_holder = nil;
 
 @interface DCCConnectionHolder : NSObject < NetObject >
 - (void)connectionLost;
-- connectionEstablished: aTransport;
+- connectionEstablished: (id <NetTransport>)aTransport;
 - dataReceived: (NSData *)data;
 - transport;
 @end
@@ -250,7 +250,7 @@ static id connection_holder = nil;
 - (void)connectionLost
 {
 }
-- connectionEstablished: aTransport
+- connectionEstablished: (id <NetTransport>)aTransport
 {
 	connection_holder = RETAIN(aTransport);
 	return self;
@@ -506,7 +506,7 @@ static id connection_holder = nil;
 		[self connectionLost];
 	}
 }		
-- connectionEstablished: aTransport
+- connectionEstablished: (id <NetTransport>)aTransport
 {
 	[super connectionEstablished: aTransport];
 	
