@@ -43,8 +43,6 @@ rm -fr build || true
 rm -fr TalkSoup.app || true
 rm -fr TalkSoupBundles/netclasses.framework || true
 mkdir build
-make distclean
-make -C ../netclasses distclean || true
 
 echo "Compiling netclasses"
 sleep 1
@@ -52,20 +50,13 @@ sleep 1
 # First we make netclasses correctly...
 (
 	trap "exit 1" ERR
-	cd ../netclasses ;
-	./configure
+	cd ../netclasses
+	if ! [ -e GNUmakefile ]; then
+		./configure
+	fi
+	make debug=yes
 	cd Source
-	make debug=yes \
-	  LIB_LINK_INSTALL_NAME="@executable_path/../Frameworks/netclasses.framework/netclasses"
 	mv netclasses.framework ../../TalkSoup/TalkSoupBundles
-) || exit 1
-
-# Then TalkSoupBundles
-(
-	trap "exit 1" ERR
-	cd TalkSoupBundles
-	make debug=yes \
-	  LIB_LINK_INSTALL_NAME="@executable_path/../Frameworks/TalkSoupBundles.framework/TalkSoupBundles"
 ) || exit 1
 
 make debug=yes
@@ -87,5 +78,19 @@ mv build/Applications/TalkSoup.debug TalkSoup.app
 rm -fr build
 
 echo "TalkSoup.app is done"
+echo "Taking care of the install names"
+
+find TalkSoup.app/Contents -type f | while read line ; do
+	if ! [ -x "$line" ]; then
+		continue
+	fi
+	if ! ( file "$line" | grep -q "Mach-O" ); then
+		continue
+	fi
+	echo "Changing install path for $line"
+	install_name_tool -change TalkSoupBundles.framework/TalkSoupBundles @executable_path/../Frameworks/TalkSoupBundles.framework/TalkSoupBundles "$line"
+	install_name_tool -change netclasses.framework/netclasses @executable_path/../Frameworks/netclasses.framework/netclasses "$line"
+done
+	
 	
 exit 0
