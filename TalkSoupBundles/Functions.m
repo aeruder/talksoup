@@ -88,11 +88,6 @@ NSString *IRCColorFromUserColor(NSString *string)
 	return x;
 }
 
-NSString *StringFromEncoding(const NSStringEncoding a)
-{
-	return [NSString localizedNameOfStringEncoding: a];
-}
-
 NSArray *PossibleUserColors(void)
 {
 	if (!mappings) build_mappings();
