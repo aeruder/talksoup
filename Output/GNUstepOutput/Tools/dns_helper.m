@@ -38,7 +38,7 @@ int main(int argc, char **argv, char **env)
 	NSHost *aHost, *aHost2;
 
 	signal(SIGPIPE, SIG_IGN);
-	if (argc < 3) 
+	if (argc < 4) 
 		return 1;
 
 	regname = [NSString stringWithCString: argv[1]];

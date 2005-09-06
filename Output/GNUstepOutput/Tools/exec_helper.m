@@ -147,13 +147,13 @@ int main(int argc, char **argv, char **env)
 	NSString *command;
 
 	signal(SIGPIPE, SIG_IGN);
-	if (argc < 3) 
+	if (argc < 4) 
 		return 1;
 
 	my_regname = [NSString stringWithCString: argv[1]];
 	my_notname = [NSString stringWithCString: argv[2]];
 	command = [NSString stringWithCString: argv[3]];
-	if (argc >= 4)
+	if (argc >= 5)
 		my_dest = [NSString stringWithCString: argv[4]];
 
 	run_it(command);
