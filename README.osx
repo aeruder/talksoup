@@ -41,35 +41,14 @@ Step 1:
 	included documentation and proceed with its installation.
 
 Step 2:
-	Set GNUSTEP_INSTALLATION_DIR to the root directory that you wish to install
-	to.  All directories will be based off this root directory.  If you wish
-	to install into the standard location for frameworks, you probably want
-	GNUSTEP_INSTALLATION_DIR=/.  If you do not have administrator rights, you
-	will need to use GNUSTEP_INSTALLATION_DIR=$HOME
+	Download netclasses from http://netclasses.aeruder.net
+
+Step 2:
+	Run Misc/setup_osx.sh and read the instructions.
 
 Step 3:
-	Install netclasses from http://netclasses.aeruder.net
-
-Step 4:
-	Type make followed by make install.  TalkSoup should be installed.  
-	You will not be able to build the documentation without gnustep-base
-	installed.  It is recommended to download the documentation off the
-	website (http://aeruder.gnustep.us).
-
-Example:
-	The following commands will work in most cases:
-		make install GNUSTEP_INSTALLATION_DIR=/ 
-	or
-		make install GNUSTEP_INSTALLATION_DIR=$HOME ADDITIONAL_FRAMEWORK_DIRS=$HOME/Library/Frameworks
-		
-Alternative:
-	This is a script in Misc/ called setup_osx.sh
-
-	From the toplevel TalkSoup directory, run Misc/setup_osx.sh and
-	read the instructions and restrictions carefully.  This script
-	will compile TalkSoup and netclasses and take care of all the
-	packaging into a single .app bundle without installing anything
-	outside of the source tree.
+	Target .app will be at TalkSoup.app with all frameworks and plugins as part
+	of the bundle.
 
 Conclusion:
 	Have fun!  Hope you enjoy TalkSoup! :)
