@@ -1,3 +1,6 @@
+2005-09-06 Andy Ruder <aeruder at ksu dot edu>
+ * TalkSoup 1.0alpha 
+
 2005-07-14 Andrew Ruder <aeruder@ksu.edu>
  * GNUstepOutput/BundlePreferences: Moved help text to external file,
  corrected help text.  Corrected NSTableView handling...

@@ -128,7 +128,7 @@
 - CTCPRequestVERSION: (NSAttributedString *)query from: (NSAttributedString *)aPerson
 {
 	[_TS_ sendCTCPReply: S2AS(@"VERSION") withArgument:
-	  BuildAttributedFormat(@"TalkSoup.app %@", 
+	  BuildAttributedFormat(@"TalkSoup.app %@ - http://talksoup.aeruder.net", 
 	    [[[NSBundle mainBundle] infoDictionary] objectForKey: @"ApplicationRelease"])
 	  to: [IRCUserComponents(aPerson) objectAtIndex: 0] 
 	  onConnection: connection 
