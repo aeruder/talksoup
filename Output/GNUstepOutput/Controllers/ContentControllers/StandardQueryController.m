@@ -195,12 +195,11 @@
 	id textStorage;
 	NSString *string;
 	NSRange allRange, thisRange;
-	unsigned len;
 	NSMutableAttributedString *mutString;
 	id date;
 	NSAttributedString *format = nil;
 	unsigned formatlen = 0;
-	unsigned offset = 0;
+	BOOL handleFirst;
 
 	if ([aString length] == 0)
 	{
@@ -208,8 +207,7 @@
 	}
 
 	string = [aString string];
-	len = [string length];
-	allRange = NSMakeRange(0, len);
+	allRange = NSMakeRange(0, [string length]);
 	mutString = [[NSMutableAttributedString alloc] 
 	  initWithAttributedString: aString];
 	date = [NSDate date];
@@ -225,23 +223,48 @@
 		    [NSNull null], @"TimestampFormat", nil]]));
 	}
 
-	do
+	textStorage = [chatView textStorage];
+	if ([textStorage length] == 0 || [[textStorage string] hasSuffix: @"\n"])
 	{
-		thisRange = [string rangeOfString: @"\n" options: 0 
-		  range: allRange];
-		if (thisRange.location == NSNotFound) break;
+		handleFirst = YES;
+	}
+	else
+	{
+		handleFirst = NO;
+	}
+	thisRange.location = 0;
+	thisRange.length = 1;
+	
+	while (1)
+	{
+		string = [mutString string];
+		NSLog(@"%d %d %d %d", allRange.location, allRange.length, thisRange.location, thisRange.length);
+		if (!handleFirst)
+		{
+			thisRange = [string rangeOfString: @"\n" options: 0
+			  range: allRange];
+			if (thisRange.location == NSNotFound) break;
+			thisRange.location += 1;
+		}
+		else
+		{
+			handleFirst = NO;
+		}
+		allRange.location += thisRange.location;
+		allRange.length -= thisRange.location;
+		NSLog(@"%d %d %d %d", allRange.location, allRange.length, thisRange.location, thisRange.length);
+		if (allRange.length == 0) break;
+		
 		[mutString addAttribute: @"Timestamp" value: date range: 
-		  NSMakeRange(allRange.location + offset, 1)];
-		if (format && [format length]) 
+		  NSMakeRange(allRange.location, 1)];
+		if (format && formatlen) 
 		{
 			[mutString insertAttributedString: format atIndex:
-			  allRange.location + offset];
-			offset += formatlen;
+			  allRange.location];
+			allRange.location += formatlen;
 		}
 		numLines++;
-		allRange.location = thisRange.location + 1;
-		allRange.length = len - allRange.location;
-	} while (allRange.length > 0);
+	}
 	
 	textStorage = [chatView textStorage];
 	[textStorage beginEditing];
@@ -304,6 +327,7 @@
 			{
 				[textStorage deleteCharactersInRange: lastRange];
 				curRange.location -= lastRange.length;
+				len -= lastRange.length;
 				if (timestampEnabled) 
 				{
 					if (![lastDate isEqual: date])
@@ -321,12 +345,14 @@
 					[textStorage insertAttributedString: lastFmt
 					  atIndex: curRange.location];
 					curRange.location += lastFmtLength;
+					len += lastFmtLength;
 				}
 			}
 		}
 		if ((curRange.location + curRange.length) >= len) break;
 		lastAttributes = thisAttributes;
 		lastRange = curRange;
+		allRange.length = len;
 		thisAttributes = [textStorage attributesAtIndex: (curRange.location + curRange.length)
 		  longestEffectiveRange: &curRange inRange: allRange];
 	}
