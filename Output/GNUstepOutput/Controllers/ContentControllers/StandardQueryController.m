@@ -238,7 +238,6 @@
 	while (1)
 	{
 		string = [mutString string];
-		NSLog(@"%d %d %d %d", allRange.location, allRange.length, thisRange.location, thisRange.length);
 		if (!handleFirst)
 		{
 			thisRange = [string rangeOfString: @"\n" options: 0
@@ -252,7 +251,6 @@
 		}
 		allRange.location += thisRange.location;
 		allRange.length -= thisRange.location;
-		NSLog(@"%d %d %d %d", allRange.location, allRange.length, thisRange.location, thisRange.length);
 		if (allRange.length == 0) break;
 		
 		[mutString addAttribute: @"Timestamp" value: date range: 
@@ -298,8 +296,8 @@
 	NSDictionary *lastAttributes = nil;
 	NSDictionary *thisAttributes;
 	NSDate *date;
-	NSDate *lastDate;
-	NSAttributedString *lastFmt;
+	NSDate *lastDate = nil;
+	NSAttributedString *lastFmt = nil;
 	unsigned lastFmtLength;
 
 	RELEASE(timestampFormat);
@@ -311,43 +309,42 @@
 	if (!len) return;
 
 	allRange = NSMakeRange(0, len);
-	[textStorage beginEditing];
 
 	thisAttributes = [textStorage attributesAtIndex: 0
 	  longestEffectiveRange: &curRange inRange: allRange];
 	lastRange = curRange;
-	lastFmt = nil;
-	lastDate = nil;
 	while (1) 
 	{
-		if ([thisAttributes objectForKey: @"TimeStamp"])
+		if ((date = [thisAttributes objectForKey: @"Timestamp"]))
 		{
-			if (lastAttributes && 
-			    (date = [lastAttributes objectForKey: @"TimestampFormat"]))
+			[textStorage beginEditing];
+			if (lastAttributes && [lastAttributes objectForKey: @"TimestampFormat"])
 			{
 				[textStorage deleteCharactersInRange: lastRange];
 				curRange.location -= lastRange.length;
 				len -= lastRange.length;
-				if (timestampEnabled) 
-				{
-					if (![lastDate isEqual: date])
-					{
-						NSString *aFmt;
-						aFmt = [date descriptionWithCalendarFormat: timestampFormat
-						  timeZone: nil locale: nil];
-						lastFmt = AUTORELEASE(([[NSAttributedString alloc] 
-						  initWithString: aFmt attributes: 
-						  [NSDictionary dictionaryWithObjectsAndKeys:
-							[NSNull null], @"TimestampFormat", nil]]));
-						lastFmtLength = [[lastFmt string] length];
-					}
-					lastDate = date;
-					[textStorage insertAttributedString: lastFmt
-					  atIndex: curRange.location];
-					curRange.location += lastFmtLength;
-					len += lastFmtLength;
-				}
 			}
+
+			if (timestampEnabled) 
+			{
+				if (![lastDate isEqual: date])
+				{
+					NSString *aFmt;
+					aFmt = [date descriptionWithCalendarFormat: timestampFormat
+					  timeZone: nil locale: nil];
+					lastFmt = AUTORELEASE(([[NSAttributedString alloc] 
+					  initWithString: aFmt attributes: 
+					  [NSDictionary dictionaryWithObjectsAndKeys:
+						[NSNull null], @"TimestampFormat", nil]]));
+					lastFmtLength = [[lastFmt string] length];
+				}
+				lastDate = date;
+				[textStorage insertAttributedString: lastFmt
+				  atIndex: curRange.location];
+				curRange.location += lastFmtLength;
+				len += lastFmtLength;
+			}
+			[textStorage endEditing];
 		}
 		if ((curRange.location + curRange.length) >= len) break;
 		lastAttributes = thisAttributes;
@@ -356,7 +353,6 @@
 		thisAttributes = [textStorage attributesAtIndex: (curRange.location + curRange.length)
 		  longestEffectiveRange: &curRange inRange: allRange];
 	}
-	[textStorage endEditing];
 }
 - (void)colorChanged: (NSNotification *)aNotification
 {
