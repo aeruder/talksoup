@@ -23,7 +23,7 @@
 #import <Foundation/NSObject.h>
 #import "Controllers/ContentControllers/ContentController.h"
 
-@class NSView, ScrollingTextView;
+@class NSView, ScrollingTextView, NSString;
  
 @interface StandardQueryController : NSObject < ContentControllerQueryController >
 	{
@@ -31,6 +31,8 @@
 		id chatView;
 		int numLines;
 		int scrollLines;
+		NSString *timestampFormat;
+		BOOL timestampEnabled;
 	}
 + (NSString *)standardNib;
 - (NSView *)contentView;

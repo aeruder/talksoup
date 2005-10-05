@@ -54,9 +54,6 @@
 @interface StandardChannelController (PreferencesCenter)
 - (void)colorChanged: (NSNotification *)aNotification;
 - (void)userListFontChanged: (NSNotification *)aNotification;
-- (void)chatFontChanged: (NSNotification *)aNotification;
-- (void)wrapIndentChanged: (NSNotification *)aNotification;
-- (void)scrollLinesChanged: (NSNotification *)aNotification;
 @end
 
 @interface StandardChannelController (DelegateMethods)
@@ -74,7 +71,8 @@
 {
 	if (!(self = [super init])) return self;
 
-	if (!([NSBundle loadNibNamed: [StandardChannelController standardNib] owner: self]))
+	if ([self isMemberOfClass: [StandardChannelController class]] && 
+	   !([NSBundle loadNibNamed: [StandardChannelController standardNib] owner: self]))
 	{
 		NSLog(@"Failed to load StandardChannelController UI");
 		[self dealloc];
@@ -85,38 +83,14 @@
 }
 - (void)awakeFromNib
 {
+	[super awakeFromNib];
+
 	id x;
 	id userColumn;
 	id userScroll;
-	id contain;
 	id font;
 	NSRect frame;
 	
-	frame = [[[chatView enclosingScrollView] contentView] bounds];
-
-	[chatView setEditable: NO];
-	[chatView setSelectable: YES];
-	[chatView setRichText: NO];
-	[chatView setDrawsBackground: YES];
-
-	[chatView setHorizontallyResizable: NO];
-	[chatView setVerticallyResizable: YES];
-	[chatView setMinSize: NSMakeSize(0, 0)];
-	[chatView setMaxSize: NSMakeSize(1e7, 1e7)];
-
-	contain = [chatView textContainer];
-	[chatView setTextContainerInset: NSMakeSize(2, 2)];
-	[contain setWidthTracksTextView: YES];
-	[contain setHeightTracksTextView: NO];
-	
-	[chatView setBackgroundColor: [NSColor colorFromEncodedData:
-	  [_PREFS_ preferenceForKey: GNUstepOutputBackgroundColor]]];
-	[chatView setTextColor: [NSColor colorFromEncodedData:
-	  [_PREFS_ preferenceForKey: GNUstepOutputTextColor]]];
-	[chatView setFrame: frame];
-
-	[chatView setNeedsDisplay: YES];
-
 	userColumn = AUTORELEASE([[NSTableColumn alloc] 
 	  initWithIdentifier: @"User List"]);
 	
@@ -163,60 +137,10 @@
 	[self splitView: splitView resizeSubviewsWithOldSize:
 	  [splitView frame].size];
 
-	x = RETAIN([(NSWindow *)window contentView]);
-	[window close];
-	AUTORELEASE(window);
-	window = x;
-	[window setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(colorChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputBackgroundColor];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(colorChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputTextColor];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(colorChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputOtherBracketColor];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(colorChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputPersonalBracketColor];
-
 	[[NSNotificationCenter defaultCenter] addObserver: self
 	  selector: @selector(userListFontChanged:)
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputUserListFont];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(chatFontChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputChatFont];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(chatFontChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputBoldChatFont];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(wrapIndentChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputWrapIndent];
-
-	scrollLines = [[_PREFS_ preferenceForKey: GNUstepOutputBufferLines]
-	  intValue];
-
-	[[NSNotificationCenter defaultCenter] addObserver: self
-	  selector: @selector(scrollLinesChanged:)
-	  name: DefaultsChangedNotification
-	  object: GNUstepOutputBufferLines];
-
 }
 - (void)dealloc
 {
@@ -225,7 +149,6 @@
 	[splitView setDelegate: nil];
 	[tableView setDoubleAction: NULL];
 	DESTROY(channelSource);
-	RELEASE(window);
 	[super dealloc];
 }
 - (Channel *)channelSource
@@ -246,29 +169,6 @@
 - (void)refreshFromChannelSource
 {
 	[tableView reloadData];
-}
-- (NSTextView *)chatView
-{
-	return chatView;
-}
-- (NSView *)contentView
-{
-	return window;
-}
-- (void)appendAttributedString: (NSAttributedString *)aString
-{
-	id textStorage;
-
-	textStorage = [chatView textStorage];
-	[textStorage appendAttributedString: aString];
-	numLines += [[[aString string] 
-	  componentsSeparatedByString: @"\n"] count] - 1;
-
-	if (numLines > scrollLines)
-	{
-		[textStorage chopNumberOfLines: numLines - scrollLines];
-		numLines = scrollLines;
-	}
 }
 @end
 
@@ -306,23 +206,6 @@
 	[tableView setRowHeight: [aFont pointSize] * 1.5];
 	[tableView setNeedsDisplay: YES];
 	[tableView reloadData];
-}
-- (void)chatFontChanged: (NSNotification *)aNotification
-{
-	[[chatView textStorage]
-	  updateAttributedStringForGNUstepOutputPreferences: 
-	  [aNotification object]];
-}
-- (void)wrapIndentChanged: (NSNotification *)aNotification
-{
-	[[chatView textStorage]
-	  updateAttributedStringForGNUstepOutputPreferences: 
-	  [aNotification object]];
-}
-- (void)scrollLinesChanged: (NSNotification *)aNotification
-{
-	scrollLines = [[_PREFS_ preferenceForKey: GNUstepOutputBufferLines]
-	  intValue];
 }
 @end
 

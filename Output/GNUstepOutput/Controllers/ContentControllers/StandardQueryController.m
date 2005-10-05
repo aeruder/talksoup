@@ -40,8 +40,11 @@
 #import <Foundation/NSDebug.h>
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSColor.h>
+#import <Foundation/NSNull.h>
 
 @interface StandardQueryController (PreferencesCenter)
+- (void)timestampEnabledChanged: (NSNotification *)aNotification;
+- (void)timestampFormatChanged: (NSNotification *)aNotification;
 - (void)colorChanged: (NSNotification *)aNotification;
 - (void)chatFontChanged: (NSNotification *)aNotification;
 - (void)wrapIndentChanged: (NSNotification *)aNotification;
@@ -54,6 +57,20 @@
 	return @"StandardQuery";
 }
 - init
+{
+	if (!(self = [super init])) return self;
+
+	if ([self isMemberOfClass: [StandardQueryController class]] && 
+	   !([NSBundle loadNibNamed: [StandardQueryController standardNib] owner: self]))
+	{
+		NSLog(@"Failed to load StandardQueryController UI");
+		[self dealloc];
+		return nil;
+	}
+
+	return self;
+}
+- initFromChannel
 {
 	if (!(self = [super init])) return self;
 
@@ -135,6 +152,20 @@
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputWrapIndent];
 
+	timestampEnabled = [GeneralPreferencesController timestampEnabled];
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(timestampEnabledChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputTimestampEnabled];
+
+	timestampFormat = RETAIN([_PREFS_ preferenceForKey: GNUstepOutputTimestampFormat]);
+
+	[[NSNotificationCenter defaultCenter] addObserver: self
+	  selector: @selector(timestampFormatChanged:)
+	  name: DefaultsChangedNotification
+	  object: GNUstepOutputTimestampFormat];
+
 	scrollLines = [[_PREFS_ preferenceForKey: GNUstepOutputBufferLines]
 	  intValue];
 
@@ -148,6 +179,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	DESTROY(window);
+	RELEASE(timestampFormat);
 	[super dealloc];
 }
 - (NSTextView *)chatView
@@ -161,12 +193,61 @@
 - (void)appendAttributedString: (NSAttributedString *)aString
 {
 	id textStorage;
+	NSString *string;
+	NSRange allRange, thisRange;
+	unsigned len;
+	NSMutableAttributedString *mutString;
+	id date;
+	NSAttributedString *format = nil;
+	unsigned formatlen = 0;
+	unsigned offset = 0;
 
+	if ([aString length] == 0)
+	{
+		return;
+	}
+
+	string = [aString string];
+	len = [string length];
+	allRange = NSMakeRange(0, len);
+	mutString = [[NSMutableAttributedString alloc] 
+	  initWithAttributedString: aString];
+	date = [NSDate date];
+	if (timestampEnabled) 
+	{
+		NSString *aFmt;
+		aFmt = [date descriptionWithCalendarFormat: timestampFormat
+		  timeZone: nil locale: nil];
+		formatlen = [aFmt length];
+		format = AUTORELEASE(([[NSAttributedString alloc] 
+		  initWithString: aFmt attributes: 
+		  [NSDictionary dictionaryWithObjectsAndKeys:
+		    [NSNull null], @"TimestampFormat", nil]]));
+	}
+
+	do
+	{
+		thisRange = [string rangeOfString: @"\n" options: 0 
+		  range: allRange];
+		if (thisRange.location == NSNotFound) break;
+		[mutString addAttribute: @"Timestamp" value: date range: 
+		  NSMakeRange(allRange.location + offset, 1)];
+		if (format && [format length]) 
+		{
+			[mutString insertAttributedString: format atIndex:
+			  allRange.location + offset];
+			offset += formatlen;
+		}
+		numLines++;
+		allRange.location = thisRange.location + 1;
+		allRange.length = len - allRange.location;
+	} while (allRange.length > 0);
+	
 	textStorage = [chatView textStorage];
-	[textStorage appendAttributedString: aString];
-
-	numLines += [[[aString string] 
-	  componentsSeparatedByString: @"\n"] count] - 1;
+	[textStorage beginEditing];
+	[textStorage appendAttributedString: mutString];
+	[textStorage endEditing];
+	RELEASE(mutString);
 
 	if (numLines > scrollLines)
 	{
@@ -177,6 +258,80 @@
 @end
 
 @implementation StandardQueryController (PreferencesCenter)
+- (void)timestampEnabledChanged: (NSNotification *)aNotification
+{
+	timestampEnabled = [GeneralPreferencesController timestampEnabled];
+
+	[self timestampFormatChanged: nil];
+}
+- (void)timestampFormatChanged: (NSNotification *)aNotification
+{
+	NSRange curRange;
+	NSRange allRange;
+	NSTextStorage *textStorage;
+	NSString *string = nil;
+	unsigned len;
+	NSRange lastRange;
+	NSDictionary *lastAttributes = nil;
+	NSDictionary *thisAttributes;
+	NSDate *date;
+	NSDate *lastDate;
+	NSAttributedString *lastFmt;
+	unsigned lastFmtLength;
+
+	RELEASE(timestampFormat);
+	timestampFormat = RETAIN([_PREFS_ preferenceForKey: GNUstepOutputTimestampFormat]);
+	
+	textStorage = [chatView textStorage];
+	string = [textStorage string];
+	len = [string length];
+	if (!len) return;
+
+	allRange = NSMakeRange(0, len);
+	[textStorage beginEditing];
+
+	thisAttributes = [textStorage attributesAtIndex: 0
+	  longestEffectiveRange: &curRange inRange: allRange];
+	lastRange = curRange;
+	lastFmt = nil;
+	lastDate = nil;
+	while (1) 
+	{
+		if ([thisAttributes objectForKey: @"TimeStamp"])
+		{
+			if (lastAttributes && 
+			    (date = [lastAttributes objectForKey: @"TimestampFormat"]))
+			{
+				[textStorage deleteCharactersInRange: lastRange];
+				curRange.location -= lastRange.length;
+				if (timestampEnabled) 
+				{
+					if (![lastDate isEqual: date])
+					{
+						NSString *aFmt;
+						aFmt = [date descriptionWithCalendarFormat: timestampFormat
+						  timeZone: nil locale: nil];
+						lastFmt = AUTORELEASE(([[NSAttributedString alloc] 
+						  initWithString: aFmt attributes: 
+						  [NSDictionary dictionaryWithObjectsAndKeys:
+							[NSNull null], @"TimestampFormat", nil]]));
+						lastFmtLength = [[lastFmt string] length];
+					}
+					lastDate = date;
+					[textStorage insertAttributedString: lastFmt
+					  atIndex: curRange.location];
+					curRange.location += lastFmtLength;
+				}
+			}
+		}
+		if ((curRange.location + curRange.length) >= len) break;
+		lastAttributes = thisAttributes;
+		lastRange = curRange;
+		thisAttributes = [textStorage attributesAtIndex: (curRange.location + curRange.length)
+		  longestEffectiveRange: &curRange inRange: allRange];
+	}
+	[textStorage endEditing];
+}
 - (void)colorChanged: (NSNotification *)aNotification
 {
 	id object;

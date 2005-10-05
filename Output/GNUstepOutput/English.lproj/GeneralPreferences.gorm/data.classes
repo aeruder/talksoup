@@ -2,13 +2,15 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "setText:"
+	    "setText:",
+	    "setTimestampEnabled:"
 	);
 	Super = NSObject;
     };
     GeneralPreferencesController = {
 	Actions = (
-	    "setText:"
+	    "setText:",
+	    "setTimestampEnabled:"
 	);
 	Outlets = (
 	    preferencesView,
@@ -16,7 +18,9 @@
 	    nameView,
 	    passwordView,
 	    nickView,
-	    quitView
+	    quitView,
+	    timestampButton,
+	    timestampFormatField
 	);
 	Super = NSObject;
     };

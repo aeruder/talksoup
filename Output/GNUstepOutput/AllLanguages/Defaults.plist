@@ -6,6 +6,8 @@
 	BufferLines = 1000;
 	WrapIndent = "0.0";
 	DefaultQuitMessage = "[TalkSoup] Get it today: http://talksoup.aeruder.net";
+	TimestampEnabled = YES;
+	TimestampFormat = "[%H:%M] ";
 
 	Aliases = {
 		j = "/join";

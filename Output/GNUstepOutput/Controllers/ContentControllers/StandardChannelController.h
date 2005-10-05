@@ -25,27 +25,19 @@
 
 #import <Foundation/NSObject.h>
 #import "Controllers/ContentControllers/ContentController.h"
+#import "Controllers/ContentControllers/StandardQueryController.h"
 
-@interface StandardChannelController : NSObject 
+@interface StandardChannelController : StandardQueryController 
    < ContentControllerChannelController >
 	{
 		NSTableView *tableView;
-		ScrollingTextView *chatView;
 		NSSplitView *splitView;
-		id window;
 		Channel *channelSource;
-		int scrollLines;
-		int numLines;
 	}
 
 - (Channel *)channelSource;
 - (void)attachChannelSource: (Channel *)aChannel;
 - (void)detachChannelSource;
-
-- (NSTextView *)chatView; 
-
-- (NSView *)contentView;
-- (void)appendAttributedString: (NSAttributedString *)aString;
 @end
 
 #endif

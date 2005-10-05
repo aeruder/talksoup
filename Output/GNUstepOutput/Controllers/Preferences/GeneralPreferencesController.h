@@ -21,13 +21,15 @@
 extern NSString *GNUstepOutputBufferLines;
 extern NSString *GNUstepOutputDefaultQuitMessage;
 extern NSString *GNUstepOutputAliases;
+extern NSString *GNUstepOutputTimestampFormat;
+extern NSString *GNUstepOutputTimestampEnabled;
 
 #ifndef GENERAL_PREFERENCES_CONTROLLER_H
 #define GENERAL_PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 
-@class NSImage;
+@class NSImage, NSButton;
 @class NSView, NSImage;
 @class NSTextField, PreferencesController;
 
@@ -40,8 +42,13 @@ extern NSString *GNUstepOutputAliases;
 		NSTextField *passwordView;
 		NSTextField *nickView;
 		NSTextField *quitView;
+		NSTextField *timestampFormatField;
+		NSButton *timestampButton;
 		BOOL activated;
 	}
++ (BOOL)timestampEnabled;
+
+- (void)setTimestampEnabled: (NSButton *)aSender;
 - (void)setText: (NSTextField *)aField;
 - (NSString *)preferencesName;
 - (NSImage *)preferencesIcon;

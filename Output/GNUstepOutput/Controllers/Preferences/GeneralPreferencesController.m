@@ -26,6 +26,7 @@
 #import <AppKit/NSView.h>
 #import <AppKit/NSWindow.h>
 #import <AppKit/NSTextField.h>
+#import <AppKit/NSButton.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSDebug.h>
@@ -34,6 +35,8 @@
 NSString *GNUstepOutputBufferLines = @"GNUstepOutputBufferLines";
 NSString *GNUstepOutputDefaultQuitMessage = @"GNUstepOutputDefaultQuitMessage";
 NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
+NSString *GNUstepOutputTimestampFormat = @"GNUstepOutputTimestampFormat";
+NSString *GNUstepOutputTimestampEnabled = @"GNUstepOutputTimestampEnabled";
 
 @interface GeneralPreferencesController (PrivateMethods)
 - (void)preferenceChanged: (NSNotification *)aNotification;
@@ -41,6 +44,19 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 @end
 
 @implementation GeneralPreferencesController
++ (BOOL)timestampEnabled
+{
+	id val;
+
+	val = [_PREFS_ preferenceForKey: GNUstepOutputTimestampEnabled];
+
+	if ([val isEqualToString: @"YES"])
+	{
+		return YES;
+	}
+
+	return NO;
+}
 - init
 {
 	id path;
@@ -119,6 +135,38 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 	RELEASE(preferencesIcon);
 	[super dealloc];
 }
+- (void)setTimestampEnabled: (NSButton *)aSender
+{
+	NSString *newState, *oldValue;
+
+	oldValue = [_PREFS_ preferenceForKey: 
+	  GNUstepOutputTimestampEnabled];
+
+	if ([timestampButton state] == NSOnState) 
+	{
+		newState = @"YES";
+	} 
+	else 
+	{
+		newState = @"NO";
+	}
+
+	if (![oldValue isEqualToString: newState])
+	{
+		[_PREFS_ setPreference: newState 
+		  forKey: GNUstepOutputTimestampEnabled];
+
+		[[NSNotificationCenter defaultCenter]
+		 postNotificationName: DefaultsChangedNotification
+		 object: GNUstepOutputTimestampEnabled 
+		 userInfo: [NSDictionary dictionaryWithObjectsAndKeys: 
+		  _TS_, @"Bundle",
+		  newState, @"New",
+		  self, @"Owner",
+		  oldValue, @"Old",
+		  nil]];
+	}
+}
 - (void)setText: (NSTextField *)aField
 {
 	NSString *preference, *newValue, *oldValue;
@@ -126,8 +174,8 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 	if (aField == userView)
 	{
 		preference = IRCDefaultsUserName;
-	} 
-	else if (aField == nameView) 
+	}
+	else if (aField == nameView)
 	{
 		preference = IRCDefaultsRealName;
 	}
@@ -142,6 +190,10 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 	else if (aField == quitView)
 	{
 		preference = GNUstepOutputDefaultQuitMessage;
+	}
+	else if (aField == timestampFormatField)
+	{
+		preference = GNUstepOutputTimestampFormat;
 	}
 	else
 	{
@@ -201,7 +253,7 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 }
 - (void)refreshFromPreferences
 {
-	id nick, user, pass, rn, qt;
+	id nick, user, pass, rn, qt, fmt, fmtE;
 
 	nick = [_PREFS_ preferenceForKey:
 	  IRCDefaultsNick];
@@ -213,17 +265,37 @@ NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
 	  IRCDefaultsRealName];
 	qt = [_PREFS_ preferenceForKey:
 	  GNUstepOutputDefaultQuitMessage];
+	fmt = [_PREFS_ preferenceForKey:
+	  GNUstepOutputTimestampFormat];
+	fmtE = [_PREFS_ preferenceForKey:
+	  GNUstepOutputTimestampEnabled];
 
 	if (!nick) nick = @"";
 	if (!user) user = @"";
 	if (!pass) pass = @"";
 	if (!rn) rn = @"";
 	if (!qt) qt = @"";
+	if (!fmt) fmt = @"";
 
 	[nickView setStringValue: nick];
 	[userView setStringValue: user];
 	[passwordView setStringValue: pass];
 	[nameView setStringValue: rn];
 	[quitView setStringValue: qt];
+	[timestampFormatField setStringValue: fmt];
+
+	if ([fmtE isEqualToString: @"YES"]) 
+	{
+		[timestampButton setState: NSOnState];
+	} 
+	else if ([fmtE isEqualToString: @"NO"])
+	{
+		[timestampButton setState: NSOffState];
+	}
+	else
+	{
+		[timestampButton setState: NSOffState];
+		[self setTimestampEnabled: timestampButton];
+	}
 }
 @end
