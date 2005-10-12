@@ -33,21 +33,26 @@ static NSDictionary *ignore_defaults = nil;
 #define get_pref(__x) [Ignore defaultsObjectForKey: (__x)]
 #define set_pref(__x,__y) [Ignore setDefaultsObject: (__y) forKey: (__x)]
 
-BOOL is_ignored(NSAttributedString *sender)
+BOOL is_ignored(NSAttributedString *sender, id connection)
 {
 	NSArray *array;
 	NSEnumerator *iter;
 	id object;
 	NSString *from = [sender string];
+	SEL aSel;
+
+	aSel = [connection lowercasingSelector];
+	if (!aSel) aSel = @selector(lowercaseString);
 
 	array = [Ignore defaultsObjectForKey: IgnoreMaskList];
 	if (!array) 
 		return NO;
 		
+	from = [from performSelector: aSel];
 	iter = [array objectEnumerator];
 	while ((object = [iter nextObject]))
 	{
-		if ([from matchesIRCWildcard: object]) return YES;
+		if ([from matchesIRCWildcard: [object performSelector: aSel]]) return YES;
 	}
 
 	return NO;
@@ -237,7 +242,7 @@ NSAttributedString *ignore_summary(void)
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	if (!is_ignored(sender))
+	if (!is_ignored(sender, connection))
 		[_TS_ messageReceived: aMessage to: to from: sender onConnection: connection
 		  withNickname: aNick sender: self];
 	return self;
@@ -247,7 +252,7 @@ NSAttributedString *ignore_summary(void)
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	if (!is_ignored(sender))
+	if (!is_ignored(sender, connection))
 		[_TS_ noticeReceived: aMessage to: to from: sender onConnection: connection
 		  withNickname: aNick sender: self];
 	return self;
@@ -257,7 +262,7 @@ NSAttributedString *ignore_summary(void)
    withNickname: (NSAttributedString *)aNick 
    sender: aPlugin
 {
-	if (!is_ignored(sender))
+	if (!is_ignored(sender, connection))
 		[_TS_ actionReceived: anAction to: to from: sender onConnection: connection
 		  withNickname: aNick sender: self];
 	return self;
