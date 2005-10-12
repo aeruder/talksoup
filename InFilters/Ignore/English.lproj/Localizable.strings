@@ -1,0 +1,24 @@
+/* Highlighting.m */
+"The color is any color listed by typing /colors." = "The color is any color listed by typing /colors.";
+"Usage: /highlighting usercolor <color>" = "Usage: /highlighting usercolor <color>";
+"This sets the highlighting color of a person who says your nickname. " = "This sets the highlighting color of a person who says your nickname. ";
+"Usage: /highlighting tabreferencecolor <color>" = "Usage: /highlighting tabreferencecolor <color>";
+"This sets the highlighting color of the tab when a person says your nickname. " = "This sets the highlighting color of the tab when a person says your nickname. ";
+"Usage: /highlighting tabanythingcolor <color>" = "Usage: /highlighting tabanythingcolor <color>";
+"This sets the highlighting color of the tab when a person says anything. " = "This sets the highlighting color of the tab when a person says anything. ";
+"Usage: /highlighting extrawords <words>" = "Usage: /highlighting extrawords <words>";
+"This sets other words that activate the highlighting besides your nickname. The argument should be a list of words separated by '^'.  If you simply specify '^', it will clear the list." = "This sets other words that activate the highlighting besides your nickname. The argument should be a list of words separated by '^'.  If you simply specify '^', it will clear the list.";
+"The list is currently: " = "The list is currently: ";
+"Highlighting Configurator:" = "Highlighting Configurator:";
+"Type /highlighting usercolor" = "Type /highlighting usercolor";
+"or /highlighting tabreferencecolor" = "or /highlighting tabreferencecolor";
+"or /highlighting tabanythingcolor" = "or /highlighting tabanythingcolor";
+"or /highlighting extrawords\n" = "or /highlighting extrawords\n";
+"for more information." = "for more information.";
+"Ok." = "Ok.";
+"Author: " = "Author: ";
+"Description: " = "Description: ";
+"This bundle will highlight the names of people who say your name in the channel.  It will also handle the highlighting of the tabs.  The highlighting colors as well as other words to highlight can be setup through the /highlighting command when this bundle is loaded" = "This bundle will highlight the names of people who say your name in the channel.  It will also handle the highlighting of the tabs.  The highlighting colors as well as other words to highlight can be setup through the /highlighting command when this bundle is loaded";
+"Copyright (C) 2003 by Andrew Ruder" = "Copyright (C) 2003 by Andrew Ruder";
+
+
