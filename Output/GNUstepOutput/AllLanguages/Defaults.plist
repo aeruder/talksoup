@@ -15,5 +15,6 @@
 		p = "/part";
 		q = "/quit";
 		c = "/close";
+		connect = "/server";
 	};
 }
