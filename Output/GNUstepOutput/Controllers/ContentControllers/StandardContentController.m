@@ -572,25 +572,32 @@
 	
 	if ([nameToBoth objectForKey: lo2]) return;
 	
-	[nameToPresentation setObject: newName forKey: lo2];
-	[nameToPresentation removeObjectForKey: lo1];
-		
 	obj = [nameToBoth objectForKey: lo1];
 	which = 
 	  ([obj conformsToProtocol: @protocol(ContentControllerChannelController)]) ?
 	  nameToChannel : nameToQuery;
-		
-	[nameToBoth setObject: obj forKey: lo2];
+
 	[which setObject: obj forKey: lo2];
-		
-	[nameToBoth removeObjectForKey: lo1];
 	[which removeObjectForKey: lo1];
-	
-	NSMapInsert(bothToName, obj, lo2);
+
+	[nameToBoth setObject: obj forKey: lo2];
+	[nameToBoth removeObjectForKey: lo1];
+
+	[nameToPresentation setObject: newName forKey: lo2];
+	[nameToPresentation removeObjectForKey: lo1];
 		
-	[nameToLabel setObject: [nameToLabel objectForKey:
-	  lo1] forKey: lo2];
+	[nameToLabel setObject: S2AS(lo2) forKey: lo2];
 	[nameToLabel removeObjectForKey: lo1];
+		
+	[nameToMasterController setObject: [nameToMasterController objectForKey: lo1] forKey: lo2];
+	[nameToMasterController removeObjectForKey: lo1];
+
+	[nameToTyping setObject: [nameToTyping objectForKey: lo1] forKey: lo2];
+	[nameToTyping removeObjectForKey: lo1];
+
+	[nameToTitle removeObjectForKey: lo1];
+
+	NSMapInsert(bothToName, obj, lo2);
 }
 - (NSAttributedString *)labelForName: (NSString *)aName
 {
