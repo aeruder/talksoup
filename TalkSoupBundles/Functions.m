@@ -358,6 +358,74 @@ static NSArray *get_first_word(NSString *arg)
 }
 @end
 
+static NSCharacterSet *wildcardCharacters = nil;
+static NSCharacterSet *normalCharacters = nil;
+
+@implementation NSString (IRCWildcards)
+- (BOOL)matchesIRCWildcard: (NSString *)wildcard
+{
+	NSScanner *scanner = [NSScanner scannerWithString: wildcard];
+	NSString *read;
+	unichar special;
+	NSString *left = self;
+
+	if (!wildcardCharacters)
+	{
+		wildcardCharacters = RETAIN([NSCharacterSet characterSetWithCharactersInString: @"*?"]);
+		normalCharacters = RETAIN([wildcardCharacters invertedSet]);
+	}
+
+	while (![scanner isAtEnd])
+	{
+		unsigned charsskip;
+		unsigned charsleft;
+
+		if (![scanner scanUpToCharactersFromSet: wildcardCharacters intoString: &read])
+			read = @"";
+		charsskip = [read length];
+
+		if (charsskip && ![left hasPrefix: read])
+			return NO;
+
+		left = [left substringFromIndex: charsskip];
+		charsleft = [left length];
+
+		if ([scanner isAtEnd])
+		{
+			/* If we have chars left and we are at the wc end, oops */
+			if (charsleft > 0) return NO;
+			return YES;
+		}
+		
+		/* Next char is a wildcard */
+		special = [wildcard characterAtIndex: charsskip];
+		wildcard = [wildcard substringFromIndex: charsskip + 1];
+		[scanner setScanLocation: [scanner scanLocation] + 1];
+
+		if (special == '*')
+		{
+			unsigned j;
+			if ([scanner isAtEnd]) /* Last char is an asterick? that matches */
+				return YES;
+			for (j = 0; j <= charsleft; j++)
+			{
+				/* Look for a recursive match to work */
+				if ([[left substringFromIndex: j] matchesIRCWildcard: wildcard])
+					return YES;
+			}
+			return NO;
+		}
+		/* We are doing a question mark, if we have a char left, keep going */
+		if (charsleft == 0)
+			return NO;
+		else
+			left = [left substringFromIndex: 1];
+	}
+
+	return ([left length] == 0) ? YES : NO; 
+}
+@end
+
 NSMutableAttributedString *BuildAttributedString(id aObject, ...)
 {
 	va_list ap;
