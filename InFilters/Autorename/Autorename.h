@@ -1,5 +1,5 @@
 /***************************************************************************
-                             Skeleton.h
+                             Autorename.h
                           -------------------
     begin                : Sat May 10 18:58:30 CDT 2003
     copyright            : (C) 2005 by Andrew Ruder
@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-@class Skeleton;
+@class Autorename;
 
-#ifndef SKELETON_H
-#define SKELETON_H
+#ifndef AUTORENAME_H
+#define AUTORENAME_H
 
 #import <Foundation/NSObject.h>
 
@@ -28,14 +28,13 @@
 	#undef _l
 #endif
 
-#define _l(X) [[NSBundle bundleForClass: [Skeleton class]] \
+#define _l(X) [[NSBundle bundleForClass: [Autorename class]] \
                localizedStringForKey: (X) value: nil \
                table: @"Localizable"]
 
 @class NSAttributedString;
 
-@interface Skeleton : NSObject
-// Open up TalkSoupProtocols.h and insert methods you want here...
+@interface Autorename : NSObject
 @end
 
 #endif

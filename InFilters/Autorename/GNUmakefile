@@ -1,5 +1,5 @@
 include $(GNUSTEP_MAKEFILES)/common.make
-BUNDLE_NAME = Skeleton
+BUNDLE_NAME = Autorename
 
 BUNDLE_EXTENSION =
 
@@ -9,17 +9,17 @@ else
 BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
 endif
 
-Skeleton_LANGUAGES = English
-Skeleton_LOCALIZED_RESOURCE_FILES = Localizable.strings
+Autorename_LANGUAGES = English
+Autorename_LOCALIZED_RESOURCE_FILES = Localizable.strings
 
-Skeleton_PRINCIPAL_CLASS = Skeleton
+Autorename_PRINCIPAL_CLASS = Autorename
 
-Skeleton_OBJC_FILES = Skeleton.m
+Autorename_OBJC_FILES = Autorename.m
 
 ifeq ($(OBJC_RUNTIME_LIB), apple)
-Skeleton_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
+Autorename_BUNDLE_LIBS = -framework TalkSoupBundles $(ADDITIONAL_FRAMEWORK_DIRS)
 else
-Skeleton_BUNDLE_LIBS = -lTalkSoupBundles
+Autorename_BUNDLE_LIBS = -lTalkSoupBundles
 endif
 
 GUI_LIB = 
