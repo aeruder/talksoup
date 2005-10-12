@@ -200,6 +200,7 @@
 	NSAttributedString *format = nil;
 	unsigned formatlen = 0;
 	BOOL handleFirst;
+	unsigned all;
 
 	if ([aString length] == 0)
 	{
@@ -238,6 +239,7 @@
 	while (1)
 	{
 		string = [mutString string];
+		all = [string length];
 		if (!handleFirst)
 		{
 			thisRange = [string rangeOfString: @"\n" options: 0
@@ -249,8 +251,8 @@
 		{
 			handleFirst = NO;
 		}
-		allRange.location += thisRange.location;
-		allRange.length -= thisRange.location;
+		allRange.location = thisRange.location;
+		allRange.length = all - allRange.location;
 		if (allRange.length == 0) break;
 		
 		[mutString addAttribute: @"Timestamp" value: date range: 
