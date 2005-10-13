@@ -389,15 +389,11 @@
 		controller = lastSelected;
 	}
 
-	string = [NSMutableAttributedString 
-	  attributedStringWithGNUstepOutputPreferences: aMessage];
-
-	[controller appendAttributedString: string];
+	[controller appendAttributedString: S2AS(aMessage)];
 	
 	if (hasEnd)
 	{
-		[controller appendAttributedString: [NSMutableAttributedString
-		  attributedStringWithGNUstepOutputPreferences: @"\n"]];
+		[controller appendAttributedString: S2AS(@"\n")];
 	}
 }
 - (void)putMessageInAll: aMessage
