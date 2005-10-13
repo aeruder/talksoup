@@ -44,6 +44,7 @@
 #import <AppKit/NSColor.h>
 #import <Foundation/NSNull.h>
 #import <Foundation/NSDate.h>
+#import <Foundation/NSCalendarDate.h>
 
 @interface StandardQueryController (PreferencesCenter)
 - (void)timestampEnabledChanged: (NSNotification *)aNotification;
