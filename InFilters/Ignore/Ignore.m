@@ -24,6 +24,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSInvocation.h>
 #import <Foundation/NSUserDefaults.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSEnumerator.h>
 
 NSString *IgnoreMaskList = @"IgnoreMaskList";
 

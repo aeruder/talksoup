@@ -22,7 +22,7 @@
 
 #import <Foundation/NSObject.h>
 
-@class NSBundle;
+@class NSBundle, NSString, NSDictionary;
 
 #ifdef _l
 	#undef _l
