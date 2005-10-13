@@ -35,6 +35,8 @@ extern NSString *InverseTypeBackground;
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString;
 - (void)updateAttributedStringForGNUstepOutputPreferences: (NSString *)aKey;
 - (void)chopNumberOfLines: (int)numLines;
+- (void)updateTimestamps;
+- (void)addTimestampsAndHandleFirst: (BOOL)handleFirst;
 @end
 
 #endif

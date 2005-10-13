@@ -31,8 +31,6 @@
 		id chatView;
 		int numLines;
 		int scrollLines;
-		NSString *timestampFormat;
-		BOOL timestampEnabled;
 	}
 + (NSString *)standardNib;
 - (NSView *)contentView;

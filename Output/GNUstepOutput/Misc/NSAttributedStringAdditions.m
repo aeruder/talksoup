@@ -19,6 +19,7 @@
 #import "Misc/NSColorAdditions.h"
 #import "Controllers/Preferences/FontPreferencesController.h"
 #import "Controllers/Preferences/ColorPreferencesController.h"
+#import "Controllers/Preferences/GeneralPreferencesController.h"
 #import "Controllers/Preferences/PreferencesController.h"
 #import "GNUstepOutput.h"
 #import <TalkSoupBundles/TalkSoup.h>
@@ -37,6 +38,8 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSNotification.h>
+#import <Foundation/NSDate.h>
+#import <Foundation/NSCalendarDate.h>
 
 NSString *TypeOfColor = @"TypeOfColor";
 NSString *InverseTypeForeground = @"InverseTypeForeground";
@@ -126,6 +129,115 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
   [NSColor colorFromEncodedData: [_PREFS_ preferenceForKey: (_aKey)]]
 
 @implementation NSMutableAttributedString (OutputAdditions2)
+- (void)addTimestampsAndHandleFirst: (BOOL)handleFirst
+{
+	NSString *string;
+	NSRange allRange, thisRange;
+	id date;
+	unsigned all;
+
+	string = [self string];
+	allRange = NSMakeRange(0, [string length]);
+	date = [NSDate date];
+
+	thisRange.location = 0;
+	thisRange.length = 1;
+	
+	while (1)
+	{
+		string = [self string];
+		all = [string length];
+		if (!handleFirst)
+		{
+			thisRange = [string rangeOfString: @"\n" options: 0
+			  range: allRange];
+			if (thisRange.location == NSNotFound) break;
+			thisRange.location += 1;
+		}
+		else
+		{
+			handleFirst = NO;
+		}
+		allRange.location = thisRange.location;
+		allRange.length = all - allRange.location;
+		if (allRange.length == 0) break;
+		
+		[self beginEditing];
+		[self addAttribute: @"Timestamp" value: date range: 
+		  NSMakeRange(allRange.location, 1)];
+		[self endEditing];
+	}
+
+	[self updateTimestamps];
+}
+- (void)updateTimestamps
+{
+	NSRange curRange;
+	NSRange allRange;
+	NSString *string = nil;
+	unsigned len;
+	NSRange lastRange;
+	NSDictionary *lastAttributes = nil;
+	NSDictionary *thisAttributes;
+	NSDate *date;
+	NSDate *lastDate = nil;
+	NSAttributedString *lastFmt = nil;
+	unsigned lastFmtLength;
+	BOOL timestampEnabled = [GeneralPreferencesController timestampEnabled];
+	NSString *timestampFormat;
+	
+	timestampFormat = [_PREFS_ preferenceForKey: GNUstepOutputTimestampFormat];
+
+	string = [self string];
+	len = [string length];
+	if (!len) return;
+
+	allRange = NSMakeRange(0, len);
+
+	thisAttributes = [self attributesAtIndex: 0
+	  longestEffectiveRange: &curRange inRange: allRange];
+	lastRange = curRange;
+	while (1) 
+	{
+		if ((date = [thisAttributes objectForKey: @"Timestamp"]))
+		{
+			[self beginEditing];
+			if (lastAttributes && [lastAttributes objectForKey: @"TimestampFormat"])
+			{
+				[self deleteCharactersInRange: lastRange];
+				curRange.location -= lastRange.length;
+				len -= lastRange.length;
+			}
+
+			if (timestampEnabled) 
+			{
+				if (![lastDate isEqual: date])
+				{
+					NSString *aFmt;
+					aFmt = [date descriptionWithCalendarFormat: timestampFormat
+					  timeZone: nil locale: nil];
+					lastFmt = AUTORELEASE(([[NSAttributedString alloc] 
+					  initWithString: aFmt attributes: 
+					  [NSDictionary dictionaryWithObjectsAndKeys:
+						[NSNull null], @"TimestampFormat", nil]]));
+					lastFmtLength = [[lastFmt string] length];
+				}
+				lastDate = date;
+				[self insertAttributedString: lastFmt
+				  atIndex: curRange.location];
+				curRange.location += lastFmtLength;
+				len += lastFmtLength;
+			}
+			[self endEditing];
+		}
+		if ((curRange.location + curRange.length) >= len) break;
+		lastAttributes = thisAttributes;
+		lastRange = curRange;
+		allRange.length = len;
+		thisAttributes = [self attributesAtIndex: (curRange.location + curRange.length)
+		  longestEffectiveRange: &curRange inRange: allRange];
+	}
+}
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString
 {
 	NSMutableAttributedString *aResult;
@@ -246,6 +358,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 {
 	id font, color;
 
+	[self beginEditing];
 	if ([aKey isEqualToString: GNUstepOutputChatFont])
 	{
 		font = [FontPreferencesController getFontFromPreferences: aKey];
@@ -281,6 +394,10 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		[self addAttribute: NSParagraphStyleAttributeName 
 		  value: paraStyle range: aRange];
 	}
+	else if ([aKey isEqualToString: GNUstepOutputTimestampFormat])
+	{
+		[self updateTimestamps];
+	}
 	else if ((color = COLOR_FOR_KEY(aKey)))
 	{
 		[self
@@ -302,6 +419,8 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 			  matchingValue: @"" withRange: NSMakeRange(0, [self length])];
 		}
 	}
+
+	[self endEditing];
 }
 - (void)chopNumberOfLines: (int)numLines
 {
@@ -322,7 +441,9 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		numLines--;
 	}
 
+	[self beginEditing];
 	[self deleteCharactersInRange: NSMakeRange(0, start)];
+	[self endEditing];
 }
 @end
 #undef COLOR_FOR_KEY
