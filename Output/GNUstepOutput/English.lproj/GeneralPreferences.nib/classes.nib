@@ -2,7 +2,7 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {setText = id; }; 
+            ACTIONS = {setText = id; setTimestampEnabled = id; }; 
             CLASS = GeneralPreferencesController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
@@ -11,6 +11,8 @@
                 passwordView = id; 
                 preferencesView = id; 
                 quitView = id; 
+                timestampButton = id; 
+                timestampFormatField = id; 
                 userView = id; 
             }; 
             SUPERCLASS = NSObject; 
