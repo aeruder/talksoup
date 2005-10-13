@@ -33,6 +33,8 @@
 #import <AppKit/NSTextView.h>
 #import <AppKit/NSClipView.h>
 #import <AppKit/NSWindow.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSRange.h>
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSString.h>
 #import <AppKit/NSView.h>
@@ -41,6 +43,7 @@
 #import <Foundation/NSGeometry.h>
 #import <AppKit/NSColor.h>
 #import <Foundation/NSNull.h>
+#import <Foundation/NSDate.h>
 
 @interface StandardQueryController (PreferencesCenter)
 - (void)timestampEnabledChanged: (NSNotification *)aNotification;
