@@ -174,6 +174,7 @@
 	  name: DefaultsChangedNotification
 	  object: GNUstepOutputBufferLines];
 
+	[self wrapIndentChanged: nil];
 }
 - (void)dealloc
 {
@@ -210,8 +211,6 @@
 	[textStorage beginEditing];
 	[textStorage appendAttributedString: mutString];
 	[textStorage endEditing];
-
-	[textStorage updateAttributedStringForGNUstepOutputPreferences: GNUstepOutputWrapIndent];
 
 	numLines += [[[mutString string]
       componentsSeparatedByString: @"\n"] count] - 1;
@@ -259,9 +258,17 @@
 }	
 - (void)wrapIndentChanged: (NSNotification *)aNotification
 {
+#ifndef GNUSTEP
+	float wIndentF = [[_PREFS_ preferenceForKey: GNUstepOutputWrapIndent]
+	  floatValue];
+	NSMutableParagraphStyle *paraStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	[paraStyle setHeadIndent: wIndentF];
+	[chatView setDefaultParagraphStyle: paraStyle];
+#else
 	[[chatView textStorage]
 	  updateAttributedStringForGNUstepOutputPreferences: 
-	  [aNotification object]];
+	  GNUstepOutputWrapIndent];
+#endif
 }
 - (void)scrollLinesChanged: (NSNotification *)aNotification
 {

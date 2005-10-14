@@ -182,7 +182,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	NSDate *date;
 	NSDate *lastDate = nil;
 	NSAttributedString *lastFmt = nil;
-	unsigned lastFmtLength;
+	unsigned lastFmtLength = 0;
 	BOOL timestampEnabled = [GeneralPreferencesController timestampEnabled];
 	NSString *timestampFormat;
 	

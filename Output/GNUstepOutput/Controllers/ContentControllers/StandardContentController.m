@@ -354,7 +354,6 @@
     withEndLine: (BOOL)hasEnd
 {
 	id <ContentControllerQueryController> controller = nil;
-	id string;
 	
 	if (!aMessage) return;
 	
