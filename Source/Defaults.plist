@@ -7,8 +7,8 @@
 		Highlighting,
 		KeepAlive,
 		DCCSupport,
-		MessageInTab,
-		Ignore
+		Ignore,
+		MessageInTab
 	    );
 	    Input = NetclassesInput;
 	    OutFilters = (
