@@ -120,9 +120,9 @@ NSAttributedString *emoticonify(NSAttributedString *message)
 @implementation Emoticon
 + (void)initialize
 {
-	if (resource_path) return;
-
 	id bundle;
+
+	if (resource_path) return;
 	
 	bundle = [NSBundle bundleForClass: [Emoticon class]];
 
