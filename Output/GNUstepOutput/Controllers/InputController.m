@@ -878,10 +878,10 @@ static void send_message(id command, id name, id connection)
 - ircCommandJoin: (NSString *)aString
 {
 	NSMutableArray *x;
-	x = [NSMutableArray arrayWithArray:
-	  [aString separateIntoNumberOfArguments: 3]];
 	NSInvocation *invoc;
 	id connection;
+	x = [NSMutableArray arrayWithArray:
+	  [aString separateIntoNumberOfArguments: 3]];
 	
 	if ([x count] >= 1)
 	{
