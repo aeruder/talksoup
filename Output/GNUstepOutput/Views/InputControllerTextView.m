@@ -31,13 +31,13 @@ static NSEvent *newline_event = nil;
 @implementation InputControllerTextView
 + (void)initialize
 {
-	if (newline_set) return;
-
 	unichar enters[] = {
 		NSEnterCharacter,
 		NSNewlineCharacter,
 		NSCarriageReturnCharacter
 	};
+
+	if (newline_set) return;
 
 	newline_set = RETAIN([NSCharacterSet characterSetWithCharactersInString: 
 	  [NSString stringWithCharacters: enters length: 3]]);
