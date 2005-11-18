@@ -1225,7 +1225,7 @@ static void send_message(id command, id name, id connection)
 {
 	id x = [command separateIntoNumberOfArguments: 2];
 	id aliases = [_PREFS_ preferenceForKey: GNUstepOutputAliases];
-	id alias;
+	id alias, to;
 
 	if ([x count] == 0)
 	{
@@ -1258,7 +1258,7 @@ static void send_message(id command, id name, id connection)
 	if ([alias hasPrefix: @"/"]) alias = [alias substringFromIndex: 1];
 	alias = [alias lowercaseString];
 
-	id to = [aliases objectForKey: alias];
+	to = [aliases objectForKey: alias];
 	if (!to)
 	{
 		[controller showMessage:
