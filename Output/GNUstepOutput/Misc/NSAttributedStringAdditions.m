@@ -182,6 +182,7 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 	NSDate *date;
 	NSDate *lastDate = nil;
 	NSAttributedString *lastFmt = nil;
+	NSFont *chatFont;
 	unsigned lastFmtLength = 0;
 	BOOL timestampEnabled = [GeneralPreferencesController timestampEnabled];
 	NSString *timestampFormat;
@@ -194,6 +195,9 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 
 	allRange = NSMakeRange(0, len);
 
+	chatFont = RETAIN([FontPreferencesController
+	  getFontFromPreferences: GNUstepOutputChatFont]);
+	
 	thisAttributes = [self attributesAtIndex: 0
 	  longestEffectiveRange: &curRange inRange: allRange];
 	lastRange = curRange;
@@ -219,7 +223,8 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 					lastFmt = AUTORELEASE(([[NSAttributedString alloc] 
 					  initWithString: aFmt attributes: 
 					  [NSDictionary dictionaryWithObjectsAndKeys:
-						[NSNull null], @"TimestampFormat", nil]]));
+						[NSNull null], @"TimestampFormat", 
+						chatFont, NSFontAttributeName, nil]]));
 					lastFmtLength = [[lastFmt string] length];
 				}
 				lastDate = date;
@@ -237,6 +242,8 @@ NSString *InverseTypeBackground = @"InverseTypeBackground";
 		thisAttributes = [self attributesAtIndex: (curRange.location + curRange.length)
 		  longestEffectiveRange: &curRange inRange: allRange];
 	}
+
+	RELEASE(chatFont);
 }
 + (NSMutableAttributedString *)attributedStringWithGNUstepOutputPreferences: (id)aString
 {
