@@ -388,7 +388,11 @@
 		controller = lastSelected;
 	}
 
-	[controller appendAttributedString: S2AS(aMessage)];
+	if (![aMessage isKindOfClass: [NSAttributedString class]]) 
+	{
+		aMessage = [aMessage description];
+	}
+	[controller appendAttributedString: aMessage];
 	
 	if (hasEnd)
 	{
