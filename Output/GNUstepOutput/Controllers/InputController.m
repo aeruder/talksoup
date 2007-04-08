@@ -1320,4 +1320,23 @@ static void send_message(id command, id name, id connection)
 
 	return self;
 }
+- ircCommandTranslucency: (NSString *)aString
+{
+	NSArray *x = [aString separateIntoNumberOfArguments: 2];
+	id name;
+	float alpha;
+	
+	name = [content nameForViewController: view];
+	if ([x count] < 1) {
+		[controller showMessage:
+		  S2AS(_l(@"Usage: /translucency <float value between 0 and 1.0>"))
+		 onConnection: nil];
+		return self;
+	}
+
+	alpha = [[x objectAtIndex: 0] floatValue];
+
+	[[lastMaster window] setAlphaValue: alpha];
+	return self;
+}
 @end
