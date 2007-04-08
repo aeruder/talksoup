@@ -66,15 +66,20 @@ mkdir -p build/Library/Application\ Support/TalkSoup/{OutFilters,InFilters,Input
 make debug=yes install GNUSTEP_INSTALLATION_DIR="$PWD"/build 
 rm -fr build/Library/Frameworks
 
+appext=debug
+if ! [ -d build/Applications/TalkSoup.debug ]; then
+	appext=app
+fi
+
 echo "Moving in the plugins..."
-mv build/Library/Application\ Support/TalkSoup/* build/Applications/TalkSoup.debug/Contents/Resources
-mkdir build/Applications/TalkSoup.debug/Contents/Frameworks
+mv build/Library/Application\ Support/TalkSoup/* build/Applications/TalkSoup.${appext}/Contents/Resources
+mkdir build/Applications/TalkSoup.${appext}/Contents/Frameworks
 
 echo "Taking care of frameworks"
 tar -C TalkSoupBundles -cf - TalkSoupBundles.framework netclasses.framework | \
-tar -C build/Applications/TalkSoup.debug/Contents/Frameworks -xf -
+tar -C build/Applications/TalkSoup.${appext}/Contents/Frameworks -xf -
 
-mv build/Applications/TalkSoup.debug TalkSoup.app
+mv build/Applications/TalkSoup.${appext} TalkSoup.app
 rm -fr build
 
 echo "TalkSoup.app is done"
