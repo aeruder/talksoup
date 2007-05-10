@@ -1,0 +1,9 @@
+{
+	Nick = ("TalkSoup");
+	Plugins = {
+		Input = "NetclassesInput.bundle";
+		OutFilters = ();
+		InFilters = ();
+		Output = "GNUstepOutput.bundle";
+	};
+}

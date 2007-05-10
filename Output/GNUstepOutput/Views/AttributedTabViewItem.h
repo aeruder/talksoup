@@ -1,7 +1,7 @@
 /***************************************************************************
-                                |FILE|
+                                ColoredTabViewItem.h
                           -------------------
-    begin                : |DATE|
+    begin                : Thu Dec  5 00:25:40 CST 2002
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,3 +14,22 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+@class AttributedTabViewItem;
+
+#ifndef ATTRIBUTED_TAB_VIEW_ITEM_H
+#define ATTRIBUTED_TAB_VIEW_ITEM_H
+
+#include <AppKit/NSTabViewItem.h>
+
+@class NSAttributedString;
+
+@interface AttributedTabViewItem : NSTabViewItem
+	{
+		NSAttributedString *attributedLabel;		
+	}
+- setAttributedLabel: (NSAttributedString *)label;
+- (NSAttributedString *)attributedLabel;
+@end
+
+#endif

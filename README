@@ -2,7 +2,7 @@ TalkSoup
 ===============================================================================
 TalkSoup is a fully-featured IRC client written with the GNUstep framework
 ===============================================================================
-Copyright (C) 2002 Andy Ruder
+Copyright (C) 2003 Andy Ruder
 
   TalkSoup is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,8 +21,26 @@ Copyright (C) 2002 Andy Ruder
 Comments are welcome.
 ===============================================================================
 
-The file INSTALL has installation instructions
+TalkSoup.app is a fully-featured IRC client which uses GNUstep base.  While
+TalkSoup.app itself is just a very basic core which can simply pass messages
+between plugins.
+
+This distribution comes with:
+
+Input Plugins:
+
+  NetclassesInput: an input plugin based on netclasses
+
+Output Plugins:
+
+  GNUstepOutput: an output plugin based on gnustep-gui
+
+Special Thanks To:
+  
+  Luis Garcia Alanis <luis.garcia@mac.com>
+    For his initial drive to make a GNUstep IRC client using netclasses
+    and his first version of Charla.app
 
 ===============================================================================
-Copyright (C) 2002 by Andy Ruder <aeruder@yahoo.com>
+Copyright (C) 2003 by Andy Ruder <aeruder@yahoo.com>
 	

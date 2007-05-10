@@ -1,0 +1,221 @@
+/***************************************************************************
+                                ContentController.m
+                          -------------------
+    begin                : Sat Jan 18 01:38:06 CST 2003
+    copyright            : (C) 2003 by Andy Ruder
+    email                : aeruder@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#include "ContentController.h"
+
+#include "Controllers/QueryController.h"
+#include "Controllers/ChannelController.h"
+#include "Views/AttributedTabViewItem.h"
+#include <AppKit/NSNibLoading.h>
+#include <AppKit/NSWindow.h>
+#include <AppKit/NSTabView.h>
+#include <AppKit/NSAttributedString.h>
+#include <AppKit/NSTextField.h>
+#include <Foundation/NSString.h>
+
+NSString *ContentConsoleName = @"Content Console Name";
+
+static NSString *make_lowercase(NSString *a)
+{
+	return [a lowercaseString];
+}
+
+@implementation ContentController
+- init
+{
+	if (!(self = [super init])) return nil;
+
+	nameToChannel = [NSMutableDictionary new];
+	nameToQuery = [NSMutableDictionary new];
+	nameToBoth = [NSMutableDictionary new];
+	nameToPresentation = [NSMutableDictionary new];
+	nameToLabel = [NSMutableDictionary new];
+	nameToTabItem = [NSMutableDictionary new];
+	
+	bothToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
+	  NSObjectMapValueCallBacks, 10);
+	tabItemToName = NSCreateMapTable(NSObjectMapKeyCallBacks,
+	  NSObjectMapValueCallBacks, 10);
+	
+	
+	return self;
+}	
+- (void)awakeFromNib
+{
+	NSLog(@"Hieeeee!");
+	while ([tabView numberOfTabViewItems] > 0)
+	{
+		[tabView removeTabViewItem: [tabView tabViewItemAtIndex: 0]];
+	}
+
+	[self addQueryWithName: ContentConsoleName withLabel: AUTORELEASE([[NSAttributedString alloc] initWithString: 
+	  @"Unconnected"])];
+
+	[window makeKeyAndOrderFront: nil];
+}
+- (void)dealloc
+{
+	NSFreeMapTable(bothToName);
+	NSFreeMapTable(tabItemToName);
+
+	RELEASE(typeView);
+	RELEASE(nickView);
+	RELEASE(tabView);
+	RELEASE(window);
+	RELEASE(nameToChannel);
+	RELEASE(nameToQuery);
+	RELEASE(nameToBoth);
+	RELEASE(nameToPresentation);
+	RELEASE(nameToLabel);
+	RELEASE(nameToTabItem);
+	RELEASE(inputController);
+
+	[super dealloc];
+}
+- putMessage: (id)aString in: (id)aChannel
+{
+	id controller = nil;
+	
+	if ([aChannel isKindOf: [ChannelController class]]
+	    || [aChannel isKindOf: [QueryController class]])
+	{
+		controller = aChannel;
+	}
+	else if ([aChannel isKindOf: [NSString class]])
+	{
+		controller = [nameToBoth objectForKey: make_lowercase(aChannel)];
+	}
+	else if ([aChannel isKindOf: [NSAttributedString class]])
+	{
+		controller = [nameToBoth objectForKey: 
+		    make_lowercase([aChannel string])];
+	}
+	
+	if (controller == nil)
+	{
+		controller = [nameToBoth objectForKey: current];
+	}
+	
+	if ([aString isKindOf: [NSString class]])
+	{
+		
+		[[[controller chatView] textStorage] appendAttributedString:
+		  AUTORELEASE([[NSAttributedString alloc] initWithString: aString])];
+	}
+	else if ([aString isKindOf: [NSAttributedString class]])
+	{
+		[[[controller chatView] textStorage] appendAttributedString: aString];
+	}
+
+	return self;
+}
+- putMessageInAll: (id)aString
+{
+	NSEnumerator *iter;
+	id object;
+
+	iter = [nameToBoth keyEnumerator];
+
+	while ((object = [iter nextObject]))
+	{
+		[self putMessage: aString in: object];
+	}
+
+	return self;
+}
+- addQueryWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
+{
+	id query;
+	id name;
+	id tabItem;
+
+	name = make_lowercase(aName);
+	query = AUTORELEASE([QueryController new]);
+	
+	if (![NSBundle loadNibNamed: @"Query" owner: query])
+	{
+		NSLog(@":( No query found...");
+		return nil;
+	}
+
+	[nameToQuery setObject: query forKey: name];
+	[nameToBoth setObject: query forKey: name];
+	[nameToPresentation setObject: aName forKey: name];
+	[nameToLabel setObject: aLabel forKey: name];
+
+	NSMapInsert(bothToName, query, name);
+
+	tabItem = AUTORELEASE([AttributedTabViewItem new]);
+
+	[nameToTabItem setObject: tabItem forKey: name];
+	
+	NSMapInsert(tabItemToName, tabItem, name);
+
+	[tabItem setAttributedLabel: aLabel];
+
+	[tabItem setView: [[query window] contentView]];
+
+	[tabView addTabViewItem: tabItem];
+	
+	[tabView setNeedsDisplay: YES];
+	
+	return self;
+}
+- addChannelWithName: (NSString *)aName withLabel: (NSAttributedString *)aLabel
+{
+	id chan;
+	id name;
+	id tabItem;
+
+	name = make_lowercase(aName);
+	chan = AUTORELEASE([ChannelController new]);
+
+	if (![NSBundle loadNibNamed: @"Channel" owner: chan])
+	{
+		return nil;
+	}
+
+	[nameToChannel setObject: chan forKey: name];
+	[nameToBoth setObject: chan forKey: name];
+	[nameToPresentation setObject: aName forKey: name];
+	[nameToLabel setObject: aLabel forKey: name];
+
+	NSMapInsert(bothToName, chan, name);
+
+	tabItem = AUTORELEASE([AttributedTabViewItem new]);
+
+	[nameToTabItem setObject: tabItem forKey: name];
+
+	NSMapInsert(tabItemToName, tabItem, name);
+
+	[tabItem setAttributedLabel: aLabel];
+	
+	[tabItem setView: [[chan window] contentView]];
+	
+	[tabView addTabViewItem: tabItem];
+	
+	return self;
+}
+- closeViewWithName: (NSString *)aName
+{
+	return self;
+}
+- (NSString *)currentViewName
+{
+	return [nameToPresentation objectForKey: current];
+}
+@end

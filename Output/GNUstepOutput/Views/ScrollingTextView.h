@@ -1,7 +1,7 @@
 /***************************************************************************
-                                |FILE|
+                                ScrollingTextView.h
                           -------------------
-    begin                : |DATE|
+    begin                : Tue Nov  5 22:24:03 CST 2002
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,3 +14,8 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#include <AppKit/NSTextView.h>
+
+@interface ScrollingTextView : NSTextView
+@end

@@ -1,7 +1,7 @@
 /***************************************************************************
-                                |FILE|
+                                QueryController.h
                           -------------------
-    begin                : |DATE|
+    begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,3 +14,24 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+@class QueryController;
+
+#ifndef QUERY_CONTROLLER_H
+#define QUERY_CONTROLLER_H
+
+#include <AppKit/AppKit.h>
+
+@interface QueryController : NSObject
+	{
+		id window;
+		id chatView;
+	}
+
+- (id)chatView;
+
+- (id)window;
+
+@end
+
+#endif

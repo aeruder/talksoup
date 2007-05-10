@@ -1,0 +1,3 @@
+before-all::
+	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Controllers
+	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/Views

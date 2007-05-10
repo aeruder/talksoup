@@ -1,0 +1,2 @@
+before-all::
+	$(MKDIRS) $(GNUSTEP_OBJ_DIR)/netclasses

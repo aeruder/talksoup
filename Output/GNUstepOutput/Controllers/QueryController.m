@@ -1,7 +1,7 @@
 /***************************************************************************
-                                |FILE|
+                                QueryController.m
                           -------------------
-    begin                : |DATE|
+    begin                : Sat Jan 18 01:38:06 CST 2003
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,3 +14,22 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+
+#include <AppKit/AppKit.h>
+#include "QueryController.h"
+
+@implementation QueryController
+- (void)awakeFromNib
+{
+	
+	NSLog(@"I'mmmm query-man!!!, %@", chatView);
+}
+- (id)chatView
+{
+	return chatView;
+}
+- (id)window
+{
+	return window;
+}
+@end
