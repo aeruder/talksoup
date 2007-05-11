@@ -53,8 +53,13 @@ Controllers/ConnectionController/ConnectionControllerNumericCommands.m \
 Controllers/ConnectionController/ConnectionControllerOutFilter.m \
 Controllers/ConnectionController/ConnectionControllerTabCompletion.m
 
+ContentController = Controllers/ContentControllers/StandardContentController.m \
+Controllers/ContentControllers/ContentController.m \
+Controllers/ContentControllers/Tab/TabContentController.m \
+Controllers/ContentControllers/Tab/TabMasterController.m
+
 Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
-              Controllers/ContentController.m Controllers/InputController.m\
+              Controllers/InputController.m\
               Controllers/PreferencesController.m \
               Controllers/NamePromptController.m \
               Controllers/ServerListController.m \
@@ -63,7 +68,8 @@ Controllers = Controllers/ChannelController.m Controllers/QueryController.m\
               Controllers/ServerListConnectionController.m \
               Controllers/TopicInspectorController.m \
               Controllers/BundleConfigureController.m \
-              $(ConnectionController)
+              $(ConnectionController) \
+			  $(ContentController)
 
 
 Views = Views/AttributedTabViewItem.m Views/ScrollingTextView.m \

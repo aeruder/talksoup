@@ -21,7 +21,7 @@
 #import "Controllers/PreferencesController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/NamePromptController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Controllers/BundleConfigureController.h"
 #import "Misc/NSColorAdditions.h"
@@ -47,10 +47,28 @@
 #import <Foundation/NSNotification.h>
 #import <Foundation/NSEnumerator.h>
 
-NSString *GNUstepOutputLowercase(NSString *aString)
+NSString *StandardLowercase(NSString *aString)
 {
 	return [aString lowercaseString];
 }
+NSString *IRCLowercase(NSString *aString)
+{
+	NSMutableString *newString = [NSMutableString 
+	  stringWithString: [aString lowercaseString]];
+	NSRange aRange = {0, [newString length]};
+
+	[newString replaceOccurrencesOfString: @"[" withString: @"{" options: 0
+	  range: aRange];
+	[newString replaceOccurrencesOfString: @"]" withString: @"}" options: 0
+	  range: aRange];
+	[newString replaceOccurrencesOfString: @"\\" withString: @"|" options: 0
+	  range: aRange];
+	[newString replaceOccurrencesOfString: @"~" withString: @"^" options: 0
+	  range: aRange];
+	
+	return [newString lowercaseString];
+}
+NSString *(*GNUstepOutputLowercase)(NSString *aString) = StandardLowercase;
 
 NSString *GNUstepOutputIdentificationForController(id controller)
 {
@@ -64,21 +82,6 @@ BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2)
 	return [GNUstepOutputLowercase(aString) isEqualToString: 
 	  GNUstepOutputLowercase(aString2)];
 }
-
-NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
-NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
-NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
-NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
-NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
-NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
-NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
-NSString *GNUstepOutputUserListFontName = @"GNUstepOutputUserListFontName";
-NSString *GNUstepOutputUserListFontSize = @"GNUstepOutputUserListFontSize";
-NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
-NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
-NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
-NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
-NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
 
 GNUstepOutput *_GS_ = nil;
 
@@ -122,14 +125,14 @@ GNUstepOutput *_GS_ = nil;
 	if (!fontName) fontName = @"Helvetica";
 	if ([fontSize intValue] < 0 || !fontSize) fontSize = @"12";	
 	
-	defaultDefaults = [[NSMutableDictionary alloc] initWithContentsOfFile: 
+	defaultPreferences = [[NSMutableDictionary alloc] initWithContentsOfFile: 
 	  [[NSBundle bundleForClass: [GNUstepOutput class]] 
 	  pathForResource: @"Defaults"
 	  ofType: @"plist"]];
 
-	[defaultDefaults setObject: fontName
+	[defaultPreferences setObject: fontName
 	  forKey: [GNUstepOutputFontName substringFromIndex: 13]];
-	[defaultDefaults setObject: fontSize
+	[defaultPreferences setObject: fontSize
 	  forKey: [GNUstepOutputFontSize substringFromIndex: 13]];
 	
 	RELEASE(_GS_);
@@ -141,14 +144,14 @@ GNUstepOutput *_GS_ = nil;
 {
 	[[topic topicText] setKeyTarget: nil];
 	RELEASE(topic);
-	RELEASE(defaultDefaults);
+	RELEASE(defaultPreferences);
 	RELEASE(connectionControllers);
 	RELEASE(pendingIdentToConnectionController);
 	NSFreeMapTable(connectionToConnectionController);
 	
 	[super dealloc];
 }
-- setDefaultsObject: aObject forKey: (NSString *)aKey
+- setPreference: (id)aPreference forKey: (NSString *)aKey
 {
 	if ([aKey hasPrefix: @"GNUstepOutput"])
 	{
@@ -190,7 +193,7 @@ GNUstepOutput *_GS_ = nil;
 	
 	return self;
 }		
-- (id)defaultsObjectForKey: (NSString *)aKey
+- (id)preferenceForKey: (NSString *)aKey
 {
 	id z;
 	
@@ -207,7 +210,7 @@ GNUstepOutput *_GS_ = nil;
 			return z;
 		}
 		
-		z = [defaultDefaults objectForKey: newKey];
+		z = [defaultPreferences objectForKey: newKey];
 		
 		[self setDefaultsObject: z forKey: aKey];
 		
@@ -220,19 +223,19 @@ GNUstepOutput *_GS_ = nil;
 		return z;
 	}
 	
-	z = [defaultDefaults objectForKey: aKey];
+	z = [defaultPreferences objectForKey: aKey];
 	
 	[self setDefaultsObject: z forKey: aKey];
 	
 	return z;
 }
-- (id)defaultDefaultsForKey: aKey
+- (id)defaultPreferenceForKey: (NSString *)aKey
 {
 	if ([aKey hasPrefix: @"GNUstepOutput"])
 	{
 		aKey = [aKey substringFromIndex: 13];
 	}
-	return [defaultDefaults objectForKey: aKey];
+	return [defaultPreferences objectForKey: aKey];
 }	  
 - (id)connectionToConnectionController: (id)aObject
 {

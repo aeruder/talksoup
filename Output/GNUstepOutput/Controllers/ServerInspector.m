@@ -1,7 +1,7 @@
 /***************************************************************************
-                                ContentController.m
+                                ServerInspector.m
                           -------------------
-    begin                : Mon Jan 19 12:09:57 CST 2004
+    begin                : Mon Jan 19 12:00:37 CST 2004
     copyright            : (C) 2003 by Andy Ruder
     email                : aeruder@yahoo.com
  ***************************************************************************/
@@ -14,15 +14,3 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-#import "Controllers/ContentControllers/ContentController.h"
-#import <Foundation/NSString.h>
-
-NSString *ContentControllerChannelType = @"ContentControllerChannelType";
-NSString *ContentControllerQueryType = @"ContentControllerQueryType";
-
-NSString *ContentConsoleName = @"ContentConsoleName";
-
-NSString *ContentControllerChangedTopicNotification = @"ContentControllerChangedTopicNotification";
-NSString *ContentControllerSelectedNameNotification = @"ContentControllerSelectedNameNotification";
-NSString *ContentControllerChangedLabelNotification = @"ContentControllerChangedLabelNotification";

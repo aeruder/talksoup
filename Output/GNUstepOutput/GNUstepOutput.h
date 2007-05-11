@@ -15,25 +15,22 @@
  *                                                                         *
  ***************************************************************************/
 
-@class GNUstepOutput, NSString, NSColor;
+@class GNUstepOutput, PreferencesController, NSString, NSColor;
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSBundle.h>
 
-NSString *GNUstepOutputLowercase(NSString *aString);
+NSString *StandardLowercase(NSString *aString);
+NSString *IRCLowercase(NSString *aString);
+
+// lowercase function to be used by GNUstepOutput
+extern NSString *(*GNUstepOutputLowercase)(NSString *aString);
+
 NSString *GNUstepOutputIdentificationForController(id controller);
 BOOL GNUstepOutputCompare(NSString *aString, NSString *aString2);
 
-extern NSString *GNUstepOutputPersonalBracketColor;
-extern NSString *GNUstepOutputOtherBracketColor;
-extern NSString *GNUstepOutputTextColor;
-extern NSString *GNUstepOutputBackgroundColor;
-extern NSString *GNUstepOutputServerList;
-extern NSString *GNUstepOutputFontName;
-extern NSString *GNUstepOutputFontSize;
-extern NSString *GNUstepOutputScrollBack;
-
 extern GNUstepOutput *_GS_;
+extern PreferencesController *_GSPREFS_;
 
 #ifdef _l
 	#undef _l
@@ -47,7 +44,7 @@ extern GNUstepOutput *_GS_;
 #define GNUSTEP_OUTPUT_H
 
 #import <Foundation/NSMapTable.h>
-#include "TalkSoupBundles/TalkSoup.h"
+#import "TalkSoupBundles/TalkSoup.h"
 
 @class NSAttributedString, NSArray, NSAttributedString, NSMutableDictionary;
 @class NSDictionary, ConnectionController, PreferencesController;
@@ -65,7 +62,7 @@ extern GNUstepOutput *_GS_;
 		NSMapTable *connectionToConnectionController;
 		NSMutableArray *connectionControllers;
 		NSMutableArray *serverLists;		
-		NSMutableDictionary *defaultDefaults;
+		NSMutableDictionary *defaultPreferences;
 		NSMutableDictionary *bundlePreferences;
 		PreferencesController *prefs;
 		TopicInspectorController *topic;
@@ -73,11 +70,7 @@ extern GNUstepOutput *_GS_;
 		BOOL terminating;
 		NSMenu *menu;
 	}
-- setDefaultsObject: aObject forKey: aKey;
-
-- (id)defaultsObjectForKey: aKey;
-
-- (id)defaultDefaultsForKey: aKey;
+- (PreferencesController *)preferences;
 
 - (id)connectionToConnectionController: (id)aObject;
 
@@ -92,11 +85,13 @@ extern GNUstepOutput *_GS_;
 - addServerList: (ServerListController *)aServer;
 - removeServerList: (ServerListController *)aServer;
 
-- setPreferencesController: (PreferencesController *)aPrefs;
-
-- controllerForBundlePreferences: (NSString *)aName;
-
 - (TopicInspectorController *)topicInspectorController;
+- (PreferencesController *)preferencesController;
+
+- (id)preferenceForKey: (NSString *)aKey;
+- setPreference: (id)aPreference forKey: (NSString *)aKey;
+- (id)defaultPreferenceForKey: (NSString *)aKey;
+
 - (void)run;
 @end
 

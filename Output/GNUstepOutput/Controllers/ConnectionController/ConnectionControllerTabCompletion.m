@@ -1,5 +1,5 @@
 /***************************************************************************
-                                ConnectionControllerTabCompletion.m
+                        ConnectionControllerTabCompletion.m
                           -------------------
     begin                : Tue May 20 18:38:20 CDT 2003
     copyright            : (C) 2003 by Andy Ruder

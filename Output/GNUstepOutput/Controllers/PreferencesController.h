@@ -3,6 +3,8 @@
                           -------------------
     begin                : Thu Apr  3 08:09:15 CST 2003
     copyright            : (C) 2003 by Andy Ruder
+	                       w/ much of the code borrowed from Preferences.app
+						   by Jeff Teunissen
     email                : aeruder@yahoo.com
  ***************************************************************************/
 
@@ -17,51 +19,38 @@
 
 @class PreferencesController;
 
+extern NSString *GNUstepOutputPersonalBracketColor;
+extern NSString *GNUstepOutputOtherBracketColor;
+extern NSString *GNUstepOutputTextColor;
+extern NSString *GNUstepOutputBackgroundColor;
+extern NSString *GNUstepOutputServerList;
+extern NSString *GNUstepOutputFontName;
+extern NSString *GNUstepOutputFontSize;
+extern NSString *GNUstepOutputScrollBack;
+
 #ifndef PREFERENCES_CONTROLLER_H
 #define PREFERENCES_CONTROLLER_H
 
 #import <Foundation/NSObject.h>
 
-@class NSColorWell, NSTextField, NSButton, NSWindow;
+@class NSScrollView, NSWindow, NSMatrix;
+
+@protocol GNUstepOutputPrefsModule
+@end
 
 @interface PreferencesController : NSObject
 	{
-		NSTextField *fontField;
-		NSButton *setFontButton;
-		NSColorWell *personalBracketColor;
-		NSColorWell *backgroundColor;
-		NSColorWell *otherBracketColor;
-		NSColorWell *textColor;
-		NSTextField *nick;
-		NSTextField *realName;
-		NSTextField *userName;
-		NSTextField *password;
-		NSButton *resetButton;
+		NSScrollView *scrollView;
 		NSWindow *window;
+		NSMatrix *prefsList;
+		NSScrollView *moduleScrollView;
+		int currentPrefs;
+		NSMutableArray *prefsModules;
 	}
-- (void)loadCurrentDefaults;
-	
-- nickSet: (NSTextField *)sender;
+- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
+- (void)refreshCurrentPanel;
 
-- passwordSet: (NSTextField *)sender;
-
-- userNameSet: (NSTextField *)sender;
-
-- realNameSet: (NSTextField *)sender;
-
-- personalBracketColorSet: (NSColorWell *)sender;
-
-- backgroundColorSet: (NSColorWell *)sender;
-
-- otherBracketColorSet: (NSColorWell *)sender;
-
-- textColorSet: (NSColorWell *)sender;
-
-- resetColors: (NSButton *)sender;
-
-- fontSet: (NSButton *)sender;
-
-- (NSWindow *)window;
+- (void)refreshAvailablePreferences;
 @end
 
 #endif

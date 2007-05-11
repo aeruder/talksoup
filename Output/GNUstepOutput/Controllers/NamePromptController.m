@@ -17,7 +17,7 @@
  
 #import "Controllers/NamePromptController.h"
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 
 #import <Foundation/NSString.h>

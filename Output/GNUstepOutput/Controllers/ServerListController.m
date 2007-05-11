@@ -19,7 +19,7 @@
 #import "Controllers/GroupEditorController.h"
 #import "Controllers/ServerEditorController.h"
 #import "Controllers/ServerListConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "GNUstepOutput.h"
 
 #import <Foundation/NSNotification.h>

@@ -3,6 +3,8 @@
                           -------------------
     begin                : Thu Apr  3 08:09:15 CST 2003
     copyright            : (C) 2003 by Andy Ruder
+	                       w/ much of the code borrowed from Preferences.app
+						   by Jeff Teunissen
     email                : aeruder@yahoo.com
  ***************************************************************************/
 
@@ -15,10 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #import "Controllers/PreferencesController.h"
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/QueryController.h"
 #import "Misc/NSColorAdditions.h"
 #import "GNUstepOutput.h"
@@ -39,7 +40,76 @@
 #import <AppKit/NSFontManager.h>
 #import <AppKit/NSFont.h>
 
+NSString *GNUstepOutputPersonalBracketColor = @"GNUstepOutputPersonalBracketColor";
+NSString *GNUstepOutputOtherBracketColor = @"GNUstepOutputOtherBracketColor";
+NSString *GNUstepOutputTextColor = @"GNUstepOutputTextColor";
+NSString *GNUstepOutputBackgroundColor = @"GNUstepOutputBackgroundColor";
+NSString *GNUstepOutputServerList = @"GNUstepOutputServerList";
+NSString *GNUstepOutputChatFontSize = @"GNUstepOutputChatFontSize";
+NSString *GNUstepOutputChatFontName = @"GNUstepOutputChatFontName";
+NSString *GNUstepOutputUserListFontName = @"GNUstepOutputUserListFontName";
+NSString *GNUstepOutputUserListFontSize = @"GNUstepOutputUserListFontSize";
+NSString *GNUstepOutputTextFieldFontName = @"GNUstepOutputTextFieldFontName";
+NSString *GNUstepOutputTextFieldFontSize = @"GNUstepOutputTextFieldFontSize";
+NSString *GNUstepOutputScrollBack = @"GNUstepOutputScrollBack";
+NSString *GNUstepOutputAliases = @"GNUstepOutputAliases";
+NSString *GNUstepOutputUserListStyle = @"GNUstepOutputUserListStyle";
+
 @implementation PreferencesController
+- (void)init
+{
+	if (!(self = [super init])) return self;
+
+	prefsModules = [NSMutableArray new];
+
+	if (![NSBundle loadNibNamed: @"Preferences" owner: self])
+	{
+		[self dealloc];
+		return nil;
+	}
+	
+	return self;
+}	
+- (void)awakeFromNib
+{
+	/* much of this setup code was shamelessly ripped
+	 * from preferences.app.  Why redo what works
+	 * so nicely? 
+	 */
+
+	prefsList = [[NSMatrix alloc] initWithFrame: 
+	  NSMakeRect(0, 0, 64*30, 64)];
+	[prefsList setCellClass: [NSButtonCell class]];
+	[prefsList setCellSize: NSMakeSize(64, 64)];
+	[prefsList setMode: NSRadioModeMatrix];
+	[prefsList setIntercellSpacing: NSZeroSize];
+	
+	[scrollView setDocumentView: iconList];
+	[scrollView setHasHorizontalScroller: YES];
+	[scrollView setHasVerticalScroller: NO];
+	[scrollView setBorderType: NSBezelBorder];
+}
+- (void)dealloc
+{
+	DESTROY(window);
+	DESTROY(prefsModules);
+
+	[super dealloc];
+}
+- (BOOL)setCurrentModule: (id <GNUstepOutputPrefsModule> aPrefsModule)
+{
+	// FIXME
+}
+- (void)refreshCurrentPanel
+{
+	// FIXME
+}
+- (void)refreshAvailablePreferences
+{
+	// FIXME
+}
+/*	
+	
 - (void)awakeFromNib
 {
 	[nick setNextKeyView: realName];
@@ -377,4 +447,5 @@
 	AUTORELEASE(RETAIN(self));
 	[_GS_ setPreferencesController: nil];
 }
+*/
 @end

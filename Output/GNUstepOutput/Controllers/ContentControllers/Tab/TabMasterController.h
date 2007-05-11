@@ -14,3 +14,57 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+ 
+ @class TabMasterController;
+ 
+#ifndef TAB_MASTER_CONTROLLER_H
+#define TAB_MASTER_CONTROLLER_H
+ 
+#import <Foundation/NSObject.h>
+#import <Foundation/NSMapTable.h>
+ 
+@class NSTextField, NSTabView, NSWindow, InputController, NSMutableArray;
+
+@interface TabMasterController : NSObject < MasterController >
+	{
+		NSMutableArray *indexToView;
+		NSMapTable *viewToIndex;
+		NSMapTable *viewToTab;
+		NSMapTable *viewToContent;
+		NSMapTable *tabToView;
+		NSMutableArray *contentControllers;
+		
+		NSTextField *typeView;
+		NSTextField *nickView;
+		NSTabView *tabView;
+		NSWindow *window;
+		
+		int numItems;
+
+// FIXME: is this needed here????		
+		InputController *input;
+	}		
+		
+- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+   forContentController: (id <ContentController>)aContentController;
+- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+   atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController;
+
+- removeView: (id <ContentControllerQueryView>)aView;
+- removeViewAtIndex: (int)aIndex;
+
+- moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
+- moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
+	 
+- (NSArray *)containedContentControllers;
+- (NSArray *)viewListForContentController: 
+    (id <ContentController>)aContentController;
+- (NSArray *)allViews;
+
+- (NSTextField *)typeView;
+- (NSTextField *)nickView;
+
+- (NSWindow *)window;
+@end
+
+#endif

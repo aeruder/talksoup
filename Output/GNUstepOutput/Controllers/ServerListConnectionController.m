@@ -18,7 +18,7 @@
 #import "Controllers/ServerListConnectionController.h"
 #import "Controllers/ServerListController.h"
 #import "Controllers/InputController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import <TalkSoupBundles/TalkSoup.h>
 #import "GNUstepOutput.h"
 

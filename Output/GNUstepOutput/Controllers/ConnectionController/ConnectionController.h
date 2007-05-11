@@ -20,7 +20,7 @@
 #ifndef CONNECTION_CONTROLLER_H
 #define CONNECTION_CONTROLLER_H
 
-@class NSString, KeyTextView, InputController, ContentController, NSArray;
+@class NSString, KeyTextView, ContentController, NSArray;
 @class NSColor, Channel, NSMutableDictionary, GNUstepOutput, NSFont;
 @class NSDictionary;
 
@@ -37,7 +37,6 @@
 		NSString *realName;
 		
 		KeyTextView *fieldEditor;
-		InputController *inputController;
 		id connection;
 		ContentController *content;
 		NSArray *tabCompletion;
@@ -69,8 +68,6 @@
 
 - setPassword: (NSString *)aString;
 - (NSString *)password;
-
-- (InputController *)inputController;
 
 - (id)connection;
 

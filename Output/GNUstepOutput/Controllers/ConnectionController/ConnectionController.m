@@ -17,7 +17,7 @@
 
 #import "Controllers/ConnectionController.h"
 #import "Controllers/ChannelController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/TopicInspectorController.h"
 #import "Controllers/InputController.h"
 #import "Views/ScrollingTextView.h"
@@ -94,19 +94,6 @@
 	typeView = [content typeView];
 
 	nameToChannelData = [NSMutableDictionary new];
-	
-	fieldEditor = [KeyTextView new];
-	[fieldEditor setFieldEditor: YES];
-	[fieldEditor setKeyTarget: self];
-	[fieldEditor setKeyAction: @selector(keyPressed:sender:)];
-	[fieldEditor setUsesFontPanel: NO];
-	
-	inputController = [[InputController alloc] initWithConnectionController: self];
-	
-	[typeView setTarget: inputController];
-	[typeView setAction: @selector(enterPressed:)];
-	[typeView abortEditing];
-	[typeView setAllowsEditingTextAttributes: NO];
 	
 	[[content window] makeFirstResponder: typeView];
 	

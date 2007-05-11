@@ -25,31 +25,84 @@
 @protocol ContentControllerDelegate;
 
 @class ConnectionController, NSView, NSString, NSAttributedString;
-@class NSArray, NSTextView;
+@class NSArray, NSTextView, NSTextField, NSWindow;
 
 extern NSString *ContentControllerChannelType;
 extern NSString *ContentControllerQueryType;
 
-@protocol ContentController
-- setDelegate: aDelegate;  // Doesn't retain
-- delegate;
+extern NSString *ContentConsoleName;
 
+@protocol ContentControllerQueryView
++ (NSString *)standardNib;
+- (NSTextView *)chatView;
+- (NSView *)contentView;
+@end
+
+//@protocol ContentControllerChannelName < ContentControllerChannelName >
+//- (NSString *)stringName;
+//- (NSAttributedString *)presentationName;
+//@end
+
+@protocol ContentControllerChannelView < ContentControllerQueryView >
+- (NSArray *)channelNames;
+- setChannelNames: (NSArray *)names;
+- addChannelName: (NSString *)aName;
+- removeChannelName: (NSString *)aName;
+@end
+
+
+@protocol MasterController
+- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+   forContentController: (id <ContentController>)aContentController;
+- addView: (id <ContentControllerQueryView>)aView withLabel: (NSAttributedString *)aLabel
+   atIndex: (int)aIndex forContentController: (id <ContentController>)aContentController;
+
+- removeView: (id <ContentControllerQueryView>)aView;
+- removeViewAtIndex: (int)aIndex;
+
+- moveView: (id <ContentControllerQueryView>)aView toIndex: (int)aIndex;
+- moveViewAtIndex: (int)aIndex toIndex: (int)aNewIndex;
+	 
+- (NSArray *)containedContentControllers;
+- (NSArray *)viewListForContentController: 
+    (id <ContentController>)aContentController;
+- (NSArray *)allViews;
+
+- (NSTextField *)typeView;
+- (NSTextField *)nickView;
+
+- (NSWindow *)window;
+@end
+
+
+@protocol ContentController
+- (NSArray *)masterControllers;
 - (id <MasterController>)primaryMasterController;
+- setPrimaryMasterController: (id <MasterController>)aController;
 
 - (NSView *)viewForName: (NSString *)aName;
 - (NSTextView *)chatViewForName: (NSString *)aName;
 - (id)controllerForName: (NSString *)aName;
 - (NSString *)typeForName: (NSString *)aName;
+- (NSArray *)allChatViews;
+- (NSArray *)allControllers;
 - (NSArray *)allViews;
 - (NSArray *)allNames;
+- (NSArray *)allChatViewsOfType: (NSString *)aType;
+- (NSArray *)allControllersOfType: (NSString *)aType;
 - (NSArray *)allViewsOfType: (NSString *)aType;
 - (NSArray *)allNamesOfType: (NSString *)aType;
 
-- putMessage: (NSAttributedString *)aMessage in: (NSString *)aName;
-- putMessage: (NSAttributedString *)aMessage in: (NSString *)aName 
+- putMessage: (NSAttributedString *)aMessage in: (id)aName;
+- putMessage: (NSAttributedString *)aMessage in: (id)aName 
     withEndLine: (BOOL)hasEnd;
 - putMessageInAll: (NSAttributedString *)aMessage;
 - putMessageInAll: (NSAttributedString *)aMessage
+    withEndLine: (BOOL)hasEnd;
+- putMessageInAll: (NSAttributedString *)aMessage
+    ofType: (NSString *)aType;
+- putMessageInAll: (NSAttributedString *)aMessage
+    ofType: (NSString *)aType
     withEndLine: (BOOL)hasEnd;
 
 - (NSString *)presentationalNameForName: (NSString *)aName;
@@ -57,27 +110,74 @@ extern NSString *ContentControllerQueryType;
 
 - (NSString *)nickname;
 - setNickname: (NSString *)aNickname;
+
+- setLowercasingFunction: (NSString * (*)(NSString *))aFunction;
 @end
 
-@protocol ContentControllerDelegate // Informal
-- (void)contentController: (id <ContentController>)aController
-   selectedName: (NSString *)aName inMaster: (id <MasterController>)aMaster;
-@end
+/*
+	object:          The content controller.
+	
+	userinfo:
+	@"OldIndex"      Old index
+	@"Index"         The new index
+	@"Master"        The master controller
+	@"View"          The view controller.
+	@"Content"       The content controller
+*/
+extern NSString *ContentControllerMovedInMasterControllerNotification;
 
-@protocol MasterController
-- (NSArray *)containedContentControllers;
-- (NSArray *)channelListForContentController: 
-    (id <ContentController>)aContentController;
+/*
+	object:          The content controller
+	
+	userinfo:
+	@"Master":       The master controller.
+	@"View":         The view controller.
+	@"Index":        The index
+	@"Content":      The content controller
+*/
+extern NSString *ContentControllerAddedToMasterControllerNotification;
 
-- setChatFont: (NSFont *)aFont;
-- (NSFont *)chatFont;
+/*
+	object:          The content controller
+	
+	userinfo:
+	@"Master":       The master controller.
+	@"View":         The view controller.
+	@"Content":      The content controller.
+*/
+extern NSString *ContentControllerRemovedFromMasterControllerNotification;
 
-- (NSTextField *)typeView;
-- (NSTextField *)nickView;
+/* 
+	object:          The content controller
+	
+	userinfo:
+	@"OldNickname": Old nickname
+	@"Nickname":    New nickname
+	@"Content":     The content controller
+*/
+extern NSString *ContentControllerChangedNicknameNotification;
 
-- (NSWindow *)window;
+/* 
+	object:       The content controller
 
-- (void)updateNickname;
-@end
+	userinfo:
+	@"View":     The view controller
+	@"Content":  The content controller
+	@"Master":   The master controller
+*/
+extern NSString *ContentControllerSelectedNameNotification;
 
+/* 
+	object:       The content controller
+	
+	userinfo:
+   @"OldLabel": The old label
+	@"Label":    The new label
+	@"View":     The view controller
+	@"Content":  The content controller
+	@"Master":   The master controller
+*/
+extern NSString *ContentControllerChangedLabelNotification;
+
+	
 #endif

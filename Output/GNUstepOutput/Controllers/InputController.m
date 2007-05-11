@@ -18,7 +18,7 @@
 #import <TalkSoupBundles/TalkSoup.h>
 #import "Controllers/InputController.h"
 #import "Controllers/ConnectionController.h"
-#import "Controllers/ContentController.h"
+#import "Controllers/ContentControllers/ContentController.h"
 #import "Controllers/QueryController.h"
 #import "Views/ScrollingTextView.h"
 #import "GNUstepOutput.h"
