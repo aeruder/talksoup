@@ -3,11 +3,7 @@ BUNDLE_NAME = Emoticon
 
 BUNDLE_EXTENSION =
 
-ifeq ($(OBJC_RUNTIME_LIB), apple)
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/InFilters
-else
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
-endif
+BUNDLE_INSTALL_DIR = $(GNUSTEP_APPLICATION_SUPPORT)/TalkSoup/InFilters
 
 Emoticon_LANGUAGES = English
 Emoticon_LOCALIZED_RESOURCE_FILES = Localizable.strings

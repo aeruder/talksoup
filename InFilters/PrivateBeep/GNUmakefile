@@ -3,11 +3,7 @@ BUNDLE_NAME = PrivateBeep
 
 BUNDLE_EXTENSION =
 
-ifeq ($(OBJC_RUNTIME_LIB), apple)
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/Application\ Support/TalkSoup/InFilters
-else
-BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Library/ApplicationSupport/TalkSoup/InFilters
-endif
+BUNDLE_INSTALL_DIR = $(GNUSTEP_APPLICATION_SUPPORT)/TalkSoup/InFilters
 
 PrivateBeep_LANGUAGES = English
 PrivateBeep_LOCALIZED_RESOURCE_FILES = Localizable.strings
